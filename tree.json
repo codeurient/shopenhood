@@ -1,0 +1,287 @@
+{
+. .   
+ 
+my-ecommerce-platform/
+├── app/
+│   ├── Console/
+│   │   ├── Commands/
+│   │   │   ├── SyncSubscriptions.php
+│   │   │   ├── CleanupExpiredCoupons.php
+│   │   │   └── (other necessary files ...)
+│   │   └── Kernel.php
+│   ├── Exceptions/
+│   │   ├── Handler.php
+│   │   └── (other necessary files ...)
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Api/
+│   │   │   │   ├── Auth/
+│   │   │   │   │   ├── LoginController.php
+│   │   │   │   │   ├── RegisterController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   ├── User/
+│   │   │   │   │   ├── UserController.php
+│   │   │   │   │   ├── SubscriptionController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   ├── Product/
+│   │   │   │   │   ├── ListingController.php
+│   │   │   │   │   ├── VariantController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   ├── Order/
+│   │   │   │   │   ├── OrderController.php
+│   │   │   │   │   ├── PaymentController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   ├── Review/
+│   │   │   │   │   ├── ReviewController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   └── (other necessary files ...)
+│   │   │   ├── Web/
+│   │   │   │   ├── Auth/
+│   │   │   │   │   ├── LoginController.php
+│   │   │   │   │   ├── RegisterController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   ├── User/
+│   │   │   │   │   ├── ProfileController.php
+│   │   │   │   │   ├── SubscriptionController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   ├── Product/
+│   │   │   │   │   ├── ListingController.php
+│   │   │   │   │   ├── CartController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   ├── Order/
+│   │   │   │   │   ├── CheckoutController.php
+│   │   │   │   │   ├── OrderHistoryController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   ├── Review/
+│   │   │   │   │   ├── ReviewController.php
+│   │   │   │   │   └── (other necessary files ...)
+│   │   │   │   └── (other necessary files ...)
+│   │   │   └── Controller.php
+│   │   ├── Middleware/
+│   │   │   ├── Authenticate.php
+│   │   │   ├── RedirectIfAuthenticated.php
+│   │   │   └── (other necessary files ...)
+│   │   ├── Requests/
+│   │   │   ├── Auth/
+│   │   │   │   ├── LoginRequest.php
+│   │   │   │   ├── RegisterRequest.php
+│   │   │   │   └── (other necessary files ...)
+│   │   │   ├── User/
+│   │   │   │   ├── UpdateProfileRequest.php
+│   │   │   │   ├── UpdateSubscriptionRequest.php
+│   │   │   │   └── (other necessary files ...)
+│   │   │   ├── Product/
+│   │   │   │   ├── StoreListingRequest.php
+│   │   │   │   ├── UpdateVariantRequest.php
+│   │   │   │   └── (other necessary files ...)
+│   │   │   ├── Order/
+│   │   │   │   ├── StoreOrderRequest.php
+│   │   │   │   ├── ProcessPaymentRequest.php
+│   │   │   │   └── (other necessary files ...)
+│   │   │   └── (other necessary files ...)
+│   │   └── Resources/
+│   │       ├── UserResource.php
+│   │       ├── ListingResource.php
+│   │       ├── OrderResource.php
+│   │       └── (other necessary files ...)
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── SubscriptionPlan.php
+│   │   ├── UserSubscription.php
+│   │   ├── SubscriptionReminder.php
+│   │   ├── Category.php
+│   │   ├── ListingType.php
+│   │   ├── Variant.php
+│   │   ├── VariantItem.php
+│   │   ├── CategoryVariant.php
+│   │   ├── Listing.php
+│   │   ├── ListingImage.php
+│   │   ├── ListingVariant.php
+│   │   ├── ProductVariation.php
+│   │   ├── Location.php
+│   │   ├── Address.php
+│   │   ├── Order.php
+│   │   ├── OrderItem.php
+│   │   ├── Payment.php
+│   │   ├── Coupon.php
+│   │   ├── CouponRestriction.php
+│   │   ├── CouponUsage.php
+│   │   ├── ShippingZone.php
+│   │   ├── ShippingMethod.php
+│   │   ├── ShippingRate.php
+│   │   ├── ListingShipping.php
+│   │   ├── Conversation.php
+│   │   ├── ConversationParticipant.php
+│   │   ├── Message.php
+│   │   ├── Review.php
+│   │   ├── ReviewResponse.php
+│   │   ├── SellerRating.php
+│   │   ├── Favorite.php
+│   │   ├── Follow.php
+│   │   ├── Report.php
+│   │   ├── Notification.php
+│   │   ├── ActivityLog.php
+│   │   ├── PageView.php
+│   │   ├── SearchQuery.php
+│   │   ├── Setting.php
+│   │   └── Job.php
+│   ├── Policies/
+│   │   ├── UserPolicy.php
+│   │   ├── ListingPolicy.php
+│   │   ├── OrderPolicy.php
+│   │   └── (other necessary files ...)
+│   ├── Providers/
+│   │   ├── AppServiceProvider.php
+│   │   ├── AuthServiceProvider.php
+│   │   ├── BroadcastServiceProvider.php
+│   │   ├── EventServiceProvider.php
+│   │   └── RouteServiceProvider.php
+│   └── (other necessary files ...)
+├── bootstrap/
+│   └── (default Laravel files ...)
+├── config/
+│   ├── auth.php
+│   ├── broadcasting.php
+│   ├── cache.php
+│   ├── database.php
+│   ├── filesystems.php
+│   ├── mail.php
+│   ├── queue.php
+│   ├── services.php
+│   ├── session.php
+│   ├── view.php
+│   └── (other necessary files ...)
+├── database/
+│   ├── factories/
+│   │   ├── UserFactory.php
+│   │   ├── ListingFactory.php
+│   │   ├── OrderFactory.php
+│   │   └── (other necessary files ...)
+│   ├── migrations/
+│   │   ├── 2023_01_01_000000_create_users_table.php
+│   │   ├── 2023_01_01_000001_create_subscription_plans_table.php
+│   │   ├── 2023_01_01_000002_create_user_subscriptions_table.php
+│   │   ├── 2023_01_01_000003_create_subscription_reminders_table.php
+│   │   ├── 2023_01_01_000004_create_categories_table.php
+│   │   ├── 2023_01_01_000005_create_listing_types_table.php
+│   │   ├── 2023_01_01_000006_create_variants_table.php
+│   │   ├── 2023_01_01_000007_create_variant_items_table.php
+│   │   ├── 2023_01_01_000008_create_category_variants_table.php
+│   │   ├── 2023_01_01_000009_create_listings_table.php
+│   │   ├── 2023_01_01_000010_create_listing_images_table.php
+│   │   ├── 2023_01_01_000011_create_listing_variants_table.php
+│   │   ├── 2023_01_01_000012_create_product_variations_table.php
+│   │   ├── 2023_01_01_000013_create_locations_table.php
+│   │   ├── 2023_01_01_000014_create_addresses_table.php
+│   │   ├── 2023_01_01_000015_create_orders_table.php
+│   │   ├── 2023_01_01_000016_create_order_items_table.php
+│   │   ├── 2023_01_01_000017_create_payments_table.php
+│   │   ├── 2023_01_01_000018_create_coupons_table.php
+│   │   ├── 2023_01_01_000019_create_coupon_restrictions_table.php
+│   │   ├── 2023_01_01_000020_create_coupon_usage_table.php
+│   │   ├── 2023_01_01_000021_create_shipping_zones_table.php
+│   │   ├── 2023_01_01_000022_create_shipping_methods_table.php
+│   │   ├── 2023_01_01_000023_create_shipping_rates_table.php
+│   │   ├── 2023_01_01_000024_create_listing_shipping_table.php
+│   │   ├── 2023_01_01_000025_create_conversations_table.php
+│   │   ├── 2023_01_01_000026_create_conversation_participants_table.php
+│   │   ├── 2023_01_01_000027_create_messages_table.php
+│   │   ├── 2023_01_01_000028_create_reviews_table.php
+│   │   ├── 2023_01_01_000029_create_review_responses_table.php
+│   │   ├── 2023_01_01_000030_create_seller_ratings_table.php
+│   │   ├── 2023_01_01_000031_create_favorites_table.php
+│   │   ├── 2023_01_01_000032_create_follows_table.php
+│   │   ├── 2023_01_01_000033_create_reports_table.php
+│   │   ├── 2023_01_01_000034_create_notifications_table.php
+│   │   ├── 2023_01_01_000035_create_activity_log_table.php
+│   │   ├── 2023_01_01_000036_create_page_views_table.php
+│   │   ├── 2023_01_01_000037_create_search_queries_table.php
+│   │   ├── 2023_01_01_000038_create_settings_table.php
+│   │   └── 2023_01_01_000039_create_jobs_table.php
+│   └── seeders/
+│       ├── DatabaseSeeder.php
+│       ├── UserSeeder.php
+│       ├── SubscriptionPlanSeeder.php
+│       └── (other necessary files ...)
+├── public/
+│   ├── css/
+│   ├── js/
+│   ├── images/
+│   └── (default Laravel files ...)
+├── resources/
+│   ├── js/
+│   │   ├── app.js
+│   │   ├── components/
+│   │   │   ├── ProductCard.vue
+│   │   │   ├── CartDropdown.vue
+│   │   │   └── (other necessary files ...)
+│   │   └── (other necessary files ...)
+│   ├── lang/
+│   │   ├── en/
+│   │   │   ├── auth.php
+│   │   │   ├── validation.php
+│   │   │   └── (other necessary files ...)
+│   │   └── (other necessary files ...)
+│   ├── views/
+│   │   ├── auth/
+│   │   │   ├── login.blade.php
+│   │   │   ├── register.blade.php
+│   │   │   └── (other necessary files ...)
+│   │   ├── layouts/
+│   │   │   ├── app.blade.php
+│   │   │   └── (other necessary files ...)
+│   │   ├── user/
+│   │   │   ├── profile.blade.php
+│   │   │   ├── subscriptions.blade.php
+│   │   │   └── (other necessary files ...)
+│   │   ├── product/
+│   │   │   ├── listings.blade.php
+│   │   │   ├── variants.blade.php
+│   │   │   └── (other necessary files ...)
+│   │   ├── order/
+│   │   │   ├── checkout.blade.php
+│   │   │   ├── history.blade.php
+│   │   │   └── (other necessary files ...)
+│   │   ├── review/
+│   │   │   ├── create.blade.php
+│   │   │   └── (other necessary files ...)
+│   │   └── (other necessary files ...)
+│   └── sass/
+│       ├── app.scss
+│       └── (other necessary files ...)
+├── routes/
+│   ├── api.php
+│   ├── web.php
+│   ├── channels.php
+│   └── console.php
+├── storage/
+│   └── (default Laravel files ...)
+├── tests/
+│   ├── Feature/
+│   │   ├── Auth/
+│   │   │   ├── LoginTest.php
+│   │   │   ├── RegistrationTest.php
+│   │   │   └── (other necessary files ...)
+│   │   ├── User/
+│   │   │   ├── ProfileTest.php
+│   │   │   └── (other necessary files ...)
+│   │   ├── Product/
+│   │   │   ├── ListingTest.php
+│   │   │   └── (other necessary files ...)
+│   │   └── (other necessary files ...)
+│   └── Unit/
+│       ├── UserTest.php
+│       ├── ListingTest.php
+│       └── (other necessary files ...)
+├── vendor/
+│   └── (default Laravel files ...)
+├── .env
+├── .env.example
+├── artisan
+├── composer.json
+├── package.json
+├── webpack.mix.js
+└── (other necessary files ...)
+
+
+}
