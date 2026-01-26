@@ -14,7 +14,8 @@ my-ecommerce-platform/
 │   │   └── (other necessary files ...)
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── Api/
+│   │   │   ├── Admin/
+│   │   │   ├── Api/V1/
 │   │   │   │   ├── Auth/
 │   │   │   │   │   ├── LoginController.php
 │   │   │   │   │   ├── RegisterController.php
