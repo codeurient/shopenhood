@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -39,8 +40,10 @@ return new class extends Migration
             $table->index('status', 'idx_status');
             $table->index('rating', 'idx_rating');
 
-            $table->check('rating BETWEEN 1 AND 5');
         });
+
+        // Check constraint əlavə etmək üçün:
+        DB::statement('ALTER TABLE reviews ADD CONSTRAINT chk_rating CHECK (rating BETWEEN 1 AND 5)');
     }
 
     public function down(): void

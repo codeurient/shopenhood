@@ -6,20 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('follows', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+
+            $table->unsignedBigInteger('follower_id');
+            $table->unsignedBigInteger('following_id');
+
+            $table->timestamp('created_at')->useCurrent();
+
+            $table->foreign('follower_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('following_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unique(
+                ['follower_id', 'following_id'],
+                'unique_follow'
+            );
+
+            $table->index('follower_id', 'idx_follower_id');
+            $table->index('following_id', 'idx_following_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('follows');

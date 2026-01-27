@@ -6,20 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('settings', function (Blueprint $table) {
-            $table->id();
+
+            $table->bigIncrements('id');
+            $table->string('key')->unique();
+            $table->text('value')->nullable();
+            $table->enum('type', ['string', 'integer', 'boolean', 'json'])->default('string');
+            $table->string('group', 100)->nullable()->comment('general, email, payment, etc.');
+            $table->boolean('is_public')->default(false);
+
             $table->timestamps();
+
+            $table->index('key', 'idx_key');
+            $table->index('group', 'idx_group');
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('settings');

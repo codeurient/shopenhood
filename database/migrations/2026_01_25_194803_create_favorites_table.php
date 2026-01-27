@@ -16,15 +16,8 @@ return new class extends Migration
 
             $table->timestamp('created_at')->useCurrent();
 
-            $table->foreign('user_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('cascade');
-
-            $table->foreign('listing_id')
-                  ->references('id')
-                  ->on('listings')
-                  ->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('listing_id')->references('id')->on('listings')->onDelete('cascade');
 
             $table->unique(
                 ['user_id', 'listing_id'],
