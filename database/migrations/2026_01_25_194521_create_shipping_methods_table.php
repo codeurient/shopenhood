@@ -6,20 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('shipping_methods', function (Blueprint $table) {
             $table->id();
+
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('carrier', 100)->nullable()->comment('DHL, FedEx, UPS, etc.');
+            $table->boolean('is_active')->default(true);
+
             $table->timestamps();
+
+            $table->index('is_active', 'idx_is_active');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('shipping_methods');
