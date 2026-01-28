@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',
@@ -34,5 +35,18 @@ return [
         ],
     ],
 
-    'password_timeout' => 10800,
 ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+

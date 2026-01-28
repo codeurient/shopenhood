@@ -35,7 +35,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // ========================================================================
     // AUTHENTICATED ADMIN ROUTES
     // ========================================================================
-    Route::middleware(['auth.admin', 'role:admin'])->group(function () {
+    Route::middleware(['auth.admin', 'role:admin', 'log.activity'])->group(function () {
 
         // Dashboard
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

@@ -1,14 +1,10 @@
 <?php
 
 namespace App\Http;
-
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
-    /**
-     * The application's global HTTP middleware stack.
-     */
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
@@ -19,9 +15,6 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
-    /**
-     * The application's route middleware groups.
-     */
     protected $middlewareGroups = [
         'web' => [
             \App\Http\Middleware\EncryptCookies::class,
@@ -39,9 +32,6 @@ class Kernel extends HttpKernel
         ],
     ];
 
-    /**
-     * The application's middleware aliases.
-     */
     protected $middlewareAliases = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
