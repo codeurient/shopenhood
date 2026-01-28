@@ -12,6 +12,19 @@ class Category extends Model
 {
     use HasFactory, LogsActivity;
 
+    // Allow mass assignment for these fields
+    protected $fillable = [
+        'parent_id',
+        'name',
+        'slug',
+        'icon',
+        'description',
+        'sort_order',
+        'level',
+        'path',
+        'is_active',
+    ];
+
     // Self-referential relationship (parent category)
     public function parent()
     {
