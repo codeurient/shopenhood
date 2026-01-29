@@ -56,8 +56,8 @@ class CategoryController extends Controller
         // Calculate level and path
         if (! empty($validated['parent_id'])) {
             $parent = Category::findOrFail($validated['parent_id']);
-            $validated['level'] = $parent->level + 1;
-            $validated['path'] = $parent->path ? $parent->path.'/'.$parent->id : (string) $parent->id;
+            $validated['level'] = $parent->level + 1; // e.g., 2 if parent is level 1
+            $validated['path'] = $parent->path ? $parent->path.'/'.$parent->id : (string) $parent->id; // e.g., "1/4/7"
         } else {
             $validated['level'] = 1;
             $validated['path'] = null;

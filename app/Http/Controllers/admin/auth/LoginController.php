@@ -21,7 +21,7 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        $remember = $request->boolean('remember');
+        $remember = $request->boolean('remember'); 
 
         if (Auth::guard('admin')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
@@ -49,7 +49,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login')
-            ->with('success', 'You have been logged out successfully');
+        return redirect()->route('admin.login')->with('success', 'You have been logged out successfully');
     }
 }
