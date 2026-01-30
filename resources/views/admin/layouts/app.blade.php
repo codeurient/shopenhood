@@ -29,6 +29,9 @@
                 <a href="{{ route('admin.variants.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('admin.variants.*') ? 'bg-gray-700' : '' }}">
                     🔧 Variants
                 </a>
+                <a href="{{ route('admin.listings.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('admin.listings.*') ? 'bg-gray-700' : '' }}">
+                    🔧 Listings
+                </a>
             </nav>
         </aside>
         

@@ -1,0 +1,142 @@
+{
+  "Azerbaijan": [
+    "Baku",
+    "Ganja",
+    "Sumgait",
+    "Mingachevir",
+    "Agdam",
+    "Zaqatala",
+    "Lankaran",
+    "Sheki"
+  ],
+  "Turkey": [
+    "Istanbul",
+    "Ankara",
+    "Izmir",
+    "Bursa",
+    "Adana",
+    "Gaziantep",
+    "Konya",
+    "Antalya"
+  ],
+  "United States": [
+    "New York",
+    "Los Angeles",
+    "Chicago",
+    "Houston",
+    "Phoenix",
+    "Philadelphia",
+    "San Antonio",
+    "San Diego"
+  ],
+  "United Kingdom": [
+    "London",
+    "Birmingham",
+    "Manchester",
+    "Glasgow",
+    "Liverpool",
+    "Leeds",
+    "Edinburgh",
+    "Bristol"
+  ],
+  "Germany": [
+    "Berlin",
+    "Hamburg",
+    "Munich",
+    "Cologne",
+    "Frankfurt",
+    "Stuttgart",
+    "Dusseldorf",
+    "Dortmund"
+  ],
+  "France": [
+    "Paris",
+    "Marseille",
+    "Lyon",
+    "Toulouse",
+    "Nice",
+    "Nantes",
+    "Strasbourg",
+    "Montpellier"
+  ],
+  "Russia": [
+    "Moscow",
+    "Saint Petersburg",
+    "Novosibirsk",
+    "Yekaterinburg",
+    "Kazan",
+    "Nizhny Novgorod",
+    "Chelyabinsk",
+    "Samara"
+  ],
+  "China": [
+    "Beijing",
+    "Shanghai",
+    "Guangzhou",
+    "Shenzhen",
+    "Chengdu",
+    "Hangzhou",
+    "Wuhan",
+    "Xi'an"
+  ],
+  "Japan": [
+    "Tokyo",
+    "Yokohama",
+    "Osaka",
+    "Nagoya",
+    "Sapporo",
+    "Fukuoka",
+    "Kobe",
+    "Kyoto"
+  ],
+  "India": [
+    "Mumbai",
+    "Delhi",
+    "Bangalore",
+    "Hyderabad",
+    "Chennai",
+    "Kolkata",
+    "Pune",
+    "Ahmedabad"
+  ],
+  "Canada": [
+    "Toronto",
+    "Montreal",
+    "Vancouver",
+    "Calgary",
+    "Edmonton",
+    "Ottawa",
+    "Winnipeg",
+    "Quebec City"
+  ],
+  "Australia": [
+    "Sydney",
+    "Melbourne",
+    "Brisbane",
+    "Perth",
+    "Adelaide",
+    "Gold Coast",
+    "Canberra",
+    "Newcastle"
+  ],
+  "UAE": [
+    "Dubai",
+    "Abu Dhabi",
+    "Sharjah",
+    "Ajman",
+    "Ras Al Khaimah",
+    "Fujairah",
+    "Umm Al Quwain",
+    "Al Ain"
+  ],
+  "Saudi Arabia": [
+    "Riyadh",
+    "Jeddah",
+    "Mecca",
+    "Medina",
+    "Dammam",
+    "Khobar",
+    "Tabuk",
+    "Abha"
+  ]
+}

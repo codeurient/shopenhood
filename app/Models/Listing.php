@@ -10,8 +10,49 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Listing extends Model
 {
-    use HasFactory;
-    use LogsActivity, SoftDeletes;
+    use HasFactory, LogsActivity, SoftDeletes;
+
+    protected $fillable = [
+        'user_id',
+        'category_id',
+        'listing_type_id',
+        'title',
+        'slug',
+        'description',
+        'short_description',
+        'base_price',
+        'discount_price',
+        'discount_start_date',
+        'discount_end_date',
+        'currency',
+        'status',
+        'is_visible',
+        'hidden_due_to_subscription',
+        'is_featured',
+        'is_negotiable',
+        'availability_type',
+        'location_id',
+        'country',
+        'city',
+        'created_as_role',
+        'store_name',
+        'meta_title',
+        'meta_description',
+    ];
+
+    protected $casts = [
+        'base_price' => 'decimal:2',
+        'discount_price' => 'decimal:2',
+        'is_visible' => 'boolean',
+        'hidden_due_to_subscription' => 'boolean',
+        'is_featured' => 'boolean',
+        'is_negotiable' => 'boolean',
+        'approved_at' => 'datetime',
+        'rejected_at' => 'datetime',
+        'expires_at' => 'datetime',
+        'discount_start_date' => 'datetime',
+        'discount_end_date' => 'datetime',
+    ];
 
     // Owner of the listing
     public function user()

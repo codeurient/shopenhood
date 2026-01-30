@@ -36,7 +36,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // ========================================================================
     // AUTHENTICATED ADMIN ROUTES
     // ========================================================================
-    Route::middleware(['auth.admin', 'role:admin'])->group(function () {
+    Route::middleware(['auth.admin', 'role:admin', 'log.activity'])->group(function () {
 
         // Dashboard
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -177,10 +177,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/', [ListingController::class, 'index'])->name('index');
             Route::get('create', [ListingController::class, 'create'])->name('create');
             Route::post('/', [ListingController::class, 'store'])->name('store');
-            Route::get('{listing}', [ListingController::class, 'show'])->name('show');
-            Route::get('{listing}/edit', [ListingController::class, 'edit'])->name('edit');
-            Route::put('{listing}', [ListingController::class, 'update'])->name('update');
-            Route::delete('{listing}', [ListingController::class, 'destroy'])->name('destroy');
+            // Route::get('{listing}', [ListingController::class, 'show'])->name('show');
+            // Route::get('{listing}/edit', [ListingController::class, 'edit'])->name('edit');
+            // Route::put('{listing}', [ListingController::class, 'update'])->name('update');
+            // Route::delete('{listing}', [ListingController::class, 'destroy'])->name('destroy');
+
+            // AJAX endpoint for loading category variants
+            Route::get('category/{category}/variants', [ListingController::class, 'getCategoryVariants'])->name('category.variants');
             
             // Listing Status Management
             Route::get('pending', [ListingController::class, 'pending'])->name('pending');
