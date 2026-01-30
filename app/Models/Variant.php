@@ -2,14 +2,26 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\LogOptions;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Variant extends Model
 {
     use HasFactory, LogsActivity;
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'type',
+        'is_required',
+        'description',
+        'placeholder',
+        'help_text',
+        'sort_order',
+        'is_active',
+    ];
 
     // Variant items (predefined options like "Red", "Large", "64GB")
     public function items()

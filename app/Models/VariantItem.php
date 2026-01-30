@@ -2,14 +2,24 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\LogOptions;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class VariantItem extends Model
 {
     use HasFactory, LogsActivity;
+
+    protected $fillable = [
+        'variant_id',
+        'value',
+        'display_value',
+        'color_code',
+        'image',
+        'sort_order',
+        'is_active',
+    ];
 
     // Parent variant (e.g., "Color" variant has item "Red")
     public function variant()

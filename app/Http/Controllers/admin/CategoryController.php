@@ -4,16 +4,74 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Variant;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
     /**
-     * Show the form for creating a new category.
-     *
-     * @return \Illuminate\View\View
+     * Display a listing of categories with statistics
+     */
+    public function index(Request $request)
+    {
+        
+        $query = Category::with(['parent', 'children'])
+            ->withCount(['variants', 'listings']);
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('slug', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        // Filter by parent
+        if ($request->has('parent_id')) {
+            if ($request->parent_id === 'root') {
+                $query->whereNull('parent_id');
+            } elseif ($request->parent_id !== '') {
+                $query->where('parent_id', $request->parent_id);
+            }
+        }
+
+        // Filter by status
+        if ($request->filled('is_active')) {
+            $query->where('is_active', $request->is_active);
+        }
+
+        // Filter by level
+        if ($request->filled('level')) {
+            $query->where('level', $request->level);
+        }
+
+        $categories = $query->orderBy('level')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->paginate(50)
+            ->withQueryString();
+
+        // For AJAX requests (used by filter/search)
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'html' => view('admin.categories.partials.table', compact('categories'))->render(),
+                'pagination' => $categories->links()->render(),
+            ]);
+        }
+
+        // Get parent categories for filter dropdown
+        $parentCategories = Category::whereNull('parent_id')
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.categories.index', compact('categories', 'parentCategories'));
+    }
+
+    /**
+     * Show the form for creating a new category
      */
     public function create()
     {
@@ -21,9 +79,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Store a newly created category in storage.
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * Store a newly created category
      */
     public function store(Request $request)
     {
@@ -40,40 +96,33 @@ class CategoryController extends Controller
             'meta_description' => 'nullable|string|max:160',
         ]);
 
-        // Auto-generate slug if not provided
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['name']);
         }
 
-        // Ensure slug uniqueness
         $validated['slug'] = $this->generateUniqueSlug($validated['slug']);
 
-        // Handle image upload
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('categories', 'public');
         }
 
-        // Calculate level and path
         if (! empty($validated['parent_id'])) {
             $parent = Category::findOrFail($validated['parent_id']);
-            $validated['level'] = $parent->level + 1; // e.g., 2 if parent is level 1
-            $validated['path'] = $parent->path ? $parent->path.'/'.$parent->id : (string) $parent->id; // e.g., "1/4/7"
+            $validated['level'] = $parent->level + 1;
+            $validated['path'] = $parent->path ? $parent->path.'/'.$parent->id : (string) $parent->id;
         } else {
             $validated['level'] = 1;
             $validated['path'] = null;
         }
 
-        // Set default values
         $validated['is_active'] = $request->has('is_active');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
 
-        // Create category
         $category = Category::create($validated);
 
         activity()
             ->performedOn($category)
-            ->causedBy(auth()->user())
-            ->withProperties(['attributes' => $validated])
+            ->causedBy(auth()->guard('admin')->user())
             ->log('Category created');
 
         return redirect()
@@ -82,7 +131,138 @@ class CategoryController extends Controller
     }
 
     /**
-     * Generate a unique slug for the category.
+     * Get available variants for category (AJAX)
+     */
+    public function getAvailableVariants(Category $category)
+    {
+        $allVariants = Variant::with('items')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
+
+        $assignedVariantIds = $category->variants()->pluck('variants.id')->toArray();
+
+        return response()->json([
+            'success' => true,
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'level' => $category->level,
+            ],
+            'variants' => $allVariants->map(function ($variant) use ($assignedVariantIds) {
+                return [
+                    'id' => $variant->id,
+                    'name' => $variant->name,
+                    'type' => $variant->type,
+                    'items_count' => $variant->items->count(),
+                    'is_assigned' => in_array($variant->id, $assignedVariantIds),
+                    'current_settings' => $variant->categoryVariants()
+                        ->where('category_id', request()->route('category')->id)
+                        ->first(),
+                ];
+            }),
+        ]);
+    }
+
+    /**
+     * Sync variants to category (AJAX)
+     */
+    public function syncVariants(Request $request, Category $category)
+    {
+        $validated = $request->validate([
+            'variants' => 'required|array',
+            'variants.*.id' => 'required|exists:variants,id',
+            'variants.*.is_required' => 'boolean',
+            'variants.*.is_searchable' => 'boolean',
+            'variants.*.is_filterable' => 'boolean',
+            'variants.*.sort_order' => 'integer|min:0',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Detach all existing variants
+            $category->variants()->detach();
+
+            // Attach selected variants with pivot data
+            foreach ($validated['variants'] as $variantData) {
+                $category->variants()->attach($variantData['id'], [
+                    'is_required' => $variantData['is_required'] ?? false,
+                    'is_searchable' => $variantData['is_searchable'] ?? true,
+                    'is_filterable' => $variantData['is_filterable'] ?? true,
+                    'sort_order' => $variantData['sort_order'] ?? 0,
+                ]);
+            }
+
+            DB::commit();
+
+            activity()
+                ->performedOn($category)
+                ->causedBy(auth()->guard('admin')->user())
+                ->withProperties([
+                    'variant_count' => count($validated['variants']),
+                    'variant_ids' => array_column($validated['variants'], 'id'),
+                ])
+                ->log('Category variants updated');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Variants updated successfully',
+                'variant_count' => count($validated['variants']),
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating variants: '.$e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get children for AJAX (used in create form)
+     */
+    public function getChildren(Request $request, ?int $categoryId = null)
+    {
+        $query = Category::with('children')
+            ->where('is_active', true)
+            ->orderBy('sort_order');
+
+        if ($categoryId) {
+            $query->where('parent_id', $categoryId);
+        } else {
+            $query->whereNull('parent_id');
+        }
+
+        $categories = $query->get()->map(function ($category) {
+            return $this->formatCategoryForSelect($category);
+        });
+
+        return response()->json([
+            'success' => true,
+            'categories' => $categories,
+        ]);
+    }
+
+    /**
+     * Format category for select dropdown (recursive)
+     */
+    private function formatCategoryForSelect(Category $category): array
+    {
+        return [
+            'id' => $category->id,
+            'name' => $category->name,
+            'level' => $category->level,
+            'children' => $category->children->map(function ($child) {
+                return $this->formatCategoryForSelect($child);
+            })->toArray(),
+        ];
+    }
+
+    /**
+     * Generate unique slug
      */
     private function generateUniqueSlug(string $slug, ?int $ignoreId = null): string
     {
@@ -105,45 +285,43 @@ class CategoryController extends Controller
         }
     }
 
+
     /**
-     * Get categories for AJAX requests (used by create form).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getChildren(Request $request, ?int $categoryId = null)
-    {
-        $query = Category::query()
-            ->with(['children' => function ($q) {
-                $q->where('is_active', true)->orderBy('sort_order');
-            }])
-            ->where('is_active', true)
-            ->orderBy('sort_order');
+ * Get direct children of a category (AJAX)
+ */
+public function getDirectChildren(Request $request, ?Category $category = null)
+{
+    $query = Category::withCount(['variants', 'listings', 'children'])
+        ->where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('name');
 
-        if ($categoryId) {
-            $query->where('parent_id', $categoryId);
-        } else {
-            $query->whereNull('parent_id');
-        }
-
-        $categories = $query->get()->map(function ($category) {
-            return $this->formatCategoryForSelect($category);
-        });
-
-        return response()->json([
-            'success' => true,
-            'categories' => $categories,
-        ]);
+    if ($category) {
+        $query->where('parent_id', $category->id);
+        $parentName = $category->name;
+    } else {
+        $query->whereNull('parent_id');
+        $parentName = null;
     }
 
-    private function formatCategoryForSelect(Category $category): array
-    {
-        return [
-            'id' => $category->id,
-            'name' => $category->name,
-            'level' => $category->level,
-            'children' => $category->children->map(function ($child) {
-                return $this->formatCategoryForSelect($child);
-            })->toArray(),
-        ];
-    }
+    $categories = $query->get();
+
+    return response()->json([
+        'success' => true,
+        'parent_name' => $parentName,
+        'parent_id' => $category?->id,
+        'categories' => $categories->map(function($cat) {
+            return [
+                'id' => $cat->id,
+                'name' => $cat->name,
+                'slug' => $cat->slug,
+                'icon' => $cat->icon,
+                'is_active' => $cat->is_active,
+                'variants_count' => $cat->variants_count,
+                'listings_count' => $cat->listings_count,
+                'has_children' => $cat->children_count > 0,
+            ];
+        }),
+    ]);
+}
 }

@@ -1,5 +1,6 @@
 <?php 
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -35,7 +36,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // ========================================================================
     // AUTHENTICATED ADMIN ROUTES
     // ========================================================================
-    Route::middleware(['auth.admin', 'role:admin', 'log.activity'])->group(function () {
+    Route::middleware(['auth.admin', 'role:admin'])->group(function () {
 
         // Dashboard
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -57,11 +58,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])->name('index');
             Route::get('create', [CategoryController::class, 'create'])->name('create');
             Route::post('/', [CategoryController::class, 'store'])->name('store');
-            Route::get('{category}', [CategoryController::class, 'show'])->name('show');
-            Route::get('{category}/edit', [CategoryController::class, 'edit'])->name('edit');
-            Route::put('{category}', [CategoryController::class, 'update'])->name('update');
-            Route::delete('{category}', [CategoryController::class, 'destroy'])->name('destroy');
-            
+            // Route::get('{category}', [CategoryController::class, 'show'])->name('show');
+            // Route::get('{category}/edit', [CategoryController::class, 'edit'])->name('edit');
+            // Route::put('{category}', [CategoryController::class, 'update'])->name('update');
+            // Route::delete('{category}', [CategoryController::class, 'destroy'])->name('destroy');
+
+    
+
+            // Variant management
+            Route::get('{category}/variants/available', [CategoryController::class, 'getAvailableVariants'])->name('variants.available');
+            Route::post('{category}/variants/sync', [CategoryController::class, 'syncVariants'])->name('variants.sync');
+
             // Bulk Actions
             Route::post('bulk-delete', [CategoryController::class, 'bulkDelete'])->name('bulk-delete');
             Route::post('bulk-activate', [CategoryController::class, 'bulkActivate'])->name('bulk-activate');
@@ -74,10 +81,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('tree/view', [CategoryController::class, 'treeView'])->name('tree');
             Route::post('tree/reorder', [CategoryController::class, 'reorderTree'])->name('tree.reorder');
             
-            // AJAX Helpers
-            Route::get('ajax/children/{category?}', [CategoryController::class, 'getChildren'])->name('ajax.children')->withoutMiddleware('log.activity');
-            Route::get('ajax/breadcrumb/{category}', [CategoryController::class, 'getBreadcrumb'])->name('ajax.breadcrumb');
             
+            // AJAX endpoints
+            Route::get('ajax/children/{category?}', [CategoryController::class, 'getChildren'])->name('ajax.children');
+            Route::get('{category}/variants/available', [CategoryController::class, 'getAvailableVariants'])->name('variants.available');
+            Route::post('{category}/variants/sync', [CategoryController::class, 'syncVariants'])->name('variants.sync');
+
+
+            // AJAX for level-based accordion (index page)
+            Route::get('children/{category?}', [CategoryController::class, 'getDirectChildren'])->name('children');
+    
             // ================================================================
             // CATEGORY VARIANTS (Nested Resource)
             // ================================================================
@@ -89,6 +102,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::post('sync', [CategoryVariantController::class, 'sync'])->name('sync');
                 Route::post('reorder', [CategoryVariantController::class, 'reorder'])->name('reorder');
             });
+
         });
 
         // ====================================================================
