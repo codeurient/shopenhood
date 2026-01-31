@@ -122,9 +122,12 @@ class ListingController extends Controller
             'variants.*' => 'nullable',
 
             // Images
-            'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'detail_images' => 'nullable|array',
+            'detail_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
+
+        // dd($validated);
 
         DB::beginTransaction();
         try {
@@ -151,9 +154,14 @@ class ListingController extends Controller
                 $this->attachVariants($listing, $request->variants);
             }
 
-            // Handle images
-            if ($request->hasFile('images')) {
-                $this->uploadImages($listing, $request->file('images'));
+            // Handle main image
+            if ($request->hasFile('main_image')) {
+                $this->uploadImages($listing, [$request->file('main_image')]);
+            }
+
+            // Handle detail images
+            if ($request->hasFile('detail_images')) {
+                $this->uploadImages($listing, $request->file('detail_images'));
             }
 
             DB::commit();

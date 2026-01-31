@@ -54,13 +54,13 @@
                                 Category <span class="text-red-500">*</span>
                             </label>
                             <div id="categorySelectsContainer">
-                                <select name="category_id" id="category_level_0" required
+                                <select id="category_level_0" required
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 category-select"
                                         data-level="0">
                                     <option value="">Select Category</option>
                                 </select>
                             </div>
-                            <input type="hidden" name="category_id" id="category_id_hidden">
+                            <input type="hidden" name="category_id" id="category_id_hidden" required>
                         </div>
 
                         <div>
@@ -254,7 +254,7 @@
                 <div class="bg-white rounded-lg shadow p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Main Image</h3>
                     <p class="text-sm text-gray-600 mb-4">This image will be displayed on the main listing page</p>
-                    <input type="file" name="images[]" id="mainImage" accept="image/*"
+                    <input type="file" name="main_image" id="mainImage" accept="image/*"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     <div id="mainImagePreview" class="mt-4 hidden">
                         <img src="" alt="Preview" class="w-full h-48 object-cover rounded-lg">

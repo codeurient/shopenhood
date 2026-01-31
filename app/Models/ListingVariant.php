@@ -9,6 +9,13 @@ class ListingVariant extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'listing_id',
+        'variant_id',
+        'variant_item_id',
+        'custom_value',
+    ];
+
     // Parent listing
     public function listing()
     {
