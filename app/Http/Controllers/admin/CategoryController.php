@@ -16,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $query = Category::with(['parent', 'children'])
             ->withCount(['variants', 'listings']);
 
@@ -285,43 +285,68 @@ class CategoryController extends Controller
         }
     }
 
-
     /**
- * Get direct children of a category (AJAX)
- */
-public function getDirectChildren(Request $request, ?Category $category = null)
-{
-    $query = Category::withCount(['variants', 'listings', 'children'])
-        ->where('is_active', true)
-        ->orderBy('sort_order')
-        ->orderBy('name');
+     * Get direct children of a category (AJAX)
+     */
+    public function getDirectChildren(Request $request, ?Category $category = null)
+    {
+        $query = Category::withCount(['variants', 'listings', 'children'])
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name');
 
-    if ($category) {
-        $query->where('parent_id', $category->id);
-        $parentName = $category->name;
-    } else {
-        $query->whereNull('parent_id');
-        $parentName = null;
+        if ($category) {
+            $query->where('parent_id', $category->id);
+            $parentName = $category->name;
+        } else {
+            $query->whereNull('parent_id');
+            $parentName = null;
+        }
+
+        $categories = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'parent_name' => $parentName,
+            'parent_id' => $category?->id,
+            'categories' => $categories->map(function ($cat) {
+                return [
+                    'id' => $cat->id,
+                    'name' => $cat->name,
+                    'slug' => $cat->slug,
+                    'icon' => $cat->icon,
+                    'is_active' => $cat->is_active,
+                    'variants_count' => $cat->variants_count,
+                    'listings_count' => $cat->listings_count,
+                    'has_children' => $cat->children_count > 0,
+                ];
+            }),
+        ]);
     }
 
-    $categories = $query->get();
+    /**
+     * Get category hierarchy from root to specified category (AJAX)
+     */
+    public function getHierarchy(Category $category)
+    {
+        $hierarchy = [];
+        $current = $category;
 
-    return response()->json([
-        'success' => true,
-        'parent_name' => $parentName,
-        'parent_id' => $category?->id,
-        'categories' => $categories->map(function($cat) {
-            return [
-                'id' => $cat->id,
-                'name' => $cat->name,
-                'slug' => $cat->slug,
-                'icon' => $cat->icon,
-                'is_active' => $cat->is_active,
-                'variants_count' => $cat->variants_count,
-                'listings_count' => $cat->listings_count,
-                'has_children' => $cat->children_count > 0,
-            ];
-        }),
-    ]);
-}
+        // Build hierarchy from child to root
+        while ($current) {
+            array_unshift($hierarchy, [
+                'id' => $current->id,
+                'name' => $current->name,
+                'level' => $current->level,
+                'parent_id' => $current->parent_id,
+            ]);
+
+            $current = $current->parent;
+        }
+
+        return response()->json([
+            'success' => true,
+            'hierarchy' => $hierarchy,
+        ]);
+    }
 }

@@ -298,7 +298,9 @@ function openVariantModal(categoryId, categoryName) {
     document.getElementById('modalCategoryName').textContent = `Category: ${categoryName}`;
     document.getElementById('variantModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
-    
+
+    console.log('🔄 Loading variants for category:', categoryId, categoryName);
+
     fetch(`/admin/categories/${categoryId}/variants`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -307,14 +309,25 @@ function openVariantModal(categoryId, categoryName) {
     })
     .then(r => r.json())
     .then(data => {
-        if (data.success) renderVariants(data.variants);
+        console.log('📦 Received variants data:', data);
+        if (data.success) {
+            // Log each variant's settings
+            data.variants.forEach(v => {
+                if (v.is_assigned && v.settings) {
+                    console.log(`  Variant "${v.name}" (ID: ${v.id}):`, v.settings);
+                }
+            });
+            renderVariants(data.variants);
+        }
     })
-    .catch(err => console.error('Error loading variants:', err));
+    .catch(err => console.error('❌ Error loading variants:', err));
 }
 
 function renderVariants(variants) {
     const body = document.getElementById('variantModalBody');
-    
+
+    console.log('🎨 Rendering variants:', variants.length);
+
     if (!variants.length) {
         body.innerHTML = `
             <div class="text-center py-12">
@@ -325,14 +338,25 @@ function renderVariants(variants) {
         `;
         return;
     }
-    
+
     let html = '<div class="space-y-3">';
     variants.forEach(v => {
         const settings = v.settings || {};
+
+        // Log checkbox states being rendered
+        console.log(`  Rendering variant "${v.name}" (ID: ${v.id}):`, {
+            is_assigned: v.is_assigned,
+            is_required: settings.is_required,
+            is_searchable: settings.is_searchable,
+            is_filterable: settings.is_filterable,
+            is_main_shown: settings.is_main_shown,
+            will_check_main_shown: settings.is_main_shown ? 'YES' : 'NO'
+        });
+
         html += `
             <div class="border rounded-lg p-4 ${v.is_assigned ? 'bg-indigo-50 border-indigo-300' : 'bg-gray-50 border-gray-200'}">
                 <div class="flex items-start gap-3">
-                    <input type="checkbox" id="var_${v.id}" value="${v.id}" ${v.is_assigned ? 'checked' : ''} 
+                    <input type="checkbox" id="var_${v.id}" value="${v.id}" ${v.is_assigned ? 'checked' : ''}
                            onchange="toggleVariantSettings(this)"
                            class="mt-1 w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
                     <div class="flex-1">
@@ -356,6 +380,10 @@ function renderVariants(variants) {
                                 <input type="checkbox" name="fil_${v.id}" ${settings.is_filterable !== false ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded">
                                 <span>Filterable</span>
                             </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-700">
+                                <input type="checkbox" name="main_${v.id}" ${settings.is_main_shown ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded">
+                                <span class="font-medium text-indigo-700">Main shown variant</span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -364,6 +392,8 @@ function renderVariants(variants) {
     });
     html += '</div>';
     body.innerHTML = html;
+
+    console.log('✓ Variants rendered');
 }
 
 function toggleVariantSettings(checkbox) {
@@ -386,19 +416,39 @@ function closeVariantModal() {
 }
 
 function saveVariants() {
+    console.log('🔄 Saving variants for category:', currentCategoryId);
+
     const checked = document.querySelectorAll('input[id^="var_"]:checked');
-    const variants = Array.from(checked).map(cb => ({
-        id: parseInt(cb.value),
-        is_required: document.querySelector(`input[name="req_${cb.value}"]`)?.checked || false,
-        is_searchable: document.querySelector(`input[name="sea_${cb.value}"]`)?.checked || true,
-        is_filterable: document.querySelector(`input[name="fil_${cb.value}"]`)?.checked || true,
-        sort_order: 0
-    }));
-    
+    console.log('📋 Selected variants:', checked.length);
+
+    const variants = Array.from(checked).map(cb => {
+        const variantId = cb.value;
+        const mainShownCheckbox = document.querySelector(`input[name="main_${variantId}"]`);
+        const isMainShown = mainShownCheckbox?.checked || false;
+
+        console.log(`  Variant ${variantId}:`, {
+            is_required: document.querySelector(`input[name="req_${variantId}"]`)?.checked || false,
+            is_searchable: document.querySelector(`input[name="sea_${variantId}"]`)?.checked || true,
+            is_filterable: document.querySelector(`input[name="fil_${variantId}"]`)?.checked || true,
+            is_main_shown: isMainShown
+        });
+
+        return {
+            id: parseInt(variantId),
+            is_required: document.querySelector(`input[name="req_${variantId}"]`)?.checked || false,
+            is_searchable: document.querySelector(`input[name="sea_${variantId}"]`)?.checked || true,
+            is_filterable: document.querySelector(`input[name="fil_${variantId}"]`)?.checked || true,
+            is_main_shown: isMainShown,
+            sort_order: 0
+        };
+    });
+
+    console.log('📦 Sending data:', { variants });
+
     const btn = document.getElementById('saveVariantsBtn');
     btn.disabled = true;
     btn.textContent = '⏳ Saving...';
-    
+
     fetch(`/admin/categories/${currentCategoryId}/variants/sync`, {
         method: 'POST',
         headers: {
@@ -408,8 +458,12 @@ function saveVariants() {
         },
         body: JSON.stringify({ variants })
     })
-    .then(r => r.json())
+    .then(r => {
+        console.log('📡 Response status:', r.status);
+        return r.json();
+    })
     .then(data => {
+        console.log('📦 Response data:', data);
         if (data.success) {
             alert('✓ ' + data.message);
             location.reload();
@@ -418,8 +472,8 @@ function saveVariants() {
         }
     })
     .catch(err => {
-        console.error(err);
-        alert('Network error occurred');
+        console.error('❌ Error:', err);
+        alert('Network error occurred: ' + err.message);
     })
     .finally(() => {
         btn.disabled = false;

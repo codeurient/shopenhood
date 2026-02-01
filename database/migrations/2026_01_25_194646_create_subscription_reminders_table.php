@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('error_message')->nullable();
 
             $table->timestamps();
-            
+
             $table->index('user_subscription_id', 'idx_subscription_id');
             $table->index('sent_at', 'idx_sent_at');
         });

@@ -20,13 +20,13 @@ return new class extends Migration
             $table->string('gateway_transaction_id')->nullable();
 
             $table->enum('status', [
-                'pending', 
-                'processing', 
-                'completed', 
-                'failed', 
-                'refunded', 
+                'pending',
+                'processing',
+                'completed',
+                'failed',
+                'refunded',
                 'cancelled'])->default('pending');
-                
+
             $table->json('gateway_response')->nullable();
             $table->text('failure_reason')->nullable();
             $table->decimal('refunded_amount', 15, 2)->default(0.00);
@@ -48,4 +48,3 @@ return new class extends Migration
         Schema::dropIfExists('payments');
     }
 };
-

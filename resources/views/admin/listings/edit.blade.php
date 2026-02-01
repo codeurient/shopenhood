@@ -1,15 +1,20 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Create Listing')
-@section('page-title', 'Create Listing')
+@section('title', 'Edit Listing: ' . $listing->title)
+@section('page-title', 'Edit Listing')
 
 @section('content')
 <div class="max-w-7xl mx-auto">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-3xl font-bold text-gray-900">Create New Listing</h2>
-        <a href="{{ route('admin.listings.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-            ← Back to Listings
-        </a>
+        <h2 class="text-3xl font-bold text-gray-900">Edit Listing: {{ $listing->title }}</h2>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.listings.show', $listing) }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                ← Back to Details
+            </a>
+            <a href="{{ route('admin.listings.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                All Listings
+            </a>
+        </div>
     </div>
 
     @if($errors->any())
@@ -22,8 +27,9 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.listings.store') }}" method="POST" enctype="multipart/form-data" id="listingForm">
+    <form action="{{ route('admin.listings.update', $listing) }}" method="POST" enctype="multipart/form-data" id="listingForm">
         @csrf
+        @method('PUT')
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Left Column: Main Content -->
@@ -42,7 +48,7 @@
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                                 <option value="">Select Type</option>
                                 @foreach($listingTypes as $type)
-                                    <option value="{{ $type->id }}" {{ old('listing_type_id') == $type->id ? 'selected' : '' }}>
+                                    <option value="{{ $type->id }}" {{ old('listing_type_id', $listing->listing_type_id) == $type->id ? 'selected' : '' }}>
                                         {{ $type->name }}
                                     </option>
                                 @endforeach
@@ -68,14 +74,14 @@
                                 Title <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="title" id="title" required
-                                   value="{{ old('title') }}"
+                                   value="{{ old('title', $listing->title) }}"
                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Slug</label>
                             <input type="text" name="slug" id="slug"
-                                   value="{{ old('slug') }}"
+                                   value="{{ old('slug', $listing->slug) }}"
                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                             <p class="text-sm text-gray-500 mt-1">Auto-generated if left empty</p>
                         </div>
@@ -87,7 +93,7 @@
                             <textarea name="short_description" id="short_description" rows="2"
                                       placeholder="Brief summary for preview (optional)"
                                       maxlength="500"
-                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('short_description') }}</textarea>
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('short_description', $listing->short_description) }}</textarea>
                             <p class="text-sm text-gray-500 mt-1">Short summary shown in listings (max 500 characters)</p>
                         </div>
 
@@ -96,7 +102,7 @@
                                 Full Description <span class="text-red-500">*</span>
                             </label>
                             <textarea name="description" id="description" rows="6" required
-                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('description') }}</textarea>
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('description', $listing->description) }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -110,16 +116,16 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Base Price</label>
                                 <input type="number" name="base_price" id="base_price" step="0.01" min="0"
-                                       value="{{ old('base_price') }}"
+                                       value="{{ old('base_price', $listing->base_price) }}"
                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Currency</label>
                                 <select name="currency"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
-                                    <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR</option>
-                                    <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP</option>
+                                    <option value="USD" {{ old('currency', $listing->currency) === 'USD' ? 'selected' : '' }}>USD</option>
+                                    <option value="EUR" {{ old('currency', $listing->currency) === 'EUR' ? 'selected' : '' }}>EUR</option>
+                                    <option value="GBP" {{ old('currency', $listing->currency) === 'GBP' ? 'selected' : '' }}>GBP</option>
                                 </select>
                             </div>
                         </div>
@@ -136,19 +142,19 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Discount Price</label>
                                         <input type="number" name="discount_price" id="discount_price" step="0.01" min="0"
-                                               value="{{ old('discount_price') }}"
+                                               value="{{ old('discount_price', $listing->discount_price) }}"
                                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
                                         <input type="datetime-local" name="discount_start_date" id="discount_start_date"
-                                               value="{{ old('discount_start_date') }}"
+                                               value="{{ old('discount_start_date', $listing->discount_start_date?->format('Y-m-d\TH:i')) }}"
                                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
                                         <input type="datetime-local" name="discount_end_date" id="discount_end_date"
-                                               value="{{ old('discount_end_date') }}"
+                                               value="{{ old('discount_end_date', $listing->discount_end_date?->format('Y-m-d\TH:i')) }}"
                                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                                     </div>
                                 </div>
@@ -164,13 +170,13 @@
                             <div class="flex gap-6">
                                 <label class="flex items-center">
                                     <input type="radio" name="availability_type" value="in_stock"
-                                           {{ old('availability_type', 'in_stock') === 'in_stock' ? 'checked' : '' }}
+                                           {{ old('availability_type', $listing->availability_type ?? 'in_stock') === 'in_stock' ? 'checked' : '' }}
                                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
                                     <span class="ml-2 text-sm text-gray-700">In Stock</span>
                                 </label>
                                 <label class="flex items-center">
                                     <input type="radio" name="availability_type" value="available_by_order"
-                                           {{ old('availability_type') === 'available_by_order' ? 'checked' : '' }}
+                                           {{ old('availability_type', $listing->availability_type) === 'available_by_order' ? 'checked' : '' }}
                                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
                                     <span class="ml-2 text-sm text-gray-700">Available by Order</span>
                                 </label>
@@ -179,17 +185,17 @@
 
                         <div class="flex items-center gap-6 border-t pt-4">
                             <label class="flex items-center">
-                                <input type="checkbox" name="is_negotiable" value="1" {{ old('is_negotiable') ? 'checked' : '' }}
+                                <input type="checkbox" name="is_negotiable" value="1" {{ old('is_negotiable', $listing->is_negotiable) ? 'checked' : '' }}
                                        class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
                                 <span class="ml-2 text-sm text-gray-700">Price is negotiable</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="checkbox" name="is_visible" value="1" {{ old('is_visible', true) ? 'checked' : '' }}
+                                <input type="checkbox" name="is_visible" value="1" {{ old('is_visible', $listing->is_visible) ? 'checked' : '' }}
                                        class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
                                 <span class="ml-2 text-sm text-gray-700">Visible to public</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="checkbox" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
+                                <input type="checkbox" name="is_featured" value="1" {{ old('is_featured', $listing->is_featured) ? 'checked' : '' }}
                                        class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
                                 <span class="ml-2 text-sm text-gray-700">Featured</span>
                             </label>
@@ -231,9 +237,9 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Posted As</label>
                             <select name="created_as_role" id="created_as_role"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="admin" {{ old('created_as_role', 'admin') === 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="normal_user" {{ old('created_as_role') === 'normal_user' ? 'selected' : '' }}>Normal User</option>
-                                <option value="business_user" {{ old('created_as_role') === 'business_user' ? 'selected' : '' }}>Business User</option>
+                                <option value="admin" {{ old('created_as_role', $listing->created_as_role ?? 'admin') === 'admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="normal_user" {{ old('created_as_role', $listing->created_as_role) === 'normal_user' ? 'selected' : '' }}>Normal User</option>
+                                <option value="business_user" {{ old('created_as_role', $listing->created_as_role) === 'business_user' ? 'selected' : '' }}>Business User</option>
                             </select>
                         </div>
 
@@ -242,7 +248,7 @@
                                 Store Name <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="store_name" id="store_name"
-                                   value="{{ old('store_name') }}"
+                                   value="{{ old('store_name', $listing->store_name) }}"
                                    placeholder="Enter store name"
                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                             <p class="text-sm text-gray-500 mt-1">This will be displayed as "Shared from [Store Name]"</p>
@@ -254,9 +260,21 @@
                 <div class="bg-white rounded-lg shadow p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Main Image</h3>
                     <p class="text-sm text-gray-600 mb-4">This image will be displayed on the main listing page</p>
+
+                    @if($listing->images->where('is_main', true)->first())
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-2">Current main image:</p>
+                            <img src="{{ Storage::url($listing->images->where('is_main', true)->first()->image_path) }}"
+                                 alt="Current main image"
+                                 class="w-full h-48 object-cover rounded-lg">
+                        </div>
+                    @endif
+
                     <input type="file" name="main_image" id="mainImage" accept="image/*"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    <p class="text-xs text-gray-500 mt-1">Leave empty to keep current image</p>
                     <div id="mainImagePreview" class="mt-4 hidden">
+                        <p class="text-sm text-gray-600 mb-2">New image preview:</p>
                         <img src="" alt="Preview" class="w-full h-48 object-cover rounded-lg">
                     </div>
                 </div>
@@ -268,13 +286,13 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Meta Title</label>
                             <input type="text" name="meta_title" maxlength="60"
-                                   value="{{ old('meta_title') }}"
+                                   value="{{ old('meta_title', $listing->meta_title) }}"
                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
                             <textarea name="meta_description" rows="3" maxlength="160"
-                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('meta_description') }}</textarea>
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('meta_description', $listing->meta_description) }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -287,9 +305,9 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Status</h3>
                     <select name="status" required
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="draft" {{ old('status', 'draft') === 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="pending" {{ old('status') === 'pending' ? 'selected' : '' }}>Pending Review</option>
-                        <option value="active" {{ old('status') === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="draft" {{ old('status', $listing->status) === 'draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="pending" {{ old('status', $listing->status) === 'pending' ? 'selected' : '' }}>Pending Review</option>
+                        <option value="active" {{ old('status', $listing->status) === 'active' ? 'selected' : '' }}>Active</option>
                     </select>
                 </div>
 
@@ -303,8 +321,27 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Product Detail Images</h3>
                     <p class="text-xs text-gray-500 mb-4">These images will be shown on the product details page when users view this listing</p>
 
+                    @if($listing->images->where('is_main', false)->count() > 0)
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-2">Current detail images ({{ $listing->images->where('is_main', false)->count() }} images):</p>
+                            <div class="grid grid-cols-2 gap-2">
+                                @foreach($listing->images->where('is_main', false) as $image)
+                                    <div class="relative group">
+                                        <img src="{{ Storage::url($image->image_path) }}"
+                                             alt="Detail image"
+                                             class="w-full h-24 object-cover rounded-lg">
+                                        <input type="checkbox" name="delete_images[]" value="{{ $image->id }}"
+                                               class="absolute top-1 left-1 w-4 h-4">
+                                        <label class="absolute top-1 left-6 text-xs bg-white px-1 rounded">Delete</label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                     <input type="file" name="detail_images[]" id="detailImages" multiple accept="image/*"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    <p class="text-xs text-gray-500 mt-1">Upload new images to add to existing ones</p>
 
                     <div id="detailImagesPreview" class="mt-4 grid grid-cols-2 gap-2">
                         <!-- Preview images will appear here -->
@@ -312,10 +349,10 @@
 
                     <div id="detailImagesContainer" class="mt-4 space-y-2 hidden">
                         <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium text-gray-700">Selected Images:</span>
+                            <span class="text-sm font-medium text-gray-700">New Images:</span>
                             <button type="button" id="clearAllDetailImages"
                                     class="text-xs text-red-600 hover:text-red-800">
-                                🗑️ Delete All
+                                🗑️ Clear New Images
                             </button>
                         </div>
                     </div>
@@ -325,7 +362,7 @@
 
         <!-- Product Variations Section -->
         <div class="mt-6">
-            @include('admin.listings.partials.variation-manager', ['mode' => 'create'])
+            @include('admin.listings.partials.variation-manager', ['mode' => 'edit', 'listing' => $listing])
         </div>
 
         <div class="mt-6 flex justify-end gap-4">
@@ -333,14 +370,40 @@
                 Cancel
             </a>
             <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                💾 Create Listing
+                💾 Update Listing
             </button>
         </div>
     </form>
 </div>
 
+@php
+    $variationsData = $listing->variations->map(function($v) {
+        return [
+            'id' => $v->id,
+            'sku' => $v->sku,
+            'attributes' => $v->attributes->mapWithKeys(function($attr) {
+                return [$attr->variant_id => $attr->variant_item_id];
+            })->toArray(),
+            'price' => (float) $v->price,
+            'discount_price' => $v->discount_price ? (float) $v->discount_price : null,
+            'stock_quantity' => $v->stock_quantity,
+            'low_stock_threshold' => $v->low_stock_threshold,
+            'manage_stock' => $v->manage_stock,
+            'allow_backorder' => $v->allow_backorder,
+            'is_default' => $v->is_default,
+            'is_active' => $v->is_active,
+            'images' => [],
+        ];
+    })->toArray();
+@endphp
+
 @push('scripts')
 <script>
+// VANILLA JS APPROACH: Set variations data globally BEFORE Alpine initializes
+// This bypasses all Alpine timing/initialization issues
+window.EDIT_VARIATIONS = @json($variationsData);
+console.log('✓ Global variations data set:', window.EDIT_VARIATIONS.length, 'variations');
+
 // Global variables
 const categoryContainer = document.getElementById('categorySelectsContainer');
 const categoryHiddenInput = document.getElementById('category_id_hidden');
@@ -589,11 +652,8 @@ function removeSelectsAfterLevel(level) {
 
 function loadVariantsForCategory(categoryId, categoryName, level) {
     if (loadedVariantsByCategory.has(categoryId)) {
-        console.log('✓ Variants already loaded for category:', categoryName);
         return;
     }
-
-    console.log('🔄 Loading sidebar variants for:', categoryName, '(ID:', categoryId, ')');
 
     const loadingCard = createLoadingCard(level);
     variantsContainer.appendChild(loadingCard);
@@ -605,50 +665,18 @@ function loadVariantsForCategory(categoryId, categoryName, level) {
             'Accept': 'application/json'
         }
     })
-    .then(r => {
-        if (!r.ok) {
-            throw new Error(`HTTP error! status: ${r.status}`);
-        }
-        return r.json();
-    })
+    .then(r => r.json())
     .then(data => {
         loadingCard.remove();
-        console.log('📦 Sidebar variants API response:', data);
 
         if (data.success && data.variants.length > 0) {
             loadedVariantsByCategory.add(categoryId);
-            console.log(`✓ Rendering ${data.variants.length} variant(s) in sidebar`);
             renderVariantsCard(data.variants, categoryName, level, categoryId);
-        } else if (data.success && data.variants.length === 0) {
-            console.warn('⚠️ This category has no variants assigned to it');
-            const noVariantsCard = document.createElement('div');
-            noVariantsCard.className = 'bg-yellow-50 border border-yellow-200 rounded-lg p-4';
-            noVariantsCard.dataset.level = level;
-            noVariantsCard.innerHTML = `
-                <p class="text-sm text-yellow-800">
-                    <strong>No variants found for "${categoryName}"</strong><br>
-                    <span class="text-xs">This category has no variant attributes assigned to it. You can add variants in the Categories section.</span>
-                </p>
-            `;
-            variantsContainer.appendChild(noVariantsCard);
-        } else {
-            console.error('❌ API returned success: false or invalid data');
         }
     })
     .catch(err => {
-        console.error('❌ Error loading sidebar variants:', err);
+        console.error('Error loading variants:', err);
         loadingCard.remove();
-
-        const errorCard = document.createElement('div');
-        errorCard.className = 'bg-red-50 border border-red-200 rounded-lg p-4';
-        errorCard.dataset.level = level;
-        errorCard.innerHTML = `
-            <p class="text-sm text-red-800">
-                <strong>Failed to load variants</strong><br>
-                <span class="text-xs">${err.message}</span>
-            </p>
-        `;
-        variantsContainer.appendChild(errorCard);
     });
 }
 
@@ -786,6 +814,142 @@ function generateSlug(text) {
         .replace(/[^\w\s-]/g, '')
         .replace(/[\s_-]+/g, '-')
         .replace(/^-+|-+$/g, '');
+}
+
+// ==================== Pre-populate existing data on page load ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Pre-populate category selection
+    @if($listing->category_id)
+        categoryHiddenInput.value = '{{ $listing->category_id }}';
+        // Load category hierarchy
+        loadCategoryHierarchy({{ $listing->category_id }});
+    @endif
+
+    // Pre-populate country and city
+    @if($listing->country)
+        countrySelect.value = '{{ $listing->country }}';
+        countrySelect.dispatchEvent(new Event('change'));
+        setTimeout(() => {
+            @if($listing->city)
+                citySelect.value = '{{ $listing->city }}';
+            @endif
+        }, 100);
+    @endif
+
+    // Show discount fields if listing has discount
+    @if($listing->discount_price)
+        hasDiscountCheckbox.checked = true;
+        discountFields.classList.remove('hidden');
+        document.getElementById('discount_price').required = true;
+        document.getElementById('discount_start_date').required = true;
+        document.getElementById('discount_end_date').required = true;
+    @endif
+
+    // Show store name field if business user
+    @if($listing->created_as_role === 'business_user')
+        storeNameField.classList.remove('hidden');
+        document.getElementById('store_name').required = true;
+    @endif
+});
+
+// Load category hierarchy for editing
+function loadCategoryHierarchy(categoryId) {
+    fetch(`/admin/categories/${categoryId}/hierarchy`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.hierarchy) {
+            // Load each level sequentially
+            loadCategoryLevel(data.hierarchy, 0);
+        }
+    })
+    .catch(err => console.error('Error loading category hierarchy:', err));
+}
+
+function loadCategoryLevel(hierarchy, index) {
+    if (index >= hierarchy.length) {
+        // After loading all category levels, set up event listener for preloading variations
+        // The actual loading will happen when category-variants-loaded event fires
+        preloadExistingVariations();
+        return;
+    }
+
+    const item = hierarchy[index];
+    const level = index;
+    const parentId = index > 0 ? hierarchy[index - 1].id : null;
+    const isLastLevel = (index === hierarchy.length - 1);
+
+    const url = parentId
+        ? `/admin/categories/children/${parentId}`
+        : '/admin/categories/children';
+
+    fetch(url, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.categories.length > 0) {
+            const existingSelect = document.getElementById('category_level_' + level);
+            if (existingSelect) {
+                existingSelect.remove();
+            }
+
+            const newSelect = document.createElement('select');
+            newSelect.id = 'category_level_' + level;
+            newSelect.className = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 category-select mt-3';
+            newSelect.dataset.level = level;
+
+            newSelect.innerHTML = '<option value="">Select ' + (level === 0 ? 'Category' : 'Subcategory') + '</option>';
+
+            data.categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.id;
+                option.textContent = cat.name;
+                if (cat.id === item.id) {
+                    option.selected = true;
+                }
+                newSelect.appendChild(option);
+            });
+
+            categoryContainer.appendChild(newSelect);
+
+            // Store in categoryLevelsData
+            categoryLevelsData[level] = {
+                id: item.id,
+                name: item.name
+            };
+
+            // Load variants for sidebar (all levels)
+            loadVariantsForCategory(item.id, item.name, level);
+
+            // IMPORTANT: Only emit category-changed for the LAST level
+            // This prevents categoryVariants from being reset multiple times
+            if (isLastLevel) {
+                console.log('Emitting category-changed for LAST level:', item.name);
+                window.dispatchEvent(new CustomEvent('category-changed', {
+                    detail: { categoryId: item.id, categoryName: item.name, level }
+                }));
+            }
+
+            // Load next level
+            loadCategoryLevel(hierarchy, index + 1);
+        }
+    });
+}
+
+// Pre-load existing variations is now handled via global variable (window.EDIT_VARIATIONS)
+// The variation manager's init() function will automatically load it
+function preloadExistingVariations() {
+    // No longer needed - data loads automatically from window.EDIT_VARIATIONS
+    console.log('✓ Variations will be loaded automatically by Alpine from window.EDIT_VARIATIONS');
 }
 </script>
 @endpush

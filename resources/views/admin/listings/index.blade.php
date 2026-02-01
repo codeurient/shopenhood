@@ -173,12 +173,25 @@
                     </td>
                     <td class="px-6 py-4 text-sm">
                         <div class="flex gap-2">
-                            <button class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                            <a href="{{ route('admin.listings.show', $listing) }}"
+                               class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 inline-block">
                                 👁️ View
-                            </button>
-                            <button class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                            </a>
+                            <a href="{{ route('admin.listings.edit', $listing) }}"
+                               class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 inline-block">
                                 ✏️ Edit
-                            </button>
+                            </a>
+                            <form action="{{ route('admin.listings.destroy', $listing) }}"
+                                  method="POST"
+                                  class="inline-block"
+                                  onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                                    🗑️ Delete
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>

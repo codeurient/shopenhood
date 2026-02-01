@@ -24,14 +24,14 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('conversation_id')
-                  ->references('id')
-                  ->on('conversations')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('conversations')
+                ->onDelete('cascade');
 
             $table->foreign('sender_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
 
             $table->index('conversation_id', 'idx_conversation_id');
             $table->index('sender_id', 'idx_sender_id');

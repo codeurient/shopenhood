@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Variant;
+use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
 
 class CategoryVariantController extends Controller
 {
@@ -16,6 +16,11 @@ class CategoryVariantController extends Controller
      */
     public function index(Category $category)
     {
+        Log::info('📖 Loading variants for category', [
+            'category_id' => $category->id,
+            'category_name' => $category->name,
+        ]);
+
         $allVariants = Variant::with('items')
             ->where('is_active', true)
             ->orderBy('sort_order')
@@ -26,32 +31,49 @@ class CategoryVariantController extends Controller
             ->get()
             ->keyBy('id');
 
-        return response()->json([
+        Log::info('📊 Assigned variants loaded', [
+            'count' => $assignedVariants->count(),
+            'variant_ids' => $assignedVariants->keys()->toArray(),
+        ]);
+
+        $response = [
             'success' => true,
             'category' => [
                 'id' => $category->id,
                 'name' => $category->name,
                 'level' => $category->level,
             ],
-            'variants' => $allVariants->map(function($variant) use ($assignedVariants) {
+            'variants' => $allVariants->map(function ($variant) use ($assignedVariants) {
                 $isAssigned = $assignedVariants->has($variant->id);
                 $pivotData = $isAssigned ? $assignedVariants->get($variant->id)->pivot : null;
-                
+
+                $settings = $pivotData ? [
+                    'is_required' => (bool) $pivotData->is_required,
+                    'is_searchable' => (bool) $pivotData->is_searchable,
+                    'is_filterable' => (bool) $pivotData->is_filterable,
+                    'is_main_shown' => (bool) $pivotData->is_main_shown,
+                    'sort_order' => (int) $pivotData->sort_order,
+                ] : null;
+
+                // Log each assigned variant's settings
+                if ($isAssigned) {
+                    Log::info("  Variant '{$variant->name}' (ID: {$variant->id})", [
+                        'settings' => $settings,
+                    ]);
+                }
+
                 return [
                     'id' => $variant->id,
                     'name' => $variant->name,
                     'type' => $variant->type,
                     'items_count' => $variant->items->count(),
                     'is_assigned' => $isAssigned,
-                    'settings' => $pivotData ? [
-                        'is_required' => (bool) $pivotData->is_required,
-                        'is_searchable' => (bool) $pivotData->is_searchable,
-                        'is_filterable' => (bool) $pivotData->is_filterable,
-                        'sort_order' => (int) $pivotData->sort_order,
-                    ] : null,
+                    'settings' => $settings,
                 ];
             }),
-        ]);
+        ];
+
+        return response()->json($response);
     }
 
     /**
@@ -59,13 +81,27 @@ class CategoryVariantController extends Controller
      */
     public function sync(Request $request, Category $category)
     {
+
+        Log::info('🔄 Syncing variants for category', [
+            'category_id' => $category->id,
+            'category_name' => $category->name,
+            'request_data' => $request->all(),
+        ]);
+
         $validated = $request->validate([
             'variants' => 'required|array',
             'variants.*.id' => 'required|exists:variants,id',
             'variants.*.is_required' => 'boolean',
             'variants.*.is_searchable' => 'boolean',
             'variants.*.is_filterable' => 'boolean',
+            'variants.*.is_main_shown' => 'boolean',
             'variants.*.sort_order' => 'integer|min:0',
+        ]);
+
+        // dd($validated['variants'] );
+
+        Log::info('✓ Validation passed', [
+            'validated_variants' => $validated['variants'],
         ]);
 
         DB::beginTransaction();
@@ -75,15 +111,25 @@ class CategoryVariantController extends Controller
 
             // Attach selected variants with pivot data
             foreach ($validated['variants'] as $variantData) {
-                $category->variants()->attach($variantData['id'], [
+                $pivotData = [
                     'is_required' => $variantData['is_required'] ?? false,
                     'is_searchable' => $variantData['is_searchable'] ?? true,
                     'is_filterable' => $variantData['is_filterable'] ?? true,
+                    'is_main_shown' => $variantData['is_main_shown'] ?? false,
                     'sort_order' => $variantData['sort_order'] ?? 0,
+                ];
+
+                Log::info('📌 Attaching variant', [
+                    'variant_id' => $variantData['id'],
+                    'pivot_data' => $pivotData,
                 ]);
+
+                $category->variants()->attach($variantData['id'], $pivotData);
             }
 
             DB::commit();
+
+            Log::info('✓ Variants saved successfully');
 
             activity()
                 ->performedOn($category)
@@ -102,7 +148,7 @@ class CategoryVariantController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Category variant sync failed', [
                 'category_id' => $category->id,
                 'error' => $e->getMessage(),
@@ -110,7 +156,7 @@ class CategoryVariantController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating variants: ' . $e->getMessage(),
+                'message' => 'Error updating variants: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -143,6 +189,7 @@ class CategoryVariantController extends Controller
             'is_required' => 'boolean',
             'is_searchable' => 'boolean',
             'is_filterable' => 'boolean',
+            'is_main_shown' => 'boolean',
             'sort_order' => 'integer|min:0',
         ]);
 
@@ -153,6 +200,4 @@ class CategoryVariantController extends Controller
             'message' => 'Settings updated successfully',
         ]);
     }
-
-    
 }

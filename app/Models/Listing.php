@@ -54,6 +54,14 @@ class Listing extends Model
         'discount_end_date' => 'datetime',
     ];
 
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     // Owner of the listing
     public function user()
     {
@@ -129,12 +137,23 @@ class Listing extends Model
         return $this->hasMany(ProductVariation::class);
     }
 
-    // Available variations only
+    // Available variations (active and in stock)
     public function availableVariations()
     {
         return $this->hasMany(ProductVariation::class)
-            ->where('is_available', true)
-            ->where('stock_quantity', '>', 0);
+            ->where('is_active', true)
+            ->where(function ($q) {
+                $q->where('manage_stock', false)
+                    ->orWhere('stock_quantity', '>', 0)
+                    ->orWhere('allow_backorder', true);
+            })
+            ->orderBy('sort_order');
+    }
+
+    // Default variation for this listing
+    public function defaultVariation()
+    {
+        return $this->hasOne(ProductVariation::class)->where('is_default', true);
     }
 
     // Orders for this listing

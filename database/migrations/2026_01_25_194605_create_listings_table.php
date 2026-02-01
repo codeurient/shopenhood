@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('listings', function (Blueprint $table) {
@@ -13,7 +14,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('category_id')->constrained('categories')->restrictOnDelete();
             $table->foreignId('listing_type_id')->constrained('listing_types')->restrictOnDelete();
-            
+
             $table->string('title', 255);
             $table->string('slug', 500)->unique();
             $table->text('description');
@@ -26,7 +27,7 @@ return new class extends Migration {
                 'active',
                 'sold',
                 'expired',
-                'rejected'
+                'rejected',
             ])->default('draft');
 
             $table->boolean('is_visible')->default(true)->comment('User-controlled visibility');
@@ -43,7 +44,7 @@ return new class extends Migration {
             $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('rejection_reason')->nullable();
             $table->timestamp('rejected_at')->nullable();
-            $table->enum('created_as_role', [ 'admin', 'normal_user','business_user']);
+            $table->enum('created_as_role', ['admin', 'normal_user', 'business_user']);
 
             $table->string('meta_title', 255)->nullable();
             $table->text('meta_description')->nullable();

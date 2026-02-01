@@ -24,7 +24,7 @@ return new class extends Migration
                 'all',
                 'categories',
                 'listings',
-                'users'
+                'users',
             ])->default('all');
 
             $table->timestamp('starts_at')->nullable();

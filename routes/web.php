@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,11 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Listing Routes
+Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])->name('listings.show');
+Route::post('/listings/{listing}/available-options', [ListingController::class, 'getAvailableOptions'])->name('listings.available-options');
+Route::get('/variations/{variation}', [ListingController::class, 'getVariation'])->name('variations.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('current_role', [
                 'admin',
                 'normal_user',
-                'business_user'
+                'business_user',
             ])->default('normal_user');
 
             $table->boolean('is_business_enabled')->default(false);
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->enum('status', [
                 'active',
                 'suspended',
-                'banned'
+                'banned',
             ])->default('active');
 
             $table->integer('daily_listing_count')->default(0);

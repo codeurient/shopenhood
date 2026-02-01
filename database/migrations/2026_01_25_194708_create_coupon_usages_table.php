@@ -23,7 +23,6 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('set null');
 
-            
             $table->index('coupon_id', 'idx_coupon_id');
             $table->index('user_id', 'idx_user_id');
             $table->index('order_id', 'idx_order_id');

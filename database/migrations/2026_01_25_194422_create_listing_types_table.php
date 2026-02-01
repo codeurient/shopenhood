@@ -6,11 +6,10 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-  
     public function up(): void
     {
         Schema::create('listing_types', function (Blueprint $table) {
-            $table->id(); 
+            $table->id();
 
             $table->string('name', 100)->comment('sell, buy, gift, barter, auction');
             $table->string('slug', 100)->unique();

@@ -15,90 +15,252 @@ class ProductVariation extends Model
         'listing_id',
         'sku',
         'variant_combination',
+        'price',
+        'discount_price',
+        'discount_start_date',
+        'discount_end_date',
+        'cost_price',
         'price_adjustment',
         'stock_quantity',
         'low_stock_threshold',
-        'is_available',
+        'manage_stock',
+        'allow_backorder',
         'weight',
+        'length',
+        'width',
+        'height',
         'dimensions',
+        'is_active',
+        'is_default',
+        'sort_order',
     ];
 
     protected $casts = [
         'variant_combination' => 'array',
+        'price' => 'decimal:2',
+        'discount_price' => 'decimal:2',
+        'discount_start_date' => 'datetime',
+        'discount_end_date' => 'datetime',
+        'cost_price' => 'decimal:2',
         'price_adjustment' => 'decimal:2',
         'stock_quantity' => 'integer',
         'low_stock_threshold' => 'integer',
-        'is_available' => 'boolean',
+        'manage_stock' => 'boolean',
+        'allow_backorder' => 'boolean',
         'weight' => 'decimal:2',
+        'length' => 'decimal:2',
+        'width' => 'decimal:2',
+        'height' => 'decimal:2',
         'dimensions' => 'array',
+        'is_active' => 'boolean',
+        'is_default' => 'boolean',
+        'sort_order' => 'integer',
     ];
 
-    // Parent listing
+    // ==================== Relationships ====================
+
     public function listing()
     {
         return $this->belongsTo(Listing::class);
     }
 
-    // Orders for this specific variation
-    public function orders()
+    public function attributes()
     {
-        return $this->hasMany(Order::class, 'variation_id');
+        return $this->hasMany(ProductVariationAttribute::class);
     }
 
-    // Order items for this variation
-    public function orderItems()
+    public function attributeValues()
     {
-        return $this->hasMany(OrderItem::class, 'variation_id');
+        return $this->belongsToMany(
+            VariantItem::class,
+            'product_variation_attributes',
+            'product_variation_id',
+            'variant_item_id'
+        )->withPivot('variant_id');
     }
 
-    // Images for this product variation
     public function images()
     {
         return $this->hasMany(ProductVariationImage::class)->orderBy('sort_order');
     }
 
-    // Primary/featured image for this variation
     public function primaryImage()
     {
-        return $this->hasOne(ProductVariationImage::class)
-            ->where('is_primary', true);
+        return $this->hasOne(ProductVariationImage::class)->where('is_primary', true);
     }
 
-    // First image (fallback if no primary)
     public function firstImage()
     {
-        return $this->hasOne(ProductVariationImage::class)
-            ->oldestOfMany('sort_order');
+        return $this->hasOne(ProductVariationImage::class)->oldestOfMany('sort_order');
     }
 
-    // Get variant items for this variation (from JSON variant_combination)
-    // This requires a custom accessor or helper method, not a direct relationship
-    // Example: getVariantItemsAttribute() that decodes JSON and fetches items
-    public function getVariantItemsAttribute()
+    public function stockMovements()
     {
-        $variantIds = collect(json_decode($this->variant_combination))
-            ->flatten()   // bütün ID-ləri bir array-a çevirir
-            ->toArray();
+        return $this->hasMany(StockMovement::class);
+    }
 
-        return VariantItem::whereIn('id', $variantIds)->get();
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'product_variation_id');
     }
 
     public function activities()
     {
-        return $this->morphMany(
-            \Spatie\Activitylog\Models\Activity::class,
-            'subject'
-        );
+        return $this->morphMany(\Spatie\Activitylog\Models\Activity::class, 'subject');
     }
+
+    // ==================== Scopes ====================
+
+    public function scopeInStock($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('manage_stock', false)
+                ->orWhere('stock_quantity', '>', 0)
+                ->orWhere('allow_backorder', true);
+        });
+    }
+
+    public function scopeLowStock($query)
+    {
+        return $query->whereColumn('stock_quantity', '<=', 'low_stock_threshold')
+            ->where('stock_quantity', '>', 0)
+            ->where('manage_stock', true);
+    }
+
+    public function scopeOutOfStock($query)
+    {
+        return $query->where('manage_stock', true)
+            ->where('stock_quantity', '<=', 0)
+            ->where('allow_backorder', false);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeDefault($query)
+    {
+        return $query->where('is_default', true);
+    }
+
+    // ==================== Methods ====================
+
+    public function isInStock(): bool
+    {
+        if (! $this->manage_stock) {
+            return true;
+        }
+
+        return $this->stock_quantity > 0 || $this->allow_backorder;
+    }
+
+    public function isLowStock(): bool
+    {
+        if (! $this->manage_stock) {
+            return false;
+        }
+
+        return $this->stock_quantity <= $this->low_stock_threshold && $this->stock_quantity > 0;
+    }
+
+    public function getCurrentPrice(): float
+    {
+        if ($this->discount_price &&
+            $this->discount_start_date &&
+            $this->discount_end_date &&
+            $this->discount_start_date <= now() &&
+            $this->discount_end_date >= now()) {
+            return (float) $this->discount_price;
+        }
+
+        return (float) $this->price;
+    }
+
+    public function hasActiveDiscount(): bool
+    {
+        return $this->discount_price &&
+            $this->discount_start_date &&
+            $this->discount_end_date &&
+            $this->discount_start_date <= now() &&
+            $this->discount_end_date >= now();
+    }
+
+    public function getDiscountPercentage(): ?float
+    {
+        if (! $this->hasActiveDiscount() || $this->price <= 0) {
+            return null;
+        }
+
+        return round((($this->price - $this->discount_price) / $this->price) * 100, 2);
+    }
+
+    public function adjustStock(int $quantity, string $type, ?string $reference = null, ?string $notes = null): void
+    {
+        $oldQuantity = $this->stock_quantity;
+        $this->stock_quantity += $quantity;
+        $this->save();
+
+        // Get authenticated user ID from either admin or regular guard
+        $userId = auth()->guard('admin')->id() ?? auth()->id();
+
+        StockMovement::create([
+            'product_variation_id' => $this->id,
+            'user_id' => $userId,
+            'type' => $type,
+            'quantity_change' => $quantity,
+            'quantity_before' => $oldQuantity,
+            'quantity_after' => $this->stock_quantity,
+            'reference' => $reference,
+            'notes' => $notes,
+        ]);
+    }
+
+    public function decreaseStock(int $quantity, ?string $reference = null): bool
+    {
+        if (! $this->isInStock()) {
+            return false;
+        }
+
+        if ($this->manage_stock && $this->stock_quantity < $quantity && ! $this->allow_backorder) {
+            return false;
+        }
+
+        $this->adjustStock(-$quantity, 'sale', $reference);
+
+        return true;
+    }
+
+    public function increaseStock(int $quantity, string $type = 'purchase', ?string $reference = null): void
+    {
+        $this->adjustStock($quantity, $type, $reference);
+    }
+
+    // Get variant items for this variation (from new attributes table)
+    public function getVariantItemsAttribute()
+    {
+        return $this->attributeValues;
+    }
+
+    public function getFormattedAttributesAttribute(): array
+    {
+        return $this->attributes->mapWithKeys(function ($attr) {
+            return [$attr->variant->name => $attr->variantItem->value];
+        })->all();
+    }
+
+    // ==================== Activity Log ====================
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly([
                 'sku',
-                'price_adjustment',
+                'price',
+                'discount_price',
                 'stock_quantity',
-                'is_available',
+                'is_active',
+                'is_default',
             ])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();

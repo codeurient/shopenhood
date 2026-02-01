@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique( ['category_id', 'variant_id'],  'unique_category_variant'  );
+            $table->unique(['category_id', 'variant_id'], 'unique_category_variant');
             $table->index('category_id');
             $table->index('variant_id');
         });
@@ -31,4 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('category_variants');
     }
 };
-

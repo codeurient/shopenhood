@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('variants', function (Blueprint $table) {
             $table->id();
-            
+
             $table->string('name')->comment('Size, Color, Storage, etc.');
             $table->string('slug')->unique();
             $table->enum('type', ['select', 'radio', 'checkbox', 'text', 'number', 'range'])->default('select');
@@ -20,9 +20,9 @@ return new class extends Migration
             $table->text('help_text')->nullable();
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
-            
+
             $table->timestamps();
-            
+
             $table->index('slug');
             $table->index('type');
             $table->index('is_active');

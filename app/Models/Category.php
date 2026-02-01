@@ -55,7 +55,7 @@ class Category extends Model
     public function variants()
     {
         return $this->belongsToMany(Variant::class, 'category_variants')
-            ->withPivot('is_required', 'is_searchable', 'is_filterable', 'sort_order')
+            ->withPivot('is_required', 'is_searchable', 'is_filterable', 'is_main_shown', 'sort_order')
             ->withTimestamps()
             ->orderBy('category_variants.sort_order');
     }

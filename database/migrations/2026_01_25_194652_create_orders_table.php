@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('seller_id')->constrained('users')->restrictOnDelete();
             $table->foreignId('listing_id')->constrained('listings')->restrictOnDelete();
             $table->foreignId('variation_id')->nullable()->constrained('product_variations')->nullOnDelete();
-            
+
             $table->integer('quantity')->default(1);
             $table->decimal('unit_price', 15, 2);
             $table->decimal('subtotal', 15, 2);
@@ -26,13 +26,13 @@ return new class extends Migration
             $table->string('currency', 3)->default('USD');
 
             $table->enum('status', [
-                'pending', 'paid', 'processing', 'shipped', 
-                'delivered', 'completed', 'cancelled', 'refunded'
+                'pending', 'paid', 'processing', 'shipped',
+                'delivered', 'completed', 'cancelled', 'refunded',
             ])->default('pending');
 
             $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending');
             $table->string('payment_method', 100)->nullable();
-            
+
             $table->foreignId('shipping_address_id')->nullable()->constrained('addresses')->nullOnDelete();
             $table->foreignId('billing_address_id')->nullable()->constrained('addresses')->nullOnDelete();
 
