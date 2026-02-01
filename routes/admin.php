@@ -58,10 +58,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])->name('index');
             Route::get('create', [CategoryController::class, 'create'])->name('create');
             Route::post('/', [CategoryController::class, 'store'])->name('store');
-            // Route::get('{category}', [CategoryController::class, 'show'])->name('show');
-            // Route::get('{category}/edit', [CategoryController::class, 'edit'])->name('edit');
-            // Route::put('{category}', [CategoryController::class, 'update'])->name('update');
-            // Route::delete('{category}', [CategoryController::class, 'destroy'])->name('destroy');
+            Route::get('{category}/edit', [CategoryController::class, 'edit'])->name('edit');
+            Route::put('{category}', [CategoryController::class, 'update'])->name('update');
+            Route::delete('{category}', [CategoryController::class, 'destroy'])->name('destroy');
 
             // Variant management
             Route::get('{category}/variants/available', [CategoryController::class, 'getAvailableVariants'])->name('variants.available');

@@ -621,16 +621,16 @@ function loadVariantsForCategory(categoryId, categoryName, level) {
             renderVariantsCard(data.variants, categoryName, level, categoryId);
         } else if (data.success && data.variants.length === 0) {
             console.warn('⚠️ This category has no variants assigned to it');
-            const noVariantsCard = document.createElement('div');
-            noVariantsCard.className = 'bg-yellow-50 border border-yellow-200 rounded-lg p-4';
-            noVariantsCard.dataset.level = level;
-            noVariantsCard.innerHTML = `
-                <p class="text-sm text-yellow-800">
-                    <strong>No variants found for "${categoryName}"</strong><br>
-                    <span class="text-xs">This category has no variant attributes assigned to it. You can add variants in the Categories section.</span>
-                </p>
-            `;
-            variantsContainer.appendChild(noVariantsCard);
+            // const noVariantsCard = document.createElement('div');
+            // noVariantsCard.className = 'bg-yellow-50 border border-yellow-200 rounded-lg p-4';
+            // noVariantsCard.dataset.level = level;
+            // noVariantsCard.innerHTML = `
+            //     <p class="text-sm text-yellow-800">
+            //         <strong>No variants found for "${categoryName}"</strong><br>
+            //         <span class="text-xs">This category has no variant attributes assigned to it. You can add variants in the Categories section.</span>
+            //     </p>
+            // `;
+            // variantsContainer.appendChild(noVariantsCard);
         } else {
             console.error('❌ API returned success: false or invalid data');
         }

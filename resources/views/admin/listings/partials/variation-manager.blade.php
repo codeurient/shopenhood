@@ -274,6 +274,7 @@ function variationManager() {
     return {
         variations: [],
         categoryVariants: [],
+        variantsByLevel: {},
         selectedVariants: [],
         defaultVariationIndex: null,
         showModal: false,
@@ -300,7 +301,12 @@ function variationManager() {
             // Listen for category changes
             window.addEventListener('category-changed', (event) => {
                 console.log('Category changed event received:', event.detail);
-                this.loadCategoryVariants(event.detail.categoryId);
+                this.loadCategoryVariants(event.detail.categoryId, event.detail.level);
+            });
+
+            // Listen for "Basic Information" being selected as default
+            window.addEventListener('basic-default-selected', () => {
+                this.defaultVariationIndex = null;
             });
         },
 
@@ -309,15 +315,27 @@ function variationManager() {
             return this.categoryVariants.filter(v => v.is_main_shown === true);
         },
 
-        async loadCategoryVariants(categoryId) {
+        async loadCategoryVariants(categoryId, level) {
             if (!categoryId) {
                 this.categoryVariants = [];
+                this.variantsByLevel = {};
                 this.selectedVariants = [];
                 console.log('⚠️ No category ID provided');
                 return;
             }
 
-            console.log('🔄 Loading variants for category ID:', categoryId);
+            // Default level to 0 if not provided
+            if (level === undefined || level === null) {
+                level = 0;
+            }
+
+            // Clear variants for this level and any deeper levels
+            const levelsToRemove = Object.keys(this.variantsByLevel)
+                .map(Number)
+                .filter(l => l >= level);
+            levelsToRemove.forEach(l => delete this.variantsByLevel[l]);
+
+            console.log('🔄 Loading variants for category ID:', categoryId, 'at level:', level);
 
             try {
                 // Load ALL variants (not just main shown) so existing variations can display properly
@@ -336,11 +354,14 @@ function variationManager() {
                 console.log('📦 API Response:', data);
 
                 if (data.success) {
-                    this.categoryVariants = data.variants;
-                    this.selectedVariants = data.variants.filter(v => v.is_required);
+                    // Store variants for this specific level
+                    this.variantsByLevel[level] = data.variants;
+
+                    // Rebuild categoryVariants by merging all levels (deduplicating by variant ID)
+                    this.rebuildCategoryVariants();
 
                     const mainShownCount = this.categoryVariants.filter(v => v.is_main_shown).length;
-                    console.log(`✓ Loaded ${this.categoryVariants.length} variants (${mainShownCount} marked as "Main shown")`);
+                    console.log(`✓ Loaded ${data.variants.length} variants for level ${level} (total across all levels: ${this.categoryVariants.length}, ${mainShownCount} marked as "Main shown")`);
 
                     // Log which variants are main shown
                     const mainShownNames = this.categoryVariants
@@ -363,9 +384,29 @@ function variationManager() {
                 }
             } catch (error) {
                 console.error('❌ Error loading category variants:', error);
-                this.categoryVariants = [];
-                this.selectedVariants = [];
+                // Remove this level's entry on error
+                delete this.variantsByLevel[level];
+                this.rebuildCategoryVariants();
             }
+        },
+
+        rebuildCategoryVariants() {
+            const seen = new Set();
+            const merged = [];
+
+            // Iterate levels in order (0, 1, 2, ...) so parent variants come first
+            const sortedLevels = Object.keys(this.variantsByLevel).map(Number).sort((a, b) => a - b);
+            for (const lvl of sortedLevels) {
+                for (const variant of this.variantsByLevel[lvl]) {
+                    if (!seen.has(variant.id)) {
+                        seen.add(variant.id);
+                        merged.push(variant);
+                    }
+                }
+            }
+
+            this.categoryVariants = merged;
+            this.selectedVariants = merged.filter(v => v.is_required);
         },
 
         confirmRegenerateVariations() {
@@ -539,6 +580,11 @@ function variationManager() {
 
         setDefaultVariation(index) {
             this.defaultVariationIndex = index;
+            // Uncheck the "Basic Information" default radio if it exists
+            const basicRadio = document.getElementById('default_basic');
+            if (basicRadio) {
+                basicRadio.checked = false;
+            }
         },
 
         handleImageUpload(event, index) {

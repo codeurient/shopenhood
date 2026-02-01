@@ -47,8 +47,12 @@
             </td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn-sm btn-warning" onclick="editItem({{ $item->id }})">✏️ Edit</button>
-                    <button class="btn-sm btn-danger" onclick="deleteItem({{ $item->id }})">🗑️ Delete</button>
+                    <a href="{{ route('admin.variants.items.edit', [$variant, $item]) }}" class="btn-sm btn-warning">✏️ Edit</a>
+                    <form action="{{ route('admin.variants.items.destroy', [$variant, $item]) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this item?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-sm btn-danger">🗑️ Delete</button>
+                    </form>
                 </div>
             </td>
         </tr>
@@ -75,21 +79,8 @@
 .badge-success { background: #d4edda; color: #155724; }
 .badge-danger { background: #f8d7da; color: #721c24; }
 .action-buttons { display: flex; gap: 0.5rem; }
-.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.875rem; border-radius: 4px; border: none; cursor: pointer; }
+.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.875rem; border-radius: 4px; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
 .btn-warning { background: #ffc107; color: #000; }
 .btn-danger { background: #dc3545; color: white; }
 </style>
 
-<script>
-function editItem(itemId) {
-    // Future implementation
-    alert('Edit functionality will be implemented in the next phase');
-}
-
-function deleteItem(itemId) {
-    if (confirm('Are you sure you want to delete this item?')) {
-        // Future implementation
-        alert('Delete functionality will be implemented in the next phase');
-    }
-}
-</script>

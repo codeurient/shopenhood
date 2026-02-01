@@ -93,4 +93,79 @@ class VariantItemController extends Controller
             ->route('admin.variants.items.index', $variant)
             ->with('success', 'Variant item added successfully');
     }
+
+    /**
+     * Show form to edit variant item
+     */
+    public function edit(Variant $variant, VariantItem $variantItem)
+    {
+        return view('admin.variants.items.edit', compact('variant', 'variantItem'));
+    }
+
+    /**
+     * Update variant item
+     */
+    public function update(Request $request, Variant $variant, VariantItem $variantItem)
+    {
+        $validated = $request->validate([
+            'value' => 'required|string|max:255',
+            'display_value' => 'nullable|string|max:255',
+            'color_code' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:1024',
+            'sort_order' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        // Check for duplicate value (excluding current item)
+        $exists = $variant->items()
+            ->where('value', $validated['value'])
+            ->where('id', '!=', $variantItem->id)
+            ->exists();
+
+        if ($exists) {
+            return back()
+                ->withErrors(['value' => 'This variant item already exists'])
+                ->withInput();
+        }
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('variant-items', 'public');
+        }
+
+        $validated['is_active'] = $request->has('is_active');
+        $validated['sort_order'] = $validated['sort_order'] ?? 0;
+
+        $variantItem->update($validated);
+
+        activity()
+            ->performedOn($variantItem)
+            ->causedBy(auth()->guard('admin')->user())
+            ->withProperties(['variant' => $variant->name])
+            ->log('Variant item updated');
+
+        return redirect()
+            ->route('admin.variants.items.index', $variant)
+            ->with('success', 'Variant item updated successfully');
+    }
+
+    /**
+     * Delete variant item
+     */
+    public function destroy(Variant $variant, VariantItem $variantItem)
+    {
+        $itemValue = $variantItem->value;
+
+        activity()
+            ->performedOn($variantItem)
+            ->causedBy(auth()->guard('admin')->user())
+            ->withProperties(['variant' => $variant->name, 'value' => $itemValue])
+            ->log('Variant item deleted');
+
+        $variantItem->delete();
+
+        return redirect()
+            ->route('admin.variants.items.index', $variant)
+            ->with('success', "Variant item \"{$itemValue}\" deleted successfully");
+    }
 }

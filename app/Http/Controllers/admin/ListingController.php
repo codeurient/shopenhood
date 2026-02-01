@@ -337,6 +337,44 @@ class ListingController extends Controller
     }
 
     /**
+     * Upload a single main (primary) image for a listing
+     */
+    private function uploadMainImage(Listing $listing, \Illuminate\Http\UploadedFile $image): void
+    {
+        $path = $image->store('listings/'.$listing->id, 'public');
+
+        $listing->images()->create([
+            'image_path' => $path,
+            'original_filename' => $image->getClientOriginalName(),
+            'file_size' => $image->getSize(),
+            'mime_type' => $image->getMimeType(),
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+    }
+
+    /**
+     * Upload detail (non-primary) images for a listing
+     */
+    private function uploadDetailImages(Listing $listing, array $images): void
+    {
+        $maxSort = $listing->images()->max('sort_order') ?? 0;
+
+        foreach ($images as $index => $image) {
+            $path = $image->store('listings/'.$listing->id, 'public');
+
+            $listing->images()->create([
+                'image_path' => $path,
+                'original_filename' => $image->getClientOriginalName(),
+                'file_size' => $image->getSize(),
+                'mime_type' => $image->getMimeType(),
+                'sort_order' => $maxSort + $index + 1,
+                'is_primary' => false,
+            ]);
+        }
+    }
+
+    /**
      * Generate unique slug
      */
     private function generateUniqueSlug(string $slug, ?int $ignoreId = null): string
@@ -510,6 +548,8 @@ class ListingController extends Controller
             'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'detail_images' => 'nullable|array',
             'detail_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'delete_images' => 'nullable|array',
+            'delete_images.*' => 'integer|exists:listing_images,id',
 
             // Variations (for updating existing variations)
             'variations' => 'nullable|array',
@@ -541,19 +581,29 @@ class ListingController extends Controller
             // Update listing
             $listing->update($validated);
 
+            // Handle image deletions
+            if (! empty($request->delete_images)) {
+                $listing->images()->whereIn('id', $request->delete_images)->delete();
+            }
+
             // Handle new main image
             if ($request->hasFile('main_image')) {
-                $this->uploadImages($listing, [$request->file('main_image')]);
+                // Unmark any existing primary image
+                $listing->images()->where('is_primary', true)->update(['is_primary' => false]);
+                $this->uploadMainImage($listing, $request->file('main_image'));
             }
 
             // Handle new detail images
             if ($request->hasFile('detail_images')) {
-                $this->uploadImages($listing, $request->file('detail_images'));
+                $this->uploadDetailImages($listing, $request->file('detail_images'));
             }
 
             // Handle variations update
             if (! empty($request->variations)) {
                 $this->updateProductVariations($listing, $request->variations, $request);
+            } elseif ($listing->variations()->exists()) {
+                // All variations were removed by the user - delete them
+                $listing->variations()->delete();
             }
 
             DB::commit();

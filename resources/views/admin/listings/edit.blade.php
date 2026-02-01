@@ -37,7 +37,22 @@
 
                 <!-- Basic Information -->
                 <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+                    <div class="flex items-center gap-3 mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Basic Information</h3>
+                        <label class="flex items-center gap-1.5 px-3 py-1 rounded-full cursor-pointer transition"
+                               :class="document.getElementById('default_basic')?.checked ? 'bg-indigo-50 ring-1 ring-indigo-300' : 'bg-gray-50'"
+                               id="defaultBasicLabel">
+                            <input type="radio"
+                                   name="default_variation"
+                                   value="basic"
+                                   id="default_basic"
+                                   @php $noVariationDefault = !$listing->variations->contains('is_default', true); @endphp
+                                   {{ $noVariationDefault ? 'checked' : '' }}
+                                   onchange="window.dispatchEvent(new CustomEvent('basic-default-selected'))"
+                                   class="w-3.5 h-3.5 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs font-medium text-gray-600">Default listing</span>
+                        </label>
+                    </div>
 
                     <div class="space-y-4">
                         <div>
@@ -259,14 +274,25 @@
                 <!-- Main Image -->
                 <div class="bg-white rounded-lg shadow p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Main Image</h3>
-                    <p class="text-sm text-gray-600 mb-4">This image will be displayed on the main listing page</p>
+                    <p class="text-sm text-gray-600 mb-4">This image will be shown in the listing grid/list view</p>
 
-                    @if($listing->images->where('is_main', true)->first())
-                        <div class="mb-4">
+                    @php $mainImage = $listing->images->where('is_primary', true)->first(); @endphp
+                    @if($mainImage)
+                        <div class="mb-4" id="main-image-wrapper-{{ $mainImage->id }}">
                             <p class="text-sm text-gray-600 mb-2">Current main image:</p>
-                            <img src="{{ Storage::url($listing->images->where('is_main', true)->first()->image_path) }}"
-                                 alt="Current main image"
-                                 class="w-full h-48 object-cover rounded-lg">
+                            <div class="relative inline-block w-full">
+                                <img src="{{ Storage::url($mainImage->image_path) }}"
+                                     alt="Current main image"
+                                     class="w-full h-48 object-cover rounded-lg">
+                                <button type="button"
+                                        onclick="markImageForDeletion({{ $mainImage->id }}, 'main-image-wrapper-{{ $mainImage->id }}')"
+                                        class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-700 transition shadow"
+                                        title="Remove main image">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     @endif
 
@@ -321,23 +347,35 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Product Detail Images</h3>
                     <p class="text-xs text-gray-500 mb-4">These images will be shown on the product details page when users view this listing</p>
 
-                    @if($listing->images->where('is_main', false)->count() > 0)
-                        <div class="mb-4">
-                            <p class="text-sm text-gray-600 mb-2">Current detail images ({{ $listing->images->where('is_main', false)->count() }} images):</p>
-                            <div class="grid grid-cols-2 gap-2">
-                                @foreach($listing->images->where('is_main', false) as $image)
-                                    <div class="relative group">
+                    @php
+                        $detailImages = $mainImage
+                            ? $listing->images->where('id', '!=', $mainImage->id)
+                            : $listing->images;
+                    @endphp
+                    @if($detailImages->count() > 0)
+                        <div class="mb-4" id="detailImagesExisting">
+                            <p class="text-sm text-gray-600 mb-2">Current detail images ({{ $detailImages->count() }} images):</p>
+                            <div class="grid grid-cols-2 gap-2" id="detailImagesGrid">
+                                @foreach($detailImages as $image)
+                                    <div class="relative" id="detail-image-{{ $image->id }}">
                                         <img src="{{ Storage::url($image->image_path) }}"
                                              alt="Detail image"
                                              class="w-full h-24 object-cover rounded-lg">
-                                        <input type="checkbox" name="delete_images[]" value="{{ $image->id }}"
-                                               class="absolute top-1 left-1 w-4 h-4">
-                                        <label class="absolute top-1 left-6 text-xs bg-white px-1 rounded">Delete</label>
+                                        <button type="button"
+                                                onclick="markImageForDeletion({{ $image->id }}, 'detail-image-{{ $image->id }}')"
+                                                class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-700 transition shadow"
+                                                title="Remove image">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                            </svg>
+                                        </button>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
                     @endif
+                    <!-- Always render the container for deletion inputs -->
+                    <div id="deleteImagesInputs"></div>
 
                     <input type="file" name="detail_images[]" id="detailImages" multiple accept="image/*"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg">
@@ -395,6 +433,14 @@
             'images' => [],
         ];
     })->toArray();
+
+    // Listing variant values (sidebar category variant selections)
+    $listingVariantValues = $listing->listingVariants->mapWithKeys(function($lv) {
+        return [$lv->variant_id => [
+            'variant_item_id' => $lv->variant_item_id,
+            'custom_value' => $lv->custom_value,
+        ]];
+    })->toArray();
 @endphp
 
 @push('scripts')
@@ -403,6 +449,10 @@
 // This bypasses all Alpine timing/initialization issues
 window.EDIT_VARIATIONS = @json($variationsData);
 console.log('✓ Global variations data set:', window.EDIT_VARIATIONS.length, 'variations');
+
+// Listing variant values for pre-selecting sidebar variant dropdowns
+// Format: { variant_id: { variant_item_id: X, custom_value: Y } }
+window.EDIT_VARIANT_VALUES = @json($listingVariantValues);
 
 // Global variables
 const categoryContainer = document.getElementById('categorySelectsContainer');
@@ -483,6 +533,39 @@ hasDiscountCheckbox.addEventListener('change', function() {
         document.getElementById('discount_end_date').value = '';
     }
 });
+
+// Unified image deletion function for both main and detail images
+function markImageForDeletion(imageId, wrapperId) {
+    const wrapper = document.getElementById(wrapperId);
+    if (!wrapper) return;
+
+    // Add hidden input for deletion
+    const inputsContainer = document.getElementById('deleteImagesInputs');
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'delete_images[]';
+    input.value = imageId;
+    input.id = 'delete-input-' + imageId;
+    inputsContainer.appendChild(input);
+
+    // Fade out and hide the remove button
+    wrapper.style.opacity = '0.3';
+    const btn = wrapper.querySelector('button');
+    if (btn) btn.style.display = 'none';
+
+    // Add undo link
+    const undo = document.createElement('p');
+    undo.className = 'text-xs text-indigo-600 mt-1 cursor-pointer hover:underline';
+    undo.textContent = 'Undo removal';
+    undo.onclick = function() {
+        const delInput = document.getElementById('delete-input-' + imageId);
+        if (delInput) delInput.remove();
+        wrapper.style.opacity = '1';
+        if (btn) btn.style.display = '';
+        undo.remove();
+    };
+    wrapper.appendChild(undo);
+}
 
 // Main image preview
 document.getElementById('mainImage').addEventListener('change', function(e) {
@@ -716,7 +799,14 @@ function renderVariantsCard(variants, categoryName, level, categoryId) {
         <div class="space-y-4">
     `;
 
+    // Get saved variant values (for edit mode pre-selection)
+    const savedValues = window.EDIT_VARIANT_VALUES || {};
+
     variants.forEach(variant => {
+        const saved = savedValues[variant.id];
+        const savedItemId = saved ? saved.variant_item_id : null;
+        const savedCustom = saved ? saved.custom_value : null;
+
         html += `<div>`;
         html += `
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -732,17 +822,19 @@ function renderVariantsCard(variants, categoryName, level, categoryId) {
                     <option value="">Select ${variant.name}</option>
             `;
             variant.items.forEach(item => {
-                html += `<option value="${item.id}">${item.display_value}</option>`;
+                const selected = savedItemId && savedItemId == item.id ? 'selected' : '';
+                html += `<option value="${item.id}" ${selected}>${item.display_value}</option>`;
             });
             html += `</select>`;
 
         } else if (variant.type === 'radio') {
             html += `<div class="space-y-2">`;
             variant.items.forEach((item, index) => {
+                const checked = savedItemId && savedItemId == item.id ? 'checked' : '';
                 html += `
                     <label class="flex items-center">
                         <input type="radio" name="variants[${variant.id}]" value="${item.id}"
-                               ${variant.is_required && index === 0 ? 'required' : ''}
+                               ${variant.is_required && index === 0 ? 'required' : ''} ${checked}
                                class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
                         <span class="ml-2 text-sm text-gray-700">${item.display_value}</span>
                     </label>
@@ -753,9 +845,10 @@ function renderVariantsCard(variants, categoryName, level, categoryId) {
         } else if (variant.type === 'checkbox') {
             html += `<div class="space-y-2">`;
             variant.items.forEach(item => {
+                const checked = savedItemId && savedItemId == item.id ? 'checked' : '';
                 html += `
                     <label class="flex items-center">
-                        <input type="checkbox" name="variants[${variant.id}][]" value="${item.id}"
+                        <input type="checkbox" name="variants[${variant.id}][]" value="${item.id}" ${checked}
                                class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
                         <span class="ml-2 text-sm text-gray-700">${item.display_value}</span>
                     </label>
@@ -764,22 +857,28 @@ function renderVariantsCard(variants, categoryName, level, categoryId) {
             html += `</div>`;
 
         } else if (variant.type === 'text') {
+            const val = savedCustom ? savedCustom.replace(/"/g, '&quot;') : '';
             html += `
                 <input type="text" name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''}
+                       value="${val}"
                        placeholder="${variant.placeholder || ''}"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
             `;
 
         } else if (variant.type === 'number') {
+            const val = savedCustom || '';
             html += `
                 <input type="number" name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''}
+                       value="${val}"
                        placeholder="${variant.placeholder || ''}"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
             `;
 
         } else if (variant.type === 'range') {
+            const val = savedCustom || '';
             html += `
                 <input type="range" name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''}
+                       value="${val}"
                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
             `;
         }
@@ -930,14 +1029,12 @@ function loadCategoryLevel(hierarchy, index) {
             // Load variants for sidebar (all levels)
             loadVariantsForCategory(item.id, item.name, level);
 
-            // IMPORTANT: Only emit category-changed for the LAST level
-            // This prevents categoryVariants from being reset multiple times
-            if (isLastLevel) {
-                console.log('Emitting category-changed for LAST level:', item.name);
-                window.dispatchEvent(new CustomEvent('category-changed', {
-                    detail: { categoryId: item.id, categoryName: item.name, level }
-                }));
-            }
+            // Emit category-changed for EVERY level so the variation manager
+            // accumulates variants from the entire category hierarchy
+            console.log('Emitting category-changed for level:', level, item.name);
+            window.dispatchEvent(new CustomEvent('category-changed', {
+                detail: { categoryId: item.id, categoryName: item.name, level }
+            }));
 
             // Load next level
             loadCategoryLevel(hierarchy, index + 1);

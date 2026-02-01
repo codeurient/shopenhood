@@ -47,6 +47,14 @@
                     <a href="{{ route('admin.variants.items.create', $variant) }}" class="btn-sm btn-success" title="Add Item">
                         ➕ Add Item
                     </a>
+                    <a href="{{ route('admin.variants.edit', $variant) }}" class="btn-sm btn-warning" title="Edit Variant">
+                        ✏️ Edit
+                    </a>
+                    <form action="{{ route('admin.variants.destroy', $variant) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this variant?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-sm btn-danger" title="Delete Variant">🗑️ Delete</button>
+                    </form>
                 </div>
             </td>
         </tr>
@@ -79,4 +87,6 @@
 .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.875rem; border-radius: 4px; text-decoration: none; display: inline-block; border: none; cursor: pointer; }
 .btn-primary { background: #667eea; color: white; }
 .btn-success { background: #28a745; color: white; }
+.btn-warning { background: #ffc107; color: #000; }
+.btn-danger { background: #dc3545; color: white; }
 </style>

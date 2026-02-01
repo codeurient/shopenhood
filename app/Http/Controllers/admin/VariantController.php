@@ -18,9 +18,9 @@ class VariantController extends Controller
 
         // Search functionality
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('slug', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('slug', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -111,6 +111,73 @@ class VariantController extends Controller
     }
 
     /**
+     * Show the form for editing the specified variant
+     */
+    public function edit(Variant $variant)
+    {
+        return view('admin.variants.edit', compact('variant'));
+    }
+
+    /**
+     * Update the specified variant
+     */
+    public function update(Request $request, Variant $variant)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:variants,name,'.$variant->id,
+            'slug' => 'nullable|string|max:255|unique:variants,slug,'.$variant->id,
+            'type' => 'required|in:select,radio,checkbox,text,number,range',
+            'is_required' => 'nullable|boolean',
+            'description' => 'nullable|string|max:1000',
+            'placeholder' => 'nullable|string|max:255',
+            'help_text' => 'nullable|string|max:500',
+            'sort_order' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['name']);
+        }
+
+        $validated['slug'] = $this->generateUniqueSlug($validated['slug'], $variant->id);
+
+        $validated['is_required'] = $request->has('is_required');
+        $validated['is_active'] = $request->has('is_active');
+        $validated['sort_order'] = $validated['sort_order'] ?? 0;
+
+        $variant->update($validated);
+
+        activity()
+            ->performedOn($variant)
+            ->causedBy(auth()->guard('admin')->user())
+            ->log('Variant updated');
+
+        return redirect()
+            ->route('admin.variants.index')
+            ->with('success', 'Variant updated successfully');
+    }
+
+    /**
+     * Remove the specified variant
+     */
+    public function destroy(Variant $variant)
+    {
+        $variantName = $variant->name;
+
+        activity()
+            ->performedOn($variant)
+            ->causedBy(auth()->guard('admin')->user())
+            ->withProperties(['name' => $variantName])
+            ->log('Variant deleted');
+
+        $variant->delete();
+
+        return redirect()
+            ->route('admin.variants.index')
+            ->with('success', "Variant \"{$variantName}\" deleted successfully");
+    }
+
+    /**
      * Generate unique slug
      */
     private function generateUniqueSlug(string $slug, ?int $ignoreId = null): string
@@ -120,16 +187,16 @@ class VariantController extends Controller
 
         while (true) {
             $query = Variant::where('slug', $slug);
-            
+
             if ($ignoreId) {
                 $query->where('id', '!=', $ignoreId);
             }
 
-            if (!$query->exists()) {
+            if (! $query->exists()) {
                 return $slug;
             }
 
-            $slug = $originalSlug . '-' . $counter;
+            $slug = $originalSlug.'-'.$counter;
             $counter++;
         }
     }

@@ -17,11 +17,14 @@ class Category extends Model
         'name',
         'slug',
         'icon',
+        'image',
         'description',
         'sort_order',
         'level',
         'path',
         'is_active',
+        'meta_title',
+        'meta_description',
     ];
 
     // Self-referential relationship (parent category)

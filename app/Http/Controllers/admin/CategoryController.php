@@ -131,6 +131,86 @@ class CategoryController extends Controller
     }
 
     /**
+     * Show the form for editing the specified category
+     */
+    public function edit(Category $category)
+    {
+        return view('admin.categories.edit', compact('category'));
+    }
+
+    /**
+     * Update the specified category
+     */
+    public function update(Request $request, Category $category)
+    {
+        $validated = $request->validate([
+            'parent_id' => 'nullable|exists:categories,id',
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:categories,slug,'.$category->id,
+            'description' => 'nullable|string|max:1000',
+            'icon' => 'nullable|string|max:100',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'sort_order' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
+            'meta_title' => 'nullable|string|max:60',
+            'meta_description' => 'nullable|string|max:160',
+        ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['name']);
+        }
+
+        $validated['slug'] = $this->generateUniqueSlug($validated['slug'], $category->id);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('categories', 'public');
+        }
+
+        if (! empty($validated['parent_id'])) {
+            $parent = Category::findOrFail($validated['parent_id']);
+            $validated['level'] = $parent->level + 1;
+            $validated['path'] = $parent->path ? $parent->path.'/'.$parent->id : (string) $parent->id;
+        } else {
+            $validated['level'] = 1;
+            $validated['path'] = null;
+        }
+
+        $validated['is_active'] = $request->has('is_active');
+        $validated['sort_order'] = $validated['sort_order'] ?? 0;
+
+        $category->update($validated);
+
+        activity()
+            ->performedOn($category)
+            ->causedBy(auth()->guard('admin')->user())
+            ->log('Category updated');
+
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category updated successfully');
+    }
+
+    /**
+     * Remove the specified category
+     */
+    public function destroy(Category $category)
+    {
+        $categoryName = $category->name;
+
+        activity()
+            ->performedOn($category)
+            ->causedBy(auth()->guard('admin')->user())
+            ->withProperties(['name' => $categoryName])
+            ->log('Category deleted');
+
+        $category->delete();
+
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', "Category \"{$categoryName}\" deleted successfully");
+    }
+
+    /**
      * Get available variants for category (AJAX)
      */
     public function getAvailableVariants(Category $category)

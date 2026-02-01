@@ -200,12 +200,15 @@ function renderAccordion(categories, title, level, parentId) {
                         : ''}
                 </div>
                 <div class="flex gap-2" onclick="event.stopPropagation()">
-                    <button onclick="openVariantModal(${cat.id}, '${escapeHtml(cat.name)}')" 
+                    <button onclick="openVariantModal(${cat.id}, '${escapeHtml(cat.name)}')"
                             class="flex-1 px-3 py-1.5 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700">
                         🔧 Variants
                     </button>
-                    <button class="px-3 py-1.5 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                    <a href="/admin/categories/${cat.id}/edit" class="px-3 py-1.5 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600 no-underline">
                         ✏️
+                    </a>
+                    <button onclick="confirmDeleteCategory(${cat.id}, '${escapeHtml(cat.name)}')" class="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700">
+                        🗑️
                     </button>
                 </div>
             </div>
@@ -479,6 +482,20 @@ function saveVariants() {
         btn.disabled = false;
         btn.textContent = '💾 Save Variants';
     });
+}
+
+function confirmDeleteCategory(categoryId, categoryName) {
+    if (confirm(`Are you sure you want to delete "${categoryName}"? This will also delete all child categories and remove variant assignments.`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/categories/${categoryId}`;
+        form.innerHTML = `
+            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
+            <input type="hidden" name="_method" value="DELETE">
+        `;
+        document.body.appendChild(form);
+        form.submit();
+    }
 }
 </script>
 @endpush

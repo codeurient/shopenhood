@@ -3,7 +3,10 @@
 use App\Models\Category;
 use App\Models\Listing;
 use App\Models\ListingType;
+use App\Models\ProductVariation;
 use App\Models\User;
+use App\Models\Variant;
+use App\Models\VariantItem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -179,4 +182,128 @@ test('discount price must be less than base price', function () {
     $response = $this->post(route('admin.listings.store'), $data);
 
     $response->assertSessionHasErrors('discount_price');
+});
+
+test('updating a listing without variations deletes all existing variations', function () {
+    $listing = Listing::factory()->create(['user_id' => $this->admin->id]);
+
+    // Create some variations for the listing
+    ProductVariation::factory()->count(3)->create(['listing_id' => $listing->id]);
+
+    expect($listing->variations()->count())->toBe(3);
+
+    $data = [
+        'listing_type_id' => $listing->listing_type_id,
+        'category_id' => $listing->category_id,
+        'title' => $listing->title,
+        'description' => $listing->description,
+        'status' => $listing->status,
+        // No 'variations' key - user deleted all of them
+    ];
+
+    $response = $this->put(route('admin.listings.update', $listing), $data);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
+
+    expect($listing->fresh()->variations()->count())->toBe(0);
+});
+
+test('updating a listing with variations keeps provided ones and deletes removed ones', function () {
+    $listing = Listing::factory()->create(['user_id' => $this->admin->id]);
+
+    $keepVariation = ProductVariation::factory()->create([
+        'listing_id' => $listing->id,
+        'sku' => 'KEEP-001',
+        'price' => 50.00,
+    ]);
+    ProductVariation::factory()->create([
+        'listing_id' => $listing->id,
+        'sku' => 'DELETE-001',
+    ]);
+    ProductVariation::factory()->create([
+        'listing_id' => $listing->id,
+        'sku' => 'DELETE-002',
+    ]);
+
+    expect($listing->variations()->count())->toBe(3);
+
+    $data = [
+        'listing_type_id' => $listing->listing_type_id,
+        'category_id' => $listing->category_id,
+        'title' => $listing->title,
+        'description' => $listing->description,
+        'status' => $listing->status,
+        'variations' => [
+            [
+                'id' => $keepVariation->id,
+                'sku' => 'KEEP-001',
+                'price' => 55.00,
+            ],
+        ],
+    ];
+
+    $response = $this->put(route('admin.listings.update', $listing), $data);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
+
+    $remaining = $listing->fresh()->variations;
+    expect($remaining)->toHaveCount(1);
+    expect($remaining->first()->sku)->toBe('KEEP-001');
+    expect((float) $remaining->first()->price)->toBe(55.00);
+});
+
+test('getCategoryVariants returns variants assigned to a category', function () {
+    $category = Category::factory()->create();
+    $variant = Variant::factory()->create(['name' => 'Color']);
+    VariantItem::factory()->count(2)->create(['variant_id' => $variant->id]);
+
+    // Attach variant to category with is_main_shown = true
+    $category->variants()->attach($variant->id, [
+        'is_required' => true,
+        'is_searchable' => false,
+        'is_filterable' => false,
+        'is_main_shown' => true,
+        'sort_order' => 0,
+    ]);
+
+    $response = $this->getJson(route('admin.listings.category.variants', $category));
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('success', true);
+    $response->assertJsonCount(1, 'variants');
+    $response->assertJsonPath('variants.0.name', 'Color');
+    $response->assertJsonPath('variants.0.is_main_shown', 1);
+});
+
+test('getCategoryVariants with show_all returns all variants including non-main-shown', function () {
+    $category = Category::factory()->create();
+    $mainVariant = Variant::factory()->create(['name' => 'Color']);
+    $otherVariant = Variant::factory()->create(['name' => 'Size']);
+
+    $category->variants()->attach($mainVariant->id, [
+        'is_required' => true,
+        'is_searchable' => false,
+        'is_filterable' => false,
+        'is_main_shown' => true,
+        'sort_order' => 0,
+    ]);
+    $category->variants()->attach($otherVariant->id, [
+        'is_required' => false,
+        'is_searchable' => false,
+        'is_filterable' => false,
+        'is_main_shown' => false,
+        'sort_order' => 1,
+    ]);
+
+    // Without show_all - only main shown
+    $response = $this->getJson(route('admin.listings.category.variants', $category));
+    $response->assertSuccessful();
+    $response->assertJsonCount(1, 'variants');
+
+    // With show_all - all variants
+    $response = $this->getJson(route('admin.listings.category.variants', ['category' => $category, 'show_all' => 'true']));
+    $response->assertSuccessful();
+    $response->assertJsonCount(2, 'variants');
 });
