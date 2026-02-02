@@ -12,7 +12,9 @@ use App\Http\Controllers\Admin\ListingTypeController;
 use App\Http\Controllers\Admin\ListingVariantController;
 use App\Http\Controllers\Admin\ProductVariationController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StockManagementController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VariantController;
 use App\Http\Controllers\Admin\VariantItemController;
 use Illuminate\Support\Facades\Route;
@@ -195,6 +197,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::post('reject', [ListingApprovalController::class, 'reject'])->name('reject');
             });
 
+            // Listing Lifecycle Management
+            Route::patch('{listing}/update-expiration', [ListingController::class, 'updateExpiration'])->name('update-expiration');
+            Route::delete('{listing_id}/force-delete', [ListingController::class, 'forceDelete'])->name('force-delete');
+            Route::post('{listing_id}/restore', [ListingController::class, 'restore'])->name('restore');
+
             // Visibility Control
             Route::patch('{listing}/toggle-visibility', [ListingController::class, 'toggleVisibility'])->name('toggle-visibility');
             Route::patch('{listing}/toggle-featured', [ListingController::class, 'toggleFeatured'])->name('toggle-featured');
@@ -253,6 +260,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::post('bulk-update-stock', [ProductVariationController::class, 'bulkUpdateStock'])->name('bulk-update-stock');
                 Route::post('generate', [ProductVariationController::class, 'generate'])->name('generate');
             });
+        });
+
+        // ====================================================================
+        // USER MANAGEMENT
+        // ====================================================================
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
+            Route::put('{user}', [UserController::class, 'update'])->name('update');
+            Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
+        });
+
+        // ====================================================================
+        // SETTINGS
+        // ====================================================================
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', [SettingController::class, 'index'])->name('index');
+            Route::put('/', [SettingController::class, 'update'])->name('update');
         });
 
         // ====================================================================

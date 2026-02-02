@@ -383,7 +383,7 @@ class ListingController extends Controller
         $counter = 1;
 
         while (true) {
-            $query = Listing::where('slug', $slug);
+            $query = Listing::withTrashed()->where('slug', $slug);
 
             if ($ignoreId) {
                 $query->where('id', '!=', $ignoreId);
@@ -754,6 +754,64 @@ class ListingController extends Controller
         if (! empty($updatedIds)) {
             $listing->variations()->whereNotIn('id', $updatedIds)->delete();
         }
+    }
+
+    /**
+     * Update the expiration date for a listing
+     */
+    public function updateExpiration(Request $request, Listing $listing)
+    {
+        $validated = $request->validate([
+            'expires_at' => 'required|date|after:now',
+        ]);
+
+        $listing->update(['expires_at' => $validated['expires_at']]);
+
+        activity()
+            ->performedOn($listing)
+            ->causedBy(auth()->guard('admin')->user())
+            ->log('Listing expiration updated');
+
+        return back()->with('success', 'Listing expiration updated.');
+    }
+
+    /**
+     * Permanently delete a soft-deleted listing
+     */
+    public function forceDelete(int $listing_id)
+    {
+        $listing = Listing::withTrashed()->findOrFail($listing_id);
+
+        $title = $listing->title;
+        $listing->forceDelete();
+
+        activity()
+            ->causedBy(auth()->guard('admin')->user())
+            ->log("Listing \"{$title}\" permanently deleted");
+
+        return redirect()
+            ->route('admin.listings.index')
+            ->with('success', "Listing \"{$title}\" has been permanently deleted.");
+    }
+
+    /**
+     * Restore a soft-deleted listing
+     */
+    public function restore(int $listing_id)
+    {
+        $listing = Listing::withTrashed()->findOrFail($listing_id);
+
+        $listing->restore();
+        $listing->update(['status' => 'pending']);
+
+        activity()
+            ->performedOn($listing)
+            ->causedBy(auth()->guard('admin')->user())
+            ->log('Listing restored');
+
+        return redirect()
+            ->route('admin.listings.index')
+            ->with('success', "Listing \"{$listing->title}\" has been restored.");
     }
 
     /**

@@ -32,6 +32,12 @@
                 <a href="{{ route('admin.listings.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('admin.listings.*') ? 'bg-gray-700' : '' }}">
                     🔧 Listings
                 </a>
+                <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('admin.users.*') ? 'bg-gray-700' : '' }}">
+                    👥 Users
+                </a>
+                <a href="{{ route('admin.settings.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('admin.settings.*') ? 'bg-gray-700' : '' }}">
+                    ⚙️ Settings
+                </a>
             </nav>
         </aside>
         

@@ -38,6 +38,11 @@ class Listing extends Model
         'store_name',
         'meta_title',
         'meta_description',
+        'expires_at',
+        'approved_by',
+        'approved_at',
+        'rejected_at',
+        'rejection_reason',
     ];
 
     protected $casts = [
@@ -233,6 +238,45 @@ class Listing extends Model
             \Spatie\Activitylog\Models\Activity::class,
             'subject'
         );
+    }
+
+    // ============================================
+    // SCOPES
+    // ============================================
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeForUser($query, int $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    public function scopeExpired($query)
+    {
+        return $query->where('expires_at', '<', now())
+            ->where('status', 'active');
+    }
+
+    // ============================================
+    // HELPERS
+    // ============================================
+
+    public function isExpired(): bool
+    {
+        return $this->expires_at !== null && $this->expires_at->isPast();
+    }
+
+    public function isReshareable(): bool
+    {
+        return $this->trashed();
+    }
+
+    public function belongsToUser(int $userId): bool
+    {
+        return $this->user_id === $userId;
     }
 
     // ============================================

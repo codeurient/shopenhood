@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -11,7 +12,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, LogsActivity, Notifiable;
+    use HasApiTokens, HasFactory, LogsActivity, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -22,6 +23,8 @@ class User extends Authenticatable
         'phone_verified_at',
         'current_role',
         'is_business_enabled',
+        'listing_limit',
+        'business_valid_until',
         'status',
         'daily_listing_count',
         'last_listing_date',
@@ -37,10 +40,62 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
+        'business_valid_until' => 'datetime',
         'last_listing_date' => 'date',
         'password' => 'hashed',
         'is_business_enabled' => 'boolean',
     ];
+
+    // ============================================
+    // RELATIONSHIPS
+    // ============================================
+
+    public function listings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Listing::class);
+    }
+
+    // ============================================
+    // ROLE HELPERS
+    // ============================================
+
+    public function isAdmin(): bool
+    {
+        return $this->current_role === 'admin';
+    }
+
+    public function isNormalUser(): bool
+    {
+        return $this->current_role === 'normal_user';
+    }
+
+    /**
+     * A business user must have the role, be enabled, and not expired.
+     */
+    public function isBusinessUser(): bool
+    {
+        return $this->current_role === 'business_user'
+            && $this->is_business_enabled
+            && ($this->business_valid_until === null || $this->business_valid_until->isFuture());
+    }
+
+    /**
+     * Get effective listing limit for this user.
+     * Returns null for unlimited (business default), or integer limit.
+     */
+    public function getListingLimit(): ?int
+    {
+        if ($this->isBusinessUser()) {
+            return $this->listing_limit; // null = unlimited
+        }
+
+        // Normal users always limited to 1
+        return 1;
+    }
+
+    // ============================================
+    // ACTIVITY LOG
+    // ============================================
 
     public function getActivitylogOptions(): LogOptions
     {

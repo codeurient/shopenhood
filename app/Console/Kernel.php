@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('listings:expire')->hourly();
+        $schedule->command('listings:purge-deleted')->dailyAt('02:00');
     }
 
     /**
