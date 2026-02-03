@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\ListingController;
 use App\Http\Controllers\Admin\ListingImageController;
 use App\Http\Controllers\Admin\ListingTypeController;
 use App\Http\Controllers\Admin\ListingVariantController;
+use App\Http\Controllers\Admin\LocationCityController;
+use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\ProductVariationController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingController;
@@ -165,6 +167,36 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 // Bulk Actions
                 Route::post('bulk-delete', [VariantItemController::class, 'bulkDelete'])->name('bulk-delete');
                 Route::post('reorder', [VariantItemController::class, 'reorder'])->name('reorder');
+            });
+        });
+
+        // ====================================================================
+        // LOCATIONS MANAGEMENT (Countries & Cities)
+        // ====================================================================
+        Route::prefix('locations')->name('locations.')->group(function () {
+            Route::get('/', [LocationController::class, 'index'])->name('index');
+            Route::get('create', [LocationController::class, 'create'])->name('create');
+            Route::post('/', [LocationController::class, 'store'])->name('store');
+            Route::get('{location}/edit', [LocationController::class, 'edit'])->name('edit');
+            Route::put('{location}', [LocationController::class, 'update'])->name('update');
+            Route::delete('{location}', [LocationController::class, 'destroy'])->name('destroy');
+
+            // Status Toggle
+            Route::patch('{location}/toggle-status', [LocationController::class, 'toggleStatus'])->name('toggle-status');
+
+            // ================================================================
+            // CITIES (Nested Resource under Country)
+            // ================================================================
+            Route::prefix('{location}/cities')->name('cities.')->group(function () {
+                Route::get('/', [LocationCityController::class, 'index'])->name('index');
+                Route::get('create', [LocationCityController::class, 'create'])->name('create');
+                Route::post('/', [LocationCityController::class, 'store'])->name('store');
+                Route::get('{city}/edit', [LocationCityController::class, 'edit'])->name('edit');
+                Route::put('{city}', [LocationCityController::class, 'update'])->name('update');
+                Route::delete('{city}', [LocationCityController::class, 'destroy'])->name('destroy');
+
+                // Status Toggle
+                Route::patch('{city}/toggle-status', [LocationCityController::class, 'toggleStatus'])->name('toggle-status');
             });
         });
 

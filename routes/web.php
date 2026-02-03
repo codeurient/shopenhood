@@ -29,6 +29,23 @@ Route::get('/dashboard', function () {
 Route::get('/api/categories/children/{category?}', [CategoryController::class, 'getChildren'])->name('api.categories.children');
 Route::get('/api/categories/{category}/variants', [CategoryController::class, 'getVariants'])->name('api.categories.variants');
 Route::get('/api/categories/{category}/hierarchy', [CategoryController::class, 'getHierarchy'])->name('api.categories.hierarchy');
+Route::get('/api/locations/countries-cities', function () {
+    $countries = \App\Models\Location::query()
+        ->where('type', 'country')
+        ->where('is_active', true)
+        ->with(['cities' => function ($q) {
+            $q->where('is_active', true)->orderBy('name');
+        }])
+        ->orderBy('name')
+        ->get();
+
+    $result = [];
+    foreach ($countries as $country) {
+        $result[$country->name] = $country->cities->pluck('name')->toArray();
+    }
+
+    return response()->json($result);
+})->name('api.locations.countries-cities');
 
 // Public Listing Routes
 Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');

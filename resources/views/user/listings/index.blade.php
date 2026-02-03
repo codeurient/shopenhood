@@ -10,6 +10,7 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            
             @if(session('success'))
                 <div class="mb-4 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300 rounded-lg">
                     {{ session('success') }}
@@ -22,8 +23,15 @@
                 </div>
             @endif
 
+            <div class="flex justify-end">
+                <a href="{{ route('user.listings.create') }}" 
+                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium transition">
+                    + Create Listing
+                </a>
+            </div>
+
             <!-- Active Listings -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden mt-4">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Active Listings ({{ $activeListings->count() }})</h3>
                 </div>
@@ -90,6 +98,7 @@
                                         <p class="text-xs text-red-500 dark:text-red-400 mt-1 max-w-xs truncate" title="{{ $listing->rejection_reason }}">{{ $listing->rejection_reason }}</p>
                                     @endif
                                 </td>
+
                                 <td class="px-6 py-4 text-sm">
                                     <div class="flex gap-2">
                                         <a href="{{ route('user.listings.edit', $listing) }}"
@@ -118,6 +127,9 @@
                         </tbody>
                     </table>
                 </div>
+
+              
+
                 @else
                 <div class="px-6 py-12 text-center">
                     <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -128,6 +140,9 @@
                 </div>
                 @endif
             </div>
+
+
+
 
             <!-- Trashed Listings -->
             @if($trashedListings->count() > 0)

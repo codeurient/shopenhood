@@ -452,7 +452,7 @@
     let countriesData = {};
 
     // Load countries and cities data
-    fetch('/json/countriesAndCities.json')
+    fetch('/api/locations/countries-cities')
         .then(response => response.json())
         .then(data => {
             countriesData = data;
