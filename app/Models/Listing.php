@@ -28,6 +28,7 @@ class Listing extends Model
         'status',
         'is_visible',
         'hidden_due_to_subscription',
+        'hidden_due_to_role_change',
         'is_featured',
         'is_negotiable',
         'availability_type',
@@ -55,6 +56,7 @@ class Listing extends Model
         'discount_price' => 'decimal:2',
         'is_visible' => 'boolean',
         'hidden_due_to_subscription' => 'boolean',
+        'hidden_due_to_role_change' => 'boolean',
         'is_featured' => 'boolean',
         'is_negotiable' => 'boolean',
         'approved_at' => 'datetime',
@@ -273,7 +275,8 @@ class Listing extends Model
     public function scopePubliclyVisible($query)
     {
         return $query->where('status', 'active')
-            ->where('is_visible', true);
+            ->where('is_visible', true)
+            ->where('hidden_due_to_role_change', false);
     }
 
     public function scopePending($query)
@@ -336,6 +339,7 @@ class Listing extends Model
                 'status',
                 'is_visible',
                 'hidden_due_to_subscription',
+                'hidden_due_to_role_change',
                 'base_price',
                 'category_id',
                 'listing_type_id',

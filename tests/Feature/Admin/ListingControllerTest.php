@@ -277,6 +277,84 @@ test('getCategoryVariants returns variants assigned to a category', function () 
     $response->assertJsonPath('variants.0.is_main_shown', 1);
 });
 
+// ==========================================
+// SOFT DELETE VISIBILITY
+// ==========================================
+
+test('admin can filter listings by deleted status', function () {
+    $listing = Listing::factory()->create();
+    $listing->delete();
+
+    $response = $this->get(route('admin.listings.index', ['status' => 'deleted']));
+
+    $response->assertSuccessful();
+    $response->assertSee($listing->title);
+});
+
+test('deleted listings do not appear in default index', function () {
+    $active = Listing::factory()->create(['title' => 'Active Listing']);
+    $deleted = Listing::factory()->create(['title' => 'Deleted Listing']);
+    $deleted->delete();
+
+    $response = $this->get(route('admin.listings.index'));
+
+    $response->assertSee('Active Listing');
+    $response->assertDontSee('Deleted Listing');
+});
+
+test('admin index shows deleted count in stats', function () {
+    Listing::factory()->create();
+    $deleted = Listing::factory()->create();
+    $deleted->delete();
+
+    $response = $this->get(route('admin.listings.index'));
+
+    $response->assertSuccessful();
+    $response->assertSee('Deleted');
+});
+
+test('admin can restore a trashed listing', function () {
+    $listing = Listing::factory()->create(['status' => 'active']);
+    $listing->delete();
+
+    $response = $this->post(route('admin.listings.restore', $listing->id));
+
+    $response->assertRedirect(route('admin.listings.index'));
+    $response->assertSessionHas('success');
+
+    $listing->refresh();
+    expect($listing->deleted_at)->toBeNull();
+    expect($listing->status)->toBe('pending');
+});
+
+test('admin can permanently delete a trashed listing', function () {
+    $listing = Listing::factory()->create();
+    $listingId = $listing->id;
+    $listing->delete();
+
+    $response = $this->delete(route('admin.listings.force-delete', $listingId));
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
+
+    expect(Listing::withTrashed()->find($listingId))->toBeNull();
+});
+
+test('deleted filter shows restore and permanently delete buttons', function () {
+    $listing = Listing::factory()->create();
+    $listing->delete();
+
+    $response = $this->get(route('admin.listings.index', ['status' => 'deleted']));
+
+    $response->assertSuccessful();
+    $response->assertSee('Restore');
+    $response->assertSee('Permanently Delete');
+});
+
+// ==========================================
+// CATEGORY VARIANTS
+// ==========================================
+
 test('getCategoryVariants with show_all returns all variants including non-main-shown', function () {
     $category = Category::factory()->create();
     $mainVariant = Variant::factory()->create(['name' => 'Color']);

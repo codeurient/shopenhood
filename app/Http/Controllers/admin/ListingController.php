@@ -19,8 +19,20 @@ class ListingController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Listing::with(['user', 'category', 'listingType', 'images'])
-            ->withCount(['images', 'variants', 'variations']);
+        $isDeletedFilter = $request->status === 'deleted';
+
+        if ($isDeletedFilter) {
+            $query = Listing::onlyTrashed()
+                ->with(['user', 'category', 'listingType', 'images'])
+                ->withCount(['images', 'variants', 'variations']);
+        } else {
+            $query = Listing::with(['user', 'category', 'listingType', 'images'])
+                ->withCount(['images', 'variants', 'variations']);
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+        }
 
         // Search
         if ($request->filled('search')) {
@@ -28,11 +40,6 @@ class ListingController extends Controller
                 $q->where('title', 'like', '%'.$request->search.'%')
                     ->orWhere('slug', 'like', '%'.$request->search.'%');
             });
-        }
-
-        // Filter by status
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
         }
 
         // Filter by category
@@ -66,6 +73,7 @@ class ListingController extends Controller
             'pending' => Listing::where('status', 'pending')->count(),
             'draft' => Listing::where('status', 'draft')->count(),
             'rejected' => Listing::where('status', 'rejected')->count(),
+            'deleted' => Listing::onlyTrashed()->count(),
         ];
 
         return view('admin.listings.index', compact(
@@ -807,7 +815,7 @@ class ListingController extends Controller
             ->log("Listing \"{$title}\" permanently deleted");
 
         return redirect()
-            ->route('admin.listings.index')
+            ->route('admin.listings.index', ['status' => 'deleted'])
             ->with('success', "Listing \"{$title}\" has been permanently deleted.");
     }
 

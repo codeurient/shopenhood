@@ -98,19 +98,7 @@
     </div>
 </form>
 
-{{-- DELETE COUNTRY FORM --}}
-<form action="{{ route('admin.locations.destroy', $country) }}"
-      method="POST"
-      class="mt-6"
-      onsubmit="return confirm('Delete {{ $country->name }} and all its cities?')">
-    @csrf
-    @method('DELETE')
 
-    <button type="submit"
-            class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700">
-        🗑️ Delete Country
-    </button>
-</form>
 
     </div>
 </div>

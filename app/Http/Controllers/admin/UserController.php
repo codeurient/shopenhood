@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Listing;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -56,13 +57,26 @@ class UserController extends Controller
             'status' => 'required|in:active,suspended,banned',
         ]);
 
+        $oldRole = $user->current_role;
+        $newRole = $validated['current_role'];
+
         $user->update([
-            'current_role' => $validated['current_role'],
+            'current_role' => $newRole,
             'is_business_enabled' => $request->has('is_business_enabled'),
             'listing_limit' => $validated['listing_limit'] ?? null,
             'business_valid_until' => $validated['business_valid_until'] ?? null,
             'status' => $validated['status'],
         ]);
+
+        // Handle role downgrade: business_user → normal_user
+        if ($oldRole === 'business_user' && $newRole === 'normal_user') {
+            $this->deactivateExcessListings($user);
+        }
+
+        // Handle role upgrade: normal_user → business_user
+        if ($oldRole === 'normal_user' && $newRole === 'business_user') {
+            $this->reactivateRoleRestrictedListings($user);
+        }
 
         activity()
             ->performedOn($user)
@@ -72,6 +86,29 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with('success', "User \"{$user->name}\" updated successfully.");
+    }
+
+    private function deactivateExcessListings(User $user): void
+    {
+        $listings = Listing::forUser($user->id)
+            ->where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Skip the most recent listing — it stays active
+        $listingsToHide = $listings->slice(1);
+
+        foreach ($listingsToHide as $listing) {
+            $listing->update(['hidden_due_to_role_change' => true]);
+        }
+    }
+
+    private function reactivateRoleRestrictedListings(User $user): void
+    {
+        Listing::withTrashed()
+            ->forUser($user->id)
+            ->where('hidden_due_to_role_change', true)
+            ->update(['hidden_due_to_role_change' => false]);
     }
 
     public function destroy(User $user)

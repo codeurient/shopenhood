@@ -91,11 +91,16 @@
                                             'rejected' => 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300',
                                         ];
                                     @endphp
-                                    <span class="px-2 py-1 text-xs font-semibold rounded {{ $statusColors[$listing->status] ?? 'bg-gray-100 text-gray-700' }}">
+                                    <span class="me-2 px-2 py-1 text-xs font-semibold rounded {{ $statusColors[$listing->status] ?? 'bg-gray-100 text-gray-700' }}">
                                         {{ ucfirst($listing->status) }}
                                     </span>
                                     @if($listing->status === 'rejected' && $listing->rejection_reason)
                                         <p class="text-xs text-red-500 dark:text-red-400 mt-1 max-w-xs truncate" title="{{ $listing->rejection_reason }}">{{ $listing->rejection_reason }}</p>
+                                    @endif
+                                    @if($listing->hidden_due_to_role_change)
+                                        <span class="xl2:ms-2 mt-1 inline-block px-2 py-1 text-xs font-semibold rounded bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300">
+                                            Hidden (role restriction)
+                                        </span>
                                     @endif
                                 </td>
 

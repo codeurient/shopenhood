@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Listing;
 use App\Models\User;
 
 beforeEach(function () {
@@ -139,4 +140,184 @@ test('settings validation rejects invalid values', function () {
     ]);
 
     $response->assertSessionHasErrors(['listing_default_duration_days', 'listing_soft_delete_retention_days']);
+});
+
+// ==========================================
+// ROLE CHANGE LISTING MANAGEMENT
+// ==========================================
+
+test('downgrade from business to normal hides excess listings', function () {
+    $user = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+    ]);
+
+    $oldest = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'created_at' => now()->subDays(3),
+    ]);
+    $middle = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'created_at' => now()->subDays(2),
+    ]);
+    $newest = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'created_at' => now()->subDay(),
+    ]);
+
+    $this->put(route('admin.users.update', $user), [
+        'current_role' => 'normal_user',
+        'status' => 'active',
+    ]);
+
+    $oldest->refresh();
+    $middle->refresh();
+    $newest->refresh();
+
+    expect($newest->hidden_due_to_role_change)->toBeFalse();
+    expect($oldest->hidden_due_to_role_change)->toBeTrue();
+    expect($middle->hidden_due_to_role_change)->toBeTrue();
+});
+
+test('downgrade keeps most recent listing active', function () {
+    $user = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+    ]);
+
+    $older = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'created_at' => now()->subDays(2),
+    ]);
+    $newer = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'created_at' => now()->subDay(),
+    ]);
+
+    $this->put(route('admin.users.update', $user), [
+        'current_role' => 'normal_user',
+        'status' => 'active',
+    ]);
+
+    $newer->refresh();
+    expect($newer->hidden_due_to_role_change)->toBeFalse();
+    expect($newer->status)->toBe('active');
+});
+
+test('upgrade from normal to business clears role restriction', function () {
+    $user = User::factory()->create([
+        'current_role' => 'normal_user',
+    ]);
+
+    $listing1 = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'hidden_due_to_role_change' => true,
+    ]);
+    $listing2 = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'hidden_due_to_role_change' => true,
+    ]);
+
+    $this->put(route('admin.users.update', $user), [
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+        'status' => 'active',
+    ]);
+
+    $listing1->refresh();
+    $listing2->refresh();
+
+    expect($listing1->hidden_due_to_role_change)->toBeFalse();
+    expect($listing2->hidden_due_to_role_change)->toBeFalse();
+});
+
+test('downgrade with only one listing does not hide it', function () {
+    $user = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+    ]);
+
+    $listing = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+    ]);
+
+    $this->put(route('admin.users.update', $user), [
+        'current_role' => 'normal_user',
+        'status' => 'active',
+    ]);
+
+    $listing->refresh();
+    expect($listing->hidden_due_to_role_change)->toBeFalse();
+});
+
+test('downgrade with no active listings does nothing', function () {
+    $user = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+    ]);
+
+    $pending = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'pending',
+    ]);
+
+    $this->put(route('admin.users.update', $user), [
+        'current_role' => 'normal_user',
+        'status' => 'active',
+    ]);
+
+    $pending->refresh();
+    expect($pending->hidden_due_to_role_change)->toBeFalse();
+});
+
+test('upgrade clears role restriction on trashed listings too', function () {
+    $user = User::factory()->create([
+        'current_role' => 'normal_user',
+    ]);
+
+    $listing = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'hidden_due_to_role_change' => true,
+    ]);
+    $listing->delete();
+
+    $this->put(route('admin.users.update', $user), [
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+        'status' => 'active',
+    ]);
+
+    $listing->refresh();
+    expect($listing->hidden_due_to_role_change)->toBeFalse();
+});
+
+test('publicly visible scope excludes role restricted listings', function () {
+    $user = User::factory()->create();
+
+    $visible = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'is_visible' => true,
+        'hidden_due_to_role_change' => false,
+    ]);
+    $hidden = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'is_visible' => true,
+        'hidden_due_to_role_change' => true,
+    ]);
+
+    $results = Listing::publiclyVisible()->get();
+
+    expect($results->pluck('id'))->toContain($visible->id);
+    expect($results->pluck('id'))->not->toContain($hidden->id);
 });

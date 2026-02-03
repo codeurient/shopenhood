@@ -60,6 +60,14 @@
                     @enderror
                 </div>
 
+                @if($user->current_role === 'business_user' && $user->listings_count > 1)
+                <div x-show="role === 'normal_user'" x-transition>
+                    <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-800">
+                        This user has {{ $user->listings_count }} listings. Changing to Normal User will hide all but the most recent listing from public view. The hidden listings will be restored if the role is changed back to Business User.
+                    </div>
+                </div>
+                @endif
+
                 <div x-show="role === 'business_user'" x-transition>
                     <div class="p-4 bg-gray-50 rounded-lg space-y-4">
                         <div class="flex items-center gap-2">

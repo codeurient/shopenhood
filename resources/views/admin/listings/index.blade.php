@@ -29,7 +29,7 @@
     @endif
 
     <!-- Statistics -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
         <div class="bg-white rounded-lg shadow p-4">
             <p class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</p>
             <p class="text-gray-600 text-sm">Total</p>
@@ -49,6 +49,10 @@
         <div class="bg-white rounded-lg shadow p-4">
             <p class="text-2xl font-bold text-gray-600">{{ $stats['draft'] }}</p>
             <p class="text-gray-600 text-sm">Drafts</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-2xl font-bold text-purple-600">{{ $stats['deleted'] }}</p>
+            <p class="text-gray-600 text-sm">Deleted</p>
         </div>
     </div>
 
@@ -71,6 +75,7 @@
                     <option value="sold" {{ request('status') === 'sold' ? 'selected' : '' }}>Sold</option>
                     <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Expired</option>
                     <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted</option>
                 </select>
             </div>
             <div>
@@ -142,47 +147,72 @@
                         @endif
                     </td>
                     <td class="px-6 py-4">
-                        @php
-                            $statusColors = [
-                                'draft' => 'bg-gray-100 text-gray-700',
-                                'pending' => 'bg-yellow-100 text-yellow-700',
-                                'active' => 'bg-green-100 text-green-700',
-                                'sold' => 'bg-blue-100 text-blue-700',
-                                'expired' => 'bg-red-100 text-red-700',
-                                'rejected' => 'bg-red-100 text-red-700',
-                            ];
-                        @endphp
-                        <span class="px-2 py-1 text-xs font-semibold rounded {{ $statusColors[$listing->status] ?? 'bg-gray-100 text-gray-700' }}">
-                            {{ ucfirst($listing->status) }}
-                        </span>
+                        @if($listing->trashed())
+                            <span class="px-2 py-1 text-xs font-semibold rounded bg-purple-100 text-purple-700">
+                                Deleted
+                            </span>
+                            <div class="text-xs text-gray-500 mt-1">{{ $listing->deleted_at->diffForHumans() }}</div>
+                        @else
+                            @php
+                                $statusColors = [
+                                    'draft' => 'bg-gray-100 text-gray-700',
+                                    'pending' => 'bg-yellow-100 text-yellow-700',
+                                    'active' => 'bg-green-100 text-green-700',
+                                    'sold' => 'bg-blue-100 text-blue-700',
+                                    'expired' => 'bg-red-100 text-red-700',
+                                    'rejected' => 'bg-red-100 text-red-700',
+                                ];
+                            @endphp
+                            <span class="px-2 py-1 text-xs font-semibold rounded {{ $statusColors[$listing->status] ?? 'bg-gray-100 text-gray-700' }}">
+                                {{ ucfirst($listing->status) }}
+                            </span>
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-sm">
                         <div class="flex gap-2 flex-wrap">
-                            @if($listing->isPending())
-                            <form method="POST" action="{{ route('admin.listings.approval.approve', $listing) }}" class="inline-block">
-                                @csrf
-                                <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Approve</button>
-                            </form>
+                            @if($listing->trashed())
+                                <form method="POST" action="{{ route('admin.listings.restore', $listing->id) }}" class="inline-block">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Restore</button>
+                                </form>
+                                <form action="{{ route('admin.listings.force-delete', $listing->id) }}"
+                                      method="POST"
+                                      class="inline-block"
+                                      onsubmit="return confirm('Permanently delete this listing? This cannot be undone.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                                        Permanently Delete
+                                    </button>
+                                </form>
+                            @else
+                                @if($listing->isPending())
+                                <form method="POST" action="{{ route('admin.listings.approval.approve', $listing) }}" class="inline-block">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Approve</button>
+                                </form>
+                                @endif
+                                <a href="{{ route('admin.listings.show', $listing) }}"
+                                   class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 inline-block">
+                                    View
+                                </a>
+                                <a href="{{ route('admin.listings.edit', $listing) }}"
+                                   class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 inline-block">
+                                    Edit
+                                </a>
+                                <form action="{{ route('admin.listings.destroy', $listing) }}"
+                                      method="POST"
+                                      class="inline-block"
+                                      onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                                        Delete
+                                    </button>
+                                </form>
                             @endif
-                            <a href="{{ route('admin.listings.show', $listing) }}"
-                               class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 inline-block">
-                                View
-                            </a>
-                            <a href="{{ route('admin.listings.edit', $listing) }}"
-                               class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 inline-block">
-                                Edit
-                            </a>
-                            <form action="{{ route('admin.listings.destroy', $listing) }}"
-                                  method="POST"
-                                  class="inline-block"
-                                  onsubmit="return confirm('Are you sure you want to delete this listing?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                        class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
-                                    Delete
-                                </button>
-                            </form>
                         </div>
                     </td>
                 </tr>
