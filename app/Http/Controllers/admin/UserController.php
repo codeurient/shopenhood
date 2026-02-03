@@ -59,8 +59,8 @@ class UserController extends Controller
         $user->update([
             'current_role' => $validated['current_role'],
             'is_business_enabled' => $request->has('is_business_enabled'),
-            'listing_limit' => $validated['listing_limit'],
-            'business_valid_until' => $validated['business_valid_until'],
+            'listing_limit' => $validated['listing_limit'] ?? null,
+            'business_valid_until' => $validated['business_valid_until'] ?? null,
             'status' => $validated['status'],
         ]);
 

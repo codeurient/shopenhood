@@ -2,145 +2,188 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">My Listings</h2>
-            @php
-                $listingService = app(\App\Services\ListingService::class);
-                $remaining = $listingService->getRemainingListingSlots($user);
-                $limit = $user->getListingLimit();
-            @endphp
-            <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-600 dark:text-gray-400">
-                    @if($limit === null)
-                        Unlimited listings
-                    @else
-                        {{ $activeListings->count() }}/{{ $limit }} active
-                    @endif
-                </span>
-                @if($remaining === null || $remaining > 0)
-                    <a href="{{ route('user.listings.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
-                        Create Listing
-                    </a>
-                @endif
-            </div>
+            <a href="{{ route('user.listings.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium transition">
+                + Create Listing
+            </a>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="p-4 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 rounded-lg">
+                <div class="mb-4 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300 rounded-lg">
                     {{ session('success') }}
                 </div>
             @endif
 
             @if(session('error'))
-                <div class="p-4 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 rounded-lg">
+                <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg">
                     {{ session('error') }}
                 </div>
             @endif
 
-            {{-- Active Listings --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Active Listings</h3>
-
-                    @if($activeListings->isEmpty())
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">You don't have any listings yet.</p>
-                    @else
-                        <div class="space-y-4">
-                            @foreach($activeListings as $listing)
-                            <div class="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                                <div class="w-16 h-16 flex-shrink-0 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
-                                    @if($listing->primaryImage)
-                                        <img src="{{ asset('storage/' . $listing->primaryImage->image_path) }}" class="w-full h-full object-cover" alt="">
-                                    @else
-                                        <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No img</div>
-                                    @endif
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate">{{ $listing->title }}</h4>
-                                    <div class="flex items-center gap-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded font-medium
-                                            {{ $listing->status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : '' }}
-                                            {{ $listing->status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}
-                                            {{ $listing->status === 'draft' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' : '' }}
-                                            {{ $listing->status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : '' }}
-                                        ">{{ ucfirst($listing->status) }}</span>
-                                        @if($listing->category)
-                                            <span>{{ $listing->category->name }}</span>
-                                        @endif
-                                        @if($listing->expires_at)
-                                            <span>Expires: {{ $listing->expires_at->format('M d, Y') }}</span>
-                                        @endif
-                                        <span>{{ $listing->is_visible ? 'Visible' : 'Hidden' }}</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2 flex-shrink-0">
-                                    <form method="POST" action="{{ route('user.listings.toggle', $listing) }}">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="px-3 py-1 text-xs rounded border {{ $listing->is_visible ? 'border-yellow-400 text-yellow-600 hover:bg-yellow-50' : 'border-green-400 text-green-600 hover:bg-green-50' }}">
-                                            {{ $listing->is_visible ? 'Hide' : 'Show' }}
-                                        </button>
-                                    </form>
-                                    <a href="{{ route('user.listings.edit', $listing) }}" class="px-3 py-1 text-xs rounded border border-blue-400 text-blue-600 hover:bg-blue-50">Edit</a>
-                                    <form method="POST" action="{{ route('user.listings.destroy', $listing) }}" onsubmit="return confirm('Delete this listing?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="px-3 py-1 text-xs rounded border border-red-400 text-red-600 hover:bg-red-50">Delete</button>
-                                    </form>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    @endif
+            <!-- Active Listings -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Active Listings ({{ $activeListings->count() }})</h3>
                 </div>
+
+                @if($activeListings->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Listing</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Category</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Price</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            @foreach($activeListings as $listing)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        @if($listing->primaryImage)
+                                            <img src="{{ asset('storage/' . $listing->primaryImage->image_path) }}"
+                                                 alt="{{ $listing->title }}"
+                                                 class="w-12 h-12 rounded object-cover mr-3">
+                                        @else
+                                            <div class="w-12 h-12 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center mr-3">
+                                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <a href="{{ route('user.listings.show', $listing) }}" class="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400">{{ $listing->title }}</a>
+                                            @if($listing->listingType)
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ $listing->listingType->name }}</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                                    {{ $listing->category->name ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                                    @if($listing->base_price)
+                                        {{ $listing->currency ?? 'USD' }} {{ number_format($listing->base_price, 2) }}
+                                    @else
+                                        <span class="text-gray-400 dark:text-gray-500">N/A</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    @php
+                                        $statusColors = [
+                                            'draft' => 'bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200',
+                                            'pending' => 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300',
+                                            'active' => 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300',
+                                            'sold' => 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300',
+                                            'expired' => 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300',
+                                            'rejected' => 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300',
+                                        ];
+                                    @endphp
+                                    <span class="px-2 py-1 text-xs font-semibold rounded {{ $statusColors[$listing->status] ?? 'bg-gray-100 text-gray-700' }}">
+                                        {{ ucfirst($listing->status) }}
+                                    </span>
+                                    @if($listing->status === 'rejected' && $listing->rejection_reason)
+                                        <p class="text-xs text-red-500 dark:text-red-400 mt-1 max-w-xs truncate" title="{{ $listing->rejection_reason }}">{{ $listing->rejection_reason }}</p>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('user.listings.edit', $listing) }}"
+                                           class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-xs transition">
+                                            Edit
+                                        </a>
+                                        <form action="{{ route('user.listings.toggle', $listing) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-500 text-xs transition">
+                                                {{ $listing->is_visible ? 'Hide' : 'Show' }}
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('user.listings.destroy', $listing) }}" method="POST" class="inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <div class="px-6 py-12 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <p class="text-gray-500 dark:text-gray-400 text-lg mb-2">No listings yet</p>
+                    <a href="{{ route('user.listings.create') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                        Create your first listing
+                    </a>
+                </div>
+                @endif
             </div>
 
-            {{-- Trashed Listings --}}
-            @if($trashedListings->isNotEmpty())
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Deleted Listings</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                        Deleted listings are permanently removed after {{ $retentionDays }} days. You can reshare them before that.
+            <!-- Trashed Listings -->
+            @if($trashedListings->count() > 0)
+            <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        Deleted Listings ({{ $trashedListings->count() }})
+                    </h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Deleted listings are kept for {{ $retentionDays }} days before being permanently removed.
                     </p>
+                </div>
 
-                    <div class="space-y-4">
-                        @foreach($trashedListings as $listing)
-                        @php
-                            $daysRemaining = max(0, $retentionDays - (int) $listing->deleted_at->diffInDays(now()));
-                        @endphp
-                        <div class="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 opacity-75">
-                            <div class="w-16 h-16 flex-shrink-0 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden">
-                                @if($listing->primaryImage)
-                                    <img src="{{ asset('storage/' . $listing->primaryImage->image_path) }}" class="w-full h-full object-cover grayscale" alt="">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No img</div>
-                                @endif
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-medium text-gray-600 dark:text-gray-400 truncate">{{ $listing->title }}</h4>
-                                <div class="flex items-center gap-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                    <span class="text-red-500">{{ $daysRemaining }} days before permanent deletion</span>
-                                    <span>Deleted: {{ $listing->deleted_at->format('M d, Y') }}</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2 flex-shrink-0">
-                                <form method="POST" action="{{ route('user.listings.reshare', $listing) }}">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1 text-xs rounded border border-green-400 text-green-600 hover:bg-green-50 font-medium">Reshare</button>
-                                </form>
-                                @if($user->isBusinessUser())
-                                <form method="POST" action="{{ route('user.listings.force-destroy', $listing) }}" onsubmit="return confirm('Permanently delete? This cannot be undone.')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-3 py-1 text-xs rounded border border-red-400 text-red-600 hover:bg-red-50">Permanently Delete</button>
-                                </form>
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Listing</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Deleted</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            @foreach($trashedListings as $listing)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 opacity-75">
+                                <td class="px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $listing->title }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $listing->category->name ?? '-' }}</div>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $listing->deleted_at->diffForHumans() }}
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    <div class="flex gap-2">
+                                        <form action="{{ route('user.listings.reshare', $listing->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs transition">
+                                                Reshare
+                                            </button>
+                                        </form>
+                                        @if($user->isBusinessUser())
+                                        <form action="{{ route('user.listings.force-destroy', $listing->id) }}" method="POST" class="inline"
+                                              onsubmit="return confirm('Permanently delete this listing? This cannot be undone.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
+                                                Permanently Delete
+                                            </button>
+                                        </form>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
             @endif

@@ -5,6 +5,8 @@ use App\Models\Listing;
 use App\Models\ListingType;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->user = User::factory()->create(['current_role' => 'normal_user']);
@@ -137,7 +139,7 @@ test('user can reshare a trashed listing', function () {
     $listing = Listing::factory()->create(['user_id' => $this->user->id]);
     $listing->delete();
 
-    $response = $this->post(route('user.listings.reshare', $listing));
+    $response = $this->post(route('user.listings.reshare', $listing->id));
 
     $response->assertRedirect(route('user.listings.index'));
 
@@ -150,7 +152,7 @@ test('normal user cannot force delete', function () {
     $listing = Listing::factory()->create(['user_id' => $this->user->id]);
     $listing->delete();
 
-    $response = $this->delete(route('user.listings.force-destroy', $listing));
+    $response = $this->delete(route('user.listings.force-destroy', $listing->id));
 
     $response->assertRedirect();
     $response->assertSessionHas('error');
@@ -168,7 +170,7 @@ test('business user can force delete trashed listing', function () {
     $listing = Listing::factory()->create(['user_id' => $businessUser->id]);
     $listing->delete();
 
-    $response = $this->delete(route('user.listings.force-destroy', $listing));
+    $response = $this->delete(route('user.listings.force-destroy', $listing->id));
 
     $response->assertRedirect(route('user.listings.index'));
     expect(Listing::withTrashed()->find($listing->id))->toBeNull();
@@ -211,4 +213,207 @@ test('purge command works', function () {
     $this->artisan('listings:purge-deleted')
         ->assertSuccessful()
         ->expectsOutputToContain('Purged 1');
+});
+
+test('user can create listing with main image and detail images', function () {
+    Storage::fake('public');
+
+    $response = $this->post(route('user.listings.store'), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => 'Listing With Images',
+        'description' => 'Description with images',
+        'main_image' => UploadedFile::fake()->image('main.jpg'),
+        'detail_images' => [
+            UploadedFile::fake()->image('detail1.jpg'),
+            UploadedFile::fake()->image('detail2.jpg'),
+        ],
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing = Listing::where('user_id', $this->user->id)->first();
+    expect($listing)->not->toBeNull();
+    expect($listing->images)->toHaveCount(3);
+
+    $primary = $listing->images->where('is_primary', true);
+    expect($primary)->toHaveCount(1);
+    expect($primary->first()->sort_order)->toBe(0);
+
+    $details = $listing->images->where('is_primary', false);
+    expect($details)->toHaveCount(2);
+});
+
+test('user can update listing with new main image', function () {
+    Storage::fake('public');
+
+    $listing = Listing::factory()->create([
+        'user_id' => $this->user->id,
+        'category_id' => $this->category->id,
+        'listing_type_id' => $this->listingType->id,
+    ]);
+
+    // Add existing primary image
+    $listing->images()->create([
+        'image_path' => 'listings/old-main.jpg',
+        'original_filename' => 'old-main.jpg',
+        'file_size' => 1000,
+        'mime_type' => 'image/jpeg',
+        'sort_order' => 0,
+        'is_primary' => true,
+    ]);
+
+    $response = $this->put(route('user.listings.update', $listing), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => 'Updated With New Image',
+        'description' => 'Updated description',
+        'main_image' => UploadedFile::fake()->image('new-main.jpg'),
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing->refresh();
+    $listing->load('images');
+
+    // Old primary should now be non-primary
+    $oldImage = $listing->images->where('image_path', 'listings/old-main.jpg')->first();
+    expect($oldImage->is_primary)->toBeFalse();
+
+    // New primary should exist
+    $newPrimary = $listing->images->where('is_primary', true)->first();
+    expect($newPrimary)->not->toBeNull();
+    expect($newPrimary->sort_order)->toBe(0);
+});
+
+test('user can delete images during update', function () {
+    $listing = Listing::factory()->create([
+        'user_id' => $this->user->id,
+        'category_id' => $this->category->id,
+        'listing_type_id' => $this->listingType->id,
+    ]);
+
+    $image = $listing->images()->create([
+        'image_path' => 'listings/to-delete.jpg',
+        'original_filename' => 'to-delete.jpg',
+        'file_size' => 1000,
+        'mime_type' => 'image/jpeg',
+        'sort_order' => 1,
+        'is_primary' => false,
+    ]);
+
+    $response = $this->put(route('user.listings.update', $listing), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => $listing->title,
+        'description' => $listing->description,
+        'delete_images' => [$image->id],
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    expect($listing->images()->count())->toBe(0);
+});
+
+test('business user can set store name on listing', function () {
+    $businessUser = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+    ]);
+    $this->actingAs($businessUser);
+
+    $response = $this->post(route('user.listings.store'), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => 'Business Listing',
+        'description' => 'From my store',
+        'store_name' => 'My Awesome Store',
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing = Listing::where('user_id', $businessUser->id)->first();
+    expect($listing->store_name)->toBe('My Awesome Store');
+});
+
+test('normal user store name is ignored', function () {
+    $response = $this->post(route('user.listings.store'), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => 'Normal User Listing',
+        'description' => 'Description',
+        'store_name' => 'Should Be Ignored',
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing = Listing::where('user_id', $this->user->id)->first();
+    expect($listing->store_name)->toBeNull();
+});
+
+test('public category children api returns root categories', function () {
+    $parent = Category::factory()->create([
+        'parent_id' => null,
+        'is_active' => true,
+        'name' => 'Root Category',
+    ]);
+
+    $response = $this->getJson(route('api.categories.children'));
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('success', true);
+    $response->assertJsonFragment(['name' => 'Root Category']);
+});
+
+test('public category children api returns child categories', function () {
+    $parent = Category::factory()->create([
+        'parent_id' => null,
+        'is_active' => true,
+        'name' => 'Parent',
+    ]);
+
+    $child = Category::factory()->create([
+        'parent_id' => $parent->id,
+        'is_active' => true,
+        'name' => 'Child Category',
+    ]);
+
+    $response = $this->getJson(route('api.categories.children', $parent));
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('success', true);
+    $response->assertJsonFragment(['name' => 'Child Category']);
+});
+
+test('public category children api excludes inactive categories', function () {
+    Category::factory()->create([
+        'parent_id' => null,
+        'is_active' => false,
+        'name' => 'Inactive Category',
+    ]);
+
+    $response = $this->getJson(route('api.categories.children'));
+
+    $response->assertSuccessful();
+    $response->assertJsonMissing(['name' => 'Inactive Category']);
+});
+
+test('edit page passes category chain for pre-selection', function () {
+    $parent = Category::factory()->create(['parent_id' => null, 'is_active' => true]);
+    $child = Category::factory()->create(['parent_id' => $parent->id, 'is_active' => true]);
+
+    $listing = Listing::factory()->create([
+        'user_id' => $this->user->id,
+        'category_id' => $child->id,
+    ]);
+
+    $response = $this->get(route('user.listings.edit', $listing));
+
+    $response->assertSuccessful();
+    $response->assertViewHas('categoryChain');
+
+    $chain = $response->viewData('categoryChain');
+    expect($chain)->toHaveCount(2);
+    expect($chain[0]['id'])->toBe($parent->id);
+    expect($chain[1]['id'])->toBe($child->id);
 });

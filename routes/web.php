@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\ListingController as UserListingController;
 use Illuminate\Support\Facades\Route;
@@ -16,35 +19,45 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Listing Routes
+// Public API Routes
+Route::get('/api/categories/children/{category?}', [CategoryController::class, 'getChildren'])->name('api.categories.children');
+Route::get('/api/categories/{category}/variants', [CategoryController::class, 'getVariants'])->name('api.categories.variants');
+Route::get('/api/categories/{category}/hierarchy', [CategoryController::class, 'getHierarchy'])->name('api.categories.hierarchy');
+
+// Public Listing Routes
+Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');
 Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])->name('listings.show');
 Route::post('/listings/{listing}/available-options', [ListingController::class, 'getAvailableOptions'])->name('listings.available-options');
 Route::get('/variations/{variation}', [ListingController::class, 'getVariation'])->name('variations.show');
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Notifications
+    Route::post('/notifications/mark-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-read');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 
     // User Listing Management
     Route::prefix('my-listings')->name('user.listings.')->group(function () {
         Route::get('/', [UserListingController::class, 'index'])->name('index');
         Route::get('/create', [UserListingController::class, 'create'])->name('create');
         Route::post('/', [UserListingController::class, 'store'])->name('store');
+        Route::get('/{listing}', [UserListingController::class, 'show'])->name('show');
         Route::get('/{listing}/edit', [UserListingController::class, 'edit'])->name('edit');
         Route::put('/{listing}', [UserListingController::class, 'update'])->name('update');
         Route::patch('/{listing}/toggle', [UserListingController::class, 'toggleVisibility'])->name('toggle');
         Route::delete('/{listing}', [UserListingController::class, 'destroy'])->name('destroy');
-        Route::delete('/{listing}/force', [UserListingController::class, 'forceDestroy'])->name('force-destroy');
-        Route::post('/{listing}/reshare', [UserListingController::class, 'reshare'])->name('reshare');
+        Route::delete('/{listing_id}/force', [UserListingController::class, 'forceDestroy'])->name('force-destroy');
+        Route::post('/{listing_id}/reshare', [UserListingController::class, 'reshare'])->name('reshare');
     });
 });
 

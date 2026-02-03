@@ -65,6 +65,7 @@ class ListingController extends Controller
             'active' => Listing::where('status', 'active')->count(),
             'pending' => Listing::where('status', 'pending')->count(),
             'draft' => Listing::where('status', 'draft')->count(),
+            'rejected' => Listing::where('status', 'rejected')->count(),
         ];
 
         return view('admin.listings.index', compact(
@@ -109,6 +110,11 @@ class ListingController extends Controller
             'is_visible' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'availability_type' => 'nullable|in:in_stock,available_by_order',
+            'has_delivery' => 'nullable|boolean',
+            'has_domestic_delivery' => 'nullable|boolean',
+            'domestic_delivery_price' => 'nullable|numeric|min:0',
+            'has_international_delivery' => 'nullable|boolean',
+            'international_delivery_price' => 'nullable|numeric|min:0',
             'status' => 'required|in:draft,pending,active',
             'country' => 'nullable|string|max:100',
             'city' => 'nullable|string|max:100',
@@ -155,6 +161,9 @@ class ListingController extends Controller
             $validated['is_negotiable'] = $request->has('is_negotiable');
             $validated['is_visible'] = $request->has('is_visible') ? true : false;
             $validated['is_featured'] = $request->has('is_featured');
+            $validated['has_delivery'] = $request->has('has_delivery');
+            $validated['has_domestic_delivery'] = $request->has('has_domestic_delivery');
+            $validated['has_international_delivery'] = $request->has('has_international_delivery');
             $validated['currency'] = $validated['currency'] ?? 'USD';
             $validated['availability_type'] = $validated['availability_type'] ?? 'in_stock';
 
@@ -537,6 +546,11 @@ class ListingController extends Controller
             'is_visible' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'availability_type' => 'nullable|in:in_stock,available_by_order',
+            'has_delivery' => 'nullable|boolean',
+            'has_domestic_delivery' => 'nullable|boolean',
+            'domestic_delivery_price' => 'nullable|numeric|min:0',
+            'has_international_delivery' => 'nullable|boolean',
+            'international_delivery_price' => 'nullable|numeric|min:0',
             'status' => 'required|in:draft,pending,active',
             'country' => 'nullable|string|max:100',
             'city' => 'nullable|string|max:100',
@@ -577,6 +591,9 @@ class ListingController extends Controller
             $validated['is_negotiable'] = $request->has('is_negotiable');
             $validated['is_visible'] = $request->has('is_visible');
             $validated['is_featured'] = $request->has('is_featured');
+            $validated['has_delivery'] = $request->has('has_delivery');
+            $validated['has_domestic_delivery'] = $request->has('has_domestic_delivery');
+            $validated['has_international_delivery'] = $request->has('has_international_delivery');
 
             // Update listing
             $listing->update($validated);

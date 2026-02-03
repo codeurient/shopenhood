@@ -27,8 +27,21 @@ class StoreUserListingRequest extends FormRequest
             'is_negotiable' => 'nullable|boolean',
             'country' => 'nullable|string|max:100',
             'city' => 'nullable|string|max:100',
-            'images' => 'nullable|array|max:10',
-            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'store_name' => 'nullable|string|max:255',
+            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'detail_images' => 'nullable|array|max:10',
+            'detail_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'variants' => 'nullable|array',
+            'variations' => 'nullable|array',
+            'variations.*.sku' => 'required_with:variations|string|max:100',
+            'variations.*.attributes' => 'nullable|array',
+            'variations.*.price' => 'required_with:variations|numeric|min:0',
+            'variations.*.discount_price' => 'nullable|numeric|min:0',
+            'variations.*.stock_quantity' => 'nullable|integer|min:0',
+            'variations.*.is_default' => 'nullable|boolean',
+            'variations.*.is_active' => 'nullable|boolean',
+            'variations.*.images' => 'nullable|array',
+            'variations.*.images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
         ];
     }
 
@@ -42,8 +55,9 @@ class StoreUserListingRequest extends FormRequest
             'description.required' => 'Please describe your listing.',
             'category_id.required' => 'Please select a category.',
             'listing_type_id.required' => 'Please select a listing type.',
-            'images.max' => 'You can upload a maximum of 10 images.',
-            'images.*.max' => 'Each image must be less than 5MB.',
+            'detail_images.max' => 'You can upload a maximum of 10 detail images.',
+            'detail_images.*.max' => 'Each image must be less than 5MB.',
+            'main_image.max' => 'The main image must be less than 5MB.',
         ];
     }
 }

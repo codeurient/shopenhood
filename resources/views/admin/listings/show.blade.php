@@ -33,6 +33,65 @@
             </div>
         </div>
 
+        {{-- Approval Panel --}}
+        @if($listing->isPending())
+        <div x-data="{ showRejectModal: false }" class="mb-6 bg-yellow-50 border border-yellow-300 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="font-medium text-yellow-800">This listing is pending approval</span>
+                </div>
+                <div class="flex gap-2">
+                    <form method="POST" action="{{ route('admin.listings.approval.approve', $listing) }}">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700">
+                            Approve
+                        </button>
+                    </form>
+                    <button @click="showRejectModal = true" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700">
+                        Reject
+                    </button>
+                </div>
+            </div>
+
+            {{-- Rejection Modal --}}
+            <div x-show="showRejectModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @keydown.escape.window="showRejectModal = false">
+                <div @click.away="showRejectModal = false" class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Reject Listing</h3>
+                    <form method="POST" action="{{ route('admin.listings.approval.reject', $listing) }}">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="rejection_reason" class="block text-sm font-medium text-gray-700 mb-1">Reason for rejection</label>
+                            <textarea name="rejection_reason" id="rejection_reason" rows="4" required maxlength="500"
+                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                placeholder="Explain why this listing is being rejected..."></textarea>
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" @click="showRejectModal = false" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-300">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700">Reject Listing</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Rejection Info --}}
+        @if($listing->isRejected() && $listing->rejection_reason)
+        <div class="mb-6 bg-red-50 border border-red-300 rounded-lg p-4">
+            <div class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div>
+                    <p class="font-medium text-red-800">This listing was rejected</p>
+                    <p class="text-sm text-red-700 mt-1">{{ $listing->rejection_reason }}</p>
+                    @if($listing->rejected_at)
+                    <p class="text-xs text-red-500 mt-1">Rejected {{ $listing->rejected_at->diffForHumans() }}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Content -->
             <div class="lg:col-span-2 space-y-6">

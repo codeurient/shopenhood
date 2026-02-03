@@ -31,6 +31,11 @@ class Listing extends Model
         'is_featured',
         'is_negotiable',
         'availability_type',
+        'has_delivery',
+        'has_domestic_delivery',
+        'domestic_delivery_price',
+        'has_international_delivery',
+        'international_delivery_price',
         'location_id',
         'country',
         'city',
@@ -57,6 +62,11 @@ class Listing extends Model
         'expires_at' => 'datetime',
         'discount_start_date' => 'datetime',
         'discount_end_date' => 'datetime',
+        'has_delivery' => 'boolean',
+        'has_domestic_delivery' => 'boolean',
+        'domestic_delivery_price' => 'decimal:2',
+        'has_international_delivery' => 'boolean',
+        'international_delivery_price' => 'decimal:2',
     ];
 
     /**
@@ -260,9 +270,43 @@ class Listing extends Model
             ->where('status', 'active');
     }
 
+    public function scopePubliclyVisible($query)
+    {
+        return $query->where('status', 'active')
+            ->where('is_visible', true);
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeSearch($query, string $term)
+    {
+        return $query->where(function ($q) use ($term) {
+            $q->where('title', 'like', '%'.$term.'%')
+                ->orWhere('description', 'like', '%'.$term.'%');
+        });
+    }
+
     // ============================================
     // HELPERS
     // ============================================
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->status === 'rejected';
+    }
 
     public function isExpired(): bool
     {

@@ -1,146 +1,670 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Create Listing</h2>
-            <a href="{{ route('user.listings.index') }}" class="text-sm text-blue-600 hover:underline">&larr; Back to My Listings</a>
-        </div>
-    </x-slot>
+    {{-- <x-slot name="header">
+
+    </x-slot> --}}
 
     <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Create Listing</h2>
+                <a href="{{ route('user.listings.index') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 text-sm">
+                    &larr; Back to My Listings
+                </a>
+            </div>
+
+
+            @if($errors->any())
+                <div class="mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg">
+                    <ul class="list-disc list-inside">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             @if(session('error'))
-                <div class="mb-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg">
+                <div class="mb-4 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-300 rounded-lg">
                     {{ session('error') }}
                 </div>
             @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <form method="POST" action="{{ route('user.listings.store') }}" enctype="multipart/form-data">
-                        @csrf
 
-                        <div class="space-y-6">
-                            {{-- Listing Type --}}
-                            <div>
-                                <label for="listing_type_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Listing Type *</label>
-                                <select name="listing_type_id" id="listing_type_id" required
-                                    class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select type...</option>
-                                    @foreach($listingTypes as $type)
-                                        <option value="{{ $type->id }}" {{ old('listing_type_id') == $type->id ? 'selected' : '' }}>
-                                            {{ $type->icon }} {{ $type->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('listing_type_id')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
 
-                            {{-- Category --}}
-                            <div>
-                                <label for="category_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category *</label>
-                                <select name="category_id" id="category_id" required
-                                    class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select category...</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+            <form action="{{ route('user.listings.store') }}" method="POST" enctype="multipart/form-data" id="listingForm">
+                @csrf
 
-                            {{-- Title --}}
-                            <div>
-                                <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title *</label>
-                                <input type="text" name="title" id="title" value="{{ old('title') }}" required maxlength="255"
-                                    class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                @error('title')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {{-- Left Column: Main Content --}}
+                    <div class="lg:col-span-2 space-y-6">
 
-                            {{-- Description --}}
-                            <div>
-                                <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description *</label>
-                                <textarea name="description" id="description" rows="5" required
-                                    class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ old('description') }}</textarea>
-                                @error('description')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        {{-- Basic Information --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Basic Information</h3>
 
-                            {{-- Short Description --}}
-                            <div>
-                                <label for="short_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Short Description</label>
-                                <input type="text" name="short_description" id="short_description" value="{{ old('short_description') }}" maxlength="500"
-                                    class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-
-                            {{-- Price --}}
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-4">
+                                {{-- Listing Type --}}
                                 <div>
-                                    <label for="base_price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price</label>
-                                    <input type="number" name="base_price" id="base_price" value="{{ old('base_price') }}" step="0.01" min="0"
-                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                                    @error('base_price')
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Listing Type <span class="text-red-500">*</span>
+                                    </label>
+                                    <select name="listing_type_id" id="listing_type_id" required
+                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="">Select Type</option>
+                                        @foreach($listingTypes as $type)
+                                            <option value="{{ $type->id }}" {{ old('listing_type_id') == $type->id ? 'selected' : '' }}>
+                                                {{ $type->icon }} {{ $type->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                {{-- Category (Hierarchical) --}}
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Category <span class="text-red-500">*</span>
+                                    </label>
+                                    <div id="categorySelectsContainer">
+                                        <select id="category_level_0" required
+                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 category-select"
+                                                data-level="0">
+                                            <option value="">Select Category</option>
+                                        </select>
+                                    </div>
+                                    <input type="hidden" name="category_id" id="category_id_hidden" required>
+                                    @error('category_id')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
+
+                                {{-- Title --}}
                                 <div>
-                                    <label for="currency" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Currency</label>
-                                    <input type="text" name="currency" id="currency" value="{{ old('currency', 'USD') }}" maxlength="3"
-                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Title <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="title" id="title" required maxlength="255"
+                                           value="{{ old('title') }}"
+                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    @error('title')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
-                            </div>
 
-                            {{-- Negotiable --}}
-                            <div class="flex items-center gap-2">
-                                <input type="checkbox" name="is_negotiable" id="is_negotiable" value="1" {{ old('is_negotiable') ? 'checked' : '' }}
-                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <label for="is_negotiable" class="text-sm text-gray-700 dark:text-gray-300">Price is negotiable</label>
-                            </div>
-
-                            {{-- Location --}}
-                            <div class="grid grid-cols-2 gap-4">
+                                {{-- Short Description --}}
                                 <div>
-                                    <label for="country" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Country</label>
-                                    <input type="text" name="country" id="country" value="{{ old('country') }}" maxlength="100"
-                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Short Description
+                                    </label>
+                                    <textarea name="short_description" rows="2" maxlength="500"
+                                              placeholder="Brief summary for preview (optional)"
+                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('short_description') }}</textarea>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Short summary shown in listings (max 500 characters)</p>
                                 </div>
+
+                                {{-- Full Description --}}
                                 <div>
-                                    <label for="city" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">City</label>
-                                    <input type="text" name="city" id="city" value="{{ old('city') }}" maxlength="100"
-                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Full Description <span class="text-red-500">*</span>
+                                    </label>
+                                    <textarea name="description" rows="6" required
+                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('description') }}</textarea>
+                                    @error('description')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
-                            </div>
-
-                            {{-- Images --}}
-                            <div>
-                                <label for="images" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Images (max 10)</label>
-                                <input type="file" name="images[]" id="images" multiple accept="image/*"
-                                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                                <p class="mt-1 text-xs text-gray-500">The first image will be used as the primary image.</p>
-                                @error('images')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                                @error('images.*')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
-                                <a href="{{ route('user.listings.index') }}" class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300">Cancel</a>
-                                <button type="submit" class="px-6 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 font-medium">Submit Listing</button>
                             </div>
                         </div>
-                    </form>
+
+                        {{-- Pricing --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Pricing</h3>
+
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Base Price</label>
+                                        <input type="number" name="base_price" step="0.01" min="0"
+                                               value="{{ old('base_price') }}"
+                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                        @error('base_price')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Currency</label>
+                                        <select name="currency"
+                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
+                                            <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR</option>
+                                            <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" name="is_negotiable" id="is_negotiable" value="1"
+                                           {{ old('is_negotiable') ? 'checked' : '' }}
+                                           class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500">
+                                    <label for="is_negotiable" class="text-sm text-gray-700 dark:text-gray-300">Price is negotiable</label>
+                                </div>
+
+                                {{-- Discount Pricing --}}
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                    <div class="flex items-center mb-3">
+                                        <input type="checkbox" id="has_discount" class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                        <label for="has_discount" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Apply Discount</label>
+                                    </div>
+
+                                    <div id="discountFields" class="hidden space-y-4">
+                                        <div class="grid grid-cols-3 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Discount Price</label>
+                                                <input type="number" name="discount_price" id="discount_price" step="0.01" min="0"
+                                                       value="{{ old('discount_price') }}"
+                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
+                                                <input type="datetime-local" name="discount_start_date" id="discount_start_date"
+                                                       value="{{ old('discount_start_date') }}"
+                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">End Date</label>
+                                                <input type="datetime-local" name="discount_end_date" id="discount_end_date"
+                                                       value="{{ old('discount_end_date') }}"
+                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">The discount price will be shown with a strikethrough on the original price during the specified period.</p>
+                                    </div>
+                                </div>
+
+                                {{-- Product Availability --}}
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Product Availability</label>
+                                    <div class="flex gap-6">
+                                        <label class="flex items-center">
+                                            <input type="radio" name="availability_type" value="in_stock"
+                                                   {{ old('availability_type', 'in_stock') === 'in_stock' ? 'checked' : '' }}
+                                                   class="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">In Stock</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="availability_type" value="available_by_order"
+                                                   {{ old('availability_type') === 'available_by_order' ? 'checked' : '' }}
+                                                   class="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Available by Order</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {{-- Delivery Options --}}
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                    <div class="flex items-center mb-3">
+                                        <input type="checkbox" id="has_delivery" name="has_delivery" value="1"
+                                               {{ old('has_delivery') ? 'checked' : '' }}
+                                               class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                        <label for="has_delivery" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Delivery Available</label>
+                                    </div>
+
+                                    <div id="deliveryFields" class="{{ old('has_delivery') ? '' : 'hidden' }} space-y-3 ml-6">
+                                        <div class="flex items-start gap-4">
+                                            <label class="flex items-center mt-2">
+                                                <input type="checkbox" name="has_domestic_delivery" value="1"
+                                                       {{ old('has_domestic_delivery') ? 'checked' : '' }}
+                                                       class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Domestic Delivery</span>
+                                            </label>
+                                            <div>
+                                                <input type="number" name="domestic_delivery_price" step="0.01" min="0"
+                                                       value="{{ old('domestic_delivery_price') }}" placeholder="Price"
+                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-4">
+                                            <label class="flex items-center mt-2">
+                                                <input type="checkbox" name="has_international_delivery" value="1"
+                                                       {{ old('has_international_delivery') ? 'checked' : '' }}
+                                                       class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">International Delivery</span>
+                                            </label>
+                                            <div>
+                                                <input type="number" name="international_delivery_price" step="0.01" min="0"
+                                                       value="{{ old('international_delivery_price') }}" placeholder="Price"
+                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Location --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Location</h3>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country</label>
+                                    <select name="country" id="country"
+                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="">Select Country</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City</label>
+                                    <select name="city" id="city" disabled
+                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="">Select country first</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Store Name (Business Users Only) --}}
+                        @if(auth()->user()->isBusinessUser())
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Store Information</h3>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Store Name</label>
+                                <input type="text" name="store_name" value="{{ old('store_name') }}" maxlength="255"
+                                       placeholder="Enter your store name"
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">This will be displayed as "Shared from [Store Name]"</p>
+                            </div>
+                        </div>
+                        @endif
+
+                        {{-- Main Image --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Main Image</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">This image will be shown as the listing thumbnail</p>
+
+                            <input type="file" name="main_image" id="mainImage" accept="image/jpeg,image/png,image/jpg,image/webp"
+                                   class="w-full px-4 py-0 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg">
+                            <div id="mainImagePreview" class="mt-4 hidden">
+                                <img src="" alt="Preview" class="w-full h-48 object-cover rounded-lg">
+                            </div>
+                            @error('main_image')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Right Column: Variants & Detail Images --}}
+                    <div class="space-y-6">
+                        {{-- Dynamic Variants Container --}}
+                        <div id="variantsContainer" class="space-y-4">
+                            {{-- Variant cards will be dynamically inserted here --}}
+                        </div>
+
+                        {{-- Product Detail Images --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" style="margin-top: 0px">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Detail Images</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Additional images shown on the product details page (max 10)</p>
+
+                            <input type="file" name="detail_images[]" id="detailImages" multiple
+                                   accept="image/jpeg,image/png,image/jpg,image/webp"
+                                   class="w-full px-4 py-0 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg">
+
+                            <div id="detailImagesPreview" class="mt-4 grid grid-cols-2 gap-2"></div>
+
+                            <div id="detailImagesContainer" class="mt-4 space-y-2 hidden">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Selected Images:</span>
+                                    <button type="button" id="clearAllDetailImages"
+                                            class="text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
+                                        Clear All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                {{-- Product Variations Section --}}
+                <div class="mt-6">
+                    @include('user.listings.partials.variation-manager', ['mode' => 'create'])
+                </div>
+
+                {{-- Footer --}}
+                <div class="mt-6 flex justify-end gap-4">
+                    <a href="{{ route('user.listings.index') }}"
+                       class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
+                        Submit Listing
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+    // Global variables
+    const categoryContainer = document.getElementById('categorySelectsContainer');
+    const categoryHiddenInput = document.getElementById('category_id_hidden');
+    const variantsContainer = document.getElementById('variantsContainer');
+    const countrySelect = document.getElementById('country');
+    const citySelect = document.getElementById('city');
+
+    let categoryLevelsData = {};
+    let loadedVariantsByCategory = new Set();
+    let countriesData = {};
+
+    // Load countries and cities data
+    fetch('/json/countriesAndCities.json')
+        .then(response => response.json())
+        .then(data => {
+            countriesData = data;
+            populateCountries();
+        });
+
+    function populateCountries() {
+        Object.keys(countriesData).forEach(country => {
+            const option = document.createElement('option');
+            option.value = country;
+            option.textContent = country;
+            countrySelect.appendChild(option);
+        });
+    }
+
+    // Country change handler
+    countrySelect.addEventListener('change', function() {
+        citySelect.innerHTML = '<option value="">Select City</option>';
+        citySelect.disabled = true;
+
+        if (this.value && countriesData[this.value]) {
+            citySelect.disabled = false;
+            countriesData[this.value].forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        }
+    });
+
+    // Main image preview
+    document.getElementById('mainImage').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('mainImagePreview');
+                preview.querySelector('img').src = e.target.result;
+                preview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Detail images preview
+    document.getElementById('detailImages').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        const previewContainer = document.getElementById('detailImagesPreview');
+        const imagesContainer = document.getElementById('detailImagesContainer');
+
+        previewContainer.innerHTML = '';
+
+        if (files.length > 0) {
+            imagesContainer.classList.remove('hidden');
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'relative group';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg">
+                        <button type="button"
+                                class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                                onclick="removeDetailImage(${index})">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    `;
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        } else {
+            imagesContainer.classList.add('hidden');
+        }
+    });
+
+    // Clear all detail images
+    document.getElementById('clearAllDetailImages').addEventListener('click', function() {
+        document.getElementById('detailImages').value = '';
+        document.getElementById('detailImagesPreview').innerHTML = '';
+        document.getElementById('detailImagesContainer').classList.add('hidden');
+    });
+
+    // Remove individual detail image
+    function removeDetailImage(index) {
+        const input = document.getElementById('detailImages');
+        const dt = new DataTransfer();
+        Array.from(input.files).forEach((file, i) => {
+            if (i !== index) dt.items.add(file);
+        });
+        input.files = dt.files;
+        input.dispatchEvent(new Event('change'));
+    }
+
+    // Load root categories on page load
+    loadCategoriesForLevel(0, null);
+
+    // Category selection handler
+    categoryContainer.addEventListener('change', function(e) {
+        if (e.target.classList.contains('category-select')) {
+            const level = parseInt(e.target.dataset.level);
+            const categoryId = e.target.value;
+            const categoryName = e.target.options[e.target.selectedIndex].text;
+
+            removeSelectsAfterLevel(level);
+            removeVariantCardsAfterLevel(level);
+
+            if (categoryId) {
+                categoryHiddenInput.value = categoryId;
+                categoryLevelsData[level] = { id: categoryId, name: categoryName };
+
+                loadCategoriesForLevel(level + 1, categoryId);
+                loadVariantsForCategory(categoryId, categoryName, level);
+
+                // Emit event for variation manager
+                window.dispatchEvent(new CustomEvent('category-changed', {
+                    detail: { categoryId, categoryName, level }
+                }));
+            } else {
+                categoryHiddenInput.value = '';
+                delete categoryLevelsData[level];
+            }
+        }
+    });
+
+    const selectClass = 'w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 category-select';
+
+    function loadCategoriesForLevel(level, parentId) {
+        const url = parentId
+            ? `/api/categories/children/${parentId}`
+            : '/api/categories/children';
+
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.categories.length > 0) {
+                const existing = document.getElementById('category_level_' + level);
+                if (existing) existing.remove();
+
+                const sel = document.createElement('select');
+                sel.id = 'category_level_' + level;
+                sel.className = selectClass + (level > 0 ? ' mt-3' : '');
+                sel.dataset.level = level;
+                sel.innerHTML = '<option value="">Select ' + (level === 0 ? 'Category' : 'Subcategory') + '</option>';
+
+                data.categories.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat.id;
+                    opt.textContent = cat.name;
+                    sel.appendChild(opt);
+                });
+
+                categoryContainer.appendChild(sel);
+            }
+        });
+    }
+
+    function removeSelectsAfterLevel(level) {
+        categoryContainer.querySelectorAll('.category-select').forEach(select => {
+            if (parseInt(select.dataset.level) > level) select.remove();
+        });
+    }
+
+    function loadVariantsForCategory(categoryId, categoryName, level) {
+        if (loadedVariantsByCategory.has(categoryId)) return;
+
+        const loadingCard = createLoadingCard(level);
+        variantsContainer.appendChild(loadingCard);
+
+        fetch(`/api/categories/${categoryId}/variants?show_all=true`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            loadingCard.remove();
+            if (data.success && data.variants.length > 0) {
+                loadedVariantsByCategory.add(categoryId);
+                renderVariantsCard(data.variants, categoryName, level, categoryId);
+            }
+        })
+        .catch(err => {
+            loadingCard.remove();
+        });
+    }
+
+    function createLoadingCard(level) {
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-gray-800 rounded-lg shadow p-6';
+        card.dataset.level = level;
+        card.innerHTML = `
+            <div class="text-center py-4">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                <p class="text-gray-600 dark:text-gray-400 mt-2 text-sm">Loading variants...</p>
+            </div>
+        `;
+        return card;
+    }
+
+    function renderVariantsCard(variants, categoryName, level, categoryId) {
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-gray-800 rounded-lg shadow p-6 variant-card';
+        card.dataset.level = level;
+        card.dataset.categoryId = categoryId;
+
+        let levelLabel = level === 0 ? 'Category' : (level === 1 ? 'Subcategory' : 'Level ' + (level + 1));
+        const inputClass = 'w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500';
+
+        let html = `
+            <div class="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">${levelLabel} Attributes</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${categoryName}</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded">
+                        ${variants.length} attribute${variants.length !== 1 ? 's' : ''}
+                    </span>
+                </div>
+            </div>
+            <div class="space-y-4">
+        `;
+
+        variants.forEach(variant => {
+            html += `<div>`;
+            html += `<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">${variant.name} ${variant.is_required ? '<span class="text-red-500">*</span>' : ''}</label>`;
+
+            if (variant.type === 'select') {
+                html += `<select name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''} class="${inputClass}"><option value="">Select ${variant.name}</option>`;
+                variant.items.forEach(item => {
+                    html += `<option value="${item.id}">${item.display_value}</option>`;
+                });
+                html += `</select>`;
+            } else if (variant.type === 'radio') {
+                html += `<div class="space-y-2">`;
+                variant.items.forEach((item, index) => {
+                    html += `<label class="flex items-center"><input type="radio" name="variants[${variant.id}]" value="${item.id}" ${variant.is_required && index === 0 ? 'required' : ''} class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"><span class="ml-2 text-sm text-gray-700 dark:text-gray-300">${item.display_value}</span></label>`;
+                });
+                html += `</div>`;
+            } else if (variant.type === 'checkbox') {
+                html += `<div class="space-y-2">`;
+                variant.items.forEach(item => {
+                    html += `<label class="flex items-center"><input type="checkbox" name="variants[${variant.id}][]" value="${item.id}" class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"><span class="ml-2 text-sm text-gray-700 dark:text-gray-300">${item.display_value}</span></label>`;
+                });
+                html += `</div>`;
+            } else if (variant.type === 'text') {
+                html += `<input type="text" name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''} placeholder="${variant.placeholder || ''}" class="${inputClass}">`;
+            } else if (variant.type === 'number') {
+                html += `<input type="number" name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''} placeholder="${variant.placeholder || ''}" class="${inputClass}">`;
+            } else if (variant.type === 'range') {
+                html += `<input type="range" name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''} class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer">`;
+            }
+
+            html += `</div>`;
+        });
+
+        html += `</div>`;
+        card.innerHTML = html;
+        variantsContainer.appendChild(card);
+    }
+
+    function removeVariantCardsAfterLevel(level) {
+        variantsContainer.querySelectorAll('.variant-card').forEach(card => {
+            const cardLevel = parseInt(card.dataset.level);
+            if (cardLevel >= level) {
+                const categoryId = card.dataset.categoryId;
+                if (categoryId) loadedVariantsByCategory.delete(categoryId);
+                card.remove();
+            }
+        });
+    }
+
+    // Discount toggle
+    const hasDiscountCheckbox = document.getElementById('has_discount');
+    const discountFields = document.getElementById('discountFields');
+    if (hasDiscountCheckbox) {
+        hasDiscountCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                discountFields.classList.remove('hidden');
+            } else {
+                discountFields.classList.add('hidden');
+                document.getElementById('discount_price').value = '';
+                document.getElementById('discount_start_date').value = '';
+                document.getElementById('discount_end_date').value = '';
+            }
+        });
+    }
+
+    // Delivery toggle
+    const hasDeliveryCheckbox = document.getElementById('has_delivery');
+    const deliveryFields = document.getElementById('deliveryFields');
+    if (hasDeliveryCheckbox) {
+        hasDeliveryCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                deliveryFields.classList.remove('hidden');
+            } else {
+                deliveryFields.classList.add('hidden');
+            }
+        });
+    }
+    </script>
+    @endpush
 </x-app-layout>

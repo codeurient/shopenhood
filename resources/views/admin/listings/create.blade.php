@@ -177,6 +177,42 @@
                             </div>
                         </div>
 
+                        <!-- Delivery Options -->
+                        <div class="border-t pt-4">
+                            <div class="flex items-center mb-3">
+                                <input type="checkbox" id="has_delivery" name="has_delivery" value="1" {{ old('has_delivery') ? 'checked' : '' }}
+                                       class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                <label for="has_delivery" class="ml-2 text-sm font-medium text-gray-700">Delivery Available</label>
+                            </div>
+
+                            <div id="deliveryFields" class="{{ old('has_delivery') ? '' : 'hidden' }} space-y-3 ml-6">
+                                <div class="flex items-start gap-4">
+                                    <label class="flex items-center mt-2">
+                                        <input type="checkbox" name="has_domestic_delivery" value="1" {{ old('has_domestic_delivery') ? 'checked' : '' }}
+                                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                        <span class="ml-2 text-sm text-gray-700">Domestic Delivery</span>
+                                    </label>
+                                    <div>
+                                        <input type="number" name="domestic_delivery_price" step="0.01" min="0"
+                                               value="{{ old('domestic_delivery_price') }}" placeholder="Price"
+                                               class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <label class="flex items-center mt-2">
+                                        <input type="checkbox" name="has_international_delivery" value="1" {{ old('has_international_delivery') ? 'checked' : '' }}
+                                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                        <span class="ml-2 text-sm text-gray-700">International Delivery</span>
+                                    </label>
+                                    <div>
+                                        <input type="number" name="international_delivery_price" step="0.01" min="0"
+                                               value="{{ old('international_delivery_price') }}" placeholder="Price"
+                                               class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="flex items-center gap-6 border-t pt-4">
                             <label class="flex items-center">
                                 <input type="checkbox" name="is_negotiable" value="1" {{ old('is_negotiable') ? 'checked' : '' }}
@@ -420,6 +456,19 @@ hasDiscountCheckbox.addEventListener('change', function() {
         document.getElementById('discount_end_date').value = '';
     }
 });
+
+// Delivery fields toggle
+const hasDeliveryCheckbox = document.getElementById('has_delivery');
+const deliveryFields = document.getElementById('deliveryFields');
+if (hasDeliveryCheckbox) {
+    hasDeliveryCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            deliveryFields.classList.remove('hidden');
+        } else {
+            deliveryFields.classList.add('hidden');
+        }
+    });
+}
 
 // Main image preview
 document.getElementById('mainImage').addEventListener('change', function(e) {

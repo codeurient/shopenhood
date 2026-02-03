@@ -2,12 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Listing;
+use App\Models\ListingType;
 use App\Models\ProductVariation;
+use App\Models\SearchQuery;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ListingController extends Controller
 {
+    public function index(Request $request): View
+    {
+        $query = Listing::publiclyVisible()
+            ->with(['category', 'listingType', 'primaryImage', 'firstImage']);
+
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        if ($request->filled('category')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('slug', $request->category);
+            });
+        }
+
+        if ($request->filled('type')) {
+            $query->where('listing_type_id', $request->type);
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('base_price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('base_price', '<=', $request->max_price);
+        }
+
+        $sort = $request->get('sort', 'newest');
+        $query = match ($sort) {
+            'price_asc' => $query->orderBy('base_price', 'asc'),
+            'price_desc' => $query->orderBy('base_price', 'desc'),
+            default => $query->latest(),
+        };
+
+        $listings = $query->paginate(12)->withQueryString();
+
+        // Log search query
+        if ($request->filled('search')) {
+            SearchQuery::create([
+                'query' => $request->search,
+                'user_id' => auth()->id(),
+                'results_count' => $listings->total(),
+                'filters' => array_filter([
+                    'category' => $request->category,
+                    'type' => $request->type,
+                    'min_price' => $request->min_price,
+                    'max_price' => $request->max_price,
+                    'sort' => $sort,
+                ]),
+            ]);
+        }
+
+        $categories = Category::whereNull('parent_id')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        $listingTypes = ListingType::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('listings.index', compact('listings', 'categories', 'listingTypes'));
+    }
+
     /**
      * Display the listing detail page
      */

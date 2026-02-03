@@ -29,42 +29,26 @@
     @endif
 
     <!-- Statistics -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600 text-2xl">📦</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ $stats['total'] }}</p>
-                    <p class="text-gray-600 text-sm">Total Listings</p>
-                </div>
-            </div>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</p>
+            <p class="text-gray-600 text-sm">Total</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600 text-2xl">✓</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ $stats['active'] }}</p>
-                    <p class="text-gray-600 text-sm">Active</p>
-                </div>
-            </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-2xl font-bold text-green-600">{{ $stats['active'] }}</p>
+            <p class="text-gray-600 text-sm">Active</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 text-2xl">⏳</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ $stats['pending'] }}</p>
-                    <p class="text-gray-600 text-sm">Pending</p>
-                </div>
-            </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-2xl font-bold text-yellow-600">{{ $stats['pending'] }}</p>
+            <p class="text-gray-600 text-sm">Pending</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-gray-100 text-gray-600 text-2xl">📝</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ $stats['draft'] }}</p>
-                    <p class="text-gray-600 text-sm">Drafts</p>
-                </div>
-            </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-2xl font-bold text-red-600">{{ $stats['rejected'] }}</p>
+            <p class="text-gray-600 text-sm">Rejected</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-2xl font-bold text-gray-600">{{ $stats['draft'] }}</p>
+            <p class="text-gray-600 text-sm">Drafts</p>
         </div>
     </div>
 
@@ -86,6 +70,7 @@
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                     <option value="sold" {{ request('status') === 'sold' ? 'selected' : '' }}>Sold</option>
                     <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Expired</option>
+                    <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
                 </select>
             </div>
             <div>
@@ -172,14 +157,20 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-sm">
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 flex-wrap">
+                            @if($listing->isPending())
+                            <form method="POST" action="{{ route('admin.listings.approval.approve', $listing) }}" class="inline-block">
+                                @csrf
+                                <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Approve</button>
+                            </form>
+                            @endif
                             <a href="{{ route('admin.listings.show', $listing) }}"
                                class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 inline-block">
-                                👁️ View
+                                View
                             </a>
                             <a href="{{ route('admin.listings.edit', $listing) }}"
                                class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 inline-block">
-                                ✏️ Edit
+                                Edit
                             </a>
                             <form action="{{ route('admin.listings.destroy', $listing) }}"
                                   method="POST"
@@ -189,7 +180,7 @@
                                 @method('DELETE')
                                 <button type="submit"
                                         class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
-                                    🗑️ Delete
+                                    Delete
                                 </button>
                             </form>
                         </div>

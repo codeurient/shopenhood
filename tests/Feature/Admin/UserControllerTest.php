@@ -80,10 +80,10 @@ test('admin can set business user limit and validity', function () {
 });
 
 test('admin can suspend a user', function () {
-    $user = User::factory()->create(['status' => 'active']);
+    $user = User::factory()->create(['current_role' => 'normal_user', 'status' => 'active']);
 
     $response = $this->put(route('admin.users.update', $user), [
-        'current_role' => $user->current_role,
+        'current_role' => 'normal_user',
         'status' => 'suspended',
     ]);
 
