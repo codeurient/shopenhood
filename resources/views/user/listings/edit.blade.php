@@ -769,6 +769,35 @@
         });
     }
 
+    // Discount toggle
+    const hasDiscountCheckbox = document.getElementById('has_discount');
+    const discountFields = document.getElementById('discountFields');
+    if (hasDiscountCheckbox) {
+        hasDiscountCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                discountFields.classList.remove('hidden');
+            } else {
+                discountFields.classList.add('hidden');
+                document.getElementById('discount_price').value = '';
+                document.getElementById('discount_start_date').value = '';
+                document.getElementById('discount_end_date').value = '';
+            }
+        });
+    }
+
+    // Delivery toggle
+    const hasDeliveryCheckbox = document.getElementById('has_delivery');
+    const deliveryFields = document.getElementById('deliveryFields');
+    if (hasDeliveryCheckbox) {
+        hasDeliveryCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                deliveryFields.classList.remove('hidden');
+            } else {
+                deliveryFields.classList.add('hidden');
+            }
+        });
+    }
+
     // Pre-populate existing data on page load
     document.addEventListener('DOMContentLoaded', function() {
         @if($listing->category_id)

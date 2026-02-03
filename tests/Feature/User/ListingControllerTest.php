@@ -398,6 +398,108 @@ test('public category children api excludes inactive categories', function () {
     $response->assertJsonMissing(['name' => 'Inactive Category']);
 });
 
+test('user can create listing with discount fields', function () {
+    $response = $this->post(route('user.listings.store'), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => 'Discounted Item',
+        'description' => 'A discounted listing',
+        'base_price' => 100.00,
+        'discount_price' => 79.99,
+        'discount_start_date' => '2026-03-01 00:00:00',
+        'discount_end_date' => '2026-03-31 23:59:59',
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing = Listing::where('user_id', $this->user->id)->first();
+    expect($listing->discount_price)->toBe('79.99');
+    expect($listing->discount_start_date)->not->toBeNull();
+    expect($listing->discount_end_date)->not->toBeNull();
+});
+
+test('user can create listing with availability type', function () {
+    $response = $this->post(route('user.listings.store'), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => 'Available By Order Item',
+        'description' => 'An on-demand listing',
+        'availability_type' => 'available_by_order',
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing = Listing::where('user_id', $this->user->id)->first();
+    expect($listing->availability_type)->toBe('available_by_order');
+});
+
+test('user can create listing with delivery options', function () {
+    $response = $this->post(route('user.listings.store'), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => 'Delivered Item',
+        'description' => 'A listing with delivery',
+        'base_price' => 50.00,
+        'has_delivery' => '1',
+        'has_domestic_delivery' => '1',
+        'domestic_delivery_price' => 5.99,
+        'has_international_delivery' => '1',
+        'international_delivery_price' => 19.99,
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing = Listing::where('user_id', $this->user->id)->first();
+    expect($listing->has_delivery)->toBeTrue();
+    expect($listing->has_domestic_delivery)->toBeTrue();
+    expect($listing->domestic_delivery_price)->toBe('5.99');
+    expect($listing->has_international_delivery)->toBeTrue();
+    expect($listing->international_delivery_price)->toBe('19.99');
+});
+
+test('delivery defaults to false when checkbox not submitted', function () {
+    $response = $this->post(route('user.listings.store'), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => 'No Delivery Item',
+        'description' => 'A listing without delivery',
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing = Listing::where('user_id', $this->user->id)->first();
+    expect($listing->has_delivery)->toBeFalse();
+    expect($listing->has_domestic_delivery)->toBeFalse();
+    expect($listing->has_international_delivery)->toBeFalse();
+});
+
+test('user can update listing with delivery options', function () {
+    $listing = Listing::factory()->create([
+        'user_id' => $this->user->id,
+        'category_id' => $this->category->id,
+        'listing_type_id' => $this->listingType->id,
+        'has_delivery' => false,
+    ]);
+
+    $response = $this->put(route('user.listings.update', $listing), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => $listing->title,
+        'description' => $listing->description,
+        'has_delivery' => '1',
+        'has_domestic_delivery' => '1',
+        'domestic_delivery_price' => 8.50,
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing->refresh();
+    expect($listing->has_delivery)->toBeTrue();
+    expect($listing->has_domestic_delivery)->toBeTrue();
+    expect($listing->domestic_delivery_price)->toBe('8.50');
+    expect($listing->has_international_delivery)->toBeFalse();
+});
+
 test('edit page passes category chain for pre-selection', function () {
     $parent = Category::factory()->create(['parent_id' => null, 'is_active' => true]);
     $child = Category::factory()->create(['parent_id' => $parent->id, 'is_active' => true]);

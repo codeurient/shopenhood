@@ -91,6 +91,9 @@ class ListingController extends Controller
             $validated['status'] = 'pending';
             $validated['is_visible'] = true;
             $validated['is_negotiable'] = $request->has('is_negotiable');
+            $validated['has_delivery'] = $request->has('has_delivery');
+            $validated['has_domestic_delivery'] = $request->has('has_domestic_delivery');
+            $validated['has_international_delivery'] = $request->has('has_international_delivery');
             $validated['expires_at'] = $this->listingService->calculateExpiresAt();
 
             // Store name only for business users
@@ -224,6 +227,9 @@ class ListingController extends Controller
             // Reset to pending if content changed
             $validated['status'] = 'pending';
             $validated['is_negotiable'] = $request->has('is_negotiable');
+            $validated['has_delivery'] = $request->has('has_delivery');
+            $validated['has_domestic_delivery'] = $request->has('has_domestic_delivery');
+            $validated['has_international_delivery'] = $request->has('has_international_delivery');
 
             // Store name only for business users
             if (! auth()->user()->isBusinessUser()) {

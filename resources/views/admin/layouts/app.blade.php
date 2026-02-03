@@ -16,7 +16,7 @@
     <div class="flex min-h-screen">
         <!-- Sidebar -->
         <aside class="w-64 bg-gray-800 text-white flex-shrink-0">
-            <div class="p-6 border-b border-gray-700">
+            <div class="p-6 border-b border-gray-700"  style="padding:1.489rem;>
                 <h2 class="text-xl font-bold">Admin Panel</h2>
             </div>
             <nav class="p-4 space-y-2">
