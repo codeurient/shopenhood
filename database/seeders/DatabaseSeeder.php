@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ListingTypeSeeder::class,
             LocationSeeder::class,
             UserSeeder::class,
+            CategorySeeder::class,
         ]);
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CategoryVariantController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ListingApprovalController;
 use App\Http\Controllers\Admin\ListingController;
@@ -302,6 +303,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
             Route::put('{user}', [UserController::class, 'update'])->name('update');
             Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
+        });
+
+        // ====================================================================
+        // COUPONS MANAGEMENT
+        // ====================================================================
+        Route::prefix('coupons')->name('coupons.')->group(function () {
+            Route::get('/', [CouponController::class, 'index'])->name('index');
+            Route::get('create', [CouponController::class, 'create'])->name('create');
+            Route::post('/', [CouponController::class, 'store'])->name('store');
+            Route::get('{coupon}/edit', [CouponController::class, 'edit'])->name('edit');
+            Route::put('{coupon}', [CouponController::class, 'update'])->name('update');
+            Route::delete('{coupon}', [CouponController::class, 'destroy'])->name('destroy');
+            Route::patch('{coupon}/toggle-status', [CouponController::class, 'toggleStatus'])->name('toggle-status');
         });
 
         // ====================================================================
