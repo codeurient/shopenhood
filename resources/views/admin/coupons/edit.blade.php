@@ -146,7 +146,6 @@
                     <option value="all" {{ old('applicable_to', $coupon->applicable_to) === 'all' ? 'selected' : '' }}>All Products</option>
                     <option value="categories" {{ old('applicable_to', $coupon->applicable_to) === 'categories' ? 'selected' : '' }}>Specific Categories</option>
                     <option value="listings" {{ old('applicable_to', $coupon->applicable_to) === 'listings' ? 'selected' : '' }}>Specific Listings</option>
-                    <option value="users" {{ old('applicable_to', $coupon->applicable_to) === 'users' ? 'selected' : '' }}>Specific Users</option>
                 </select>
             </div>
 
@@ -165,26 +164,18 @@
                 </div>
             </div>
 
-            {{-- Restrictions: Users --}}
-            <div x-show="applicableTo === 'users'" x-transition class="border-t pt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Select Users</label>
+            {{-- Restrictions: Listings --}}
+            <div x-show="applicableTo === 'listings'" x-transition class="border-t pt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Select Listings</label>
                 <div class="max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-4 space-y-2">
-                    @foreach($users as $user)
+                    @foreach($listings as $listing)
                         <label class="flex items-center">
-                            <input type="checkbox" name="restrictions[]" value="{{ $user->id }}"
-                                   {{ in_array($user->id, old('restrictions', $existingRestrictionIds)) ? 'checked' : '' }}
+                            <input type="checkbox" name="restrictions[]" value="{{ $listing->id }}"
+                                   {{ in_array($listing->id, old('restrictions', $existingRestrictionIds)) ? 'checked' : '' }}
                                    class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
-                            <span class="ml-2 text-sm text-gray-700">{{ $user->name }} ({{ $user->email }})</span>
+                            <span class="ml-2 text-sm text-gray-700">{{ $listing->title }}</span>
                         </label>
                     @endforeach
-                </div>
-            </div>
-
-            {{-- Restrictions: Listings note --}}
-            <div x-show="applicableTo === 'listings'" x-transition class="border-t pt-6">
-                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-                    Listing restrictions can be managed by selecting applicable listings.
-                    Currently {{ $coupon->restrictions->count() }} listing(s) attached.
                 </div>
             </div>
 

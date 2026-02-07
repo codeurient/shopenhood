@@ -37,6 +37,14 @@
                     My Listings
                 </a>
 
+                @if(auth()->user()->isBusinessUser())
+                <a href="{{ route('user.coupons.index') }}"
+                   class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('user.coupons.*') ? 'bg-gray-700' : '' }}">
+                    <svg class="inline w-5 h-5 mr-2 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                    My Coupons
+                </a>
+                @endif
+
                 <a href="{{ route('profile.edit') }}"
                    class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('profile.*') ? 'bg-gray-700' : '' }}">
                     <svg class="inline w-5 h-5 mr-2 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>

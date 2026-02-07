@@ -76,10 +76,10 @@ class CouponFactory extends Factory
         ]);
     }
 
-    public function forUsers(): static
+    public function forUser(int $userId): static
     {
         return $this->state(fn () => [
-            'applicable_to' => 'users',
+            'user_id' => $userId,
         ]);
     }
 }

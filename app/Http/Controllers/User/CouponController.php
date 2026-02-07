@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -13,7 +13,13 @@ class CouponController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Coupon::withCount(['restrictions', 'usages']);
+        $user = auth()->user();
+
+        if (! $user->isBusinessUser()) {
+            return redirect()->route('dashboard')->with('error', 'Only business users can manage coupons.');
+        }
+
+        $query = Coupon::forUser($user->id)->withCount(['restrictions', 'usages']);
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
@@ -46,63 +52,87 @@ class CouponController extends Controller
         $coupons = $query->latest()->paginate(20)->withQueryString();
 
         $stats = [
-            'total' => Coupon::count(),
-            'active' => Coupon::where('is_active', true)
+            'total' => Coupon::forUser($user->id)->count(),
+            'active' => Coupon::forUser($user->id)->where('is_active', true)
                 ->where(function ($q) {
                     $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
                 })->count(),
-            'expired' => Coupon::whereNotNull('expires_at')
+            'expired' => Coupon::forUser($user->id)->whereNotNull('expires_at')
                 ->where('expires_at', '<', now())->count(),
-            'inactive' => Coupon::where('is_active', false)->count(),
+            'inactive' => Coupon::forUser($user->id)->where('is_active', false)->count(),
         ];
 
-        return view('admin.coupons.index', compact('coupons', 'stats'));
+        return view('user.coupons.index', compact('coupons', 'stats'));
     }
 
     public function create()
     {
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
-        $listings = Listing::where('status', 'active')->orderBy('title')->get(['id', 'title']);
+        $user = auth()->user();
 
-        return view('admin.coupons.create', compact('categories', 'listings'));
+        if (! $user->isBusinessUser()) {
+            return redirect()->route('dashboard')->with('error', 'Only business users can manage coupons.');
+        }
+
+        $categories = $this->getUserCategories($user);
+        $listings = $this->getUserListings($user);
+
+        return view('user.coupons.create', compact('categories', 'listings'));
     }
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+
+        if (! $user->isBusinessUser()) {
+            return redirect()->route('dashboard')->with('error', 'Only business users can manage coupons.');
+        }
+
         $validated = $request->validate($this->validationRules());
 
+        $validated['user_id'] = $user->id;
         $validated['code'] = strtoupper($validated['code']);
         $validated['is_active'] = $request->has('is_active');
 
         $coupon = Coupon::create($validated);
 
-        $this->syncRestrictions($coupon, $request);
-
-        activity()
-            ->performedOn($coupon)
-            ->causedBy(auth()->guard('admin')->user())
-            ->log('Coupon created');
+        $this->syncRestrictions($coupon, $request, $user);
 
         return redirect()
-            ->route('admin.coupons.index')
+            ->route('user.coupons.index')
             ->with('success', "Coupon \"{$coupon->code}\" created successfully.");
     }
 
     public function edit(Coupon $coupon)
     {
+        $user = auth()->user();
+
+        if (! $user->isBusinessUser()) {
+            return redirect()->route('dashboard')->with('error', 'Only business users can manage coupons.');
+        }
+
+        $this->authorizeOwnership($coupon);
+
         $coupon->loadCount(['usages']);
         $coupon->load('restrictions');
 
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
-        $listings = Listing::where('status', 'active')->orderBy('title')->get(['id', 'title']);
+        $categories = $this->getUserCategories($user);
+        $listings = $this->getUserListings($user);
 
         $existingRestrictionIds = $coupon->restrictions->pluck('restrictable_id')->toArray();
 
-        return view('admin.coupons.edit', compact('coupon', 'categories', 'listings', 'existingRestrictionIds'));
+        return view('user.coupons.edit', compact('coupon', 'categories', 'listings', 'existingRestrictionIds'));
     }
 
     public function update(Request $request, Coupon $coupon)
     {
+        $user = auth()->user();
+
+        if (! $user->isBusinessUser()) {
+            return redirect()->route('dashboard')->with('error', 'Only business users can manage coupons.');
+        }
+
+        $this->authorizeOwnership($coupon);
+
         $validated = $request->validate($this->validationRules($coupon->id));
 
         $validated['code'] = strtoupper($validated['code']);
@@ -110,46 +140,76 @@ class CouponController extends Controller
 
         $coupon->update($validated);
 
-        $this->syncRestrictions($coupon, $request);
-
-        activity()
-            ->performedOn($coupon)
-            ->causedBy(auth()->guard('admin')->user())
-            ->log('Coupon updated');
+        $this->syncRestrictions($coupon, $request, $user);
 
         return redirect()
-            ->route('admin.coupons.index')
+            ->route('user.coupons.index')
             ->with('success', "Coupon \"{$coupon->code}\" updated successfully.");
     }
 
     public function destroy(Coupon $coupon)
     {
+        $user = auth()->user();
+
+        if (! $user->isBusinessUser()) {
+            return redirect()->route('dashboard')->with('error', 'Only business users can manage coupons.');
+        }
+
+        $this->authorizeOwnership($coupon);
+
         $code = $coupon->code;
         $coupon->delete();
 
-        activity()
-            ->causedBy(auth()->guard('admin')->user())
-            ->log("Coupon \"{$code}\" deleted");
-
         return redirect()
-            ->route('admin.coupons.index')
+            ->route('user.coupons.index')
             ->with('success', "Coupon \"{$code}\" deleted successfully.");
     }
 
     public function toggleStatus(Coupon $coupon)
     {
+        $user = auth()->user();
+
+        if (! $user->isBusinessUser()) {
+            return redirect()->route('dashboard')->with('error', 'Only business users can manage coupons.');
+        }
+
+        $this->authorizeOwnership($coupon);
+
         $coupon->update([
             'is_active' => ! $coupon->is_active,
         ]);
 
-        activity()
-            ->performedOn($coupon)
-            ->causedBy(auth()->guard('admin')->user())
-            ->log('Coupon status toggled');
-
         return redirect()
             ->back()
             ->with('success', 'Coupon status updated successfully.');
+    }
+
+    private function authorizeOwnership(Coupon $coupon): void
+    {
+        if (! $coupon->belongsToUser(auth()->id())) {
+            abort(403, 'This coupon does not belong to you.');
+        }
+    }
+
+    private function getUserCategories($user)
+    {
+        $categoryIds = Listing::forUser($user->id)
+            ->whereNotNull('category_id')
+            ->distinct()
+            ->pluck('category_id');
+
+        return Category::whereIn('id', $categoryIds)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+    }
+
+    private function getUserListings($user)
+    {
+        return Listing::forUser($user->id)
+            ->where('status', 'active')
+            ->orderBy('title')
+            ->get(['id', 'title']);
     }
 
     private function validationRules(?int $couponId = null): array
@@ -172,7 +232,7 @@ class CouponController extends Controller
         ];
     }
 
-    private function syncRestrictions(Coupon $coupon, Request $request): void
+    private function syncRestrictions(Coupon $coupon, Request $request, $user): void
     {
         $coupon->restrictions()->delete();
 
@@ -191,7 +251,13 @@ class CouponController extends Controller
             return;
         }
 
-        $restrictions = collect($request->restrictions)->map(fn ($id) => [
+        $validIds = $this->getValidRestrictionIds($coupon->applicable_to, $user, $request->restrictions);
+
+        if (empty($validIds)) {
+            return;
+        }
+
+        $restrictions = collect($validIds)->map(fn ($id) => [
             'coupon_id' => $coupon->id,
             'restrictable_type' => $restrictableType,
             'restrictable_id' => $id,
@@ -199,5 +265,28 @@ class CouponController extends Controller
         ])->toArray();
 
         CouponRestriction::insert($restrictions);
+    }
+
+    private function getValidRestrictionIds(string $applicableTo, $user, array $requestedIds): array
+    {
+        if ($applicableTo === 'categories') {
+            $userCategoryIds = Listing::forUser($user->id)
+                ->whereNotNull('category_id')
+                ->distinct()
+                ->pluck('category_id')
+                ->toArray();
+
+            return array_intersect($requestedIds, $userCategoryIds);
+        }
+
+        if ($applicableTo === 'listings') {
+            $userListingIds = Listing::forUser($user->id)
+                ->pluck('id')
+                ->toArray();
+
+            return array_intersect($requestedIds, $userListingIds);
+        }
+
+        return [];
     }
 }

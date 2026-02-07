@@ -97,7 +97,6 @@
                     <option value="all" {{ request('applicable_to') === 'all' ? 'selected' : '' }}>All Products</option>
                     <option value="categories" {{ request('applicable_to') === 'categories' ? 'selected' : '' }}>Categories</option>
                     <option value="listings" {{ request('applicable_to') === 'listings' ? 'selected' : '' }}>Listings</option>
-                    <option value="users" {{ request('applicable_to') === 'users' ? 'selected' : '' }}>Users</option>
                 </select>
             </div>
             <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
