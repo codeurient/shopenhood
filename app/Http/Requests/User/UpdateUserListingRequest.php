@@ -54,6 +54,19 @@ class UpdateUserListingRequest extends FormRequest
             'variations.*.is_active' => 'nullable|boolean',
             'variations.*.images' => 'nullable|array',
             'variations.*.images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'variations.*.price_tiers' => 'nullable|array',
+            'variations.*.price_tiers.*.min_quantity' => 'required_with:variations.*.price_tiers|integer|min:1',
+            'variations.*.price_tiers.*.max_quantity' => 'nullable|integer|min:1',
+            'variations.*.price_tiers.*.unit_price' => 'required_with:variations.*.price_tiers|numeric|min:0.01',
+
+            // Wholesale fields
+            'is_wholesale' => 'nullable|boolean',
+            'wholesale_min_order_qty' => 'nullable|required_if:is_wholesale,1|integer|min:1',
+            'wholesale_qty_increment' => 'nullable|integer|min:1',
+            'wholesale_lead_time_days' => 'nullable|integer|min:0|max:365',
+            'wholesale_sample_available' => 'nullable|boolean',
+            'wholesale_sample_price' => 'nullable|numeric|min:0',
+            'wholesale_terms' => 'nullable|string|max:2000',
         ];
     }
 

@@ -109,6 +109,11 @@ class ProductVariation extends Model
         return $this->morphMany(\Spatie\Activitylog\Models\Activity::class, 'subject');
     }
 
+    public function priceTiers()
+    {
+        return $this->hasMany(VariationPriceTier::class)->orderBy('min_quantity');
+    }
+
     // ==================== Scopes ====================
 
     public function scopeInStock($query)
@@ -247,6 +252,25 @@ class ProductVariation extends Model
         return $this->attributes->mapWithKeys(function ($attr) {
             return [$attr->variant->name => $attr->variantItem->value];
         })->all();
+    }
+
+    public function getPriceForQuantity(int $quantity): float
+    {
+        $tier = $this->priceTiers()
+            ->where('min_quantity', '<=', $quantity)
+            ->where(function ($q) use ($quantity) {
+                $q->whereNull('max_quantity')
+                    ->orWhere('max_quantity', '>=', $quantity);
+            })
+            ->orderByDesc('min_quantity')
+            ->first();
+
+        return $tier ? (float) $tier->unit_price : $this->getCurrentPrice();
+    }
+
+    public function hasTieredPricing(): bool
+    {
+        return $this->priceTiers()->exists();
     }
 
     // ==================== Activity Log ====================

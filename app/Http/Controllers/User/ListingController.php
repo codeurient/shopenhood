@@ -10,6 +10,7 @@ use App\Models\Listing;
 use App\Models\ListingType;
 use App\Models\ProductVariationAttribute;
 use App\Models\ProductVariationImage;
+use App\Models\VariationPriceTier;
 use App\Services\ListingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -96,9 +97,19 @@ class ListingController extends Controller
             $validated['has_international_delivery'] = $request->has('has_international_delivery');
             $validated['expires_at'] = $this->listingService->calculateExpiresAt();
 
-            // Store name only for business users
+            // Store name and wholesale only for business users
             if (! $user->isBusinessUser()) {
                 unset($validated['store_name']);
+                $validated['is_wholesale'] = false;
+                unset($validated['wholesale_min_order_qty']);
+                unset($validated['wholesale_qty_increment']);
+                unset($validated['wholesale_lead_time_days']);
+                unset($validated['wholesale_sample_available']);
+                unset($validated['wholesale_sample_price']);
+                unset($validated['wholesale_terms']);
+            } else {
+                $validated['is_wholesale'] = $request->has('is_wholesale');
+                $validated['wholesale_sample_available'] = $request->has('wholesale_sample_available');
             }
 
             // Extract variant/variation data before model create
@@ -231,9 +242,20 @@ class ListingController extends Controller
             $validated['has_domestic_delivery'] = $request->has('has_domestic_delivery');
             $validated['has_international_delivery'] = $request->has('has_international_delivery');
 
-            // Store name only for business users
-            if (! auth()->user()->isBusinessUser()) {
+            // Store name and wholesale only for business users
+            $user = auth()->user();
+            if (! $user->isBusinessUser()) {
                 unset($validated['store_name']);
+                $validated['is_wholesale'] = false;
+                unset($validated['wholesale_min_order_qty']);
+                unset($validated['wholesale_qty_increment']);
+                unset($validated['wholesale_lead_time_days']);
+                unset($validated['wholesale_sample_available']);
+                unset($validated['wholesale_sample_price']);
+                unset($validated['wholesale_terms']);
+            } else {
+                $validated['is_wholesale'] = $request->has('is_wholesale');
+                $validated['wholesale_sample_available'] = $request->has('wholesale_sample_available');
             }
 
             // Extract variant/variation data before model update
@@ -495,6 +517,11 @@ class ListingController extends Controller
                     ]);
                 }
             }
+
+            // Create price tiers
+            if (! empty($variationData['price_tiers'])) {
+                $this->syncPriceTiers($variation, $variationData['price_tiers']);
+            }
         }
     }
 
@@ -551,6 +578,9 @@ class ListingController extends Controller
                             ]);
                         }
                     }
+
+                    // Sync price tiers
+                    $this->syncPriceTiers($variation, $variationData['price_tiers'] ?? []);
                 }
             } else {
                 // Create new variation
@@ -598,12 +628,35 @@ class ListingController extends Controller
                         ]);
                     }
                 }
+
+                // Create price tiers
+                if (! empty($variationData['price_tiers'])) {
+                    $this->syncPriceTiers($variation, $variationData['price_tiers']);
+                }
             }
         }
 
         // Delete variations that were removed
         if (! empty($updatedIds)) {
             $listing->variations()->whereNotIn('id', $updatedIds)->delete();
+        }
+    }
+
+    private function syncPriceTiers($variation, array $tiers): void
+    {
+        $variation->priceTiers()->delete();
+
+        foreach ($tiers as $tier) {
+            if (empty($tier['min_quantity']) || empty($tier['unit_price'])) {
+                continue;
+            }
+
+            VariationPriceTier::create([
+                'product_variation_id' => $variation->id,
+                'min_quantity' => $tier['min_quantity'],
+                'max_quantity' => $tier['max_quantity'] ?? null,
+                'unit_price' => $tier['unit_price'],
+            ]);
         }
     }
 }

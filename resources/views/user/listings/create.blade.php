@@ -278,6 +278,81 @@
                         </div>
                         @endif
 
+                        {{-- Wholesale Settings (Business Users Only) --}}
+                        @if(auth()->user()->isBusinessUser())
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" x-data="{ isWholesale: {{ old('is_wholesale') ? 'true' : 'false' }}, sampleAvailable: {{ old('wholesale_sample_available') ? 'true' : 'false' }} }">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Wholesale Settings</h3>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="is_wholesale" x-model="isWholesale"
+                                           class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Enable Wholesale</span>
+                                </label>
+                            </div>
+
+                            <div x-show="isWholesale" x-collapse class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Minimum Order Quantity (MOQ) <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="number" name="wholesale_min_order_qty" min="1"
+                                               value="{{ old('wholesale_min_order_qty') }}"
+                                               placeholder="e.g., 10"
+                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Quantity Increment
+                                        </label>
+                                        <input type="number" name="wholesale_qty_increment" min="1"
+                                               value="{{ old('wholesale_qty_increment') }}"
+                                               placeholder="e.g., 5 (order in multiples)"
+                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Lead Time (days)
+                                    </label>
+                                    <input type="number" name="wholesale_lead_time_days" min="0" max="365"
+                                           value="{{ old('wholesale_lead_time_days') }}"
+                                           placeholder="Production/fulfillment time"
+                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                    <label class="flex items-center mb-2">
+                                        <input type="checkbox" name="wholesale_sample_available" x-model="sampleAvailable"
+                                               class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Samples Available</span>
+                                    </label>
+                                    <div x-show="sampleAvailable" class="ml-6">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sample Price (per unit)</label>
+                                        <input type="number" name="wholesale_sample_price" step="0.01" min="0"
+                                               value="{{ old('wholesale_sample_price') }}"
+                                               placeholder="0.00"
+                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Wholesale Terms & Conditions
+                                    </label>
+                                    <textarea name="wholesale_terms" rows="3" maxlength="2000"
+                                              placeholder="Payment terms, shipping policy, bulk order requirements..."
+                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('wholesale_terms') }}</textarea>
+                                </div>
+
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Volume pricing tiers can be set for each product variation in the variations section below.
+                                </p>
+                            </div>
+                        </div>
+                        @endif
+
                         {{-- Main Image --}}
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Main Image</h3>

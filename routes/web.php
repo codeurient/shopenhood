@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\AddressController as UserAddressController;
 use App\Http\Controllers\User\CouponController as UserCouponController;
 use App\Http\Controllers\User\ListingController as UserListingController;
 use Illuminate\Support\Facades\Route;
@@ -88,6 +89,21 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{coupon}', [UserCouponController::class, 'destroy'])->name('destroy');
         Route::patch('/{coupon}/toggle-status', [UserCouponController::class, 'toggleStatus'])->name('toggle-status');
     });
+
+    // User Address Management
+    Route::prefix('my-addresses')->name('user.addresses.')->group(function () {
+        Route::get('/', [UserAddressController::class, 'index'])->name('index');
+        Route::get('/create', [UserAddressController::class, 'create'])->name('create');
+        Route::post('/', [UserAddressController::class, 'store'])->name('store');
+        Route::get('/{address}/edit', [UserAddressController::class, 'edit'])->name('edit');
+        Route::put('/{address}', [UserAddressController::class, 'update'])->name('update');
+        Route::delete('/{address}', [UserAddressController::class, 'destroy'])->name('destroy');
+        Route::patch('/{address}/set-default', [UserAddressController::class, 'setDefault'])->name('set-default');
+    });
+
+    // API: User Addresses (for checkout)
+    Route::get('/api/user/addresses', [UserAddressController::class, 'getAddresses'])->name('api.user.addresses');
+    Route::get('/api/user/addresses/{address}', [UserAddressController::class, 'getAddress'])->name('api.user.address');
 });
 
 require __DIR__.'/auth.php';

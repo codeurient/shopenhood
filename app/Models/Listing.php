@@ -31,6 +31,13 @@ class Listing extends Model
         'hidden_due_to_role_change',
         'is_featured',
         'is_negotiable',
+        'is_wholesale',
+        'wholesale_min_order_qty',
+        'wholesale_qty_increment',
+        'wholesale_lead_time_days',
+        'wholesale_sample_available',
+        'wholesale_sample_price',
+        'wholesale_terms',
         'availability_type',
         'has_delivery',
         'has_domestic_delivery',
@@ -59,6 +66,12 @@ class Listing extends Model
         'hidden_due_to_role_change' => 'boolean',
         'is_featured' => 'boolean',
         'is_negotiable' => 'boolean',
+        'is_wholesale' => 'boolean',
+        'wholesale_min_order_qty' => 'integer',
+        'wholesale_qty_increment' => 'integer',
+        'wholesale_lead_time_days' => 'integer',
+        'wholesale_sample_available' => 'boolean',
+        'wholesale_sample_price' => 'decimal:2',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
         'expires_at' => 'datetime',
@@ -292,6 +305,11 @@ class Listing extends Model
         });
     }
 
+    public function scopeWholesale($query)
+    {
+        return $query->where('is_wholesale', true);
+    }
+
     // ============================================
     // HELPERS
     // ============================================
@@ -324,6 +342,11 @@ class Listing extends Model
     public function belongsToUser(int $userId): bool
     {
         return $this->user_id === $userId;
+    }
+
+    public function isWholesale(): bool
+    {
+        return (bool) $this->is_wholesale;
     }
 
     // ============================================

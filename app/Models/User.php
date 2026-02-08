@@ -60,6 +60,11 @@ class User extends Authenticatable
         return $this->hasMany(Coupon::class);
     }
 
+    public function addresses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserAddress::class);
+    }
+
     // ============================================
     // ROLE HELPERS
     // ============================================
