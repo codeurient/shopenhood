@@ -64,6 +64,10 @@ class StoreUserListingRequest extends FormRequest
             'wholesale_sample_available' => 'nullable|boolean',
             'wholesale_sample_price' => 'nullable|numeric|min:0',
             'wholesale_terms' => 'nullable|string|max:2000',
+
+            // SEO fields (business users only)
+            'meta_title' => 'nullable|string|max:60',
+            'meta_description' => 'nullable|string|max:160',
         ];
     }
 
@@ -80,6 +84,8 @@ class StoreUserListingRequest extends FormRequest
             'detail_images.max' => 'You can upload a maximum of 10 detail images.',
             'detail_images.*.max' => 'Each image must be less than 5MB.',
             'main_image.max' => 'The main image must be less than 5MB.',
+            'meta_title.max' => 'Meta title must not exceed 60 characters for optimal search display.',
+            'meta_description.max' => 'Meta description must not exceed 160 characters for optimal search display.',
         ];
     }
 }

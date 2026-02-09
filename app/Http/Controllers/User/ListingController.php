@@ -97,7 +97,7 @@ class ListingController extends Controller
             $validated['has_international_delivery'] = $request->has('has_international_delivery');
             $validated['expires_at'] = $this->listingService->calculateExpiresAt();
 
-            // Store name and wholesale only for business users
+            // Store name, wholesale, and SEO only for business users
             if (! $user->isBusinessUser()) {
                 unset($validated['store_name']);
                 $validated['is_wholesale'] = false;
@@ -107,6 +107,8 @@ class ListingController extends Controller
                 unset($validated['wholesale_sample_available']);
                 unset($validated['wholesale_sample_price']);
                 unset($validated['wholesale_terms']);
+                unset($validated['meta_title']);
+                unset($validated['meta_description']);
             } else {
                 $validated['is_wholesale'] = $request->has('is_wholesale');
                 $validated['wholesale_sample_available'] = $request->has('wholesale_sample_available');
@@ -242,7 +244,7 @@ class ListingController extends Controller
             $validated['has_domestic_delivery'] = $request->has('has_domestic_delivery');
             $validated['has_international_delivery'] = $request->has('has_international_delivery');
 
-            // Store name and wholesale only for business users
+            // Store name, wholesale, and SEO only for business users
             $user = auth()->user();
             if (! $user->isBusinessUser()) {
                 unset($validated['store_name']);
@@ -253,6 +255,8 @@ class ListingController extends Controller
                 unset($validated['wholesale_sample_available']);
                 unset($validated['wholesale_sample_price']);
                 unset($validated['wholesale_terms']);
+                unset($validated['meta_title']);
+                unset($validated['meta_description']);
             } else {
                 $validated['is_wholesale'] = $request->has('is_wholesale');
                 $validated['wholesale_sample_available'] = $request->has('wholesale_sample_available');

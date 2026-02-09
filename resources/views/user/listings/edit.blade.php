@@ -361,6 +361,83 @@
                         </div>
                         @endif
 
+                        {{-- SEO Settings (Business Users Only) --}}
+                        @if(auth()->user()->isBusinessUser())
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Search Engine Optimization (SEO)</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Optimize how your product appears in Google and other search engines</p>
+                                </div>
+                                <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded">Pro Feature</span>
+                            </div>
+
+                            <div class="space-y-5">
+                                {{-- Meta Title --}}
+                                <div x-data="{ charCount: {{ strlen(old('meta_title', $listing->meta_title ?? '')) }} }">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Meta Title
+                                        <span class="ml-2 text-xs font-normal" :class="charCount > 60 ? 'text-red-500' : 'text-gray-400'">
+                                            (<span x-text="charCount"></span>/60)
+                                        </span>
+                                    </label>
+                                    <input type="text" name="meta_title" maxlength="60"
+                                           value="{{ old('meta_title', $listing->meta_title) }}"
+                                           x-on:input="charCount = $event.target.value.length"
+                                           placeholder="e.g., Premium Cotton T-Shirts Wholesale | Your Brand"
+                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    <div class="mt-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-xs text-gray-600 dark:text-gray-400">
+                                        <p class="font-medium text-gray-700 dark:text-gray-300 mb-1">Tips for a great meta title:</p>
+                                        <ul class="list-disc list-inside space-y-1">
+                                            <li>Keep it under 60 characters to avoid truncation in search results</li>
+                                            <li>Include your main keyword near the beginning</li>
+                                            <li>Use a pipe <code class="bg-gray-200 dark:bg-gray-600 px-1 rounded">|</code> or hyphen <code class="bg-gray-200 dark:bg-gray-600 px-1 rounded">-</code> to separate brand name</li>
+                                            <li>Make it compelling and unique - this is what users click on!</li>
+                                        </ul>
+                                        <p class="mt-2 text-green-600 dark:text-green-400">Example: "Organic Cotton T-Shirts Bulk | Free Shipping Over $500"</p>
+                                    </div>
+                                </div>
+
+                                {{-- Meta Description --}}
+                                <div x-data="{ charCount: {{ strlen(old('meta_description', $listing->meta_description ?? '')) }} }">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Meta Description
+                                        <span class="ml-2 text-xs font-normal" :class="charCount > 160 ? 'text-red-500' : (charCount > 120 ? 'text-yellow-500' : 'text-gray-400')">
+                                            (<span x-text="charCount"></span>/160)
+                                        </span>
+                                    </label>
+                                    <textarea name="meta_description" rows="3" maxlength="160"
+                                              x-on:input="charCount = $event.target.value.length"
+                                              placeholder="Write a compelling description that encourages users to click..."
+                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('meta_description', $listing->meta_description) }}</textarea>
+                                    <div class="mt-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-xs text-gray-600 dark:text-gray-400">
+                                        <p class="font-medium text-gray-700 dark:text-gray-300 mb-1">Tips for a great meta description:</p>
+                                        <ul class="list-disc list-inside space-y-1">
+                                            <li>Aim for 120-155 characters (mobile-friendly length)</li>
+                                            <li>Include a call-to-action: "Shop now", "Order today", "Free shipping"</li>
+                                            <li>Mention key benefits: price, quality, delivery speed</li>
+                                            <li>Use numbers for impact: "50+ colors", "Save 20%"</li>
+                                        </ul>
+                                        <p class="mt-2 text-green-600 dark:text-green-400">Example: "Shop premium cotton t-shirts in bulk. MOQ 10 pieces. Free shipping on orders over $500. 50+ colors available. Order now!"</p>
+                                    </div>
+                                </div>
+
+                                {{-- Important Notice --}}
+                                <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg">
+                                    <div class="flex items-start">
+                                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <div class="text-sm text-amber-800 dark:text-amber-300">
+                                            <p class="font-medium mb-1">Important: Write Original Content</p>
+                                            <p>Please write all text in your own words with correct grammar and spelling. Do not copy content from other websites or use AI-generated text. Original, human-written content performs significantly better in search engines and builds more trust with customers.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
                         {{-- Main Image --}}
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Main Image</h3>
