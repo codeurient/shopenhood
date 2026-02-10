@@ -180,11 +180,18 @@
                 </div>
             </div>
 
-            {{-- Restrictions: Listings note --}}
+            {{-- Restrictions: Listings --}}
             <div x-show="applicableTo === 'listings'" x-transition class="border-t pt-6">
-                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-                    Listing restrictions can be managed by selecting applicable listings.
-                    Currently {{ $coupon->restrictions->count() }} listing(s) attached.
+                <label class="block text-sm font-medium text-gray-700 mb-2">Select Listings</label>
+                <div class="max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-4 space-y-2">
+                    @foreach($listings as $listing)
+                        <label class="flex items-center">
+                            <input type="checkbox" name="restrictions[]" value="{{ $listing->id }}"
+                                   {{ in_array($listing->id, old('restrictions', $existingRestrictionIds)) ? 'checked' : '' }}
+                                   class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                            <span class="ml-2 text-sm text-gray-700">{{ $listing->title }}</span>
+                        </label>
+                    @endforeach
                 </div>
             </div>
 

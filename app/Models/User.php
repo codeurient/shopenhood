@@ -55,6 +55,11 @@ class User extends Authenticatable
         return $this->hasMany(Listing::class);
     }
 
+    public function coupons(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Coupon::class);
+    }
+
     // ============================================
     // ROLE HELPERS
     // ============================================

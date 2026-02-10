@@ -64,8 +64,9 @@ class CouponController extends Controller
     {
         $categories = Category::where('is_active', true)->orderBy('name')->get();
         $listings = Listing::where('status', 'approved')->orderBy('title')->get(['id', 'title']);
+        $users = User::orderBy('name')->get(['id', 'name', 'email']);
 
-        return view('admin.coupons.create', compact('categories', 'listings'));
+        return view('admin.coupons.create', compact('categories', 'listings', 'users'));
     }
 
     public function store(Request $request)
@@ -95,11 +96,12 @@ class CouponController extends Controller
         $coupon->load('restrictions');
 
         $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $listings = Listing::where('status', 'approved')->orderBy('title')->get(['id', 'title']);
         $users = User::orderBy('name')->get(['id', 'name', 'email']);
 
         $existingRestrictionIds = $coupon->restrictions->pluck('restrictable_id')->toArray();
 
-        return view('admin.coupons.edit', compact('coupon', 'categories', 'users', 'existingRestrictionIds'));
+        return view('admin.coupons.edit', compact('coupon', 'categories', 'listings', 'users', 'existingRestrictionIds'));
     }
 
     public function update(Request $request, Coupon $coupon)
