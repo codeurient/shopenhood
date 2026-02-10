@@ -73,11 +73,6 @@ class Coupon extends Model
             });
     }
 
-    public function scopeForUser($query, int $userId)
-    {
-        return $query->where('user_id', $userId);
-    }
-
     public function belongsToUser(int $userId): bool
     {
         return $this->user_id === $userId;

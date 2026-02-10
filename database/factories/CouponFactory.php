@@ -77,17 +77,10 @@ class CouponFactory extends Factory
         ]);
     }
 
-    public function forUser(int $userId): static
+    public function forUser(int|User $user): static
     {
         return $this->state(fn () => [
-            'user_id' => $userId,
-        ]);
-    }
-
-    public function forUser(User $user): static
-    {
-        return $this->state(fn () => [
-            'user_id' => $user->id,
+            'user_id' => $user instanceof User ? $user->id : $user,
         ]);
     }
 }

@@ -6,8 +6,6 @@ use App\Http\Controllers\ListingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\AddressController as UserAddressController;
-
-
 use App\Http\Controllers\User\CouponController as UserCouponController;
 use App\Http\Controllers\User\ListingController as UserListingController;
 use Illuminate\Support\Facades\Route;
@@ -90,17 +88,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{listing}', [UserListingController::class, 'destroy'])->name('destroy');
         Route::delete('/{listing_id}/force', [UserListingController::class, 'forceDestroy'])->name('force-destroy');
         Route::post('/{listing_id}/reshare', [UserListingController::class, 'reshare'])->name('reshare');
-    });
-
-    // User Coupon Management
-    Route::prefix('my-coupons')->name('user.coupons.')->group(function () {
-        Route::get('/', [UserCouponController::class, 'index'])->name('index');
-        Route::get('/create', [UserCouponController::class, 'create'])->name('create');
-        Route::post('/', [UserCouponController::class, 'store'])->name('store');
-        Route::get('/{coupon}/edit', [UserCouponController::class, 'edit'])->name('edit');
-        Route::put('/{coupon}', [UserCouponController::class, 'update'])->name('update');
-        Route::delete('/{coupon}', [UserCouponController::class, 'destroy'])->name('destroy');
-        Route::patch('/{coupon}/toggle-status', [UserCouponController::class, 'toggleStatus'])->name('toggle-status');
     });
 
     // User Address Management

@@ -2,29 +2,17 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Create Coupon</h2>
-<<<<<<< HEAD
             <a href="{{ route('user.coupons.index') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 text-sm font-medium transition">
-=======
-            <a href="{{ route('user.coupons.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                 &larr; Back to Coupons
             </a>
         </div>
     </x-slot>
 
-<<<<<<< HEAD
     <div class="py-6">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg">
-=======
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-
-            @if($errors->any())
-                <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                     <ul class="list-disc list-inside">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -47,15 +35,9 @@
                             <input type="text" name="code" id="code" required
                                    value="{{ old('code') }}"
                                    placeholder="e.g., SUMMER2026"
-<<<<<<< HEAD
                                    class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100 uppercase">
                             <button type="button" @click="generateCode()"
                                     class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 text-sm transition">
-=======
-                                   class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500 uppercase">
-                            <button type="button" @click="generateCode()"
-                                    class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 text-sm">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                                 Generate
                             </button>
                         </div>
@@ -69,11 +51,7 @@
                                 Discount Type <span class="text-red-500">*</span>
                             </label>
                             <select name="type" x-model="type" required
-<<<<<<< HEAD
                                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
-=======
-                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                                 <option value="percentage" {{ old('type', 'percentage') === 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
                                 <option value="fixed" {{ old('type') === 'fixed' ? 'selected' : '' }}>Fixed Amount ($)</option>
                             </select>
@@ -83,20 +61,12 @@
                                 Value <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-<<<<<<< HEAD
                                 <span class="absolute left-3 top-2 text-gray-500 dark:text-gray-400" x-text="type === 'percentage' ? '%' : '$'"></span>
-=======
-                                <span class="absolute left-3 top-2 text-gray-500" x-text="type === 'percentage' ? '%' : '$'"></span>
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                                 <input type="number" name="value" required step="0.01" min="0.01"
                                        :max="type === 'percentage' ? 100 : ''"
                                        value="{{ old('value') }}"
                                        placeholder="0.00"
-<<<<<<< HEAD
                                        class="w-full pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
-=======
-                                       class="w-full pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                             </div>
                             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" x-show="type === 'percentage'">Maximum 100%</p>
                         </div>
@@ -109,22 +79,14 @@
                             <input type="number" name="min_purchase_amount" step="0.01" min="0"
                                    value="{{ old('min_purchase_amount') }}"
                                    placeholder="No minimum"
-<<<<<<< HEAD
                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
-=======
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Maximum Discount Amount</label>
                             <input type="number" name="max_discount_amount" step="0.01" min="0"
                                    value="{{ old('max_discount_amount') }}"
                                    placeholder="No limit"
-<<<<<<< HEAD
                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
-=======
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Cap the discount at this amount (useful for percentage coupons)</p>
                         </div>
                     </div>
@@ -136,24 +98,16 @@
                             <input type="number" name="usage_limit" min="1"
                                    value="{{ old('usage_limit') }}"
                                    placeholder="Unlimited"
-<<<<<<< HEAD
                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
                             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Maximum total times this coupon can be used</p>
-=======
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Per User Limit</label>
                             <input type="number" name="per_user_limit" min="1"
                                    value="{{ old('per_user_limit') }}"
                                    placeholder="Unlimited"
-<<<<<<< HEAD
                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
                             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Maximum times a single user can use this coupon</p>
-=======
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                         </div>
                     </div>
 
@@ -163,22 +117,14 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
                             <input type="datetime-local" name="starts_at"
                                    value="{{ old('starts_at') }}"
-<<<<<<< HEAD
                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
-=======
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Leave empty for immediate availability</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Expiry Date</label>
                             <input type="datetime-local" name="expires_at"
                                    value="{{ old('expires_at') }}"
-<<<<<<< HEAD
                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
-=======
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Leave empty for no expiry</p>
                         </div>
                     </div>
@@ -189,11 +135,7 @@
                             Applicable To <span class="text-red-500">*</span>
                         </label>
                         <select name="applicable_to" x-model="applicableTo" required
-<<<<<<< HEAD
                                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
-=======
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                             <option value="all" {{ old('applicable_to', 'all') === 'all' ? 'selected' : '' }}>All My Products</option>
                             <option value="categories" {{ old('applicable_to') === 'categories' ? 'selected' : '' }}>Specific Categories</option>
                             <option value="listings" {{ old('applicable_to') === 'listings' ? 'selected' : '' }}>Specific Listings</option>
@@ -204,7 +146,6 @@
                     {{-- Restrictions: Categories --}}
                     <div x-show="applicableTo === 'categories'" x-transition class="border-t border-gray-200 dark:border-gray-700 pt-6">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Categories</label>
-<<<<<<< HEAD
                         @if($categories->count() > 0)
                         <div class="max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-4 space-y-2">
                             @foreach($categories as $category)
@@ -218,28 +159,12 @@
                         </div>
                         @else
                         <p class="text-sm text-gray-500 dark:text-gray-400">No categories available. Add listings with categories first.</p>
-=======
-                        @if($categories->isEmpty())
-                            <p class="text-sm text-gray-500 dark:text-gray-400">You have no listings in any category yet.</p>
-                        @else
-                            <div class="max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-4 space-y-2">
-                                @foreach($categories as $category)
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="restrictions[]" value="{{ $category->id }}"
-                                               {{ in_array($category->id, old('restrictions', [])) ? 'checked' : '' }}
-                                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $category->name }}</span>
-                                    </label>
-                                @endforeach
-                            </div>
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                         @endif
                     </div>
 
                     {{-- Restrictions: Listings --}}
                     <div x-show="applicableTo === 'listings'" x-transition class="border-t border-gray-200 dark:border-gray-700 pt-6">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Listings</label>
-<<<<<<< HEAD
                         @if($listings->count() > 0)
                         <div class="max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-4 space-y-2">
                             @foreach($listings as $listing)
@@ -253,21 +178,6 @@
                         </div>
                         @else
                         <p class="text-sm text-gray-500 dark:text-gray-400">No approved listings available.</p>
-=======
-                        @if($listings->isEmpty())
-                            <p class="text-sm text-gray-500 dark:text-gray-400">You have no active listings yet.</p>
-                        @else
-                            <div class="max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-4 space-y-2">
-                                @foreach($listings as $listing)
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="restrictions[]" value="{{ $listing->id }}"
-                                               {{ in_array($listing->id, old('restrictions', [])) ? 'checked' : '' }}
-                                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
-                                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $listing->title }}</span>
-                                    </label>
-                                @endforeach
-                            </div>
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                         @endif
                     </div>
 
@@ -275,13 +185,8 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
                         <textarea name="description" rows="3"
-<<<<<<< HEAD
                                   placeholder="Internal note or description for this coupon"
                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">{{ old('description') }}</textarea>
-=======
-                                  placeholder="Optional note about this coupon"
-                                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('description') }}</textarea>
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                     </div>
 
                     {{-- Active --}}
@@ -297,17 +202,10 @@
 
                 {{-- Action Buttons --}}
                 <div class="mt-6 flex justify-end gap-4">
-<<<<<<< HEAD
                     <a href="{{ route('user.coupons.index') }}" class="px-6 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition">
                         Cancel
                     </a>
                     <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-=======
-                    <a href="{{ route('user.coupons.index') }}" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-                        Cancel
-                    </a>
-                    <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                         Create Coupon
                     </button>
                 </div>
