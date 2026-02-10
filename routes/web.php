@@ -5,10 +5,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
-<<<<<<< HEAD
 use App\Http\Controllers\User\AddressController as UserAddressController;
-=======
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
+
+
 use App\Http\Controllers\User\CouponController as UserCouponController;
 use App\Http\Controllers\User\ListingController as UserListingController;
 use Illuminate\Support\Facades\Route;

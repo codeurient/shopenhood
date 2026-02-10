@@ -73,14 +73,13 @@ class User extends Authenticatable
         return $this->hasMany(Coupon::class);
     }
 
-<<<<<<< HEAD
+
     public function addresses(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(UserAddress::class);
     }
 
-=======
->>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
+
     // ============================================
     // ROLE HELPERS
     // ============================================
