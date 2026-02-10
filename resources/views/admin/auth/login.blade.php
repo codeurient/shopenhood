@@ -176,5 +176,49 @@
             </button>
         </form>
     </div>
+
+    {{-- Double-submit prevention --}}
+    <script>
+    (function() {
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+
+            // Check if form is already submitting
+            if (form.hasAttribute('data-submitting')) {
+                e.preventDefault();
+                return;
+            }
+
+            // Mark form as submitting
+            form.setAttribute('data-submitting', 'true');
+
+            // Find all submit buttons in the form
+            const buttons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+            buttons.forEach(function(btn) {
+                btn.disabled = true;
+                btn.style.opacity = '0.75';
+                btn.style.cursor = 'not-allowed';
+
+                if (btn.tagName === 'BUTTON') {
+                    btn.setAttribute('data-original-text', btn.innerHTML);
+                    btn.innerHTML = 'Processing...';
+                }
+            });
+
+            // Re-enable after timeout
+            setTimeout(function() {
+                form.removeAttribute('data-submitting');
+                buttons.forEach(function(btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = '';
+                    btn.style.cursor = '';
+                    if (btn.tagName === 'BUTTON' && btn.hasAttribute('data-original-text')) {
+                        btn.innerHTML = btn.getAttribute('data-original-text');
+                    }
+                });
+            }, 10000);
+        });
+    })();
+    </script>
 </body>
 </html>

@@ -12,12 +12,12 @@ class CheckUserRole
     {
         $user = auth()->guard('admin')->user();
 
-        if (!$user) {
+        if (! $user) {
             abort(403, 'Unauthorized');
         }
 
-        // Check if user's current_role matches any of the required roles
-        if (!in_array($user->current_role, $roles)) {
+        // Check if user's current_role matches any of the required roles (strict comparison)
+        if (! in_array($user->current_role, $roles, true)) {
             abort(403, 'You do not have permission to access this resource');
         }
 

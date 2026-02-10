@@ -3,42 +3,33 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Auth\AdminLoginRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
-    public function showLoginForm()
+    public function showLoginForm(): View
     {
         return view('admin.auth.login');
     }
 
-    public function login(Request $request)
+    public function login(AdminLoginRequest $request): RedirectResponse
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
+        $request->authenticate();
 
-        $remember = $request->boolean('remember'); 
+        $request->session()->regenerate();
 
-        if (Auth::guard('admin')->attempt($credentials, $remember)) {
-            $request->session()->regenerate();
+        activity()
+            ->causedBy(Auth::guard('admin')->user())
+            ->log('Admin logged in');
 
-            activity()
-                ->causedBy(Auth::guard('admin')->user())
-                ->log('Admin logged in');
-
-            return redirect()->intended(route('admin.dashboard'));
-        }
-
-        throw ValidationException::withMessages([
-            'email' => 'These credentials do not match our records.',
-        ]);
+        return redirect()->intended(route('admin.dashboard'));
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse
     {
         activity()
             ->causedBy(Auth::guard('admin')->user())

@@ -60,13 +60,13 @@ class UserController extends Controller
         $oldRole = $user->current_role;
         $newRole = $validated['current_role'];
 
-        $user->update([
-            'current_role' => $newRole,
-            'is_business_enabled' => $request->has('is_business_enabled'),
-            'listing_limit' => $validated['listing_limit'] ?? null,
-            'business_valid_until' => $validated['business_valid_until'] ?? null,
-            'status' => $validated['status'],
-        ]);
+        // Set guarded fields explicitly (protected from mass assignment for security)
+        $user->current_role = $newRole;
+        $user->is_business_enabled = $request->has('is_business_enabled');
+        $user->listing_limit = $validated['listing_limit'] ?? null;
+        $user->business_valid_until = $validated['business_valid_until'] ?? null;
+        $user->status = $validated['status'];
+        $user->save();
 
         // Handle role downgrade: business_user → normal_user
         if ($oldRole === 'business_user' && $newRole === 'normal_user') {

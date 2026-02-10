@@ -14,6 +14,11 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, LogsActivity, Notifiable, SoftDeletes;
 
+    /**
+     * Mass assignable attributes.
+     * SECURITY: Sensitive fields (current_role, is_business_enabled, listing_limit,
+     * business_valid_until, status) are protected via $guarded to prevent privilege escalation.
+     */
     protected $fillable = [
         'name',
         'email',
@@ -21,15 +26,23 @@ class User extends Authenticatable
         'phone',
         'email_verified_at',
         'phone_verified_at',
+        'daily_listing_count',
+        'last_listing_date',
+        'avatar',
+        'bio',
+    ];
+
+    /**
+     * Attributes protected from mass assignment.
+     * SECURITY: These fields can only be set explicitly by admin controllers.
+     */
+    protected $guarded = [
+        'id',
         'current_role',
         'is_business_enabled',
         'listing_limit',
         'business_valid_until',
         'status',
-        'daily_listing_count',
-        'last_listing_date',
-        'avatar',
-        'bio',
     ];
 
     protected $hidden = [
