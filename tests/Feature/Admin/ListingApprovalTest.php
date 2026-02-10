@@ -140,3 +140,154 @@ test('approving a previously rejected listing clears rejection fields', function
     expect($listing->rejection_reason)->toBeNull();
     expect($listing->rejected_at)->toBeNull();
 });
+
+// ==========================================
+// ROLE CHANGE RESTRICTIONS
+// ==========================================
+
+test('approving listing after user downgrade hides listing if user already has active listing', function () {
+    Notification::fake();
+
+    // User was business_user, now is normal_user
+    $user = User::factory()->create([
+        'current_role' => 'normal_user',
+        'is_business_enabled' => false,
+    ]);
+
+    // User already has one active visible listing
+    Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'hidden_due_to_role_change' => false,
+        'created_as_role' => 'business_user',
+    ]);
+
+    // Pending listing created when user was business_user
+    $pendingListing = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'pending',
+        'hidden_due_to_role_change' => false,
+        'created_as_role' => 'business_user',
+    ]);
+
+    $response = $this->post(route('admin.listings.approval.approve', $pendingListing));
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
+
+    $pendingListing->refresh();
+    expect($pendingListing->status)->toBe('active');
+    expect($pendingListing->hidden_due_to_role_change)->toBeTrue();
+});
+
+test('approving listing after user downgrade does not hide if user has no active listings', function () {
+    Notification::fake();
+
+    // User was business_user, now is normal_user, but has no active listings
+    $user = User::factory()->create([
+        'current_role' => 'normal_user',
+        'is_business_enabled' => false,
+    ]);
+
+    // Pending listing created when user was business_user
+    $pendingListing = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'pending',
+        'hidden_due_to_role_change' => false,
+        'created_as_role' => 'business_user',
+    ]);
+
+    $response = $this->post(route('admin.listings.approval.approve', $pendingListing));
+
+    $response->assertRedirect();
+
+    $pendingListing->refresh();
+    expect($pendingListing->status)->toBe('active');
+    expect($pendingListing->hidden_due_to_role_change)->toBeFalse();
+});
+
+test('approving listing for business user does not apply role restrictions', function () {
+    Notification::fake();
+
+    // User is still a business_user
+    $user = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+    ]);
+
+    // User already has active listings
+    Listing::factory()->count(3)->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'hidden_due_to_role_change' => false,
+        'created_as_role' => 'business_user',
+    ]);
+
+    // Pending listing
+    $pendingListing = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'pending',
+        'hidden_due_to_role_change' => false,
+        'created_as_role' => 'business_user',
+    ]);
+
+    $response = $this->post(route('admin.listings.approval.approve', $pendingListing));
+
+    $response->assertRedirect();
+
+    $pendingListing->refresh();
+    expect($pendingListing->status)->toBe('active');
+    expect($pendingListing->hidden_due_to_role_change)->toBeFalse();
+});
+
+test('approving listing created as normal user does not apply role restrictions', function () {
+    Notification::fake();
+
+    // User is a normal_user
+    $user = User::factory()->create([
+        'current_role' => 'normal_user',
+    ]);
+
+    // Pending listing created as normal_user
+    $pendingListing = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'pending',
+        'hidden_due_to_role_change' => false,
+        'created_as_role' => 'normal_user',
+    ]);
+
+    $response = $this->post(route('admin.listings.approval.approve', $pendingListing));
+
+    $response->assertRedirect();
+
+    $pendingListing->refresh();
+    expect($pendingListing->status)->toBe('active');
+    expect($pendingListing->hidden_due_to_role_change)->toBeFalse();
+});
+
+test('success message indicates role restriction when listing is hidden', function () {
+    Notification::fake();
+
+    $user = User::factory()->create([
+        'current_role' => 'normal_user',
+        'is_business_enabled' => false,
+    ]);
+
+    Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'active',
+        'hidden_due_to_role_change' => false,
+        'created_as_role' => 'business_user',
+    ]);
+
+    $pendingListing = Listing::factory()->create([
+        'user_id' => $user->id,
+        'status' => 'pending',
+        'created_as_role' => 'business_user',
+    ]);
+
+    $response = $this->post(route('admin.listings.approval.approve', $pendingListing));
+
+    $response->assertSessionHas('success');
+    expect(session('success'))->toContain('hidden due to user role restrictions');
+});
