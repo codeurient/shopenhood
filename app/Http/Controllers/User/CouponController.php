@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
+=======
+use App\Http\Requests\User\StoreCouponRequest;
+use App\Http\Requests\User\UpdateCouponRequest;
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\CouponRestriction;
 use App\Models\Listing;
+<<<<<<< HEAD
 use Illuminate\Http\Request;
 
 class CouponController extends Controller
@@ -58,6 +64,31 @@ class CouponController extends Controller
                     $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
                 })->count(),
             'expired' => Coupon::forUser($user->id)->whereNotNull('expires_at')
+=======
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+
+class CouponController extends Controller
+{
+    public function index(): View
+    {
+        $user = auth()->user();
+
+        $coupons = Coupon::forUser($user->id)
+            ->withCount(['restrictions', 'usages'])
+            ->latest()
+            ->paginate(20);
+
+        $stats = [
+            'total' => Coupon::forUser($user->id)->count(),
+            'active' => Coupon::forUser($user->id)
+                ->where('is_active', true)
+                ->where(function ($q) {
+                    $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                })->count(),
+            'expired' => Coupon::forUser($user->id)
+                ->whereNotNull('expires_at')
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
                 ->where('expires_at', '<', now())->count(),
             'inactive' => Coupon::forUser($user->id)->where('is_active', false)->count(),
         ];
@@ -65,6 +96,7 @@ class CouponController extends Controller
         return view('user.coupons.index', compact('coupons', 'stats'));
     }
 
+<<<<<<< HEAD
     public function create()
     {
         $user = auth()->user();
@@ -75,10 +107,19 @@ class CouponController extends Controller
 
         $categories = $this->getUserCategories($user);
         $listings = $this->getUserListings($user);
+=======
+    public function create(): View
+    {
+        $user = auth()->user();
+
+        $categories = $this->getUserCategories($user->id);
+        $listings = $this->getUserListings($user->id);
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
 
         return view('user.coupons.create', compact('categories', 'listings'));
     }
 
+<<<<<<< HEAD
     public function store(Request $request)
     {
         $user = auth()->user();
@@ -91,17 +132,29 @@ class CouponController extends Controller
 
         $validated['user_id'] = $user->id;
         $validated['code'] = strtoupper($validated['code']);
+=======
+    public function store(StoreCouponRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+        $validated['code'] = strtoupper($validated['code']);
+        $validated['user_id'] = auth()->id();
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
         $validated['is_active'] = $request->has('is_active');
 
         $coupon = Coupon::create($validated);
 
+<<<<<<< HEAD
         $this->syncRestrictions($coupon, $request, $user);
+=======
+        $this->syncRestrictions($coupon, $request);
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
 
         return redirect()
             ->route('user.coupons.index')
             ->with('success', "Coupon \"{$coupon->code}\" created successfully.");
     }
 
+<<<<<<< HEAD
     public function edit(Coupon $coupon)
     {
         $user = auth()->user();
@@ -111,18 +164,33 @@ class CouponController extends Controller
         }
 
         $this->authorizeOwnership($coupon);
+=======
+    public function edit(Coupon $coupon): View|RedirectResponse
+    {
+        if ($coupon->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $user = auth()->user();
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
 
         $coupon->loadCount(['usages']);
         $coupon->load('restrictions');
 
+<<<<<<< HEAD
         $categories = $this->getUserCategories($user);
         $listings = $this->getUserListings($user);
+=======
+        $categories = $this->getUserCategories($user->id);
+        $listings = $this->getUserListings($user->id);
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
 
         $existingRestrictionIds = $coupon->restrictions->pluck('restrictable_id')->toArray();
 
         return view('user.coupons.edit', compact('coupon', 'categories', 'listings', 'existingRestrictionIds'));
     }
 
+<<<<<<< HEAD
     public function update(Request $request, Coupon $coupon)
     {
         $user = auth()->user();
@@ -135,18 +203,32 @@ class CouponController extends Controller
 
         $validated = $request->validate($this->validationRules($coupon->id));
 
+=======
+    public function update(UpdateCouponRequest $request, Coupon $coupon): RedirectResponse
+    {
+        if ($coupon->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validated();
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
         $validated['code'] = strtoupper($validated['code']);
         $validated['is_active'] = $request->has('is_active');
 
         $coupon->update($validated);
 
+<<<<<<< HEAD
         $this->syncRestrictions($coupon, $request, $user);
+=======
+        $this->syncRestrictions($coupon, $request);
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
 
         return redirect()
             ->route('user.coupons.index')
             ->with('success', "Coupon \"{$coupon->code}\" updated successfully.");
     }
 
+<<<<<<< HEAD
     public function destroy(Coupon $coupon)
     {
         $user = auth()->user();
@@ -157,6 +239,14 @@ class CouponController extends Controller
 
         $this->authorizeOwnership($coupon);
 
+=======
+    public function destroy(Coupon $coupon): RedirectResponse
+    {
+        if ($coupon->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
         $code = $coupon->code;
         $coupon->delete();
 
@@ -165,6 +255,7 @@ class CouponController extends Controller
             ->with('success', "Coupon \"{$code}\" deleted successfully.");
     }
 
+<<<<<<< HEAD
     public function toggleStatus(Coupon $coupon)
     {
         $user = auth()->user();
@@ -175,6 +266,14 @@ class CouponController extends Controller
 
         $this->authorizeOwnership($coupon);
 
+=======
+    public function toggleStatus(Coupon $coupon): RedirectResponse
+    {
+        if ($coupon->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
         $coupon->update([
             'is_active' => ! $coupon->is_active,
         ]);
@@ -184,6 +283,7 @@ class CouponController extends Controller
             ->with('success', 'Coupon status updated successfully.');
     }
 
+<<<<<<< HEAD
     private function authorizeOwnership(Coupon $coupon): void
     {
         if (! $coupon->belongsToUser(auth()->id())) {
@@ -195,6 +295,15 @@ class CouponController extends Controller
     {
         $categoryIds = Listing::forUser($user->id)
             ->whereNotNull('category_id')
+=======
+    /**
+     * Get distinct categories from the user's own approved/active listings.
+     */
+    private function getUserCategories(int $userId)
+    {
+        $categoryIds = Listing::where('user_id', $userId)
+            ->whereIn('status', ['approved', 'active'])
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
             ->distinct()
             ->pluck('category_id');
 
@@ -204,14 +313,25 @@ class CouponController extends Controller
             ->get();
     }
 
+<<<<<<< HEAD
     private function getUserListings($user)
     {
         return Listing::forUser($user->id)
             ->where('status', 'active')
+=======
+    /**
+     * Get the user's own approved/active listings.
+     */
+    private function getUserListings(int $userId)
+    {
+        return Listing::where('user_id', $userId)
+            ->whereIn('status', ['approved', 'active'])
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
             ->orderBy('title')
             ->get(['id', 'title']);
     }
 
+<<<<<<< HEAD
     private function validationRules(?int $couponId = null): array
     {
         return [
@@ -233,6 +353,9 @@ class CouponController extends Controller
     }
 
     private function syncRestrictions(Coupon $coupon, Request $request, $user): void
+=======
+    private function syncRestrictions(Coupon $coupon, $request): void
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
     {
         $coupon->restrictions()->delete();
 
@@ -251,6 +374,7 @@ class CouponController extends Controller
             return;
         }
 
+<<<<<<< HEAD
         $validIds = $this->getValidRestrictionIds($coupon->applicable_to, $user, $request->restrictions);
 
         if (empty($validIds)) {
@@ -258,6 +382,9 @@ class CouponController extends Controller
         }
 
         $restrictions = collect($validIds)->map(fn ($id) => [
+=======
+        $restrictions = collect($request->restrictions)->map(fn ($id) => [
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
             'coupon_id' => $coupon->id,
             'restrictable_type' => $restrictableType,
             'restrictable_id' => $id,
@@ -266,6 +393,7 @@ class CouponController extends Controller
 
         CouponRestriction::insert($restrictions);
     }
+<<<<<<< HEAD
 
     private function getValidRestrictionIds(string $applicableTo, $user, array $requestedIds): array
     {
@@ -289,4 +417,6 @@ class CouponController extends Controller
 
         return [];
     }
+=======
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
 }

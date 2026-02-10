@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -80,6 +81,13 @@ class CouponFactory extends Factory
     {
         return $this->state(fn () => [
             'user_id' => $userId,
+        ]);
+    }
+
+    public function forUser(User $user): static
+    {
+        return $this->state(fn () => [
+            'user_id' => $user->id,
         ]);
     }
 }

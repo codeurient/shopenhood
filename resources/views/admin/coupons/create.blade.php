@@ -174,6 +174,24 @@
                 </div>
             </div>
 
+<<<<<<< HEAD
+=======
+            {{-- Restrictions: Listings --}}
+            <div x-show="applicableTo === 'listings'" x-transition class="border-t pt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Select Listings</label>
+                <div class="max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-4 space-y-2">
+                    @foreach($listings as $listing)
+                        <label class="flex items-center">
+                            <input type="checkbox" name="restrictions[]" value="{{ $listing->id }}"
+                                   {{ in_array($listing->id, old('restrictions', [])) ? 'checked' : '' }}
+                                   class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                            <span class="ml-2 text-sm text-gray-700">{{ $listing->title }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
             {{-- Description --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>

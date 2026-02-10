@@ -55,6 +55,11 @@ class Coupon extends Model
         return $this->hasMany(CouponUsage::class);
     }
 
+    public function scopeForUser($query, int $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true)

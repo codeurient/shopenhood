@@ -5,7 +5,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+<<<<<<< HEAD
 use App\Http\Controllers\User\AddressController as UserAddressController;
+=======
+>>>>>>> 126dacd81adcef53b155a6e3204b9d6deaeaba7e
 use App\Http\Controllers\User\CouponController as UserCouponController;
 use App\Http\Controllers\User\ListingController as UserListingController;
 use Illuminate\Support\Facades\Route;
@@ -64,6 +67,17 @@ Route::middleware('auth')->group(function () {
     // Notifications
     Route::post('/notifications/mark-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-read');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+
+    // User Coupon Management
+    Route::prefix('my-coupons')->name('user.coupons.')->group(function () {
+        Route::get('/', [UserCouponController::class, 'index'])->name('index');
+        Route::get('/create', [UserCouponController::class, 'create'])->name('create');
+        Route::post('/', [UserCouponController::class, 'store'])->name('store');
+        Route::get('/{coupon}/edit', [UserCouponController::class, 'edit'])->name('edit');
+        Route::put('/{coupon}', [UserCouponController::class, 'update'])->name('update');
+        Route::delete('/{coupon}', [UserCouponController::class, 'destroy'])->name('destroy');
+        Route::patch('/{coupon}/toggle-status', [UserCouponController::class, 'toggleStatus'])->name('toggle-status');
+    });
 
     // User Listing Management
     Route::prefix('my-listings')->name('user.listings.')->group(function () {
