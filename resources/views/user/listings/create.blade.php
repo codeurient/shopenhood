@@ -248,17 +248,20 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country</label>
-                                    <select name="country" id="country"
+                                    <select id="country_select"
                                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                                         <option value="">Select Country</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City</label>
-                                    <select name="city" id="city" disabled
+                                    <select name="location_id" id="city_select" disabled
                                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                                         <option value="">Select country first</option>
                                     </select>
+                                    @error('location_id')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -503,43 +506,45 @@
     const categoryContainer = document.getElementById('categorySelectsContainer');
     const categoryHiddenInput = document.getElementById('category_id_hidden');
     const variantsContainer = document.getElementById('variantsContainer');
-    const countrySelect = document.getElementById('country');
-    const citySelect = document.getElementById('city');
+    const countrySelect = document.getElementById('country_select');
+    const citySelect = document.getElementById('city_select');
 
     let categoryLevelsData = {};
     let loadedVariantsByCategory = new Set();
-    let countriesData = {};
 
-    // Load countries and cities data
-    fetch('/api/locations/countries-cities')
+    // Load countries from database
+    fetch('/api/locations/countries')
         .then(response => response.json())
         .then(data => {
-            countriesData = data;
-            populateCountries();
+            if (data.success) {
+                data.countries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.id;
+                    option.textContent = country.name;
+                    countrySelect.appendChild(option);
+                });
+            }
         });
 
-    function populateCountries() {
-        Object.keys(countriesData).forEach(country => {
-            const option = document.createElement('option');
-            option.value = country;
-            option.textContent = country;
-            countrySelect.appendChild(option);
-        });
-    }
-
-    // Country change handler
+    // Country change handler - load cities
     countrySelect.addEventListener('change', function() {
         citySelect.innerHTML = '<option value="">Select City</option>';
         citySelect.disabled = true;
 
-        if (this.value && countriesData[this.value]) {
-            citySelect.disabled = false;
-            countriesData[this.value].forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
-            });
+        if (this.value) {
+            fetch(`/api/locations/${this.value}/cities`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.cities.length > 0) {
+                        citySelect.disabled = false;
+                        data.cities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city.id;
+                            option.textContent = city.name;
+                            citySelect.appendChild(option);
+                        });
+                    }
+                });
         }
     });
 

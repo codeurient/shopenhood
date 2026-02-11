@@ -31,23 +31,27 @@ Route::get('/dashboard', function () {
 Route::get('/api/categories/children/{category?}', [CategoryController::class, 'getChildren'])->name('api.categories.children');
 Route::get('/api/categories/{category}/variants', [CategoryController::class, 'getVariants'])->name('api.categories.variants');
 Route::get('/api/categories/{category}/hierarchy', [CategoryController::class, 'getHierarchy'])->name('api.categories.hierarchy');
-Route::get('/api/locations/countries-cities', function () {
-    $countries = \App\Models\Location::query()
-        ->where('type', 'country')
-        ->where('is_active', true)
-        ->with(['cities' => function ($q) {
-            $q->where('is_active', true)->orderBy('name');
-        }])
-        ->orderBy('name')
-        ->get();
+Route::get('/api/locations/countries', function () {
+    return response()->json([
+        'success' => true,
+        'countries' => \App\Models\Location::query()
+            ->where('type', 'country')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'code']),
+    ]);
+})->name('api.locations.countries');
 
-    $result = [];
-    foreach ($countries as $country) {
-        $result[$country->name] = $country->cities->pluck('name')->toArray();
-    }
-
-    return response()->json($result);
-})->name('api.locations.countries-cities');
+Route::get('/api/locations/{country}/cities', function (\App\Models\Location $country) {
+    return response()->json([
+        'success' => true,
+        'cities' => $country->children()
+            ->where('type', 'city')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'code']),
+    ]);
+})->name('api.locations.cities');
 
 // Public Listing Routes
 Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');
