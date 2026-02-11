@@ -55,7 +55,7 @@
             </div>
 
             {{-- Rejection Modal --}}
-            <div x-show="showRejectModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @keydown.escape.window="showRejectModal = false">
+            <div x-show="showRejectModal" x-cloak style="display: none" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @keydown.escape.window="showRejectModal = false">
                 <div @click.away="showRejectModal = false" class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Reject Listing</h3>
                     <form method="POST" action="{{ route('admin.listings.approval.reject', $listing) }}">

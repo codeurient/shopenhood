@@ -69,7 +69,7 @@
 </div>
 
 <!-- Variant Assignment Modal -->
-<div id="variantModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4">
+<div id="variantModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4" style="display: none">
     <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col">
         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <div>
@@ -298,8 +298,22 @@ function escapeHtml(text) {
 
 function openVariantModal(categoryId, categoryName) {
     currentCategoryId = categoryId;
+
+    // Reset modal body to loading state BEFORE showing to prevent stale content flash
+    document.getElementById('variantModalBody').innerHTML = `
+        <div class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <p class="text-gray-600 mt-4">Loading variants...</p>
+        </div>
+    `;
+
     document.getElementById('modalCategoryName').textContent = `Category: ${categoryName}`;
-    document.getElementById('variantModal').classList.remove('hidden');
+
+    // Remove both hidden class and inline style (for initial page load protection)
+    const modal = document.getElementById('variantModal');
+    modal.classList.remove('hidden');
+    modal.style.display = '';
+
     document.body.style.overflow = 'hidden';
 
     console.log('🔄 Loading variants for category:', categoryId, categoryName);
@@ -414,7 +428,9 @@ function toggleVariantSettings(checkbox) {
 }
 
 function closeVariantModal() {
-    document.getElementById('variantModal').classList.add('hidden');
+    const modal = document.getElementById('variantModal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
     document.body.style.overflow = '';
 }
 

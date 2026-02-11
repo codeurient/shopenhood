@@ -689,22 +689,33 @@
     function loadVariantsForCategory(categoryId, categoryName, level) {
         if (loadedVariantsByCategory.has(categoryId)) return;
 
-        const loadingCard = createLoadingCard(level);
-        variantsContainer.appendChild(loadingCard);
+        // Delay showing the loading spinner to prevent flash when no variants exist
+        let loadingCard = null;
+        let fetchComplete = false;
+        const loadingTimeout = setTimeout(() => {
+            if (!fetchComplete) {
+                loadingCard = createLoadingCard(level);
+                variantsContainer.appendChild(loadingCard);
+            }
+        }, 150);
 
         fetch(`/api/categories/${categoryId}/variants?show_all=true`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
         })
         .then(r => r.json())
         .then(data => {
-            loadingCard.remove();
+            fetchComplete = true;
+            clearTimeout(loadingTimeout);
+            if (loadingCard) loadingCard.remove();
             if (data.success && data.variants.length > 0) {
                 loadedVariantsByCategory.add(categoryId);
                 renderVariantsCard(data.variants, categoryName, level, categoryId);
             }
         })
         .catch(err => {
-            loadingCard.remove();
+            fetchComplete = true;
+            clearTimeout(loadingTimeout);
+            if (loadingCard) loadingCard.remove();
         });
     }
 
