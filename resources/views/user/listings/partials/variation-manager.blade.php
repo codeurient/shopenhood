@@ -37,7 +37,7 @@
     </div>
 
     <!-- Variant Selection Info -->
-    <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 rounded" x-show="categoryVariants.length > 0">
+    <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 rounded" x-show="categoryVariants.length > 0" x-cloak>
         <p class="text-sm text-blue-700 dark:text-blue-300">
             <strong>Available Variants for this category:</strong>
             <span x-text="categoryVariants.map(v => v.name).join(', ')"></span>
@@ -48,7 +48,7 @@
     </div>
 
     <!-- Variations Table -->
-    <div class="overflow-x-auto" x-show="variations.length > 0">
+    <div class="overflow-x-auto" x-show="variations.length > 0" x-cloak>
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
@@ -187,7 +187,7 @@
     </div>
 
     <!-- Empty State -->
-    <div class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-lg" x-show="variations.length === 0">
+    <div class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-lg" x-show="variations.length === 0" x-cloak>
         <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
         <p class="text-gray-500 dark:text-gray-400 text-lg mb-4">No variations created yet</p>
         <p class="text-sm text-gray-400 dark:text-gray-500 mb-6">
@@ -197,7 +197,7 @@
     </div>
 
     <!-- Bulk Actions -->
-    <div class="mt-6 flex gap-4" x-show="variations.length > 0">
+    <div class="mt-6 flex gap-4" x-show="variations.length > 0" x-cloak>
         <button type="button"
                 @click="bulkSetPrice()"
                 class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition">

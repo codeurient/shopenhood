@@ -37,7 +37,7 @@
     </div>
 
     <!-- Variant Selection Info -->
-    <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded" x-show="categoryVariants.length > 0">
+    <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded" x-show="categoryVariants.length > 0" x-cloak>
         <p class="text-sm text-blue-700">
             <strong>Available Variants for this category:</strong>
             <span x-text="categoryVariants.map(v => v.name).join(', ')"></span>
@@ -48,7 +48,7 @@
     </div>
 
     <!-- Variations Table -->
-    <div class="overflow-x-auto" x-show="variations.length > 0">
+    <div class="overflow-x-auto" x-show="variations.length > 0" x-cloak>
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
@@ -187,7 +187,7 @@
     </div>
 
     <!-- Empty State -->
-    <div class="text-center py-12 bg-gray-50 rounded-lg" x-show="variations.length === 0">
+    <div class="text-center py-12 bg-gray-50 rounded-lg" x-show="variations.length === 0" x-cloak>
         <div class="text-6xl mb-4">📦</div>
         <p class="text-gray-500 text-lg mb-4">No variations created yet</p>
         <p class="text-sm text-gray-400 mb-6">
@@ -197,7 +197,7 @@
     </div>
 
     <!-- Bulk Actions -->
-    <div class="mt-6 flex gap-4" x-show="variations.length > 0">
+    <div class="mt-6 flex gap-4" x-show="variations.length > 0" x-cloak>
         <button type="button"
                 @click="bulkSetPrice()"
                 class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">

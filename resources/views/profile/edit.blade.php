@@ -113,7 +113,7 @@
                 </div>
 
                 <!-- Delete Confirmation -->
-                <div x-show="confirmingDeletion" x-cloak class="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <div x-show="confirmingDeletion" x-cloak style="display: none" class="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                         Are you sure you want to delete your account? Please enter your password to confirm.
                     </p>
