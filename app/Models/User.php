@@ -73,12 +73,20 @@ class User extends Authenticatable
         return $this->hasMany(Coupon::class);
     }
 
-
     public function addresses(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(UserAddress::class);
     }
 
+    public function loginHistories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(LoginHistory::class);
+    }
+
+    public function lastLogin(): ?\Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(LoginHistory::class)->latestOfMany('logged_in_at');
+    }
 
     // ============================================
     // ROLE HELPERS

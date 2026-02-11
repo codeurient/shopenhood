@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ListingTypeController;
 use App\Http\Controllers\Admin\ListingVariantController;
 use App\Http\Controllers\Admin\LocationCityController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\LoginHistoryController;
 use App\Http\Controllers\Admin\ProductVariationController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingController;
@@ -333,6 +334,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/', [ActivityLogController::class, 'index'])->name('index');
             Route::get('{activity}', [ActivityLogController::class, 'show'])->name('show');
             Route::delete('clear-old', [ActivityLogController::class, 'clearOld'])->name('clear-old');
+        });
+
+        // ====================================================================
+        // LOGIN HISTORIES
+        // ====================================================================
+        Route::prefix('login-histories')->name('login-histories.')->group(function () {
+            Route::get('/', [LoginHistoryController::class, 'index'])->name('index');
+            Route::get('{loginHistory}', [LoginHistoryController::class, 'show'])->name('show');
+            Route::get('user/{user}', [LoginHistoryController::class, 'userHistory'])->name('user');
+            Route::post('block-ip', [LoginHistoryController::class, 'blockIp'])->name('block-ip');
         });
 
         // ====================================================================
