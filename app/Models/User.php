@@ -88,6 +88,25 @@ class User extends Authenticatable
         return $this->hasOne(LoginHistory::class)->latestOfMany('logged_in_at');
     }
 
+    public function businessProfile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(BusinessProfile::class);
+    }
+
+    // ============================================
+    // BUSINESS PROFILE HELPERS
+    // ============================================
+
+    public function hasBusinessProfile(): bool
+    {
+        return $this->businessProfile()->exists();
+    }
+
+    public function getBusinessNameAttribute(): ?string
+    {
+        return $this->businessProfile?->business_name;
+    }
+
     // ============================================
     // ROLE HELPERS
     // ============================================

@@ -1,0 +1,151 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreBusinessProfileRequest;
+use App\Http\Requests\Admin\UpdateBusinessProfileRequest;
+use App\Models\BusinessProfile;
+use App\Models\Location;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+class BusinessProfileController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = BusinessProfile::with(['user', 'country']);
+
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        if ($request->filled('industry')) {
+            $query->byIndustry($request->industry);
+        }
+
+        if ($request->filled('country')) {
+            $query->where('country_id', $request->country);
+        }
+
+        $profiles = $query->latest()->paginate(20)->withQueryString();
+
+        $industries = BusinessProfile::distinct()->whereNotNull('industry')->pluck('industry');
+        $countries = Location::countries()->active()->orderBy('name')->get();
+
+        $stats = [
+            'total' => BusinessProfile::count(),
+        ];
+
+        return view('admin.business-profiles.index', compact('profiles', 'industries', 'countries', 'stats'));
+    }
+
+    public function show(BusinessProfile $businessProfile)
+    {
+        $businessProfile->load(['user', 'country']);
+
+        return view('admin.business-profiles.show', compact('businessProfile'));
+    }
+
+    public function create(User $user)
+    {
+        if (! $user->isBusinessUser()) {
+            return redirect()->route('admin.users.edit', $user)
+                ->with('error', 'Only business users can have a business profile.');
+        }
+
+        if ($user->hasBusinessProfile()) {
+            return redirect()->route('admin.business-profiles.edit', $user->businessProfile)
+                ->with('info', 'This user already has a business profile.');
+        }
+
+        $countries = Location::countries()->active()->orderBy('name')->get();
+
+        return view('admin.business-profiles.create', compact('user', 'countries'));
+    }
+
+    public function store(StoreBusinessProfileRequest $request, User $user)
+    {
+        if (! $user->isBusinessUser()) {
+            return redirect()->route('admin.users.edit', $user)
+                ->with('error', 'Only business users can have a business profile.');
+        }
+
+        if ($user->hasBusinessProfile()) {
+            return redirect()->route('admin.business-profiles.edit', $user->businessProfile)
+                ->with('error', 'This user already has a business profile.');
+        }
+
+        $data = $request->validated();
+        $data['user_id'] = $user->id;
+        $data['slug'] = Str::slug($data['business_name']).'-'.Str::random(6);
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $request->file('logo')->store('business/logos', 'public');
+        }
+
+        // Handle banner upload
+        if ($request->hasFile('banner')) {
+            $data['banner'] = $request->file('banner')->store('business/banners', 'public');
+        }
+
+        $profile = BusinessProfile::create($data);
+
+        return redirect()->route('admin.business-profiles.show', $profile)
+            ->with('success', 'Business profile created successfully.');
+    }
+
+    public function edit(BusinessProfile $businessProfile)
+    {
+        $businessProfile->load(['user', 'country']);
+        $countries = Location::countries()->active()->orderBy('name')->get();
+
+        return view('admin.business-profiles.edit', compact('businessProfile', 'countries'));
+    }
+
+    public function update(UpdateBusinessProfileRequest $request, BusinessProfile $businessProfile)
+    {
+        $data = $request->validated();
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            // Delete old logo if exists
+            if ($businessProfile->logo) {
+                \Storage::disk('public')->delete($businessProfile->logo);
+            }
+            $data['logo'] = $request->file('logo')->store('business/logos', 'public');
+        }
+
+        // Handle banner upload
+        if ($request->hasFile('banner')) {
+            // Delete old banner if exists
+            if ($businessProfile->banner) {
+                \Storage::disk('public')->delete($businessProfile->banner);
+            }
+            $data['banner'] = $request->file('banner')->store('business/banners', 'public');
+        }
+
+        $businessProfile->update($data);
+
+        return redirect()->route('admin.business-profiles.show', $businessProfile)
+            ->with('success', 'Business profile updated successfully.');
+    }
+
+    public function destroy(BusinessProfile $businessProfile)
+    {
+        // Delete uploaded files
+        if ($businessProfile->logo) {
+            \Storage::disk('public')->delete($businessProfile->logo);
+        }
+        if ($businessProfile->banner) {
+            \Storage::disk('public')->delete($businessProfile->banner);
+        }
+
+        $businessProfile->delete();
+
+        return redirect()->route('admin.business-profiles.index')
+            ->with('success', 'Business profile deleted successfully.');
+    }
+}

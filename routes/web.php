@@ -6,6 +6,7 @@ use App\Http\Controllers\ListingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\AddressController as UserAddressController;
+use App\Http\Controllers\User\BusinessProfileController as UserBusinessProfileController;
 use App\Http\Controllers\User\CouponController as UserCouponController;
 use App\Http\Controllers\User\ListingController as UserListingController;
 use Illuminate\Support\Facades\Route;
@@ -108,6 +109,15 @@ Route::middleware('auth')->group(function () {
     // API: User Addresses (for checkout)
     Route::get('/api/user/addresses', [UserAddressController::class, 'getAddresses'])->name('api.user.addresses');
     Route::get('/api/user/addresses/{address}', [UserAddressController::class, 'getAddress'])->name('api.user.address');
+
+    // Business Profile (for business users)
+    Route::prefix('business')->name('business.')->group(function () {
+        Route::get('/profile', [UserBusinessProfileController::class, 'show'])->name('profile');
+        Route::get('/profile/create', [UserBusinessProfileController::class, 'create'])->name('profile.create');
+        Route::post('/profile', [UserBusinessProfileController::class, 'store'])->name('profile.store');
+        Route::get('/profile/edit', [UserBusinessProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [UserBusinessProfileController::class, 'update'])->name('profile.update');
+    });
 });
 
 require __DIR__.'/auth.php';

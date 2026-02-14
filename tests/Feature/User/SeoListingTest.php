@@ -31,6 +31,7 @@ test('business user can create listing with seo fields', function () {
         'category_id' => $this->category->id,
         'title' => 'SEO Test Product',
         'description' => 'A product with SEO optimization.',
+        'condition' => 'new',
         'base_price' => 50.00,
         'meta_title' => 'Premium Cotton T-Shirts Wholesale | TestBrand',
         'meta_description' => 'Shop premium cotton t-shirts in bulk. MOQ 10 pieces. Free shipping on orders over $500.',
@@ -55,6 +56,7 @@ test('normal user cannot set seo fields on listing', function () {
         'category_id' => $this->category->id,
         'title' => 'Normal User Product',
         'description' => 'A product from normal user.',
+        'condition' => 'new',
         'base_price' => 25.00,
         'meta_title' => 'This Should Not Be Saved',
         'meta_description' => 'This description should not be saved either.',
@@ -87,6 +89,7 @@ test('business user can update listing with seo fields', function () {
         'category_id' => $this->category->id,
         'title' => $listing->title,
         'description' => $listing->description,
+        'condition' => 'new',
         'meta_title' => 'Updated SEO Title | Brand',
         'meta_description' => 'Updated SEO description with keywords and benefits.',
     ];
@@ -117,6 +120,7 @@ test('normal user cannot update seo fields on listing', function () {
         'category_id' => $this->category->id,
         'title' => $listing->title,
         'description' => $listing->description,
+        'condition' => 'new',
         'meta_title' => 'Should Not Be Saved',
         'meta_description' => 'This should not be saved.',
     ];
@@ -142,6 +146,7 @@ test('meta title cannot exceed 60 characters', function () {
         'category_id' => $this->category->id,
         'title' => 'Test Product',
         'description' => 'Test description.',
+        'condition' => 'new',
         'meta_title' => str_repeat('a', 61),
     ];
 
@@ -158,6 +163,7 @@ test('meta description cannot exceed 160 characters', function () {
         'category_id' => $this->category->id,
         'title' => 'Test Product',
         'description' => 'Test description.',
+        'condition' => 'new',
         'meta_description' => str_repeat('a', 161),
     ];
 
@@ -174,6 +180,7 @@ test('meta title at max length is valid', function () {
         'category_id' => $this->category->id,
         'title' => 'Test Product',
         'description' => 'Test description.',
+        'condition' => 'new',
         'meta_title' => str_repeat('a', 60),
     ];
 
@@ -196,6 +203,7 @@ test('meta description at max length is valid', function () {
         'category_id' => $this->category->id,
         'title' => 'Test Product',
         'description' => 'Test description.',
+        'condition' => 'new',
         'meta_description' => str_repeat('a', 160),
     ];
 
@@ -222,6 +230,7 @@ test('seo fields are optional for business users', function () {
         'category_id' => $this->category->id,
         'title' => 'Product Without SEO',
         'description' => 'A product without any SEO fields set.',
+        'condition' => 'new',
         'base_price' => 25.00,
     ];
 
@@ -254,6 +263,7 @@ test('business user can clear seo fields on update', function () {
         'category_id' => $this->category->id,
         'title' => $listing->title,
         'description' => $listing->description,
+        'condition' => 'new',
         'meta_title' => '',
         'meta_description' => '',
     ];

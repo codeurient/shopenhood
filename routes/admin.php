@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\BusinessProfileController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CategoryVariantController;
 use App\Http\Controllers\Admin\CouponController;
@@ -304,6 +305,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('{user}/edit', [UserController::class, 'edit'])->name('edit');
             Route::put('{user}', [UserController::class, 'update'])->name('update');
             Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
+        });
+
+        // ====================================================================
+        // BUSINESS PROFILES MANAGEMENT
+        // ====================================================================
+        Route::prefix('business-profiles')->name('business-profiles.')->group(function () {
+            Route::get('/', [BusinessProfileController::class, 'index'])->name('index');
+            Route::get('/create/{user}', [BusinessProfileController::class, 'create'])->name('create');
+            Route::post('/store/{user}', [BusinessProfileController::class, 'store'])->name('store');
+            Route::get('/{businessProfile}', [BusinessProfileController::class, 'show'])->name('show');
+            Route::get('/{businessProfile}/edit', [BusinessProfileController::class, 'edit'])->name('edit');
+            Route::put('/{businessProfile}', [BusinessProfileController::class, 'update'])->name('update');
+            Route::delete('/{businessProfile}', [BusinessProfileController::class, 'destroy'])->name('destroy');
         });
 
         // ====================================================================

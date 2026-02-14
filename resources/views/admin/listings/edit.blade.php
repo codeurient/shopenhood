@@ -177,6 +177,27 @@
                             </div>
                         </div>
 
+                        <!-- Product Condition -->
+                        <div class="border-t pt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                Product Condition <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex gap-6">
+                                <label class="flex items-center">
+                                    <input type="radio" name="condition" value="new"
+                                           {{ old('condition', $listing->condition ?? 'new') === 'new' ? 'checked' : '' }}
+                                           class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="ml-2 text-sm text-gray-700">New</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="condition" value="used"
+                                           {{ old('condition', $listing->condition) === 'used' ? 'checked' : '' }}
+                                           class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="ml-2 text-sm text-gray-700">Second-hand</span>
+                                </label>
+                            </div>
+                        </div>
+
                         <!-- Product Availability -->
                         <div class="border-t pt-4">
                             <label class="block text-sm font-medium text-gray-700 mb-3">

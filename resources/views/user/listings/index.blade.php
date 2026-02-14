@@ -2,9 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">My Listings</h2>
-            <a href="{{ route('user.listings.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium transition">
-                + Create Listing
-            </a>
+
         </div>
     </x-slot>
 

@@ -44,6 +44,7 @@ test('user can create a listing', function () {
         'title' => 'My Test Listing',
         'description' => 'A description for my listing',
         'base_price' => 99.99,
+        'condition' => 'new',
     ]);
 
     $response->assertRedirect(route('user.listings.index'));
@@ -64,6 +65,7 @@ test('user cannot create listing when at limit via store', function () {
         'category_id' => $this->category->id,
         'title' => 'Another Listing',
         'description' => 'Description',
+        'condition' => 'new',
     ]);
 
     $response->assertRedirect(route('user.listings.index'));
@@ -102,6 +104,7 @@ test('user can update own listing', function () {
         'category_id' => $this->category->id,
         'title' => 'Updated Title',
         'description' => 'Updated description',
+        'condition' => 'new',
     ]);
 
     $response->assertRedirect(route('user.listings.index'));
@@ -223,6 +226,7 @@ test('user can create listing with main image and detail images', function () {
         'category_id' => $this->category->id,
         'title' => 'Listing With Images',
         'description' => 'Description with images',
+        'condition' => 'new',
         'main_image' => UploadedFile::fake()->image('main.jpg'),
         'detail_images' => [
             UploadedFile::fake()->image('detail1.jpg'),
@@ -268,6 +272,7 @@ test('user can update listing with new main image', function () {
         'category_id' => $this->category->id,
         'title' => 'Updated With New Image',
         'description' => 'Updated description',
+        'condition' => 'new',
         'main_image' => UploadedFile::fake()->image('new-main.jpg'),
     ]);
 
@@ -307,6 +312,7 @@ test('user can delete images during update', function () {
         'category_id' => $this->category->id,
         'title' => $listing->title,
         'description' => $listing->description,
+        'condition' => 'new',
         'delete_images' => [$image->id],
     ]);
 
@@ -327,6 +333,7 @@ test('business user can set store name on listing', function () {
         'category_id' => $this->category->id,
         'title' => 'Business Listing',
         'description' => 'From my store',
+        'condition' => 'new',
         'store_name' => 'My Awesome Store',
     ]);
 
@@ -342,6 +349,7 @@ test('normal user store name is ignored', function () {
         'category_id' => $this->category->id,
         'title' => 'Normal User Listing',
         'description' => 'Description',
+        'condition' => 'new',
         'store_name' => 'Should Be Ignored',
     ]);
 
@@ -404,6 +412,7 @@ test('user can create listing with discount fields', function () {
         'category_id' => $this->category->id,
         'title' => 'Discounted Item',
         'description' => 'A discounted listing',
+        'condition' => 'new',
         'base_price' => 100.00,
         'discount_price' => 79.99,
         'discount_start_date' => '2026-03-01 00:00:00',
@@ -418,19 +427,42 @@ test('user can create listing with discount fields', function () {
     expect($listing->discount_end_date)->not->toBeNull();
 });
 
-test('user can create listing with availability type', function () {
+test('business user can create listing with availability type', function () {
+    $businessUser = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+    ]);
+    $this->actingAs($businessUser);
+
     $response = $this->post(route('user.listings.store'), [
         'listing_type_id' => $this->listingType->id,
         'category_id' => $this->category->id,
         'title' => 'Available By Order Item',
         'description' => 'An on-demand listing',
+        'condition' => 'new',
+        'availability_type' => 'available_by_order',
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+
+    $listing = Listing::where('user_id', $businessUser->id)->first();
+    expect($listing->availability_type)->toBe('available_by_order');
+});
+
+test('normal user availability type is ignored', function () {
+    $response = $this->post(route('user.listings.store'), [
+        'listing_type_id' => $this->listingType->id,
+        'category_id' => $this->category->id,
+        'title' => 'Normal User Listing',
+        'description' => 'Description',
+        'condition' => 'new',
         'availability_type' => 'available_by_order',
     ]);
 
     $response->assertRedirect(route('user.listings.index'));
 
     $listing = Listing::where('user_id', $this->user->id)->first();
-    expect($listing->availability_type)->toBe('available_by_order');
+    expect($listing->availability_type)->toBe('in_stock'); // Default value, not the submitted one
 });
 
 test('user can create listing with delivery options', function () {
@@ -439,6 +471,7 @@ test('user can create listing with delivery options', function () {
         'category_id' => $this->category->id,
         'title' => 'Delivered Item',
         'description' => 'A listing with delivery',
+        'condition' => 'new',
         'base_price' => 50.00,
         'has_delivery' => '1',
         'has_domestic_delivery' => '1',
@@ -463,6 +496,7 @@ test('delivery defaults to false when checkbox not submitted', function () {
         'category_id' => $this->category->id,
         'title' => 'No Delivery Item',
         'description' => 'A listing without delivery',
+        'condition' => 'new',
     ]);
 
     $response->assertRedirect(route('user.listings.index'));
@@ -486,6 +520,7 @@ test('user can update listing with delivery options', function () {
         'category_id' => $this->category->id,
         'title' => $listing->title,
         'description' => $listing->description,
+        'condition' => 'new',
         'has_delivery' => '1',
         'has_domestic_delivery' => '1',
         'domestic_delivery_price' => 8.50,

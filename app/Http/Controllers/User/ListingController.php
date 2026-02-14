@@ -97,7 +97,7 @@ class ListingController extends Controller
             $validated['has_international_delivery'] = $request->has('has_international_delivery');
             $validated['expires_at'] = $this->listingService->calculateExpiresAt();
 
-            // Store name, wholesale, and SEO only for business users
+            // Store name, wholesale, SEO, availability, and variations only for business users
             if (! $user->isBusinessUser()) {
                 unset($validated['store_name']);
                 $validated['is_wholesale'] = false;
@@ -109,14 +109,18 @@ class ListingController extends Controller
                 unset($validated['wholesale_terms']);
                 unset($validated['meta_title']);
                 unset($validated['meta_description']);
+                // Availability, variants/variations are business-only features
+                unset($validated['availability_type']);
+                unset($validated['variants']);
+                unset($validated['variations']);
             } else {
                 $validated['is_wholesale'] = $request->has('is_wholesale');
                 $validated['wholesale_sample_available'] = $request->has('wholesale_sample_available');
             }
 
-            // Extract variant/variation data before model create
-            $variantsData = $validated['variants'] ?? [];
-            $variationsData = $validated['variations'] ?? [];
+            // Extract variant/variation data before model create (only for business users)
+            $variantsData = $user->isBusinessUser() ? ($validated['variants'] ?? []) : [];
+            $variationsData = $user->isBusinessUser() ? ($validated['variations'] ?? []) : [];
             unset($validated['main_image'], $validated['detail_images'], $validated['variants'], $validated['variations']);
 
             $listing = Listing::create($validated);
@@ -244,7 +248,7 @@ class ListingController extends Controller
             $validated['has_domestic_delivery'] = $request->has('has_domestic_delivery');
             $validated['has_international_delivery'] = $request->has('has_international_delivery');
 
-            // Store name, wholesale, and SEO only for business users
+            // Store name, wholesale, SEO, availability, and variations only for business users
             $user = auth()->user();
             if (! $user->isBusinessUser()) {
                 unset($validated['store_name']);
@@ -257,14 +261,18 @@ class ListingController extends Controller
                 unset($validated['wholesale_terms']);
                 unset($validated['meta_title']);
                 unset($validated['meta_description']);
+                // Availability, variants/variations are business-only features
+                unset($validated['availability_type']);
+                unset($validated['variants']);
+                unset($validated['variations']);
             } else {
                 $validated['is_wholesale'] = $request->has('is_wholesale');
                 $validated['wholesale_sample_available'] = $request->has('wholesale_sample_available');
             }
 
-            // Extract variant/variation data before model update
-            $variantsData = $validated['variants'] ?? [];
-            $variationsData = $validated['variations'] ?? [];
+            // Extract variant/variation data before model update (only for business users)
+            $variantsData = $user->isBusinessUser() ? ($validated['variants'] ?? []) : [];
+            $variationsData = $user->isBusinessUser() ? ($validated['variations'] ?? []) : [];
             unset($validated['main_image'], $validated['detail_images'], $validated['delete_images'], $validated['variants'], $validated['variations']);
 
             $listing->update($validated);

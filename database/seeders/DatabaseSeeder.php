@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             LocationSeeder::class,
             UserSeeder::class,
             CategorySeeder::class,
+            VariantSeeder::class,
+            ListingSeeder::class,
         ]);
     }
 }

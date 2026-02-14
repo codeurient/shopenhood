@@ -31,6 +31,7 @@ class Listing extends Model
         'hidden_due_to_role_change',
         'is_featured',
         'is_negotiable',
+        'condition',
         'is_wholesale',
         'wholesale_min_order_qty',
         'wholesale_qty_increment',

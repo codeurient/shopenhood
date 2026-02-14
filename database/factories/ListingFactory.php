@@ -32,6 +32,7 @@ class ListingFactory extends Factory
             'base_price' => fake()->randomFloat(2, 10, 1000),
             'currency' => 'USD',
             'status' => 'active',
+            'condition' => fake()->randomElement(['new', 'used']),
             'created_as_role' => 'admin',
         ];
     }

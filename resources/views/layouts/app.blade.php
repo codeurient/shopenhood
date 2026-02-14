@@ -64,9 +64,9 @@
             <!-- Header -->
             <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-between items-center">
                 <div>
-                    {{-- @if(isset($header))
+                    @if(isset($header))
                         {{ $header }}
-                    @endif --}}
+                    @endif
                 </div>
                 <div class="flex items-center gap-4">
                     <span class="text-gray-600 dark:text-gray-300 text-sm">{{ auth()->user()->name }}</span>

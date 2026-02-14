@@ -189,7 +189,27 @@
                                     </div>
                                 </div>
 
-                                {{-- Product Availability --}}
+                                {{-- Product Condition --}}
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Product Condition <span class="text-red-500">*</span></label>
+                                    <div class="flex gap-6">
+                                        <label class="flex items-center">
+                                            <input type="radio" name="condition" value="new"
+                                                   {{ old('condition', $listing->condition ?? 'new') === 'new' ? 'checked' : '' }}
+                                                   class="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">New</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="condition" value="used"
+                                                   {{ old('condition', $listing->condition) === 'used' ? 'checked' : '' }}
+                                                   class="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Second-hand</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {{-- Product Availability (Business Users Only) --}}
+                                @if(auth()->user()->isBusinessUser())
                                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Product Availability</label>
                                     <div class="flex gap-6">
@@ -207,6 +227,7 @@
                                         </label>
                                     </div>
                                 </div>
+                                @endif
 
                                 {{-- Delivery Options --}}
                                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
@@ -541,10 +562,12 @@
                     </div>
                 </div>
 
-                {{-- Product Variations Section --}}
+                {{-- Product Variations Section (Business Users Only) --}}
+                @if(auth()->user()->isBusinessUser())
                 <div class="mt-6">
                     @include('user.listings.partials.variation-manager', ['mode' => 'edit', 'listing' => $listing])
                 </div>
+                @endif
 
                 {{-- Footer --}}
                 <div class="mt-6 flex justify-end gap-4">
