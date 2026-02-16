@@ -350,6 +350,41 @@ class Listing extends Model
         return (bool) $this->is_wholesale;
     }
 
+    /**
+     * Get country code from country name
+     */
+    public function getCountryCodeAttribute(): ?string
+    {
+        if (! $this->country) {
+            return null;
+        }
+
+        // Try to find the country code from the locations table
+        $location = Location::where('type', 'country')
+            ->where('name', $this->country)
+            ->first();
+
+        if ($location && $location->code) {
+            return $location->code;
+        }
+
+        // Fallback: manual mapping for common countries
+        $countryCodeMap = [
+            'United States' => 'US',
+            'Azerbaijan' => 'AZ',
+            'United Kingdom' => 'GB',
+            'Germany' => 'DE',
+            'France' => 'FR',
+            'Turkey' => 'TR',
+            'Russia' => 'RU',
+            'China' => 'CN',
+            'Japan' => 'JP',
+            'India' => 'IN',
+        ];
+
+        return $countryCodeMap[$this->country] ?? substr($this->country, 0, 2);
+    }
+
     // ============================================
     // ACTIVITY LOGGING CONFIGURATION
     // ============================================

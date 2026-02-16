@@ -11,15 +11,25 @@ class HomeController extends Controller
 {
     public function index(): View
     {
+        // Get the 'sell' listing type
+        $sellType = ListingType::where('slug', 'sell')->first();
+
+        // Filter only 'sell' type listings by default
         $featuredListings = Listing::publiclyVisible()
             ->where('is_featured', true)
-            ->with(['category', 'listingType', 'primaryImage', 'firstImage'])
+            ->when($sellType, function ($query) use ($sellType) {
+                return $query->where('listing_type_id', $sellType->id);
+            })
+            ->with(['category', 'listingType', 'primaryImage', 'firstImage', 'user'])
             ->latest()
-            ->limit(8)
+            ->limit(15)
             ->get();
 
         $latestListings = Listing::publiclyVisible()
-            ->with(['category', 'listingType', 'primaryImage', 'firstImage'])
+            ->when($sellType, function ($query) use ($sellType) {
+                return $query->where('listing_type_id', $sellType->id);
+            })
+            ->with(['category', 'listingType', 'primaryImage', 'firstImage', 'user'])
             ->latest()
             ->limit(8)
             ->get();

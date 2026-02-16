@@ -1,38 +1,45 @@
 <x-guest-layout>
-    <!-- Search Bar -->
-    <x-mobile.search-bar />
+    <!-- Listing Type Tabs -->
+    <x-mobile.listing-type-tabs :listingTypes="$listingTypes" currentType="sell" />
 
     <!-- Category Horizontal Scroll -->
     <x-mobile.category-scroll :categories="$categories" />
 
-    <!-- Main Content -->
-    <div class="px-4 py-6 space-y-8">
+    <!-- Home Slider -->
+    <x-mobile.home-slider />
 
-        <!-- Featured Listings Section -->
+    <!-- Main Content -->
+    <div class="space-y-6">
+
+        <!-- Featured/Premium Listings Section (Horizontally Scrollable) -->
         @if($featuredListings->isNotEmpty())
         <section>
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-900">Premium Listings</h2>
+            <div class="flex items-center justify-between px-4 mb-3">
+                <h2 class="text-lg font-bold text-gray-900">Premium Listings</h2>
                 <a href="{{ route('listings.index', ['featured' => 1]) }}"
                    class="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
                     View All
                 </a>
             </div>
 
-            <!-- Listings Grid -->
-            <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                @foreach($featuredListings as $listing)
-                    <x-mobile.listing-card :listing="$listing" />
-                @endforeach
+            <!-- Horizontal Scroll Container -->
+            <div class="overflow-x-auto scrollbar-hide px-4">
+                <div class="flex gap-3 pb-2">
+                    @foreach($featuredListings as $listing)
+                        <div class="w-40 flex-shrink-0">
+                            <x-mobile.listing-card :listing="$listing" />
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </section>
         @endif
 
-        <!-- Latest Listings Section -->
+        <!-- Recent Listings Section (Grid) -->
         @if($latestListings->isNotEmpty())
         <section>
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-900">Recent Listings</h2>
+            <div class="flex items-center justify-between px-4 mb-3">
+                <h2 class="text-lg font-bold text-gray-900">Recent Listings</h2>
                 <a href="{{ route('listings.index') }}"
                    class="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
                     View All
@@ -40,7 +47,7 @@
             </div>
 
             <!-- Listings Grid -->
-            <div class="grid grid-cols-2 gap-3 sm:gap-4">
+            <div class="grid grid-cols-2 gap-3 px-4">
                 @foreach($latestListings as $listing)
                     <x-mobile.listing-card :listing="$listing" />
                 @endforeach
@@ -74,69 +81,97 @@
         </div>
         @endif
 
-        <!-- Categories Grid (Optional - for better UX) -->
-        @if($categories->isNotEmpty())
-        <section class="mt-12">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Browse by Category</h2>
-            <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                @foreach($categories->take(6) as $category)
-                <a href="{{ route('listings.index', ['category' => $category->slug]) }}"
-                   class="flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all group">
-                    @if($category->icon)
-                        <img src="{{ asset('storage/' . $category->icon) }}"
-                             alt="{{ $category->name }}"
-                             class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform">
-                    @else
-                        <div class="w-12 h-12 mb-3 bg-gradient-to-br from-primary-200 to-primary-300 rounded-xl"></div>
-                    @endif
-                    <h3 class="text-sm font-semibold text-gray-900 text-center">{{ $category->name }}</h3>
-                    @if($category->listings_count > 0)
-                        <p class="text-xs text-gray-500 mt-1">{{ $category->listings_count }} items</p>
-                    @endif
-                </a>
-                @endforeach
-            </div>
-        </section>
-        @endif
-
     </div>
 
     @push('scripts')
     <script>
-        // Smooth scroll for category navigation
+        // Filter Panel Toggle
+        function toggleFilterPanel() {
+            // Filter panel functionality to be implemented
+            console.log('Filter panel clicked');
+        }
+
+        // Filter by Type (AJAX with Vanilla JavaScript)
+        function filterByType(typeSlug) {
+            // Update active tab
+            document.querySelectorAll('.listing-type-tab').forEach(tab => {
+                if (tab.dataset.type === typeSlug) {
+                    tab.classList.add('bg-gray-800', 'border-b-2', 'border-primary-500');
+                } else {
+                    tab.classList.remove('bg-gray-800', 'border-b-2', 'border-primary-500');
+                }
+            });
+
+            // Fetch listings by type using AJAX
+            fetch(`{{ route('home') }}?type=${typeSlug}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update listings sections
+                updateListingsSection('featured', data.featuredListings);
+                updateListingsSection('recent', data.latestListings);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function updateListingsSection(section, listings) {
+            // Update the DOM with new listings
+            // This will be fully implemented when we add the API endpoint
+            console.log(`Updating ${section} section with`, listings);
+        }
+
+        // Smooth scroll for horizontal scroll containers
         document.addEventListener('DOMContentLoaded', function() {
-            const categoryScroll = document.querySelector('.overflow-x-auto');
-            if (categoryScroll) {
+            const scrollContainers = document.querySelectorAll('.scrollbar-hide');
+
+            scrollContainers.forEach(container => {
                 let isDown = false;
                 let startX;
                 let scrollLeft;
 
-                categoryScroll.addEventListener('mousedown', (e) => {
+                container.addEventListener('mousedown', (e) => {
                     isDown = true;
-                    categoryScroll.classList.add('cursor-grabbing');
-                    startX = e.pageX - categoryScroll.offsetLeft;
-                    scrollLeft = categoryScroll.scrollLeft;
+                    container.classList.add('cursor-grabbing');
+                    startX = e.pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
                 });
 
-                categoryScroll.addEventListener('mouseleave', () => {
+                container.addEventListener('mouseleave', () => {
                     isDown = false;
-                    categoryScroll.classList.remove('cursor-grabbing');
+                    container.classList.remove('cursor-grabbing');
                 });
 
-                categoryScroll.addEventListener('mouseup', () => {
+                container.addEventListener('mouseup', () => {
                     isDown = false;
-                    categoryScroll.classList.remove('cursor-grabbing');
+                    container.classList.remove('cursor-grabbing');
                 });
 
-                categoryScroll.addEventListener('mousemove', (e) => {
+                container.addEventListener('mousemove', (e) => {
                     if (!isDown) return;
                     e.preventDefault();
-                    const x = e.pageX - categoryScroll.offsetLeft;
+                    const x = e.pageX - container.offsetLeft;
                     const walk = (x - startX) * 2;
-                    categoryScroll.scrollLeft = scrollLeft - walk;
+                    container.scrollLeft = scrollLeft - walk;
                 });
-            }
+            });
         });
     </script>
+
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .scrollbar-hide {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
     @endpush
 </x-guest-layout>
