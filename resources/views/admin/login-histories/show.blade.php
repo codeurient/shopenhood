@@ -21,14 +21,14 @@
         <div class="flex items-start justify-between">
             <div class="flex items-center">
                 @if($loginHistory->user)
-                    <div class="h-16 w-16 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-2xl">
+                    <div class="h-16 w-16 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-300 font-bold text-2xl">
                         {{ substr($loginHistory->user->name, 0, 1) }}
                     </div>
                     <div class="ml-4">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ $loginHistory->user->name }}</h3>
                         <p class="text-gray-500 dark:text-gray-400">{{ $loginHistory->user->email }}</p>
                         <a href="{{ route('admin.login-histories.user', $loginHistory->user) }}"
-                           class="text-indigo-600 dark:text-indigo-400 text-sm hover:underline">
+                           class="text-primary-600 dark:text-primary-300 text-sm hover:underline">
                             View all logins for this user
                         </a>
                     </div>
@@ -114,7 +114,7 @@
             @foreach($sameIpLogins as $login)
                 <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <div class="flex items-center">
-                        <div class="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold text-sm">
+                        <div class="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-300 font-semibold text-sm">
                             {{ $login->user ? substr($login->user->name, 0, 1) : '?' }}
                         </div>
                         <div class="ml-3">

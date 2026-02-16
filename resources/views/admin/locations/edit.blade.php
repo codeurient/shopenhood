@@ -43,7 +43,7 @@
                 required
                 value="{{ old('name', $country->name) }}"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg
-                       focus:ring-indigo-500 focus:border-indigo-500">
+                       focus:ring-primary-500 focus:border-primary-500">
         </div>
 
         {{-- Country Code --}}
@@ -60,7 +60,7 @@
                 placeholder="e.g., AZ, TR, US"
                 value="{{ old('code', $country->code) }}"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg
-                       focus:ring-indigo-500 focus:border-indigo-500">
+                       focus:ring-primary-500 focus:border-primary-500">
 
             <p class="text-sm text-gray-500 mt-1">
                 Optional ISO country code
@@ -75,8 +75,8 @@
                 id="is_active"
                 value="1"
                 {{ old('is_active', $country->is_active) ? 'checked' : '' }}
-                class="rounded border-gray-300 text-indigo-600
-                       focus:ring-indigo-500">
+                class="rounded border-gray-300 text-primary-600
+                       focus:ring-primary-500">
 
             <label for="is_active" class="text-sm text-gray-700">
                 Active
@@ -92,7 +92,7 @@
         </a>
 
         <button type="submit"
-                class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
             💾 Update Country
         </button>
     </div>

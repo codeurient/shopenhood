@@ -52,7 +52,7 @@
                 <!-- Hierarchy Section -->
                 <div class="pb-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
                         </svg>
                         Category Hierarchy
@@ -63,7 +63,7 @@
                         </label>
                         <div id="category-selects-container" class="space-y-3">
                             <select name="parent_id" id="category_level_0"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 category-select"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 category-select"
                                     data-level="0">
                                 <option value="">Root Category</option>
                             </select>
@@ -78,7 +78,7 @@
                 <!-- Basic Information Section -->
                 <div class="pb-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         Basic Information
@@ -91,7 +91,7 @@
                             </label>
                             <input type="text" id="name" name="name"
                                    value="{{ old('name', $category->name) }}"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 @error('name') border-red-500 @enderror"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 @error('name') border-red-500 @enderror"
                                    placeholder="e.g., Electronics, Clothing, Home & Garden"
                                    required autofocus>
                             @error('name')
@@ -112,7 +112,7 @@
                                 </div>
                                 <input type="text" id="slug" name="slug"
                                        value="{{ old('slug', $category->slug) }}"
-                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 p-2.5 @error('slug') border-red-500 @enderror"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 @error('slug') border-red-500 @enderror"
                                        placeholder="auto-generated-if-empty">
                             </div>
                             @error('slug')
@@ -126,7 +126,7 @@
                                 Description
                             </label>
                             <textarea id="description" name="description" rows="4"
-                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 @error('description') border-red-500 @enderror"
+                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 @error('description') border-red-500 @enderror"
                                       placeholder="Brief description of this category...">{{ old('description', $category->description) }}</textarea>
                             @error('description')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -138,7 +138,7 @@
                 <!-- Visual Identity Section -->
                 <div class="pb-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                         Visual Identity
@@ -157,7 +157,7 @@
                                 </div>
                                 <input type="text" id="icon" name="icon"
                                        value="{{ old('icon', $category->icon) }}"
-                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 p-2.5 @error('icon') border-red-500 @enderror"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 @error('icon') border-red-500 @enderror"
                                        placeholder="e.g., fa-laptop">
                             </div>
                             <p class="mt-2 text-sm text-gray-500">
@@ -196,7 +196,7 @@
                             </label>
                             <input type="number" id="sort_order" name="sort_order"
                                    value="{{ old('sort_order', $category->sort_order) }}" min="0"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 @error('sort_order') border-red-500 @enderror"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 @error('sort_order') border-red-500 @enderror"
                                    placeholder="0">
                             <p class="mt-2 text-sm text-gray-500">
                                 Lower numbers appear first
@@ -211,7 +211,7 @@
                 <!-- SEO Section -->
                 <div class="pb-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                         SEO Settings
@@ -224,7 +224,7 @@
                             </label>
                             <input type="text" id="meta_title" name="meta_title" maxlength="60"
                                    value="{{ old('meta_title', $category->meta_title) }}"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 @error('meta_title') border-red-500 @enderror"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 @error('meta_title') border-red-500 @enderror"
                                    placeholder="Optimized title for search engines">
                             <p class="mt-2 text-sm text-gray-500">
                                 <span id="meta_title_count">{{ strlen($category->meta_title ?? '') }}</span>/60 characters
@@ -240,7 +240,7 @@
                                 Meta Description
                             </label>
                             <textarea id="meta_description" name="meta_description" rows="3" maxlength="160"
-                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 @error('meta_description') border-red-500 @enderror"
+                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 @error('meta_description') border-red-500 @enderror"
                                       placeholder="Brief description for search engine results...">{{ old('meta_description', $category->meta_description) }}</textarea>
                             <p class="mt-2 text-sm text-gray-500">
                                 <span id="meta_desc_count">{{ strlen($category->meta_description ?? '') }}</span>/160 characters
@@ -255,7 +255,7 @@
                 <!-- Status Section -->
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         Status
@@ -265,7 +265,7 @@
                             <input type="checkbox" id="is_active" name="is_active" value="1"
                                    {{ old('is_active', $category->is_active) ? 'checked' : '' }}
                                    class="sr-only peer">
-                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
                             <span class="ml-3 text-sm font-medium text-gray-900">Active (visible to users)</span>
                         </label>
                     </div>
@@ -287,7 +287,7 @@
                         Cancel
                     </a>
                     <button type="submit"
-                            class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 transition">
+                            class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 transition">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
@@ -432,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function createNextLevelSelect(level, parentId) {
         const newSelect = document.createElement('select');
         newSelect.id = 'category_level_' + level;
-        newSelect.className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 category-select';
+        newSelect.className = 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 category-select';
         newSelect.dataset.level = level;
         newSelect.style.marginTop = '0.75rem';
         newSelect.innerHTML = '<option value="">Loading...</option>';

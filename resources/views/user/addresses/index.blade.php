@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">My Addresses</h2>
-            <a href="{{ route('user.addresses.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium transition">
+            <a href="{{ route('user.addresses.create') }}" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm font-medium transition">
                 + Add Address
             </a>
         </div>
@@ -27,10 +27,10 @@
             @if($addresses->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($addresses as $address)
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 relative {{ $address->is_default ? 'ring-2 ring-indigo-500' : '' }}">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 relative {{ $address->is_default ? 'ring-2 ring-primary-500' : '' }}">
                     {{-- Default Badge --}}
                     @if($address->is_default)
-                    <span class="absolute top-4 right-4 px-2 py-1 text-xs font-semibold rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300">
+                    <span class="absolute top-4 right-4 px-2 py-1 text-xs font-semibold rounded bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300">
                         Default
                     </span>
                     @endif
@@ -82,7 +82,7 @@
                     {{-- Actions --}}
                     <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
                         <a href="{{ route('user.addresses.edit', $address) }}"
-                           class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-xs transition">
+                           class="px-3 py-1 bg-primary-500 text-white rounded hover:bg-primary-600 text-xs transition">
                             Edit
                         </a>
 
@@ -117,7 +117,7 @@
                     </svg>
                     <p class="text-gray-500 dark:text-gray-400 text-lg mb-2">No addresses yet</p>
                     <p class="text-gray-400 dark:text-gray-500 text-sm mb-4">Add an address to use during checkout</p>
-                    <a href="{{ route('user.addresses.create') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                    <a href="{{ route('user.addresses.create') }}" class="text-primary-600 dark:text-primary-300 hover:underline">
                         Add your first address
                     </a>
                 </div>

@@ -33,7 +33,7 @@
                 <input type="text" name="name" id="name" required
                        value="{{ old('name') }}"
                        placeholder="e.g., Sell, Buy, Gift, Barter, Auction"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                 <p class="text-sm text-gray-500 mt-1">The display name of the listing type</p>
             </div>
 
@@ -42,7 +42,7 @@
                 <input type="text" name="slug" id="slug"
                        value="{{ old('slug') }}"
                        placeholder="Auto-generated from name"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                 <p class="text-sm text-gray-500 mt-1">URL-friendly version (auto-generated if left empty)</p>
             </div>
 
@@ -50,7 +50,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea name="description" id="description" rows="3"
                           placeholder="Brief description of this listing type"
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('description') }}</textarea>
+                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('description') }}</textarea>
             </div>
 
             <div>
@@ -58,7 +58,7 @@
                 <input type="text" name="icon"
                        value="{{ old('icon') }}"
                        placeholder="e.g., 💰 or <i class='fas fa-tag'></i>"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                 <p class="text-sm text-gray-500 mt-1">Optional icon to display with the listing type</p>
             </div>
 
@@ -67,7 +67,7 @@
                 <input type="number" name="sort_order"
                        value="{{ old('sort_order', 0) }}"
                        min="0"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                 <p class="text-sm text-gray-500 mt-1">Display order (lower numbers appear first)</p>
             </div>
 
@@ -75,14 +75,14 @@
                 <div class="space-y-4">
                     <label class="flex items-center">
                         <input type="checkbox" name="requires_price" value="1" {{ old('requires_price', true) ? 'checked' : '' }}
-                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                               class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                         <span class="ml-2 text-sm text-gray-700">Requires Price</span>
                     </label>
                     <p class="text-sm text-gray-500 ml-6">Check if listings of this type must have a price (e.g., Sell, Auction)</p>
 
                     <label class="flex items-center">
                         <input type="checkbox" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}
-                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                               class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                         <span class="ml-2 text-sm text-gray-700">Active</span>
                     </label>
                     <p class="text-sm text-gray-500 ml-6">Inactive types won't be available when creating listings</p>
@@ -94,7 +94,7 @@
             <a href="{{ route('admin.listing-types.index') }}" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
                 Cancel
             </a>
-            <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+            <button type="submit" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                 💾 Create Listing Type
             </button>
         </div>

@@ -24,7 +24,7 @@
                 </button>
             @else
                 <button type="button" @click="generateAllVariations()"
-                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                        class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition"
                         :disabled="categoryVariants.length === 0">
                     ⚡ Generate All Combinations
                 </button>
@@ -75,7 +75,7 @@
                                    x-model="variation.sku"
                                    @input="updateSKU(index)"
                                    placeholder="Auto-generate"
-                                   class="w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500">
+                                   class="w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-primary-500 focus:border-primary-500">
                         </td>
 
                         <!-- Variant Values -->
@@ -85,7 +85,7 @@
                                 <select :name="`variations[${index}][attributes][${variant.id}]`"
                                         x-model="variation.attributes[variant.id]"
                                         @change="updateVariationDisplay(index)"
-                                        class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500">
+                                        class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-primary-500 focus:border-primary-500">
                                     <option value="">Select</option>
                                     <template x-for="item in variant.items" :key="item.id">
                                         <option :value="item.id" x-text="item.display_value || item.value"></option>
@@ -102,7 +102,7 @@
                                    step="0.01"
                                    placeholder="0.00"
                                    required
-                                   class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500">
+                                   class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-primary-500 focus:border-primary-500">
                         </td>
 
                         <!-- Discount Price -->
@@ -112,7 +112,7 @@
                                    x-model="variation.discount_price"
                                    step="0.01"
                                    placeholder="Optional"
-                                   class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500">
+                                   class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-primary-500 focus:border-primary-500">
                         </td>
 
                         <!-- Stock -->
@@ -121,7 +121,7 @@
                                    :name="`variations[${index}][stock_quantity]`"
                                    x-model="variation.stock_quantity"
                                    placeholder="0"
-                                   class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500">
+                                   class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-primary-500 focus:border-primary-500">
                         </td>
 
                         <!-- Images -->
@@ -151,7 +151,7 @@
                                    :value="index"
                                    x-model="defaultVariationIndex"
                                    @change="setDefaultVariation(index)"
-                                   class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                   class="w-4 h-4 text-primary-600 focus:ring-primary-500">
                             <input type="hidden"
                                    :name="`variations[${index}][is_default]`"
                                    :value="defaultVariationIndex === index ? 1 : 0">
@@ -163,7 +163,7 @@
                                    :name="`variations[${index}][is_active]`"
                                    x-model="variation.is_active"
                                    value="1"
-                                   class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                   class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                         </td>
 
                         <!-- Actions -->
@@ -244,7 +244,7 @@
                            x-ref="modalInput"
                            step="0.01"
                            min="0"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                            @keydown.enter="confirmModal()">
                 </div>
 
@@ -256,7 +256,7 @@
                     </button>
                     <button type="button"
                             @click="confirmModal()"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
                         Apply
                     </button>
                 </div>

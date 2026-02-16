@@ -69,7 +69,7 @@
         <div class="bg-white rounded-lg shadow p-6 mb-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Performed By</h3>
             <div class="flex items-center">
-                <div class="h-16 w-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-2xl">
+                <div class="h-16 w-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold text-2xl">
                     {{ substr($activity->causer->name ?? 'U', 0, 1) }}
                 </div>
                 <div class="ml-4">

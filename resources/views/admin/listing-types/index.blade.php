@@ -11,7 +11,7 @@
             <h2 class="text-3xl font-bold text-gray-900">Listing Types</h2>
             <p class="text-gray-600 mt-1">Manage listing types (sell, buy, gift, barter, auction)</p>
         </div>
-        <a href="{{ route('admin.listing-types.create') }}" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+        <a href="{{ route('admin.listing-types.create') }}" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
             ➕ Create Listing Type
         </a>
     </div>
@@ -65,16 +65,16 @@
             <div class="flex-1">
                 <input type="text" name="search" value="{{ request('search') }}"
                        placeholder="Search by name or description..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
             </div>
             <div>
-                <select name="is_active" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <select name="is_active" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                     <option value="">All Status</option>
                     <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Active</option>
                     <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Inactive</option>
                 </select>
             </div>
-            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+            <button type="submit" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                 🔍 Filter
             </button>
             <a href="{{ route('admin.listing-types.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
@@ -141,7 +141,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex gap-2">
-                                        <a href="{{ route('admin.listing-types.edit', $type) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('admin.listing-types.edit', $type) }}" class="text-primary-600 hover:text-primary-700">
                                             Edit
                                         </a>
                                         @if($type->listings_count === 0)
@@ -171,7 +171,7 @@
             <div class="text-center py-12">
                 <div class="text-6xl mb-4">📋</div>
                 <p class="text-gray-500 text-lg">No listing types found</p>
-                <a href="{{ route('admin.listing-types.create') }}" class="text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+                <a href="{{ route('admin.listing-types.create') }}" class="text-primary-600 hover:text-primary-700 mt-2 inline-block">
                     Create your first listing type
                 </a>
             </div>

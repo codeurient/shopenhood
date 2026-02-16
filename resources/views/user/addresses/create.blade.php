@@ -33,7 +33,7 @@
                                 Address Label <span class="text-red-500">*</span>
                             </label>
                             <select name="label" required
-                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                                 <option value="Home" {{ old('label', 'Home') === 'Home' ? 'selected' : '' }}>Home</option>
                                 <option value="Work" {{ old('label') === 'Work' ? 'selected' : '' }}>Work</option>
                                 <option value="Other" {{ old('label') === 'Other' ? 'selected' : '' }}>Other</option>
@@ -42,7 +42,7 @@
                         <div class="flex items-end">
                             <label class="flex items-center">
                                 <input type="checkbox" name="is_default" value="1" {{ old('is_default') ? 'checked' : '' }}
-                                       class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                       class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Set as default address</span>
                             </label>
                         </div>
@@ -60,7 +60,7 @@
                                 <input type="text" name="recipient_name" required
                                        value="{{ old('recipient_name') }}"
                                        placeholder="Full name of the recipient"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -69,7 +69,7 @@
                                 <input type="tel" name="phone" required
                                        value="{{ old('phone') }}"
                                        placeholder="+1 234 567 8900"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             </div>
                         </div>
 
@@ -78,7 +78,7 @@
                             <input type="email" name="email"
                                    value="{{ old('email') }}"
                                    placeholder="Optional email for delivery notifications"
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                         </div>
                     </div>
 
@@ -94,7 +94,7 @@
                                 <input type="text" name="country" required
                                        value="{{ old('country') }}"
                                        placeholder="Country"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -103,7 +103,7 @@
                                 <input type="text" name="city" required
                                        value="{{ old('city') }}"
                                        placeholder="City"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             </div>
                         </div>
 
@@ -113,14 +113,14 @@
                                 <input type="text" name="district"
                                        value="{{ old('district') }}"
                                        placeholder="District or neighborhood"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Postal Code</label>
                                 <input type="text" name="postal_code"
                                        value="{{ old('postal_code') }}"
                                        placeholder="Postal / ZIP code"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             </div>
                         </div>
 
@@ -131,7 +131,7 @@
                             <input type="text" name="street" required
                                    value="{{ old('street') }}"
                                    placeholder="Street name and number"
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -140,14 +140,14 @@
                                 <input type="text" name="building"
                                        value="{{ old('building') }}"
                                        placeholder="Building name or number"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Apartment / Unit</label>
                                 <input type="text" name="apartment"
                                        value="{{ old('apartment') }}"
                                        placeholder="Apartment, suite, unit, etc."
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             </div>
                         </div>
                     </div>
@@ -157,7 +157,7 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Additional Notes</label>
                         <textarea name="additional_notes" rows="3"
                                   placeholder="Delivery instructions, landmarks, gate codes, etc."
-                                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">{{ old('additional_notes') }}</textarea>
+                                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">{{ old('additional_notes') }}</textarea>
                     </div>
                 </div>
 
@@ -166,7 +166,7 @@
                     <a href="{{ route('user.addresses.index') }}" class="px-6 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition">
                         Cancel
                     </a>
-                    <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    <button type="submit" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
                         Save Address
                     </button>
                 </div>

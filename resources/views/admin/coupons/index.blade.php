@@ -11,7 +11,7 @@
             <h2 class="text-3xl font-bold text-gray-900">Coupons</h2>
             <p class="text-gray-600 mt-1">Manage discount coupons and promotions</p>
         </div>
-        <a href="{{ route('admin.coupons.create') }}" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+        <a href="{{ route('admin.coupons.create') }}" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
             + Create Coupon
         </a>
     </div>
@@ -74,17 +74,17 @@
             <div class="flex-1 min-w-[200px]">
                 <input type="text" name="search" value="{{ request('search') }}"
                        placeholder="Search by code or description..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
             </div>
             <div>
-                <select name="type" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <select name="type" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                     <option value="">All Types</option>
                     <option value="percentage" {{ request('type') === 'percentage' ? 'selected' : '' }}>Percentage</option>
                     <option value="fixed" {{ request('type') === 'fixed' ? 'selected' : '' }}>Fixed</option>
                 </select>
             </div>
             <div>
-                <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                     <option value="">All Status</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                     <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -92,14 +92,14 @@
                 </select>
             </div>
             <div>
-                <select name="applicable_to" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <select name="applicable_to" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                     <option value="">All Scope</option>
                     <option value="all" {{ request('applicable_to') === 'all' ? 'selected' : '' }}>All Products</option>
                     <option value="categories" {{ request('applicable_to') === 'categories' ? 'selected' : '' }}>Categories</option>
                     <option value="listings" {{ request('applicable_to') === 'listings' ? 'selected' : '' }}>Listings</option>
                 </select>
             </div>
-            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+            <button type="submit" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                 Filter
             </button>
             <a href="{{ route('admin.coupons.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
@@ -182,7 +182,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex gap-2">
-                                        <a href="{{ route('admin.coupons.edit', $coupon) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('admin.coupons.edit', $coupon) }}" class="text-primary-600 hover:text-primary-700">
                                             Edit
                                         </a>
                                         <form action="{{ route('admin.coupons.destroy', $coupon) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this coupon?')">
@@ -208,7 +208,7 @@
             <div class="text-center py-12">
                 <div class="text-6xl mb-4">🎟️</div>
                 <p class="text-gray-500 text-lg">No coupons found</p>
-                <a href="{{ route('admin.coupons.create') }}" class="text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+                <a href="{{ route('admin.coupons.create') }}" class="text-primary-600 hover:text-primary-700 mt-2 inline-block">
                     Create your first coupon
                 </a>
             </div>

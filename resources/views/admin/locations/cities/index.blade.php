@@ -17,7 +17,7 @@
             </p>
         </div>
         <div class="flex gap-3">
-            <a href="{{ route('admin.locations.cities.create', $country) }}" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+            <a href="{{ route('admin.locations.cities.create', $country) }}" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
                 ➕ Add City
             </a>
             <a href="{{ route('admin.locations.index') }}" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
@@ -79,7 +79,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex gap-2">
-                                        <a href="{{ route('admin.locations.cities.edit', [$country, $city->id]) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('admin.locations.cities.edit', [$country, $city->id]) }}" class="text-primary-600 hover:text-primary-700">
                                             Edit
                                         </a>
                                         <form action="{{ route('admin.locations.cities.destroy', [$country, $city->id]) }}" method="POST" onsubmit="return confirm('Delete {{ $city->name }}?')" class="inline">
@@ -102,7 +102,7 @@
             <div class="text-center py-12">
                 <div class="text-6xl mb-4">🏙️</div>
                 <p class="text-gray-500 text-lg">No cities added for {{ $country->name }}</p>
-                <a href="{{ route('admin.locations.cities.create', $country) }}" class="text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+                <a href="{{ route('admin.locations.cities.create', $country) }}" class="text-primary-600 hover:text-primary-700 mt-2 inline-block">
                     Add the first city
                 </a>
             </div>

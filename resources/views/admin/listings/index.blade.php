@@ -11,7 +11,7 @@
             <h2 class="text-3xl font-bold text-gray-900">Listings</h2>
             <p class="text-gray-600 mt-1">Manage product listings</p>
         </div>
-        <a href="{{ route('admin.listings.create') }}" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+        <a href="{{ route('admin.listings.create') }}" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
             ➕ Create Listing
         </a>
     </div>
@@ -63,11 +63,11 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
                 <input type="text" name="search" value="{{ request('search') }}" 
                        placeholder="Search listings..." 
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                     <option value="">All Statuses</option>
                     <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
@@ -80,7 +80,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                <select name="category_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <select name="category_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                     <option value="">All Categories</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -90,7 +90,7 @@
                 </select>
             </div>
             <div class="flex items-end gap-2">
-                <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                <button type="submit" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                     🔍 Filter
                 </button>
                 <a href="{{ route('admin.listings.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
@@ -194,7 +194,7 @@
                                 </form>
                                 @endif
                                 <a href="{{ route('admin.listings.show', $listing) }}"
-                                   class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 inline-block">
+                                   class="px-3 py-1 bg-primary-500 text-white rounded hover:bg-primary-600 inline-block">
                                     View
                                 </a>
                                 <a href="{{ route('admin.listings.edit', $listing) }}"
@@ -221,7 +221,7 @@
                     <td colspan="6" class="px-6 py-12 text-center">
                         <div class="text-6xl mb-4">📦</div>
                         <p class="text-gray-600 text-lg mb-2">No listings found</p>
-                        <a href="{{ route('admin.listings.create') }}" class="text-indigo-600 hover:underline">
+                        <a href="{{ route('admin.listings.create') }}" class="text-primary-600 hover:underline">
                             Create your first listing
                         </a>
                     </td>

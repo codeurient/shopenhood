@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">My Coupons</h2>
-            <a href="{{ route('user.coupons.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium transition">
+            <a href="{{ route('user.coupons.create') }}" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm font-medium transition">
                 + Create Coupon
             </a>
         </div>
@@ -48,17 +48,17 @@
                 <form method="GET" action="{{ route('user.coupons.index') }}" class="flex flex-wrap gap-4 items-end">
                     <div class="flex-1 min-w-[200px]">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by code or description..."
-                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                     </div>
                     <div>
-                        <select name="type" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                        <select name="type" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             <option value="">All Types</option>
                             <option value="percentage" {{ request('type') === 'percentage' ? 'selected' : '' }}>Percentage</option>
                             <option value="fixed" {{ request('type') === 'fixed' ? 'selected' : '' }}>Fixed Amount</option>
                         </select>
                     </div>
                     <div>
-                        <select name="status" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                        <select name="status" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             <option value="">All Status</option>
                             <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                             <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -66,14 +66,14 @@
                         </select>
                     </div>
                     <div>
-                        <select name="applicable_to" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
+                        <select name="applicable_to" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                             <option value="">All Scope</option>
                             <option value="all" {{ request('applicable_to') === 'all' ? 'selected' : '' }}>All Products</option>
                             <option value="categories" {{ request('applicable_to') === 'categories' ? 'selected' : '' }}>Categories</option>
                             <option value="listings" {{ request('applicable_to') === 'listings' ? 'selected' : '' }}>Listings</option>
                         </select>
                     </div>
-                    <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    <button type="submit" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
                         Filter
                     </button>
                     <a href="{{ route('user.coupons.index') }}" class="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition">
@@ -145,7 +145,7 @@
                                 <td class="px-6 py-4 text-sm">
                                     <div class="flex gap-2">
                                         <a href="{{ route('user.coupons.edit', $coupon) }}"
-                                           class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-xs transition">
+                                           class="px-3 py-1 bg-primary-500 text-white rounded hover:bg-primary-600 text-xs transition">
                                             Edit
                                         </a>
                                         <form action="{{ route('user.coupons.toggle-status', $coupon) }}" method="POST" class="inline">
@@ -182,7 +182,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
                     </svg>
                     <p class="text-gray-500 dark:text-gray-400 text-lg mb-2">No coupons yet</p>
-                    <a href="{{ route('user.coupons.create') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                    <a href="{{ route('user.coupons.create') }}" class="text-primary-600 dark:text-primary-300 hover:underline">
                         Create your first coupon
                     </a>
                 </div>

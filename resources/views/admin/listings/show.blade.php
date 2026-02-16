@@ -18,7 +18,7 @@
             </div>
             <div class="flex gap-2">
                 <a href="{{ route('admin.listings.edit', $listing) }}"
-                   class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
+                   class="inline-flex items-center px-4 py-2 bg-primary-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600">
                     Edit Listing
                 </a>
                 <form action="{{ route('admin.listings.destroy', $listing) }}" method="POST" class="inline"
@@ -63,7 +63,7 @@
                         <div class="mb-4">
                             <label for="rejection_reason" class="block text-sm font-medium text-gray-700 mb-1">Reason for rejection</label>
                             <textarea name="rejection_reason" id="rejection_reason" rows="4" required maxlength="500"
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
                                 placeholder="Explain why this listing is being rejected..."></textarea>
                         </div>
                         <div class="flex justify-end gap-2">
@@ -189,7 +189,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {{ $variation->sku }}
                                         @if($variation->is_default)
-                                        <span class="ml-2 px-2 py-0.5 text-xs bg-indigo-100 text-indigo-800 rounded">Default</span>
+                                        <span class="ml-2 px-2 py-0.5 text-xs bg-primary-100 text-primary-800 rounded">Default</span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -225,7 +225,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <a href="{{ route('admin.stock.edit', $variation) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('admin.stock.edit', $variation) }}" class="text-primary-600 hover:text-primary-700">
                                             Manage Stock
                                         </a>
                                     </td>
@@ -251,7 +251,7 @@
                                      alt="{{ $listing->title }}"
                                      class="w-full h-full object-cover">
                                 @if($image->is_primary)
-                                <span class="absolute top-2 left-2 px-2 py-1 bg-indigo-600 text-white text-xs rounded">
+                                <span class="absolute top-2 left-2 px-2 py-1 bg-primary-500 text-white text-xs rounded">
                                     Primary
                                 </span>
                                 @endif

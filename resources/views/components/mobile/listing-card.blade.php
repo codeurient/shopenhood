@@ -77,7 +77,7 @@
         </div>
 
         <!-- Title -->
-        <h3 class="text-sm font-semibold text-gray-900 line-clamp-2 leading-tight">
+        <h3 class="text-sm font-semibold text-gray-900 truncate leading-tight">
             {{ $listing->title }}
         </h3>
 

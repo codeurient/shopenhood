@@ -22,7 +22,7 @@
                     📊 Movement History
                 </a>
                 <a href="{{ route('admin.stock.export') }}"
-                   class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                   class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600">
                     📥 Export CSV
                 </a>
             </div>
@@ -121,14 +121,14 @@
                            id="search"
                            value="{{ request('search') }}"
                            placeholder="SKU or product name..."
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
                 </div>
 
                 <div>
                     <label for="stock_status" class="block text-sm font-medium text-gray-700">Stock Status</label>
                     <select name="stock_status"
                             id="stock_status"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
                         <option value="">All</option>
                         <option value="in" {{ request('stock_status') == 'in' ? 'selected' : '' }}>In Stock</option>
                         <option value="low" {{ request('stock_status') == 'low' ? 'selected' : '' }}>Low Stock</option>
@@ -140,7 +140,7 @@
                     <label for="sort_by" class="block text-sm font-medium text-gray-700">Sort By</label>
                     <select name="sort_by"
                             id="sort_by"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
                         <option value="stock_quantity" {{ request('sort_by') == 'stock_quantity' ? 'selected' : '' }}>Stock Quantity</option>
                         <option value="sku" {{ request('sort_by') == 'sku' ? 'selected' : '' }}>SKU</option>
                         <option value="price" {{ request('sort_by') == 'price' ? 'selected' : '' }}>Price</option>
@@ -149,7 +149,7 @@
 
                 <div class="flex items-end">
                     <button type="submit"
-                            class="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                         Apply Filters
                     </button>
                 </div>
@@ -229,7 +229,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <a href="{{ route('admin.stock.edit', $variation) }}"
-                               class="text-indigo-600 hover:text-indigo-900">
+                               class="text-primary-600 hover:text-primary-700">
                                 Adjust Stock
                             </a>
                         </td>

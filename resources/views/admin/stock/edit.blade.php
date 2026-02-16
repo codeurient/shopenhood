@@ -48,7 +48,7 @@
                                 <select name="type"
                                         id="type"
                                         required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('type') border-red-500 @enderror">
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm @error('type') border-red-500 @enderror">
                                     <option value="">Select type...</option>
                                     <option value="purchase">Purchase (Add Stock)</option>
                                     <option value="sale">Sale (Remove Stock)</option>
@@ -73,7 +73,7 @@
                                            min="1"
                                            required
                                            placeholder="Enter quantity"
-                                           class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('quantity') border-red-500 @enderror">
+                                           class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm @error('quantity') border-red-500 @enderror">
                                 </div>
                                 <p class="mt-1 text-xs text-gray-500">
                                     Current stock: <strong>{{ $variation->stock_quantity }}</strong> units
@@ -95,7 +95,7 @@
                                        name="reference"
                                        id="reference"
                                        placeholder="PO-12345"
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('reference') border-red-500 @enderror">
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm @error('reference') border-red-500 @enderror">
                                 @error('reference')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -110,7 +110,7 @@
                                           id="notes"
                                           rows="3"
                                           placeholder="Additional notes about this stock adjustment..."
-                                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('notes') border-red-500 @enderror"></textarea>
+                                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm @error('notes') border-red-500 @enderror"></textarea>
                                 @error('notes')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -123,7 +123,7 @@
                                 Cancel
                             </a>
                             <button type="submit"
-                                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600">
                                 Adjust Stock
                             </button>
                         </div>

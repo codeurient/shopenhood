@@ -13,7 +13,7 @@
             <div class="flex gap-2">
                 @if(!in_array($listing->status, ['sold', 'expired']))
                 <a href="{{ route('user.listings.edit', $listing) }}"
-                   class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 transition">
+                   class="inline-flex items-center px-4 py-2 bg-primary-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600 transition">
                     Edit Listing
                 </a>
                 @endif
@@ -175,7 +175,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                                             {{ $variation->sku }}
                                             @if($variation->is_default)
-                                            <span class="ml-2 px-2 py-0.5 text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-300 rounded">Default</span>
+                                            <span class="ml-2 px-2 py-0.5 text-xs bg-primary-100 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 rounded">Default</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
@@ -232,7 +232,7 @@
                                          alt="{{ $listing->title }}"
                                          class="w-full h-full object-cover">
                                     @if($image->is_primary)
-                                    <span class="absolute top-2 left-2 px-2 py-1 bg-indigo-600 text-white text-xs rounded">
+                                    <span class="absolute top-2 left-2 px-2 py-1 bg-primary-500 text-white text-xs rounded">
                                         Primary
                                     </span>
                                     @endif

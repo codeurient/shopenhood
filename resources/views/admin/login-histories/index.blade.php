@@ -97,19 +97,19 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
                     <input type="text" name="search" value="{{ request('search') }}"
                            placeholder="Search IP, user, browser..."
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">IP Address</label>
                     <input type="text" name="ip_address" value="{{ request('ip_address') }}"
                            placeholder="Filter by IP..."
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Suspicious</label>
-                    <select name="is_suspicious" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                    <select name="is_suspicious" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
                         <option value="">All</option>
                         <option value="yes" {{ request('is_suspicious') === 'yes' ? 'selected' : '' }}>Suspicious Only</option>
                         <option value="no" {{ request('is_suspicious') === 'no' ? 'selected' : '' }}>Normal Only</option>
@@ -117,7 +117,7 @@
                 </div>
 
                 <div class="flex items-end">
-                    <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                    <button type="submit" class="w-full px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                         Filter
                     </button>
                 </div>
@@ -127,13 +127,13 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date From</label>
                     <input type="date" name="date_from" value="{{ request('date_from') }}"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date To</label>
                     <input type="date" name="date_to" value="{{ request('date_to') }}"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
                 </div>
 
                 <div class="flex items-end">
@@ -167,7 +167,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($history->user)
                                         <div class="flex items-center">
-                                            <div class="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold">
+                                            <div class="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-300 font-semibold">
                                                 {{ substr($history->user->name, 0, 1) }}
                                             </div>
                                             <div class="ml-3">
@@ -206,7 +206,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <a href="{{ route('admin.login-histories.show', $history) }}"
-                                       class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
+                                       class="text-primary-600 dark:text-primary-300 hover:text-primary-700 dark:hover:text-primary-300">
                                         View Details
                                     </a>
                                 </td>
@@ -227,7 +227,7 @@
                 </svg>
                 <p class="text-gray-500 dark:text-gray-400 text-lg mt-4">No login histories found</p>
                 @if(request()->hasAny(['search', 'ip_address', 'is_suspicious', 'date_from', 'date_to']))
-                    <a href="{{ route('admin.login-histories.index') }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 mt-2 inline-block">
+                    <a href="{{ route('admin.login-histories.index') }}" class="text-primary-600 dark:text-primary-300 hover:text-primary-700 mt-2 inline-block">
                         Clear filters
                     </a>
                 @endif

@@ -27,7 +27,7 @@
             <div class="flex items-center gap-2" onclick="event.stopPropagation()">
                 <button type="button" 
                         onclick="openVariantModal({{ $category->id }}, '{{ addslashes($category->name) }}')"
-                        class="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        class="px-3 py-1.5 text-sm bg-primary-500 text-white rounded hover:bg-primary-600">
                     🔧 Variants
                 </button>
                 <button type="button" 
@@ -46,7 +46,7 @@
     @if($category->children->count() > 0)
         <div id="accordion-body-{{ $category->id }}" class="hidden" aria-labelledby="accordion-heading-{{ $category->id }}">
             <div class="p-5 border border-t-0 border-gray-200 rounded-b-lg bg-gray-50">
-                <div class="space-y-3 pl-6 border-l-2 border-indigo-300">
+                <div class="space-y-3 pl-6 border-l-2 border-primary-300">
                     @foreach($category->children as $childIndex => $child)
                         @include('admin.categories.partials.accordion-item', ['category' => $child, 'index' => $childIndex])
                     @endforeach

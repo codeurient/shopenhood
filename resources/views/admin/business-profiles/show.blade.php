@@ -18,7 +18,7 @@
             </div>
             <div class="flex gap-2">
                 <a href="{{ route('admin.business-profiles.edit', $businessProfile) }}"
-                   class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
+                   class="inline-flex items-center px-4 py-2 bg-primary-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600">
                     Edit Profile
                 </a>
                 <form action="{{ route('admin.business-profiles.destroy', $businessProfile) }}" method="POST" class="inline"

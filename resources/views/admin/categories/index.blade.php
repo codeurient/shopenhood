@@ -11,7 +11,7 @@
             <h2 class="text-3xl font-bold text-gray-900">Categories</h2>
             <p class="text-gray-600 mt-1">Manage product categories hierarchy</p>
         </div>
-        <a href="{{ route('admin.categories.create') }}" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+        <a href="{{ route('admin.categories.create') }}" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
             ➕ Create Category
         </a>
     </div>
@@ -81,7 +81,7 @@
         
         <div id="variantModalBody" class="flex-1 overflow-y-auto p-6">
             <div class="text-center py-12">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
                 <p class="text-gray-600 mt-4">Loading variants...</p>
             </div>
         </div>
@@ -90,7 +90,7 @@
             <button onclick="closeVariantModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
                 Cancel
             </button>
-            <button onclick="saveVariants()" id="saveVariantsBtn" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+            <button onclick="saveVariants()" id="saveVariantsBtn" class="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600">
                 💾 Save Variants
             </button>
         </div>
@@ -176,7 +176,7 @@ function renderAccordion(categories, title, level, parentId) {
     
     categories.forEach(cat => {
         html += `
-            <div class="border border-gray-200 rounded-lg p-4 hover:border-indigo-400 hover:shadow-md transition ${cat.has_children ? 'cursor-pointer' : ''}"
+            <div class="border border-gray-200 rounded-lg p-4 hover:border-primary-400 hover:shadow-md transition ${cat.has_children ? 'cursor-pointer' : ''}"
                  ${cat.has_children ? `onclick="onCategoryClick(${cat.id}, '${escapeHtml(cat.name)}', ${level})"` : ''}>
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-2">
@@ -186,7 +186,7 @@ function renderAccordion(categories, title, level, parentId) {
                             <p class="text-xs text-gray-500 mt-0.5">${cat.slug}</p>
                         </div>
                     </div>
-                    ${cat.has_children ? '<span class="text-indigo-600 text-xl">→</span>' : ''}
+                    ${cat.has_children ? '<span class="text-primary-600 text-xl">→</span>' : ''}
                 </div>
                 <div class="flex flex-wrap gap-2 mb-3">
                     ${cat.is_active 
@@ -201,7 +201,7 @@ function renderAccordion(categories, title, level, parentId) {
                 </div>
                 <div class="flex gap-2" onclick="event.stopPropagation()">
                     <button onclick="openVariantModal(${cat.id}, '${escapeHtml(cat.name)}')"
-                            class="flex-1 px-3 py-1.5 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                            class="flex-1 px-3 py-1.5 text-sm bg-primary-500 text-white rounded hover:bg-primary-600">
                         🔧 Variants
                     </button>
                     <a href="/admin/categories/${cat.id}/edit" class="px-3 py-1.5 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600 no-underline">
@@ -252,7 +252,7 @@ function removeLevel(level) {
  */
 function getBorderColor(level) {
     const colors = [
-        'border-indigo-500',
+        'border-primary-500',
         'border-purple-500',
         'border-pink-500',
         'border-blue-500',
@@ -266,7 +266,7 @@ function getBorderColor(level) {
  */
 function getGradientColor(level) {
     const gradients = [
-        'from-indigo-50 to-white',
+        'from-primary-50 to-white',
         'from-purple-50 to-white',
         'from-pink-50 to-white',
         'from-blue-50 to-white',
@@ -302,7 +302,7 @@ function openVariantModal(categoryId, categoryName) {
     // Reset modal body to loading state BEFORE showing to prevent stale content flash
     document.getElementById('variantModalBody').innerHTML = `
         <div class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
             <p class="text-gray-600 mt-4">Loading variants...</p>
         </div>
     `;
@@ -350,7 +350,7 @@ function renderVariants(variants) {
             <div class="text-center py-12">
                 <div class="text-6xl mb-4">📦</div>
                 <p class="text-gray-600 text-lg mb-2">No variants available</p>
-                <a href="/admin/variants/create" class="text-indigo-600 hover:underline">Create a variant first</a>
+                <a href="/admin/variants/create" class="text-primary-600 hover:underline">Create a variant first</a>
             </div>
         `;
         return;
@@ -371,35 +371,35 @@ function renderVariants(variants) {
         });
 
         html += `
-            <div class="border rounded-lg p-4 ${v.is_assigned ? 'bg-indigo-50 border-indigo-300' : 'bg-gray-50 border-gray-200'}">
+            <div class="border rounded-lg p-4 ${v.is_assigned ? 'bg-primary-50 border-primary-300' : 'bg-gray-50 border-gray-200'}">
                 <div class="flex items-start gap-3">
                     <input type="checkbox" id="var_${v.id}" value="${v.id}" ${v.is_assigned ? 'checked' : ''}
                            onchange="toggleVariantSettings(this)"
-                           class="mt-1 w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
+                           class="mt-1 w-5 h-5 text-primary-600 rounded focus:ring-primary-500">
                     <div class="flex-1">
                         <label for="var_${v.id}" class="cursor-pointer">
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="font-semibold text-gray-900">${v.name}</span>
-                                <span class="px-2 py-1 text-xs bg-indigo-100 text-indigo-700 rounded">${v.type}</span>
+                                <span class="px-2 py-1 text-xs bg-primary-100 text-primary-700 rounded">${v.type}</span>
                             </div>
                             <p class="text-sm text-gray-600">${v.items_count} items available</p>
                         </label>
-                        <div id="settings_${v.id}" class="mt-3 pl-4 border-l-2 border-indigo-300 space-y-2 ${v.is_assigned ? '' : 'hidden'}">
+                        <div id="settings_${v.id}" class="mt-3 pl-4 border-l-2 border-primary-300 space-y-2 ${v.is_assigned ? '' : 'hidden'}">
                             <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="req_${v.id}" ${settings.is_required ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded">
+                                <input type="checkbox" name="req_${v.id}" ${settings.is_required ? 'checked' : ''} class="w-4 h-4 text-primary-600 rounded">
                                 <span>Required field</span>
                             </label>
                             <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="sea_${v.id}" ${settings.is_searchable !== false ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded">
+                                <input type="checkbox" name="sea_${v.id}" ${settings.is_searchable !== false ? 'checked' : ''} class="w-4 h-4 text-primary-600 rounded">
                                 <span>Searchable</span>
                             </label>
                             <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="fil_${v.id}" ${settings.is_filterable !== false ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded">
+                                <input type="checkbox" name="fil_${v.id}" ${settings.is_filterable !== false ? 'checked' : ''} class="w-4 h-4 text-primary-600 rounded">
                                 <span>Filterable</span>
                             </label>
                             <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="main_${v.id}" ${settings.is_main_shown ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded">
-                                <span class="font-medium text-indigo-700">Main shown variant</span>
+                                <input type="checkbox" name="main_${v.id}" ${settings.is_main_shown ? 'checked' : ''} class="w-4 h-4 text-primary-600 rounded">
+                                <span class="font-medium text-primary-700">Main shown variant</span>
                             </label>
                         </div>
                     </div>
@@ -418,11 +418,11 @@ function toggleVariantSettings(checkbox) {
     const container = checkbox.closest('div[class*="border"]');
     if (checkbox.checked) {
         settingsDiv.classList.remove('hidden');
-        container.classList.add('bg-indigo-50', 'border-indigo-300');
+        container.classList.add('bg-primary-50', 'border-primary-300');
         container.classList.remove('bg-gray-50', 'border-gray-200');
     } else {
         settingsDiv.classList.add('hidden');
-        container.classList.remove('bg-indigo-50', 'border-indigo-300');
+        container.classList.remove('bg-primary-50', 'border-primary-300');
         container.classList.add('bg-gray-50', 'border-gray-200');
     }
 }

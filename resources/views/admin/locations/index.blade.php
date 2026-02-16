@@ -11,7 +11,7 @@
             <h2 class="text-3xl font-bold text-gray-900">Locations (Countries)</h2>
             <p class="text-gray-600 mt-1">Manage countries and their cities for listing locations</p>
         </div>
-        <a href="{{ route('admin.locations.create') }}" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+        <a href="{{ route('admin.locations.create') }}" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
             ➕ Add Country
         </a>
     </div>
@@ -50,7 +50,7 @@
         </div>
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-indigo-100 text-indigo-600 text-2xl">🏙️</div>
+                <div class="p-3 rounded-full bg-primary-100 text-primary-600 text-2xl">🏙️</div>
                 <div class="ml-4">
                     <p class="text-3xl font-bold text-gray-900">{{ $stats['total_cities'] }}</p>
                     <p class="text-gray-600 text-sm">Total Cities</p>
@@ -65,16 +65,16 @@
             <div class="flex-1">
                 <input type="text" name="search" value="{{ request('search') }}"
                        placeholder="Search by country name..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
             </div>
             <div>
-                <select name="is_active" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <select name="is_active" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                     <option value="">All Status</option>
                     <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Active</option>
                     <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Inactive</option>
                 </select>
             </div>
-            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+            <button type="submit" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                 🔍 Filter
             </button>
             <a href="{{ route('admin.locations.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
@@ -111,7 +111,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <a href="{{ route('admin.locations.cities.index', $country) }}" class="text-indigo-600 hover:text-indigo-900 font-semibold">
+                                    <a href="{{ route('admin.locations.cities.index', $country) }}" class="text-primary-600 hover:text-primary-700 font-semibold">
                                         {{ $country->cities_count }} {{ Str::plural('city', $country->cities_count) }}
                                     </a>
                                 </td>
@@ -129,7 +129,7 @@
                                         <a href="{{ route('admin.locations.cities.create', $country) }}" class="text-green-600 hover:text-green-900">
                                             + City
                                         </a>
-                                        <a href="{{ route('admin.locations.edit', $country) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('admin.locations.edit', $country) }}" class="text-primary-600 hover:text-primary-700">
                                             Edit
                                         </a>
                                         <form action="{{ route('admin.locations.destroy', $country) }}" method="POST" onsubmit="return confirm('Delete {{ $country->name }} and all its cities?')" class="inline">
@@ -152,7 +152,7 @@
             <div class="text-center py-12">
                 <div class="text-6xl mb-4">🌍</div>
                 <p class="text-gray-500 text-lg">No countries found</p>
-                <a href="{{ route('admin.locations.create') }}" class="text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+                <a href="{{ route('admin.locations.create') }}" class="text-primary-600 hover:text-primary-700 mt-2 inline-block">
                     Add your first country
                 </a>
             </div>

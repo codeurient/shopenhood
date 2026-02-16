@@ -28,14 +28,14 @@
                            id="search"
                            value="{{ request('search') }}"
                            placeholder="SKU or reference..."
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
                 </div>
 
                 <div>
                     <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
                     <select name="type"
                             id="type"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
                         <option value="">All Types</option>
                         <option value="purchase" {{ request('type') == 'purchase' ? 'selected' : '' }}>Purchase</option>
                         <option value="sale" {{ request('type') == 'sale' ? 'selected' : '' }}>Sale</option>
@@ -52,7 +52,7 @@
                            name="date_from"
                            id="date_from"
                            value="{{ request('date_from') }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
                 </div>
 
                 <div>
@@ -61,12 +61,12 @@
                            name="date_to"
                            id="date_to"
                            value="{{ request('date_to') }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
                 </div>
 
                 <div class="flex items-end">
                     <button type="submit"
-                            class="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            class="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600">
                         Filter
                     </button>
                 </div>

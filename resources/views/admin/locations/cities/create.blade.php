@@ -32,7 +32,7 @@
                         City Name <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                            placeholder="e.g., Baku">
                 </div>
 
@@ -41,13 +41,13 @@
                         City Code
                     </label>
                     <input type="text" name="code" id="code" value="{{ old('code') }}" maxlength="10"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                            placeholder="Optional code">
                 </div>
 
                 <div class="flex items-center gap-2">
                     <input type="checkbox" name="is_active" id="is_active" value="1" checked
-                           class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                           class="rounded border-gray-300 text-primary-600 focus:ring-primary-500">
                     <label for="is_active" class="text-sm text-gray-700">Active</label>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                 <a href="{{ route('admin.locations.cities.index', $country) }}" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
                     Cancel
                 </a>
-                <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                <button type="submit" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                     💾 Create City
                 </button>
             </div>

@@ -50,7 +50,7 @@
                                         Listing Type <span class="text-red-500">*</span>
                                     </label>
                                     <select name="listing_type_id" id="listing_type_id" required
-                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                         <option value="">Select Type</option>
                                         @foreach($listingTypes as $type)
                                             <option value="{{ $type->id }}" {{ old('listing_type_id') == $type->id ? 'selected' : '' }}>
@@ -67,7 +67,7 @@
                                     </label>
                                     <div id="categorySelectsContainer">
                                         <select id="category_level_0" required
-                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 category-select"
+                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 category-select"
                                                 data-level="0">
                                             <option value="">Select Category</option>
                                         </select>
@@ -85,7 +85,7 @@
                                     </label>
                                     <input type="text" name="title" id="title" required maxlength="255"
                                            value="{{ old('title') }}"
-                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     @error('title')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -98,7 +98,7 @@
                                     </label>
                                     <textarea name="short_description" rows="2" maxlength="500"
                                               placeholder="Brief summary for preview (optional)"
-                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('short_description') }}</textarea>
+                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('short_description') }}</textarea>
                                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Short summary shown in listings (max 500 characters)</p>
                                 </div>
 
@@ -108,7 +108,7 @@
                                         Full Description <span class="text-red-500">*</span>
                                     </label>
                                     <textarea name="description" rows="6" required
-                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('description') }}</textarea>
+                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('description') }}</textarea>
                                     @error('description')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -126,7 +126,7 @@
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Base Price</label>
                                         <input type="number" name="base_price" step="0.01" min="0"
                                                value="{{ old('base_price') }}"
-                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                         @error('base_price')
                                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                         @enderror
@@ -134,7 +134,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Currency</label>
                                         <select name="currency"
-                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                             <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
                                             <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR</option>
                                             <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP</option>
@@ -145,14 +145,14 @@
                                 <div class="flex items-center gap-2">
                                     <input type="checkbox" name="is_negotiable" id="is_negotiable" value="1"
                                            {{ old('is_negotiable') ? 'checked' : '' }}
-                                           class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500">
+                                           class="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500">
                                     <label for="is_negotiable" class="text-sm text-gray-700 dark:text-gray-300">Price is negotiable</label>
                                 </div>
 
                                 {{-- Discount Pricing --}}
                                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                                     <div class="flex items-center mb-3">
-                                        <input type="checkbox" id="has_discount" class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                        <input type="checkbox" id="has_discount" class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                         <label for="has_discount" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Apply Discount</label>
                                     </div>
 
@@ -162,19 +162,19 @@
                                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Discount Price</label>
                                                 <input type="number" name="discount_price" id="discount_price" step="0.01" min="0"
                                                        value="{{ old('discount_price') }}"
-                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
                                                 <input type="datetime-local" name="discount_start_date" id="discount_start_date"
                                                        value="{{ old('discount_start_date') }}"
-                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">End Date</label>
                                                 <input type="datetime-local" name="discount_end_date" id="discount_end_date"
                                                        value="{{ old('discount_end_date') }}"
-                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                             </div>
                                         </div>
                                         <p class="text-sm text-gray-500 dark:text-gray-400">The discount price will be shown with a strikethrough on the original price during the specified period.</p>
@@ -188,13 +188,13 @@
                                         <label class="flex items-center">
                                             <input type="radio" name="condition" value="new"
                                                    {{ old('condition', 'new') === 'new' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">New</span>
                                         </label>
                                         <label class="flex items-center">
                                             <input type="radio" name="condition" value="used"
                                                    {{ old('condition') === 'used' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Second-hand</span>
                                         </label>
                                     </div>
@@ -208,13 +208,13 @@
                                         <label class="flex items-center">
                                             <input type="radio" name="availability_type" value="in_stock"
                                                    {{ old('availability_type', 'in_stock') === 'in_stock' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">In Stock</span>
                                         </label>
                                         <label class="flex items-center">
                                             <input type="radio" name="availability_type" value="available_by_order"
                                                    {{ old('availability_type') === 'available_by_order' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Available by Order</span>
                                         </label>
                                     </div>
@@ -226,7 +226,7 @@
                                     <div class="flex items-center mb-3">
                                         <input type="checkbox" id="has_delivery" name="has_delivery" value="1"
                                                {{ old('has_delivery') ? 'checked' : '' }}
-                                               class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                               class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                         <label for="has_delivery" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Delivery Available</label>
                                     </div>
 
@@ -235,26 +235,26 @@
                                             <label class="flex items-center mt-2">
                                                 <input type="checkbox" name="has_domestic_delivery" value="1"
                                                        {{ old('has_domestic_delivery') ? 'checked' : '' }}
-                                                       class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                                       class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Domestic Delivery</span>
                                             </label>
                                             <div>
                                                 <input type="number" name="domestic_delivery_price" step="0.01" min="0"
                                                        value="{{ old('domestic_delivery_price') }}" placeholder="Price"
-                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
                                             </div>
                                         </div>
                                         <div class="flex items-start gap-4">
                                             <label class="flex items-center mt-2">
                                                 <input type="checkbox" name="has_international_delivery" value="1"
                                                        {{ old('has_international_delivery') ? 'checked' : '' }}
-                                                       class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                                       class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">International Delivery</span>
                                             </label>
                                             <div>
                                                 <input type="number" name="international_delivery_price" step="0.01" min="0"
                                                        value="{{ old('international_delivery_price') }}" placeholder="Price"
-                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
                                             </div>
                                         </div>
                                     </div>
@@ -270,14 +270,14 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country</label>
                                     <select id="country_select"
-                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                         <option value="">Select Country</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City</label>
                                     <select name="location_id" id="city_select" disabled
-                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                         <option value="">Select country first</option>
                                     </select>
                                     @error('location_id')
@@ -296,7 +296,7 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Store Name</label>
                                 <input type="text" name="store_name" value="{{ old('store_name') }}" maxlength="255"
                                        placeholder="Enter your store name"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">This will be displayed as "Shared from [Store Name]"</p>
                             </div>
                         </div>
@@ -309,7 +309,7 @@
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Wholesale Settings</h3>
                                 <label class="flex items-center">
                                     <input type="checkbox" name="is_wholesale" x-model="isWholesale"
-                                           class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                           class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Enable Wholesale</span>
                                 </label>
                             </div>
@@ -323,7 +323,7 @@
                                         <input type="number" name="wholesale_min_order_qty" min="1"
                                                value="{{ old('wholesale_min_order_qty') }}"
                                                placeholder="e.g., 10"
-                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -332,7 +332,7 @@
                                         <input type="number" name="wholesale_qty_increment" min="1"
                                                value="{{ old('wholesale_qty_increment') }}"
                                                placeholder="e.g., 5 (order in multiples)"
-                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     </div>
                                 </div>
 
@@ -343,13 +343,13 @@
                                     <input type="number" name="wholesale_lead_time_days" min="0" max="365"
                                            value="{{ old('wholesale_lead_time_days') }}"
                                            placeholder="Production/fulfillment time"
-                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                 </div>
 
                                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                                     <label class="flex items-center mb-2">
                                         <input type="checkbox" name="wholesale_sample_available" x-model="sampleAvailable"
-                                               class="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-600 focus:ring-indigo-500">
+                                               class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                         <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Samples Available</span>
                                     </label>
                                     <div x-show="sampleAvailable" class="ml-6">
@@ -357,7 +357,7 @@
                                         <input type="number" name="wholesale_sample_price" step="0.01" min="0"
                                                value="{{ old('wholesale_sample_price') }}"
                                                placeholder="0.00"
-                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     </div>
                                 </div>
 
@@ -367,7 +367,7 @@
                                     </label>
                                     <textarea name="wholesale_terms" rows="3" maxlength="2000"
                                               placeholder="Payment terms, shipping policy, bulk order requirements..."
-                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('wholesale_terms') }}</textarea>
+                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('wholesale_terms') }}</textarea>
                                 </div>
 
                                 <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -401,7 +401,7 @@
                                            value="{{ old('meta_title') }}"
                                            x-on:input="charCount = $event.target.value.length"
                                            placeholder="e.g., Premium Cotton T-Shirts Wholesale | Your Brand"
-                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     <div class="mt-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-xs text-gray-600 dark:text-gray-400">
                                         <p class="font-medium text-gray-700 dark:text-gray-300 mb-1">Tips for a great meta title:</p>
                                         <ul class="list-disc list-inside space-y-1">
@@ -425,7 +425,7 @@
                                     <textarea name="meta_description" rows="3" maxlength="160"
                                               x-on:input="charCount = $event.target.value.length"
                                               placeholder="Write a compelling description that encourages users to click..."
-                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('meta_description') }}</textarea>
+                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('meta_description') }}</textarea>
                                     <div class="mt-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-xs text-gray-600 dark:text-gray-400">
                                         <p class="font-medium text-gray-700 dark:text-gray-300 mb-1">Tips for a great meta description:</p>
                                         <ul class="list-disc list-inside space-y-1">
@@ -515,7 +515,7 @@
                         Cancel
                     </a>
                     <button type="submit"
-                            class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
+                            class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-medium">
                         Submit Listing
                     </button>
                 </div>
@@ -669,7 +669,7 @@
         }
     });
 
-    const selectClass = 'w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 category-select';
+    const selectClass = 'w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 category-select';
 
     function loadCategoriesForLevel(level, parentId) {
         const url = parentId
@@ -748,7 +748,7 @@
         card.dataset.level = level;
         card.innerHTML = `
             <div class="text-center py-4">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
                 <p class="text-gray-600 dark:text-gray-400 mt-2 text-sm">Loading variants...</p>
             </div>
         `;
@@ -762,7 +762,7 @@
         card.dataset.categoryId = categoryId;
 
         let levelLabel = level === 0 ? 'Category' : (level === 1 ? 'Subcategory' : 'Level ' + (level + 1));
-        const inputClass = 'w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500';
+        const inputClass = 'w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500';
 
         let html = `
             <div class="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
@@ -771,7 +771,7 @@
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">${levelLabel} Attributes</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${categoryName}</p>
                     </div>
-                    <span class="px-2 py-1 text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded">
+                    <span class="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded">
                         ${variants.length} attribute${variants.length !== 1 ? 's' : ''}
                     </span>
                 </div>
@@ -792,13 +792,13 @@
             } else if (variant.type === 'radio') {
                 html += `<div class="space-y-2">`;
                 variant.items.forEach((item, index) => {
-                    html += `<label class="flex items-center"><input type="radio" name="variants[${variant.id}]" value="${item.id}" ${variant.is_required && index === 0 ? 'required' : ''} class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"><span class="ml-2 text-sm text-gray-700 dark:text-gray-300">${item.display_value}</span></label>`;
+                    html += `<label class="flex items-center"><input type="radio" name="variants[${variant.id}]" value="${item.id}" ${variant.is_required && index === 0 ? 'required' : ''} class="w-4 h-4 text-primary-600 focus:ring-primary-500"><span class="ml-2 text-sm text-gray-700 dark:text-gray-300">${item.display_value}</span></label>`;
                 });
                 html += `</div>`;
             } else if (variant.type === 'checkbox') {
                 html += `<div class="space-y-2">`;
                 variant.items.forEach(item => {
-                    html += `<label class="flex items-center"><input type="checkbox" name="variants[${variant.id}][]" value="${item.id}" class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"><span class="ml-2 text-sm text-gray-700 dark:text-gray-300">${item.display_value}</span></label>`;
+                    html += `<label class="flex items-center"><input type="checkbox" name="variants[${variant.id}][]" value="${item.id}" class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"><span class="ml-2 text-sm text-gray-700 dark:text-gray-300">${item.display_value}</span></label>`;
                 });
                 html += `</div>`;
             } else if (variant.type === 'text') {

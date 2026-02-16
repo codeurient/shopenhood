@@ -39,7 +39,7 @@
                                 Listing Type <span class="text-red-500">*</span>
                             </label>
                             <select name="listing_type_id" id="listing_type_id" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                 <option value="">Select Type</option>
                                 @foreach($listingTypes as $type)
                                     <option value="{{ $type->id }}" {{ old('listing_type_id') == $type->id ? 'selected' : '' }}>
@@ -55,7 +55,7 @@
                             </label>
                             <div id="categorySelectsContainer">
                                 <select id="category_level_0" required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 category-select"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 category-select"
                                         data-level="0">
                                     <option value="">Select Category</option>
                                 </select>
@@ -69,14 +69,14 @@
                             </label>
                             <input type="text" name="title" id="title" required
                                    value="{{ old('title') }}"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Slug</label>
                             <input type="text" name="slug" id="slug"
                                    value="{{ old('slug') }}"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                             <p class="text-sm text-gray-500 mt-1">Auto-generated if left empty</p>
                         </div>
 
@@ -87,7 +87,7 @@
                             <textarea name="short_description" id="short_description" rows="2"
                                       placeholder="Brief summary for preview (optional)"
                                       maxlength="500"
-                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('short_description') }}</textarea>
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('short_description') }}</textarea>
                             <p class="text-sm text-gray-500 mt-1">Short summary shown in listings (max 500 characters)</p>
                         </div>
 
@@ -96,7 +96,7 @@
                                 Full Description <span class="text-red-500">*</span>
                             </label>
                             <textarea name="description" id="description" rows="6" required
-                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('description') }}</textarea>
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('description') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -111,12 +111,12 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Base Price</label>
                                 <input type="number" name="base_price" id="base_price" step="0.01" min="0"
                                        value="{{ old('base_price') }}"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Currency</label>
                                 <select name="currency"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
                                     <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR</option>
                                     <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP</option>
@@ -127,7 +127,7 @@
                         <!-- Discount Pricing -->
                         <div class="border-t pt-4">
                             <div class="flex items-center mb-3">
-                                <input type="checkbox" id="has_discount" class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                <input type="checkbox" id="has_discount" class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                                 <label for="has_discount" class="ml-2 text-sm font-medium text-gray-700">Apply Discount</label>
                             </div>
 
@@ -137,19 +137,19 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Discount Price</label>
                                         <input type="number" name="discount_price" id="discount_price" step="0.01" min="0"
                                                value="{{ old('discount_price') }}"
-                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
                                         <input type="datetime-local" name="discount_start_date" id="discount_start_date"
                                                value="{{ old('discount_start_date') }}"
-                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
                                         <input type="datetime-local" name="discount_end_date" id="discount_end_date"
                                                value="{{ old('discount_end_date') }}"
-                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     </div>
                                 </div>
                                 <p class="text-sm text-gray-500">The discount price will be shown with a strikethrough on the original price during the specified period.</p>
@@ -165,13 +165,13 @@
                                 <label class="flex items-center">
                                     <input type="radio" name="condition" value="new"
                                            {{ old('condition', 'new') === 'new' ? 'checked' : '' }}
-                                           class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                           class="w-4 h-4 text-primary-600 focus:ring-primary-500">
                                     <span class="ml-2 text-sm text-gray-700">New</span>
                                 </label>
                                 <label class="flex items-center">
                                     <input type="radio" name="condition" value="used"
                                            {{ old('condition') === 'used' ? 'checked' : '' }}
-                                           class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                           class="w-4 h-4 text-primary-600 focus:ring-primary-500">
                                     <span class="ml-2 text-sm text-gray-700">Second-hand</span>
                                 </label>
                             </div>
@@ -186,13 +186,13 @@
                                 <label class="flex items-center">
                                     <input type="radio" name="availability_type" value="in_stock"
                                            {{ old('availability_type', 'in_stock') === 'in_stock' ? 'checked' : '' }}
-                                           class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                           class="w-4 h-4 text-primary-600 focus:ring-primary-500">
                                     <span class="ml-2 text-sm text-gray-700">In Stock</span>
                                 </label>
                                 <label class="flex items-center">
                                     <input type="radio" name="availability_type" value="available_by_order"
                                            {{ old('availability_type') === 'available_by_order' ? 'checked' : '' }}
-                                           class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                           class="w-4 h-4 text-primary-600 focus:ring-primary-500">
                                     <span class="ml-2 text-sm text-gray-700">Available by Order</span>
                                 </label>
                             </div>
@@ -202,7 +202,7 @@
                         <div class="border-t pt-4">
                             <div class="flex items-center mb-3">
                                 <input type="checkbox" id="has_delivery" name="has_delivery" value="1" {{ old('has_delivery') ? 'checked' : '' }}
-                                       class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                       class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                                 <label for="has_delivery" class="ml-2 text-sm font-medium text-gray-700">Delivery Available</label>
                             </div>
 
@@ -210,25 +210,25 @@
                                 <div class="flex items-start gap-4">
                                     <label class="flex items-center mt-2">
                                         <input type="checkbox" name="has_domestic_delivery" value="1" {{ old('has_domestic_delivery') ? 'checked' : '' }}
-                                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                               class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                                         <span class="ml-2 text-sm text-gray-700">Domestic Delivery</span>
                                     </label>
                                     <div>
                                         <input type="number" name="domestic_delivery_price" step="0.01" min="0"
                                                value="{{ old('domestic_delivery_price') }}" placeholder="Price"
-                                               class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                               class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
                                     </div>
                                 </div>
                                 <div class="flex items-start gap-4">
                                     <label class="flex items-center mt-2">
                                         <input type="checkbox" name="has_international_delivery" value="1" {{ old('has_international_delivery') ? 'checked' : '' }}
-                                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                               class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                                         <span class="ml-2 text-sm text-gray-700">International Delivery</span>
                                     </label>
                                     <div>
                                         <input type="number" name="international_delivery_price" step="0.01" min="0"
                                                value="{{ old('international_delivery_price') }}" placeholder="Price"
-                                               class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                               class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
                                     </div>
                                 </div>
                             </div>
@@ -237,17 +237,17 @@
                         <div class="flex items-center gap-6 border-t pt-4">
                             <label class="flex items-center">
                                 <input type="checkbox" name="is_negotiable" value="1" {{ old('is_negotiable') ? 'checked' : '' }}
-                                       class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                       class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                                 <span class="ml-2 text-sm text-gray-700">Price is negotiable</span>
                             </label>
                             <label class="flex items-center">
                                 <input type="checkbox" name="is_visible" value="1" {{ old('is_visible', true) ? 'checked' : '' }}
-                                       class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                       class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                                 <span class="ml-2 text-sm text-gray-700">Visible to public</span>
                             </label>
                             <label class="flex items-center">
                                 <input type="checkbox" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
-                                       class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                                       class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                                 <span class="ml-2 text-sm text-gray-700">Featured</span>
                             </label>
                         </div>
@@ -263,14 +263,14 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
                                 <select name="country" id="country"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                     <option value="">Select Country</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
                                 <select name="city" id="city"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                                         disabled>
                                     <option value="">Select city first</option>
                                 </select>
@@ -287,7 +287,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Posted As</label>
                             <select name="created_as_role" id="created_as_role"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                 <option value="admin" {{ old('created_as_role', 'admin') === 'admin' ? 'selected' : '' }}>Admin</option>
                                 <option value="normal_user" {{ old('created_as_role') === 'normal_user' ? 'selected' : '' }}>Normal User</option>
                                 <option value="business_user" {{ old('created_as_role') === 'business_user' ? 'selected' : '' }}>Business User</option>
@@ -301,7 +301,7 @@
                             <input type="text" name="store_name" id="store_name"
                                    value="{{ old('store_name') }}"
                                    placeholder="Enter store name"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                             <p class="text-sm text-gray-500 mt-1">This will be displayed as "Shared from [Store Name]"</p>
                         </div>
                     </div>
@@ -326,12 +326,12 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Meta Title</label>
                             <input type="text" name="meta_title" maxlength="60"
                                    value="{{ old('meta_title') }}"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
                             <textarea name="meta_description" rows="3" maxlength="160"
-                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">{{ old('meta_description') }}</textarea>
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('meta_description') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -343,7 +343,7 @@
                 <div class="bg-white rounded-lg shadow p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Status</h3>
                     <select name="status" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                         <option value="draft" {{ old('status', 'draft') === 'draft' ? 'selected' : '' }}>Draft</option>
                         <option value="pending" {{ old('status') === 'pending' ? 'selected' : '' }}>Pending Review</option>
                         <option value="active" {{ old('status') === 'active' ? 'selected' : '' }}>Active</option>
@@ -389,7 +389,7 @@
             <a href="{{ route('admin.listings.index') }}" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
                 Cancel
             </a>
-            <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+            <button type="submit" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
                 💾 Create Listing
             </button>
         </div>
@@ -632,7 +632,7 @@ function loadCategoriesForLevel(level, parentId) {
 
             const newSelect = document.createElement('select');
             newSelect.id = 'category_level_' + level;
-            newSelect.className = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 category-select mt-3';
+            newSelect.className = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 category-select mt-3';
             newSelect.dataset.level = level;
 
             newSelect.innerHTML = '<option value="">Select ' + (level === 0 ? 'Category' : 'Subcategory') + '</option>';
@@ -728,7 +728,7 @@ function createLoadingCard(level) {
     card.dataset.level = level;
     card.innerHTML = `
         <div class="text-center py-4">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
             <p class="text-gray-600 mt-2 text-sm">Loading variants...</p>
         </div>
     `;
@@ -750,7 +750,7 @@ function renderVariantsCard(variants, categoryName, level, categoryId) {
                     <h3 class="text-lg font-semibold text-gray-900">${levelLabel} Attributes</h3>
                     <p class="text-sm text-gray-600 mt-1">${categoryName}</p>
                 </div>
-                <span class="px-2 py-1 text-xs bg-indigo-100 text-indigo-700 rounded">
+                <span class="px-2 py-1 text-xs bg-primary-100 text-primary-700 rounded">
                     ${variants.length} attribute${variants.length !== 1 ? 's' : ''}
                 </span>
             </div>
@@ -770,7 +770,7 @@ function renderVariantsCard(variants, categoryName, level, categoryId) {
         if (variant.type === 'select') {
             html += `
                 <select name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''}
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                     <option value="">Select ${variant.name}</option>
             `;
             variant.items.forEach(item => {
@@ -785,7 +785,7 @@ function renderVariantsCard(variants, categoryName, level, categoryId) {
                     <label class="flex items-center">
                         <input type="radio" name="variants[${variant.id}]" value="${item.id}"
                                ${variant.is_required && index === 0 ? 'required' : ''}
-                               class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                               class="w-4 h-4 text-primary-600 focus:ring-primary-500">
                         <span class="ml-2 text-sm text-gray-700">${item.display_value}</span>
                     </label>
                 `;
@@ -798,7 +798,7 @@ function renderVariantsCard(variants, categoryName, level, categoryId) {
                 html += `
                     <label class="flex items-center">
                         <input type="checkbox" name="variants[${variant.id}][]" value="${item.id}"
-                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
+                               class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
                         <span class="ml-2 text-sm text-gray-700">${item.display_value}</span>
                     </label>
                 `;
@@ -809,14 +809,14 @@ function renderVariantsCard(variants, categoryName, level, categoryId) {
             html += `
                 <input type="text" name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''}
                        placeholder="${variant.placeholder || ''}"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
             `;
 
         } else if (variant.type === 'number') {
             html += `
                 <input type="number" name="variants[${variant.id}]" ${variant.is_required ? 'required' : ''}
                        placeholder="${variant.placeholder || ''}"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
             `;
 
         } else if (variant.type === 'range') {
