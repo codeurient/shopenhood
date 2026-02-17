@@ -7,7 +7,7 @@
         <button type="button"
                 onclick="filterByType('{{ $type->slug }}')"
                 data-type="{{ $type->slug }}"
-                class="listing-type-tab flex-1 min-w-[80px] px-4 py-3 text-sm font-semibold text-white hover:bg-gray-600 transition-colors whitespace-nowrap {{ $type->slug === $currentType ? 'bg-gray-800 border-b-2 border-primary-500' : '' }}">
+                class="listing-type-tab flex-1 min-w-[80px] px-4 py-3 text-sm font-semibold text-white hover:bg-gray-600 transition-colors whitespace-nowrap {{ $type->slug === $currentType ? 'border-b-2 border-primary-500' : '' }}">
             {{ $type->name }}
         </button>
         @endforeach

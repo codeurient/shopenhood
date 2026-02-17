@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\LoginHistoryController;
 use App\Http\Controllers\Admin\ProductVariationController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\StockManagementController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VariantController;
@@ -318,6 +319,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/{businessProfile}/edit', [BusinessProfileController::class, 'edit'])->name('edit');
             Route::put('/{businessProfile}', [BusinessProfileController::class, 'update'])->name('update');
             Route::delete('/{businessProfile}', [BusinessProfileController::class, 'destroy'])->name('destroy');
+        });
+
+        // ====================================================================
+        // SLIDERS & BANNERS MANAGEMENT
+        // ====================================================================
+        Route::prefix('sliders')->name('sliders.')->group(function () {
+            Route::get('/', [SliderController::class, 'index'])->name('index');
+            Route::get('/create', [SliderController::class, 'create'])->name('create');
+            Route::post('/', [SliderController::class, 'store'])->name('store');
+            Route::get('/{slider}/edit', [SliderController::class, 'edit'])->name('edit');
+            Route::put('/{slider}', [SliderController::class, 'update'])->name('update');
+            Route::delete('/{slider}', [SliderController::class, 'destroy'])->name('destroy');
+            Route::post('/update-order', [SliderController::class, 'updateOrder'])->name('update-order');
         });
 
         // ====================================================================

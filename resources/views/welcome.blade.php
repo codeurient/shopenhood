@@ -6,7 +6,7 @@
     <x-mobile.category-scroll :categories="$categories" />
 
     <!-- Home Slider -->
-    <x-mobile.home-slider />
+    <x-mobile.home-slider :mainSliders="$mainSliders" :smallBanners="$smallBanners" />
 
     <!-- Main Content -->
     <div class="space-y-6">

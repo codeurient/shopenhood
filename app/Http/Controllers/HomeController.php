@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Listing;
 use App\Models\ListingType;
+use App\Models\Slider;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -46,11 +47,25 @@ class HomeController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        $mainSliders = Slider::active()
+            ->mainSliders()
+            ->ordered()
+            ->limit(5)
+            ->get();
+
+        $smallBanners = Slider::active()
+            ->smallBanners()
+            ->ordered()
+            ->limit(2)
+            ->get();
+
         return view('welcome', compact(
             'featuredListings',
             'latestListings',
             'categories',
-            'listingTypes'
+            'listingTypes',
+            'mainSliders',
+            'smallBanners'
         ));
     }
 }
