@@ -118,11 +118,15 @@
                     qty: variation.stock_quantity,
                     is_low_stock: variation.is_low_stock,
                 } : null;
+                if (this.displayStock && this.displayStock.qty > 0 && this.quantity > this.displayStock.qty) {
+                    this.quantity = this.displayStock.qty;
+                }
             },
             formatPrice(amount) {
                 return parseFloat(amount).toFixed(2);
             },
-            increaseQty() { this.quantity++; },
+            maxQty() { return (this.displayStock && this.displayStock.qty > 0) ? this.displayStock.qty : Infinity; },
+            increaseQty() { if (this.quantity < this.maxQty()) this.quantity++; },
             decreaseQty() { if (this.quantity > 1) this.quantity--; },
             isVariantItemAvailable(variantId, itemId) {
                 // Only apply constraints from dimensions that appear BEFORE this one.
@@ -404,7 +408,9 @@
                 </button>
                 <span x-text="quantity" class="text-base font-semibold text-gray-900 w-6 text-center"></span>
                 <button @click="increaseQty()"
-                        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-gray-400 transition-colors">
+                        :disabled="quantity >= maxQty()"
+                        :class="quantity >= maxQty() ? 'opacity-40 cursor-not-allowed border-gray-200' : 'hover:border-gray-400'"
+                        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
