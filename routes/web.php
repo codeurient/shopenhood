@@ -57,14 +57,22 @@ Route::get('/api/locations/{country}/cities', function (\App\Models\Location $co
 
 // Public Listing Routes
 Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');
-Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])->name('listings.show');
-Route::post('/listings/{listing}/available-options', [ListingController::class, 'getAvailableOptions'])->name('listings.available-options');
-Route::get('/variations/{variation}', [ListingController::class, 'getVariation'])->name('variations.show');
+Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])
+    ->where('listing', '[a-z0-9-]+')
+    ->name('listings.show');
+Route::post('/listings/{listing}/available-options', [ListingController::class, 'getAvailableOptions'])
+    ->middleware('throttle:60,1')
+    ->name('listings.available-options');
+Route::get('/variations/{variation}', [ListingController::class, 'getVariation'])
+    ->where('variation', '[0-9]+')
+    ->name('variations.show');
 
-// Listing Reviews (auth required)
-Route::middleware('auth')->group(function () {
+// Listing Reviews (auth required, rate limited)
+Route::middleware(['auth', 'throttle:10,1'])->group(function () {
     Route::post('/listings/{listing}/reviews', [ListingReviewController::class, 'store'])->name('listings.reviews.store');
-    Route::delete('/reviews/{review}', [ListingReviewController::class, 'destroy'])->name('listings.reviews.destroy');
+    Route::delete('/reviews/{review}', [ListingReviewController::class, 'destroy'])
+        ->where('review', '[0-9]+')
+        ->name('listings.reviews.destroy');
 });
 
 Route::middleware('auth')->group(function () {

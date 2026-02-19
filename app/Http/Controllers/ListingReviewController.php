@@ -24,24 +24,18 @@ class ListingReviewController extends Controller
             return back()->with('error', 'You can only review products you have received.');
         }
 
-        // Prevent duplicate reviews
-        $alreadyReviewed = ListingReview::where('listing_id', $listing->id)
-            ->where('user_id', $user->id)
-            ->exists();
-
-        if ($alreadyReviewed) {
+        try {
+            ListingReview::create([
+                'listing_id' => $listing->id,
+                'user_id' => $user->id,
+                'order_id' => $eligibleOrder->id,
+                'rating' => $request->validated('rating'),
+                'title' => $request->validated('title'),
+                'body' => $request->validated('body'),
+            ]);
+        } catch (\Illuminate\Database\UniqueConstraintViolationException) {
             return back()->with('error', 'You have already reviewed this product.');
         }
-
-        ListingReview::create([
-            'listing_id' => $listing->id,
-            'user_id' => $user->id,
-            'order_id' => $eligibleOrder->id,
-            'rating' => $request->validated('rating'),
-            'title' => $request->validated('title'),
-            'body' => $request->validated('body'),
-            'is_verified_purchase' => true,
-        ]);
 
         return back()->with('success', 'Your review has been submitted. Thank you!');
     }

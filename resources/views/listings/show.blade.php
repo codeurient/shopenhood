@@ -84,9 +84,9 @@
                     this.currentImage = (this.currentImage + 1) % this.totalImages;
                 }, 5000);
             },
-            selectVariant(variantId, itemId, itemValue) {
-                this.selectedVariants[variantId] = itemValue;
+            selectVariant(variantId, itemId) {
                 this.selectedVariantItemIds[variantId] = itemId;
+                this.selectedVariants[variantId] = (this.allVariantItemValues[variantId] || {})[itemId] ?? '';
                 this.resolveConflicts(variantId);
                 this.updateDisplay();
             },
@@ -351,10 +351,10 @@
                 <div class="flex items-center gap-2.5 flex-wrap">
                     @foreach($variant['items'] as $item)
                     <button type="button"
-                            @click="isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }}) && selectVariant({{ $variant['id'] }}, {{ $item['id'] }}, '{{ addslashes($item['value']) }}')"
+                            @click="isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }}) && selectVariant({{ $variant['id'] }}, {{ $item['id'] }})"
                             :class="{
-                                'ring-2 ring-green-500 ring-offset-2': selectedVariants[{{ $variant['id'] }}] === '{{ addslashes($item['value']) }}',
-                                'ring-1 ring-gray-300': selectedVariants[{{ $variant['id'] }}] !== '{{ addslashes($item['value']) }}',
+                                'ring-2 ring-green-500 ring-offset-2': selectedVariantItemIds[{{ $variant['id'] }}] === {{ $item['id'] }},
+                                'ring-1 ring-gray-300': selectedVariantItemIds[{{ $variant['id'] }}] !== {{ $item['id'] }},
                                 'opacity-40 cursor-not-allowed': !isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }})
                             }"
                             class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 transition-all duration-150"
@@ -377,10 +377,10 @@
                 <div class="flex items-center gap-2 flex-wrap">
                     @foreach($variant['items'] as $item)
                     <button type="button"
-                            @click="isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }}) && selectVariant({{ $variant['id'] }}, {{ $item['id'] }}, '{{ addslashes($item['value']) }}')"
+                            @click="isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }}) && selectVariant({{ $variant['id'] }}, {{ $item['id'] }})"
                             :class="{
-                                'border-green-500 text-green-700 bg-green-50 font-semibold': selectedVariants[{{ $variant['id'] }}] === '{{ addslashes($item['value']) }}',
-                                'border-gray-300 text-gray-700 bg-white': selectedVariants[{{ $variant['id'] }}] !== '{{ addslashes($item['value']) }}',
+                                'border-green-500 text-green-700 bg-green-50 font-semibold': selectedVariantItemIds[{{ $variant['id'] }}] === {{ $item['id'] }},
+                                'border-gray-300 text-gray-700 bg-white': selectedVariantItemIds[{{ $variant['id'] }}] !== {{ $item['id'] }},
                                 'opacity-40 cursor-not-allowed line-through': !isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }})
                             }"
                             class="px-3 py-1.5 rounded-lg border text-sm transition-colors">

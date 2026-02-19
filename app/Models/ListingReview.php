@@ -18,7 +18,6 @@ class ListingReview extends Model
         'rating',
         'title',
         'body',
-        'is_verified_purchase',
     ];
 
     protected $casts = [
