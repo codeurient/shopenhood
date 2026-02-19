@@ -20,6 +20,7 @@
             allVariantIds: @json($variantsData->pluck('id')->values()),
             allVariantItems: @json($variantsData->mapWithKeys(fn($v) => [$v['id'] => collect($v['items'])->pluck('id')->values()->toArray()])->toArray()),
             allVariantItemValues: @json($variantsData->mapWithKeys(fn($v) => [$v['id'] => collect($v['items'])->mapWithKeys(fn($item) => [$item['id'] => $item['value']])->toArray()])->toArray()),
+            listingPrice: @json($listing->base_price ? ['base_price' => (float) $listing->base_price, 'current_price' => (float) ($hasDiscount && $listing->discount_price ? $listing->discount_price : $listing->base_price), 'has_discount' => (bool) $hasDiscount] : null),
         };
     </script>
     @endpush
@@ -113,7 +114,7 @@
                     base_price: priceSrc.price,
                     current_price: priceSrc.current_price,
                     has_discount: priceSrc.has_discount,
-                } : null;
+                } : window.LISTING_PAGE.listingPrice;
                 this.displayStock = variation ? {
                     qty: variation.stock_quantity,
                     is_low_stock: variation.is_low_stock,
