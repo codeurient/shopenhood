@@ -282,6 +282,13 @@ class ListingController extends Controller
                 $listing->images()->whereIn('id', $request->delete_images)->delete();
             }
 
+            // Handle variation image deletions
+            if (! empty($request->delete_variation_image_ids)) {
+                ProductVariationImage::whereIn('id', $request->delete_variation_image_ids)
+                    ->whereHas('productVariation', fn ($q) => $q->where('listing_id', $listing->id))
+                    ->delete();
+            }
+
             // Handle main image replacement
             if ($request->hasFile('main_image')) {
                 // Mark old primary as non-primary

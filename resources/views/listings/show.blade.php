@@ -11,11 +11,25 @@
         $seller = $listing->user;
     @endphp
 
+    @push('scripts')
+    <script>
+        window.LISTING_PAGE = {
+            allVariations: @json($variationsData->values()),
+            listingImages: @json($images->map(fn($img) => ['url' => asset('storage/' . $img->image_path)])->values()),
+            currency: @json($currency),
+            allVariantIds: @json($variantsData->pluck('id')->values()),
+            allVariantItems: @json($variantsData->mapWithKeys(fn($v) => [$v['id'] => collect($v['items'])->pluck('id')->values()->toArray()])->toArray()),
+            allVariantItemValues: @json($variantsData->mapWithKeys(fn($v) => [$v['id'] => collect($v['items'])->mapWithKeys(fn($item) => [$item['id'] => $item['value']])->toArray()])->toArray()),
+        };
+    </script>
+    @endpush
+
     <div x-data="{
             currentImage: 0,
-            totalImages: {{ $totalImages > 0 ? $totalImages : 1 }},
+            totalImages: 0,
             quantity: 1,
             selectedVariants: {},
+            selectedVariantItemIds: {},
             titleExpanded: false,
             descExpanded: false,
             charExpanded: false,
@@ -24,6 +38,18 @@
             dragOffsetX: 0,
             isDragging: false,
             autoSlideTimer: null,
+
+            allVariations: window.LISTING_PAGE.allVariations,
+            listingImages: window.LISTING_PAGE.listingImages,
+            currency: window.LISTING_PAGE.currency,
+            allVariantIds: window.LISTING_PAGE.allVariantIds,
+            allVariantItems: window.LISTING_PAGE.allVariantItems,
+            allVariantItemValues: window.LISTING_PAGE.allVariantItemValues,
+
+            displayImages: [],
+            displayPrice: null,
+            displayStock: null,
+
             prevImage() {
                 this.currentImage = (this.currentImage - 1 + this.totalImages) % this.totalImages;
                 this.resetAutoSlide();
@@ -58,9 +84,94 @@
                     this.currentImage = (this.currentImage + 1) % this.totalImages;
                 }, 5000);
             },
+            selectVariant(variantId, itemId, itemValue) {
+                this.selectedVariants[variantId] = itemValue;
+                this.selectedVariantItemIds[variantId] = itemId;
+                this.resolveConflicts(variantId);
+                this.updateDisplay();
+            },
+            findMatchingVariation() {
+                const ids = this.selectedVariantItemIds;
+                if (!Object.keys(ids).length || !this.allVariations.length) return null;
+                const matches = this.allVariations.filter(v =>
+                    v.attributes.length > 0 &&
+                    v.attributes.every(a => ids[a.variant_id] === a.variant_item_id)
+                );
+                if (!matches.length) return null;
+                return matches.reduce((best, v) => v.attributes.length > best.attributes.length ? v : best);
+            },
+            updateDisplay() {
+                const variation = this.findMatchingVariation();
+                this.displayImages = (variation && variation.images && variation.images.length)
+                    ? variation.images
+                    : this.listingImages;
+                this.totalImages = this.displayImages.length || 1;
+                this.currentImage = 0;
+                this.resetAutoSlide();
+                const priceSrc = variation || this.allVariations.find(v => v.is_default) || this.allVariations[0] || null;
+                this.displayPrice = priceSrc ? {
+                    base_price: priceSrc.price,
+                    current_price: priceSrc.current_price,
+                    has_discount: priceSrc.has_discount,
+                } : null;
+                this.displayStock = variation ? {
+                    qty: variation.stock_quantity,
+                    is_low_stock: variation.is_low_stock,
+                } : null;
+            },
+            formatPrice(amount) {
+                return parseFloat(amount).toFixed(2);
+            },
             increaseQty() { this.quantity++; },
             decreaseQty() { if (this.quantity > 1) this.quantity--; },
-            init() { this.resetAutoSlide(); }
+            isVariantItemAvailable(variantId, itemId) {
+                // Only apply constraints from dimensions that appear BEFORE this one.
+                // This prevents deadlocks: e.g. Color (position 0) is never blocked by
+                // Storage (position 1), but Storage IS filtered by the selected Color.
+                const myPosition = this.allVariantIds.indexOf(variantId);
+                const constraints = (myPosition > 0 ? this.allVariantIds.slice(0, myPosition) : [])
+                    .flatMap(vid => {
+                        const iid = this.selectedVariantItemIds[vid];
+                        return iid !== undefined ? [{ vid, iid }] : [];
+                    });
+                return this.allVariations.some(v => {
+                    const hasItem = v.attributes.some(a => a.variant_id == variantId && a.variant_item_id == itemId);
+                    if (!hasItem) return false;
+                    return constraints.every(c =>
+                        v.attributes.some(a => a.variant_id == c.vid && a.variant_item_id == c.iid)
+                    );
+                });
+            },
+            resolveConflicts(changedVariantId) {
+                // After changing a dimension, auto-correct any downstream dimensions
+                // whose current selection is no longer valid.
+                const changedPosition = this.allVariantIds.indexOf(changedVariantId);
+                for (let i = changedPosition + 1; i < this.allVariantIds.length; i++) {
+                    const vid = this.allVariantIds[i];
+                    const currentIid = this.selectedVariantItemIds[vid];
+                    if (currentIid !== undefined && !this.isVariantItemAvailable(vid, currentIid)) {
+                        const items = this.allVariantItems[vid] || [];
+                        const firstValid = items.find(iid => this.isVariantItemAvailable(vid, iid));
+                        if (firstValid !== undefined) {
+                            this.selectedVariantItemIds[vid] = firstValid;
+                            this.selectedVariants[vid] = (this.allVariantItemValues[vid] || {})[firstValid] ?? '';
+                        } else {
+                            delete this.selectedVariantItemIds[vid];
+                            delete this.selectedVariants[vid];
+                        }
+                    }
+                }
+            },
+            init() {
+                const defaultVar = this.allVariations.find(v => v.is_default) || this.allVariations[0] || null;
+                if (defaultVar) {
+                    defaultVar.attributes.forEach(a => {
+                        this.selectedVariants[a.variant_id] = a.item_value;
+                        this.selectedVariantItemIds[a.variant_id] = a.variant_item_id;
+                    });
+                }
+                this.updateDisplay();
+            }
          }"
          class="bg-gray-50 pb-20">
 
@@ -70,29 +181,28 @@
         <div class="relative bg-white overflow-hidden select-none" style="height: 340px; touch-action: none;">
 
             {{-- Draggable image strip --}}
-            @if($images->count() > 0)
-            <div class="flex h-full"
+            <div x-show="displayImages.length > 0"
+                 class="flex h-full"
                  :style="{ transform: `translateX(calc(-${currentImage} * 100% + ${dragOffsetX}px))`, transition: isDragging ? 'none' : 'transform 0.3s ease' }"
                  @pointerdown="startDrag($event)"
                  @pointermove="moveDrag($event)"
                  @pointerup="endDrag()"
                  @pointercancel="isDragging = false; dragOffsetX = 0; resetAutoSlide()">
-                @foreach($images as $image)
-                <div class="w-full h-full flex-shrink-0">
-                    <img src="{{ asset('storage/' . $image->image_path) }}"
-                         alt="{{ $listing->title }}"
-                         class="w-full h-full object-cover pointer-events-none"
-                         draggable="false">
-                </div>
-                @endforeach
+                <template x-for="(img, idx) in displayImages" :key="idx">
+                    <div class="w-full h-full flex-shrink-0">
+                        <img :src="img.url"
+                             alt="{{ $listing->title }}"
+                             class="w-full h-full object-cover pointer-events-none"
+                             draggable="false">
+                    </div>
+                </template>
             </div>
-            @else
-            <div class="w-full h-full flex items-center justify-center bg-gray-100">
+            <div x-show="displayImages.length === 0"
+                 class="w-full h-full flex items-center justify-center bg-gray-100">
                 <svg class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
             </div>
-            @endif
 
             {{-- Back button --}}
             <a href="{{ url()->previous() }}"
@@ -117,20 +227,20 @@
             </div>
 
             {{-- Image counter --}}
-            @if($totalImages > 1)
-            <div class="absolute bottom-3 right-3 z-10 bg-black/50 rounded-full px-2.5 py-0.5 pointer-events-none">
-                <span class="text-white text-xs" x-text="(currentImage + 1) + '/{{ $totalImages }}'"></span>
+            <div x-show="totalImages > 1"
+                 class="absolute bottom-3 right-3 z-10 bg-black/50 rounded-full px-2.5 py-0.5 pointer-events-none">
+                <span class="text-white text-xs" x-text="(currentImage + 1) + '/' + totalImages"></span>
             </div>
 
             {{-- Dots --}}
-            <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
-                @foreach($images as $index => $image)
-                <button @click.stop="currentImage = {{ $index }}; resetAutoSlide()"
-                        :class="currentImage === {{ $index }} ? 'bg-white w-4' : 'bg-white/50 w-1.5'"
-                        class="h-1.5 rounded-full transition-all duration-300"></button>
-                @endforeach
+            <div x-show="totalImages > 1"
+                 class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
+                <template x-for="(img, idx) in displayImages" :key="idx">
+                    <button @click.stop="currentImage = idx; resetAutoSlide()"
+                            :class="currentImage === idx ? 'bg-white w-4' : 'bg-white/50 w-1.5'"
+                            class="h-1.5 rounded-full transition-all duration-300"></button>
+                </template>
             </div>
-            @endif
         </div>
 
         {{-- ================================================================ --}}
@@ -179,40 +289,34 @@
 
             {{-- Prices --}}
             <div class="flex items-baseline gap-2 mt-2">
-                @if($hasDiscount)
-                    <span class="text-gray-400 text-sm line-through">
-                        {{ number_format($listing->base_price, 2) }} {{ $currency }}
-                    </span>
-                    <span class="text-xl font-bold text-gray-900">
-                        {{ number_format($listing->discount_price, 2) }} {{ $currency }}
-                    </span>
-                @elseif($listing->base_price)
-                    <span class="text-xl font-bold text-gray-900">
-                        {{ number_format($listing->base_price, 2) }} {{ $currency }}
-                    </span>
-                @else
+                <template x-if="displayPrice && displayPrice.has_discount">
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-gray-400 text-sm line-through"
+                              x-text="formatPrice(displayPrice.base_price) + ' ' + currency"></span>
+                        <span class="text-xl font-bold text-gray-900"
+                              x-text="formatPrice(displayPrice.current_price) + ' ' + currency"></span>
+                    </div>
+                </template>
+                <template x-if="displayPrice && !displayPrice.has_discount">
+                    <span class="text-xl font-bold text-gray-900"
+                          x-text="formatPrice(displayPrice.current_price) + ' ' + currency"></span>
+                </template>
+                <template x-if="!displayPrice">
                     <span class="text-base font-medium text-gray-600">Contact for price</span>
-                @endif
+                </template>
             </div>
 
             {{-- Stock badge --}}
-            @php
-                $defaultVariation = $listing->defaultVariation ?? $listing->variations->first();
-                $stockQty = $defaultVariation?->stock_quantity ?? null;
-            @endphp
-            @if($stockQty !== null && $stockQty <= 10 && $stockQty > 0)
-            <div class="mt-2">
-                <span class="inline-block bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-wide">
-                    Only {{ $stockQty }} left
-                </span>
+            <div x-show="displayStock && displayStock.qty !== null && displayStock.qty <= 10 && displayStock.qty > 0"
+                 class="mt-2">
+                <span class="inline-block bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-wide"
+                      x-text="'Only ' + (displayStock ? displayStock.qty : '') + ' left'"></span>
             </div>
-            @elseif($stockQty === 0)
-            <div class="mt-2">
+            <div x-show="displayStock && displayStock.qty === 0" class="mt-2">
                 <span class="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-wide">
                     Out of stock
                 </span>
             </div>
-            @endif
         </div>
 
         {{-- ================================================================ --}}
@@ -222,44 +326,51 @@
         <div class="bg-white mt-2 px-4 py-3 space-y-4">
             @foreach($variantsData as $variant)
             <div>
-                {{-- Label row --}}
-                <div class="flex items-center gap-1 mb-2">
-                    <span class="text-sm font-medium text-gray-700">{{ $variant['name'] }}:</span>
-                    <span class="text-sm text-gray-500"
-                          x-text="selectedVariants[{{ $variant['id'] }}] ?? ''"
-                          x-show="selectedVariants[{{ $variant['id'] }}]"></span>
+                {{-- Label row: "Color: Silver" --}}
+                <div class="flex items-center gap-1.5 mb-2.5">
+                    <span class="text-sm text-gray-500">{{ $variant['name'] }}:</span>
+                    <span class="text-sm font-semibold text-gray-900"
+                          x-text="selectedVariants[{{ $variant['id'] }}] ?? ''"></span>
                 </div>
 
                 @if($variant['display_type'] === 'color' || $variant['display_type'] === 'image')
-                {{-- Color / Image swatches --}}
-                <div class="flex items-center gap-2 flex-wrap">
-                    @foreach($variant['items'] as $itemIndex => $item)
-                    <button @click="selectedVariants[{{ $variant['id'] }}] = '{{ $item['value'] }}'"
-                            :class="selectedVariants[{{ $variant['id'] }}] === '{{ $item['value'] }}' ? 'ring-2 ring-orange-400 ring-offset-1' : 'ring-1 ring-gray-200'"
-                            class="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 transition-all">
+                {{-- Color / Image swatches — round circles --}}
+                <div class="flex items-center gap-2.5 flex-wrap">
+                    @foreach($variant['items'] as $item)
+                    <button type="button"
+                            @click="isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }}) && selectVariant({{ $variant['id'] }}, {{ $item['id'] }}, '{{ addslashes($item['value']) }}')"
+                            :class="{
+                                'ring-2 ring-green-500 ring-offset-2': selectedVariants[{{ $variant['id'] }}] === '{{ addslashes($item['value']) }}',
+                                'ring-1 ring-gray-300': selectedVariants[{{ $variant['id'] }}] !== '{{ addslashes($item['value']) }}',
+                                'opacity-40 cursor-not-allowed': !isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }})
+                            }"
+                            class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 transition-all duration-150"
+                            title="{{ $item['value'] }}">
                         @if($item['image_path'])
                             <img src="{{ asset('storage/' . $item['image_path']) }}" alt="{{ $item['value'] }}" class="w-full h-full object-cover">
                         @elseif($item['color_code'])
                             <div class="w-full h-full" style="background-color: {{ $item['color_code'] }};"></div>
                         @else
-                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                                <span class="text-xs text-gray-600">{{ substr($item['value'], 0, 2) }}</span>
+                            <div class="w-full h-full bg-gray-300 flex items-center justify-center">
+                                <span class="text-[10px] font-semibold text-gray-600 uppercase">{{ substr($item['value'], 0, 2) }}</span>
                             </div>
-                        @endif
-                        @if($itemIndex === 0)
-                        <span class="absolute top-0 left-0 bg-orange-500 text-white text-[9px] font-bold px-1 py-px rounded-br">HOT</span>
                         @endif
                     </button>
                     @endforeach
                 </div>
 
-                @elseif($variant['display_type'] === 'button' || $variant['display_type'] === 'text')
-                {{-- Button pills --}}
+                @else
+                {{-- Button pills (button, text, select, etc.) --}}
                 <div class="flex items-center gap-2 flex-wrap">
                     @foreach($variant['items'] as $item)
-                    <button @click="selectedVariants[{{ $variant['id'] }}] = '{{ $item['value'] }}'"
-                            :class="selectedVariants[{{ $variant['id'] }}] === '{{ $item['value'] }}' ? 'border-orange-400 text-orange-600 bg-orange-50' : 'border-gray-200 text-gray-700 bg-white'"
-                            class="px-4 py-1.5 rounded-full border text-sm font-medium transition-colors">
+                    <button type="button"
+                            @click="isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }}) && selectVariant({{ $variant['id'] }}, {{ $item['id'] }}, '{{ addslashes($item['value']) }}')"
+                            :class="{
+                                'border-green-500 text-green-700 bg-green-50 font-semibold': selectedVariants[{{ $variant['id'] }}] === '{{ addslashes($item['value']) }}',
+                                'border-gray-300 text-gray-700 bg-white': selectedVariants[{{ $variant['id'] }}] !== '{{ addslashes($item['value']) }}',
+                                'opacity-40 cursor-not-allowed line-through': !isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }})
+                            }"
+                            class="px-3 py-1.5 rounded-lg border text-sm transition-colors">
                         {{ $item['value'] }}
                     </button>
                     @endforeach

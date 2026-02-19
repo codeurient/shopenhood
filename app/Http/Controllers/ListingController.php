@@ -102,13 +102,6 @@ class ListingController extends Controller
             'variations.attributes.variant.items',
         ]);
 
-        // Get category variants for display
-        $categoryVariants = $listing->category->variants()
-            ->with(['items' => function ($q) {
-                $q->where('is_active', true)->orderBy('sort_order');
-            }])
-            ->get();
-
         // Get default or first variation
         $defaultVariation = $listing->defaultVariation ?? $listing->variations->first();
 
@@ -143,22 +136,38 @@ class ListingController extends Controller
             ];
         });
 
-        // Prepare variants data for display
-        $variantsData = $categoryVariants->map(function ($variant) {
-            return [
-                'id' => $variant->id,
-                'name' => $variant->name,
-                'display_type' => $variant->display_type,
-                'is_required' => $variant->pivot->is_required,
-                'items' => $variant->items->map(function ($item) {
-                    return [
-                        'id' => $item->id,
-                        'value' => $item->value,
-                        'color_code' => $item->color_code,
-                        'image_path' => $item->image_path,
+        // Build variant selectors from the listing's actual variation attributes.
+        // This ensures selectors appear even when the category has no variants assigned,
+        // and only shows options that actually exist in this listing's variations.
+        $variantsMap = [];
+        foreach ($listing->variations as $variation) {
+            foreach ($variation->attributes as $attr) {
+                $vid = $attr->variant_id;
+                if (! isset($variantsMap[$vid])) {
+                    $variantsMap[$vid] = [
+                        'id' => $vid,
+                        'name' => $attr->variant->name,
+                        'display_type' => $attr->variant->display_type ?? 'button',
+                        'items' => [],
+                        'seen_item_ids' => [],
                     ];
-                })->toArray(),
-            ];
+                }
+                if (! in_array($attr->variant_item_id, $variantsMap[$vid]['seen_item_ids'])) {
+                    $variantsMap[$vid]['items'][] = [
+                        'id' => $attr->variant_item_id,
+                        'value' => $attr->variantItem->value,
+                        'color_code' => $attr->variantItem->color_code ?? null,
+                        'image_path' => $attr->variantItem->image_path ?? null,
+                    ];
+                    $variantsMap[$vid]['seen_item_ids'][] = $attr->variant_item_id;
+                }
+            }
+        }
+
+        $variantsData = collect(array_values($variantsMap))->map(function ($v) {
+            unset($v['seen_item_ids']);
+
+            return $v;
         });
 
         $relatedListings = Listing::publiclyVisible()

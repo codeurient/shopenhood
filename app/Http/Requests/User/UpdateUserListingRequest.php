@@ -42,6 +42,8 @@ class UpdateUserListingRequest extends FormRequest
             'detail_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
             'delete_images' => 'nullable|array',
             'delete_images.*' => 'integer|exists:listing_images,id',
+            'delete_variation_image_ids' => 'nullable|array',
+            'delete_variation_image_ids.*' => 'integer|exists:product_variation_images,id',
             'variants' => 'nullable|array',
             'variations' => 'nullable|array',
             'variations.*.id' => 'nullable|integer',

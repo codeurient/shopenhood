@@ -603,6 +603,11 @@
                 'is_default' => $v->is_default,
                 'is_active' => $v->is_active,
                 'images' => [],
+                'existing_images' => $v->images->map(fn ($img) => [
+                    'id' => $img->id,
+                    'url' => asset('storage/'.$img->image_path),
+                ])->values()->toArray(),
+                'deleted_image_ids' => [],
             ];
         })->toArray();
 
