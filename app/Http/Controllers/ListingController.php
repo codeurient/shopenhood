@@ -136,6 +136,33 @@ class ListingController extends Controller
             ];
         });
 
+        // When no ProductVariation records exist, represent the listing's basic info
+        // as a synthetic default variation so the price/stock logic works uniformly.
+        if ($variationsData->isEmpty() && $listing->base_price) {
+            $listingHasDiscount = $listing->discount_price
+                && $listing->discount_start_date
+                && $listing->discount_end_date
+                && now()->between($listing->discount_start_date, $listing->discount_end_date);
+
+            $variationsData = collect([[
+                'id' => null,
+                'sku' => null,
+                'price' => (float) $listing->base_price,
+                'discount_price' => $listingHasDiscount ? (float) $listing->discount_price : null,
+                'current_price' => $listingHasDiscount ? (float) $listing->discount_price : (float) $listing->base_price,
+                'discount_percentage' => $listingHasDiscount
+                    ? (int) round((($listing->base_price - $listing->discount_price) / $listing->base_price) * 100)
+                    : 0,
+                'has_discount' => (bool) $listingHasDiscount,
+                'stock_quantity' => null,
+                'is_in_stock' => true,
+                'is_low_stock' => false,
+                'is_default' => true,
+                'attributes' => [],
+                'images' => [],
+            ]]);
+        }
+
         // Build variant selectors from the listing's actual variation attributes.
         // This ensures selectors appear even when the category has no variants assigned,
         // and only shows options that actually exist in this listing's variations.

@@ -566,6 +566,26 @@
 
                 {{-- Product Variations Section (Business Users Only) --}}
                 @if(auth()->user()->isBusinessUser())
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">Default Product</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                        Choose which product is shown by default on the listing page.
+                    </p>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio"
+                                   id="default_basic"
+                                   name="default_variation"
+                                   value="basic"
+                                   {{ $listing->variations->where('is_default', true)->isEmpty() ? 'checked' : '' }}
+                                   onchange="window.dispatchEvent(new CustomEvent('basic-default-selected'))"
+                                   class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Basic Information</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">(base price from Pricing section)</span>
+                        </label>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">— or select a variation as default in the table below</span>
+                    </div>
+                </div>
                 <div class="mt-6">
                     @include('user.listings.partials.variation-manager', ['mode' => 'edit', 'listing' => $listing])
                 </div>

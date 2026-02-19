@@ -109,15 +109,16 @@
                 this.totalImages = this.displayImages.length || 1;
                 this.currentImage = 0;
                 this.resetAutoSlide();
-                const priceSrc = variation || this.allVariations.find(v => v.is_default) || this.allVariations[0] || null;
+                const priceSrc = variation || this.allVariations.find(v => v.is_default) || null;
                 this.displayPrice = priceSrc ? {
                     base_price: priceSrc.price,
                     current_price: priceSrc.current_price,
                     has_discount: priceSrc.has_discount,
                 } : window.LISTING_PAGE.listingPrice;
-                this.displayStock = variation ? {
-                    qty: variation.stock_quantity,
-                    is_low_stock: variation.is_low_stock,
+                const stockSrc = variation ?? priceSrc;
+                this.displayStock = (stockSrc && stockSrc.stock_quantity !== null && stockSrc.stock_quantity !== undefined) ? {
+                    qty: stockSrc.stock_quantity,
+                    is_low_stock: stockSrc.is_low_stock,
                 } : null;
                 if (this.displayStock && this.displayStock.qty > 0 && this.quantity > this.displayStock.qty) {
                     this.quantity = this.displayStock.qty;
@@ -168,7 +169,7 @@
                 }
             },
             init() {
-                const defaultVar = this.allVariations.find(v => v.is_default) || this.allVariations[0] || null;
+                const defaultVar = this.allVariations.find(v => v.is_default) || null;
                 if (defaultVar) {
                     defaultVar.attributes.forEach(a => {
                         this.selectedVariants[a.variant_id] = a.item_value;
