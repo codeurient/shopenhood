@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Listing;
+use App\Models\ListingReview;
 use App\Models\ListingType;
+use App\Models\Order;
 use App\Models\ProductVariation;
 use App\Models\SearchQuery;
 use Illuminate\Http\Request;
@@ -86,6 +88,7 @@ class ListingController extends Controller
             'category',
             'listingType',
             'images',
+            'user',
             'variations' => function ($query) {
                 $query->active()
                     ->with([
@@ -100,7 +103,7 @@ class ListingController extends Controller
         ]);
 
         // Get category variants for display
-        $categoryVariants = $listing->category->allVariants()
+        $categoryVariants = $listing->category->variants()
             ->with(['items' => function ($q) {
                 $q->where('is_active', true)->orderBy('sort_order');
             }])
@@ -158,11 +161,46 @@ class ListingController extends Controller
             ];
         });
 
+        $relatedListings = Listing::publiclyVisible()
+            ->where('category_id', $listing->category_id)
+            ->where('id', '!=', $listing->id)
+            ->with(['primaryImage', 'firstImage'])
+            ->latest()
+            ->limit(6)
+            ->get();
+
+        $reviews = ListingReview::where('listing_id', $listing->id)
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $user = auth()->user();
+
+        $canReview = false;
+        $alreadyReviewed = false;
+
+        if ($user) {
+            $alreadyReviewed = ListingReview::where('listing_id', $listing->id)
+                ->where('user_id', $user->id)
+                ->exists();
+
+            if (! $alreadyReviewed) {
+                $canReview = Order::where('listing_id', $listing->id)
+                    ->where('buyer_id', $user->id)
+                    ->whereIn('status', ['delivered', 'completed'])
+                    ->exists();
+            }
+        }
+
         return view('listings.show', compact(
             'listing',
             'defaultVariation',
             'variationsData',
-            'variantsData'
+            'variantsData',
+            'relatedListings',
+            'reviews',
+            'canReview',
+            'alreadyReviewed'
         ));
     }
 

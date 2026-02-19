@@ -308,7 +308,8 @@
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Wholesale Settings</h3>
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="is_wholesale" x-model="isWholesale"
+                                    <input type="hidden" name="is_wholesale" :value="isWholesale ? '1' : '0'">
+                                    <input type="checkbox" x-model="isWholesale"
                                            class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Enable Wholesale</span>
                                 </label>
@@ -348,7 +349,8 @@
 
                                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                                     <label class="flex items-center mb-2">
-                                        <input type="checkbox" name="wholesale_sample_available" x-model="sampleAvailable"
+                                        <input type="hidden" name="wholesale_sample_available" :value="sampleAvailable ? '1' : '0'">
+                                        <input type="checkbox" x-model="sampleAvailable"
                                                class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                         <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Samples Available</span>
                                     </label>

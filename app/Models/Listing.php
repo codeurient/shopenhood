@@ -202,14 +202,17 @@ class Listing extends Model
     // Reviews for this listing
     public function reviews()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(ListingReview::class)->latest();
     }
 
-    // Approved reviews only
-    public function approvedReviews()
+    public function averageRating(): float
     {
-        return $this->hasMany(Review::class)
-            ->where('status', 'approved');
+        return (float) $this->reviews()->avg('rating');
+    }
+
+    public function reviewsCount(): int
+    {
+        return $this->reviews()->count();
     }
 
     // Users who favorited this listing

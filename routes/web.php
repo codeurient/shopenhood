@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
+use App\Http\Controllers\ListingReviewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\AddressController as UserAddressController;
@@ -59,6 +60,12 @@ Route::get('/listings', [ListingController::class, 'index'])->name('listings.ind
 Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])->name('listings.show');
 Route::post('/listings/{listing}/available-options', [ListingController::class, 'getAvailableOptions'])->name('listings.available-options');
 Route::get('/variations/{variation}', [ListingController::class, 'getVariation'])->name('variations.show');
+
+// Listing Reviews (auth required)
+Route::middleware('auth')->group(function () {
+    Route::post('/listings/{listing}/reviews', [ListingReviewController::class, 'store'])->name('listings.reviews.store');
+    Route::delete('/reviews/{review}', [ListingReviewController::class, 'destroy'])->name('listings.reviews.destroy');
+});
 
 Route::middleware('auth')->group(function () {
 
