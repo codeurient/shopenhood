@@ -307,15 +307,24 @@
             </div>
 
             {{-- Stock badge --}}
-            <div x-show="displayStock && displayStock.qty !== null && displayStock.qty <= 10 && displayStock.qty > 0"
-                 class="mt-2">
-                <span class="inline-block bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-wide"
-                      x-text="'Only ' + (displayStock ? displayStock.qty : '') + ' left'"></span>
-            </div>
-            <div x-show="displayStock && displayStock.qty === 0" class="mt-2">
-                <span class="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-wide">
-                    Out of stock
-                </span>
+            <div x-show="displayStock && displayStock.qty !== null" class="mt-2">
+                <template x-if="displayStock && displayStock.qty > 10">
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-green-700">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span x-text="displayStock.qty + ' in stock'"></span>
+                    </span>
+                </template>
+                <template x-if="displayStock && displayStock.qty <= 10 && displayStock.qty > 0">
+                    <span class="inline-block bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-wide"
+                          x-text="'Only ' + displayStock.qty + ' left'"></span>
+                </template>
+                <template x-if="displayStock && displayStock.qty === 0">
+                    <span class="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-wide">
+                        Out of stock
+                    </span>
+                </template>
             </div>
         </div>
 
