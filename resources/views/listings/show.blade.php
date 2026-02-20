@@ -101,10 +101,26 @@
                 if (!matches.length) return null;
                 return matches.reduce((best, v) => v.attributes.length > best.attributes.length ? v : best);
             },
+            findImageVariation() {
+                const ids = this.selectedVariantItemIds;
+                if (!Object.keys(ids).length) return null;
+                // Partial match: find a variation that satisfies all SELECTED dimensions
+                // (ignoring dimensions the user hasn't chosen yet).
+                const candidates = this.allVariations.filter(v =>
+                    v.attributes.length > 0 &&
+                    Object.entries(ids).every(([vid, iid]) =>
+                        v.attributes.some(a => a.variant_id == vid && a.variant_item_id == iid)
+                    )
+                );
+                // Prefer candidates that have their own images
+                const withImages = candidates.filter(v => v.images && v.images.length > 0);
+                return withImages.length ? withImages[0] : (candidates.length ? candidates[0] : null);
+            },
             updateDisplay() {
                 const variation = this.findMatchingVariation();
-                this.displayImages = (variation && variation.images && variation.images.length)
-                    ? variation.images
+                const imageVar = variation || this.findImageVariation();
+                this.displayImages = (imageVar && imageVar.images && imageVar.images.length)
+                    ? imageVar.images
                     : this.listingImages;
                 this.totalImages = this.displayImages.length || 1;
                 this.currentImage = 0;
