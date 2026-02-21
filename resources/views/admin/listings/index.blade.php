@@ -4,7 +4,10 @@
 @section('page-title', 'Listings')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
+<div class="max-w-7xl mx-auto" x-data="{
+    selectedIds: [],
+    get hasSelected() { return this.selectedIds.length > 0; }
+}">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <div>
@@ -61,8 +64,8 @@
         <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-                <input type="text" name="search" value="{{ request('search') }}" 
-                       placeholder="Search listings..." 
+                <input type="text" name="search" value="{{ request('search') }}"
+                       placeholder="Search listings..."
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
             </div>
             <div>
@@ -100,11 +103,69 @@
         </form>
     </div>
 
+    <!-- Bulk Action Bar -->
+    <div x-show="hasSelected"
+         class="mb-4 p-4 bg-gray-100 border border-gray-300 rounded-lg flex items-center gap-3 flex-wrap">
+        <span class="text-sm text-gray-700 font-medium" x-text="`${selectedIds.length} listing(s) selected`"></span>
+
+        @if(request('status') === 'deleted')
+            {{-- Trashed listings: permanent delete options --}}
+            <form action="{{ route('admin.listings.bulk-force-destroy') }}" method="POST">
+                @csrf
+                <template x-for="id in selectedIds" :key="id">
+                    <input type="hidden" name="ids[]" :value="id">
+                </template>
+                <button type="button"
+                    @click="$dispatch('open-confirm-modal', { message: `Permanently delete ${selectedIds.length} listing(s)? This cannot be undone.`, form: $el.closest('form') })"
+                    class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium transition">
+                    Permanently Delete Selected
+                </button>
+            </form>
+        @else
+            {{-- Active listings: soft delete --}}
+            <form action="{{ route('admin.listings.bulk-delete') }}" method="POST">
+                @csrf
+                <template x-for="id in selectedIds" :key="id">
+                    <input type="hidden" name="ids[]" :value="id">
+                </template>
+                <button type="button"
+                    @click="$dispatch('open-confirm-modal', { message: `Delete ${selectedIds.length} listing(s)?`, form: $el.closest('form') })"
+                    class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium transition">
+                    Delete Selected
+                </button>
+            </form>
+        @endif
+
+        <button type="button" @click="selectedIds = []"
+            class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm transition">
+            Clear Selection
+        </button>
+    </div>
+
+    @if(request('status') === 'deleted')
+    <!-- Delete All Trashed button (only shown on deleted filter) -->
+    <div class="mb-4 flex justify-end">
+        <form action="{{ route('admin.listings.force-destroy-all-trashed') }}" method="POST">
+            @csrf
+            <button type="button"
+                @click="$dispatch('open-confirm-modal', { message: 'Permanently delete ALL deleted listings? This cannot be undone.', form: $el.closest('form') })"
+                class="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 text-sm font-medium transition">
+                Delete All Permanently
+            </button>
+        </form>
+    </div>
+    @endif
+
     <!-- Listings Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
+                    <th class="px-4 py-3">
+                        <input type="checkbox"
+                               @change="selectedIds = $event.target.checked ? [{{ $listings->pluck('id')->join(',') }}] : []"
+                               class="rounded border-gray-300">
+                    </th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
@@ -116,11 +177,15 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($listings as $listing)
                 <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-4">
+                        <input type="checkbox" :value="{{ $listing->id }}" x-model="selectedIds"
+                               class="rounded border-gray-300">
+                    </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center">
                             @if($listing->primaryImage)
-                                <img src="{{ asset('storage/' . $listing->primaryImage->image_path) }}" 
-                                     alt="{{ $listing->title }}" 
+                                <img src="{{ asset('storage/' . $listing->primaryImage->image_path) }}"
+                                     alt="{{ $listing->title }}"
                                      class="w-16 h-16 rounded object-cover mr-4">
                             @else
                                 <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center mr-4">
@@ -177,12 +242,12 @@
                                 </form>
                                 <form action="{{ route('admin.listings.force-delete', $listing->id) }}"
                                       method="POST"
-                                      class="inline-block"
-                                      onsubmit="return confirm('Permanently delete this listing? This cannot be undone.');">
+                                      class="inline-block">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit"
-                                            class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                                    <button type="button"
+                                        @click="$dispatch('open-confirm-modal', { message: 'Permanently delete this listing? This cannot be undone.', form: $el.closest('form') })"
+                                        class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
                                         Permanently Delete
                                     </button>
                                 </form>
@@ -203,12 +268,12 @@
                                 </a>
                                 <form action="{{ route('admin.listings.destroy', $listing) }}"
                                       method="POST"
-                                      class="inline-block"
-                                      onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                                      class="inline-block">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit"
-                                            class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                                    <button type="button"
+                                        @click="$dispatch('open-confirm-modal', { message: 'Are you sure you want to delete this listing?', form: $el.closest('form') })"
+                                        class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
                                         Delete
                                     </button>
                                 </form>
@@ -218,7 +283,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center">
+                    <td colspan="7" class="px-6 py-12 text-center">
                         <div class="text-6xl mb-4">📦</div>
                         <p class="text-gray-600 text-lg mb-2">No listings found</p>
                         <a href="{{ route('admin.listings.create') }}" class="text-primary-600 hover:underline">

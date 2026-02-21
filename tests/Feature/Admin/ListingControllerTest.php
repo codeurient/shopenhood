@@ -385,3 +385,103 @@ test('getCategoryVariants with show_all returns all variants including non-main-
     $response->assertSuccessful();
     $response->assertJsonCount(2, 'variants');
 });
+
+test('admin can bulk soft-delete selected listings', function () {
+    $listing1 = Listing::factory()->create(['status' => 'active']);
+    $listing2 = Listing::factory()->create(['status' => 'active']);
+    $listing3 = Listing::factory()->create(['status' => 'active']);
+
+    $response = $this->post(route('admin.listings.bulk-delete'), ['ids' => [$listing1->id, $listing2->id]]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
+
+    $this->assertSoftDeleted('listings', ['id' => $listing1->id]);
+    $this->assertSoftDeleted('listings', ['id' => $listing2->id]);
+    $this->assertDatabaseHas('listings', ['id' => $listing3->id, 'deleted_at' => null]);
+});
+
+test('admin bulk delete returns error when no ids given', function () {
+    $response = $this->post(route('admin.listings.bulk-delete'), ['ids' => []]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('error');
+});
+
+test('admin can bulk permanently delete selected trashed listings and files are cleaned up', function () {
+    Storage::fake('public');
+
+    $listing1 = Listing::factory()->create();
+    $listing2 = Listing::factory()->create();
+
+    $image1 = $listing1->images()->create([
+        'image_path' => 'listings/test1.jpg',
+        'original_filename' => 'test1.jpg',
+        'file_size' => 1024,
+        'mime_type' => 'image/jpeg',
+        'sort_order' => 0,
+        'is_primary' => true,
+    ]);
+    Storage::disk('public')->put('listings/test1.jpg', 'fake');
+
+    $listing1->delete();
+    $listing2->delete();
+
+    $response = $this->post(route('admin.listings.bulk-force-destroy'), ['ids' => [$listing1->id, $listing2->id]]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
+
+    $this->assertDatabaseMissing('listings', ['id' => $listing1->id]);
+    $this->assertDatabaseMissing('listings', ['id' => $listing2->id]);
+    Storage::disk('public')->assertMissing('listings/test1.jpg');
+});
+
+test('admin bulk force destroy returns error when no ids given', function () {
+    $response = $this->post(route('admin.listings.bulk-force-destroy'), ['ids' => []]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('error');
+});
+
+test('admin can permanently delete all trashed listings at once', function () {
+    Storage::fake('public');
+
+    $listing1 = Listing::factory()->create();
+    $listing2 = Listing::factory()->create();
+    $active = Listing::factory()->create(['status' => 'active']);
+
+    $listing1->delete();
+    $listing2->delete();
+
+    $response = $this->post(route('admin.listings.force-destroy-all-trashed'));
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
+
+    $this->assertDatabaseMissing('listings', ['id' => $listing1->id]);
+    $this->assertDatabaseMissing('listings', ['id' => $listing2->id]);
+    $this->assertDatabaseHas('listings', ['id' => $active->id]);
+});
+
+test('admin force delete uses service to clean up listing image files', function () {
+    Storage::fake('public');
+
+    $listing = Listing::factory()->create();
+    $listing->images()->create([
+        'image_path' => 'listings/admin-test.jpg',
+        'original_filename' => 'admin-test.jpg',
+        'file_size' => 1024,
+        'mime_type' => 'image/jpeg',
+        'sort_order' => 0,
+        'is_primary' => true,
+    ]);
+    Storage::disk('public')->put('listings/admin-test.jpg', 'fake');
+
+    $listing->delete();
+
+    $this->delete(route('admin.listings.force-delete', $listing->id));
+
+    Storage::disk('public')->assertMissing('listings/admin-test.jpg');
+    $this->assertDatabaseMissing('listings', ['id' => $listing->id]);
+});

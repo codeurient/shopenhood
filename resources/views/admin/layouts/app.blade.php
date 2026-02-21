@@ -192,5 +192,57 @@
     </script>
 
     @stack('scripts')
+
+    <!-- Global Confirm Modal -->
+    <div x-data="{
+            show: false,
+            message: '',
+            pendingForm: null,
+            open(message, form) {
+                this.message = message;
+                this.pendingForm = form;
+                this.show = true;
+            },
+            confirm() {
+                this.show = false;
+                if (this.pendingForm) {
+                    this.pendingForm.submit();
+                }
+            },
+            cancel() {
+                this.show = false;
+                this.pendingForm = null;
+            }
+        }"
+        @open-confirm-modal.window="open($event.detail.message, $event.detail.form)"
+        x-show="show"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true">
+        <div class="absolute inset-0 bg-black/50" @click="cancel()"></div>
+        <div class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 z-10" @click.stop>
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.194-.833-2.964 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Confirm Action</h3>
+                    <p class="mt-1 text-sm text-gray-600" x-text="message"></p>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" @click="cancel()"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                    Cancel
+                </button>
+                <button type="button" @click="confirm()"
+                    class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

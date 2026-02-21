@@ -35,15 +35,15 @@
                     <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-4 flex-wrap">
                         <h3 class="text-lg font-semibold text-gray-900">Active Listings ({{ $activeListings->count() }})</h3>
                         <div class="flex items-center gap-2" x-show="selectedActiveIds.length > 0">
-                            <form action="{{ route('business.listings.bulk-destroy') }}" method="POST"
-                                  @submit.prevent="if(confirm('Delete selected listings?')) $el.submit()">
+                            <form action="{{ route('business.listings.bulk-destroy') }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <template x-for="id in selectedActiveIds" :key="id">
                                     <input type="hidden" name="ids[]" :value="id">
                                 </template>
-                                <button type="submit"
-                                        class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium transition">
+                                <button type="button"
+                                    @click="$dispatch('open-confirm-modal', { message: 'Delete selected listings?', form: $el.closest('form') })"
+                                    class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium transition">
                                     Delete Selected
                                 </button>
                             </form>
@@ -129,11 +129,12 @@
                                                     {{ $listing->is_visible ? 'Hide' : 'Show' }}
                                                 </button>
                                             </form>
-                                            <form action="{{ route('business.listings.destroy', $listing) }}" method="POST" class="inline"
-                                                  onsubmit="return confirm('Delete this listing?');">
+                                            <form action="{{ route('business.listings.destroy', $listing) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
+                                                <button type="button"
+                                                    @click="$dispatch('open-confirm-modal', { message: 'Delete this listing?', form: $el.closest('form') })"
+                                                    class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
                                                     Delete
                                                 </button>
                                             </form>
@@ -172,23 +173,23 @@
                         </div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <form action="{{ route('business.listings.bulk-force-destroy-trashed') }}" method="POST"
-                                  x-show="selectedTrashedIds.length > 0"
-                                  @submit.prevent="if(confirm('Permanently delete selected listings? This cannot be undone.')) $el.submit()">
+                                  x-show="selectedTrashedIds.length > 0">
                                 @csrf
                                 <template x-for="id in selectedTrashedIds" :key="id">
                                     <input type="hidden" name="ids[]" :value="id">
                                 </template>
-                                <button type="submit"
-                                        class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium transition">
+                                <button type="button"
+                                    @click="$dispatch('open-confirm-modal', { message: 'Permanently delete selected listings? This cannot be undone.', form: $el.closest('form') })"
+                                    class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium transition">
                                     Permanently Delete Selected
                                 </button>
                             </form>
 
-                            <form action="{{ route('business.listings.force-destroy-all-trashed') }}" method="POST"
-                                  onsubmit="return confirm('Permanently delete ALL deleted listings? This cannot be undone.');">
+                            <form action="{{ route('business.listings.force-destroy-all-trashed') }}" method="POST">
                                 @csrf
-                                <button type="submit"
-                                        class="px-3 py-1.5 bg-red-700 text-white rounded hover:bg-red-800 text-xs font-medium transition">
+                                <button type="button"
+                                    @click="$dispatch('open-confirm-modal', { message: 'Permanently delete ALL deleted listings? This cannot be undone.', form: $el.closest('form') })"
+                                    class="px-3 py-1.5 bg-red-700 text-white rounded hover:bg-red-800 text-xs font-medium transition">
                                     Delete All Permanently
                                 </button>
                             </form>
@@ -231,11 +232,12 @@
                                                     Reshare
                                                 </button>
                                             </form>
-                                            <form action="{{ route('business.listings.force-destroy', $listing->id) }}" method="POST" class="inline"
-                                                  onsubmit="return confirm('Permanently delete? This cannot be undone.');">
+                                            <form action="{{ route('business.listings.force-destroy', $listing->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
+                                                <button type="button"
+                                                    @click="$dispatch('open-confirm-modal', { message: 'Permanently delete this listing? This cannot be undone.', form: $el.closest('form') })"
+                                                    class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
                                                     Permanently Delete
                                                 </button>
                                             </form>

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Listing;
 use App\Models\ListingType;
 use App\Models\Variant;
+use App\Services\ListingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -14,6 +15,8 @@ use Illuminate\Support\Str;
 
 class ListingController extends Controller
 {
+    public function __construct(private ListingService $listingService) {}
+
     /**
      * Display a listing of all listings
      */
@@ -810,7 +813,7 @@ class ListingController extends Controller
         $listing = Listing::withTrashed()->findOrFail($listing_id);
 
         $title = $listing->title;
-        $listing->forceDelete();
+        $this->listingService->forceDeleteListing(auth()->guard('admin')->user(), $listing);
 
         activity()
             ->causedBy(auth()->guard('admin')->user())
@@ -819,6 +822,79 @@ class ListingController extends Controller
         return redirect()
             ->route('admin.listings.index', ['status' => 'deleted'])
             ->with('success', "Listing \"{$title}\" has been permanently deleted.");
+    }
+
+    /**
+     * Soft-delete multiple listings at once.
+     */
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return back()->with('error', 'No listings selected.');
+        }
+
+        $listings = Listing::whereIn('id', $ids)->get();
+        $count = $listings->count();
+
+        $listings->each->delete();
+
+        activity()
+            ->causedBy(auth()->guard('admin')->user())
+            ->log("Bulk deleted {$count} listing(s)");
+
+        return redirect()
+            ->route('admin.listings.index')
+            ->with('success', "{$count} listing(s) deleted.");
+    }
+
+    /**
+     * Permanently delete selected soft-deleted listings.
+     */
+    public function bulkForceDestroy(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return back()->with('error', 'No listings selected.');
+        }
+
+        $admin = auth()->guard('admin')->user();
+
+        $listings = Listing::onlyTrashed()->whereIn('id', $ids)->get();
+        $count = $listings->count();
+
+        $listings->each(fn ($listing) => $this->listingService->forceDeleteListing($admin, $listing));
+
+        activity()
+            ->causedBy($admin)
+            ->log("Bulk permanently deleted {$count} listing(s)");
+
+        return redirect()
+            ->route('admin.listings.index', ['status' => 'deleted'])
+            ->with('success', "{$count} listing(s) permanently deleted.");
+    }
+
+    /**
+     * Permanently delete all soft-deleted listings.
+     */
+    public function forceDestroyAllTrashed()
+    {
+        $admin = auth()->guard('admin')->user();
+
+        $listings = Listing::onlyTrashed()->get();
+        $count = $listings->count();
+
+        $listings->each(fn ($listing) => $this->listingService->forceDeleteListing($admin, $listing));
+
+        activity()
+            ->causedBy($admin)
+            ->log("Permanently deleted all {$count} trashed listing(s)");
+
+        return redirect()
+            ->route('admin.listings.index', ['status' => 'deleted'])
+            ->with('success', "All {$count} deleted listing(s) permanently removed.");
     }
 
     /**

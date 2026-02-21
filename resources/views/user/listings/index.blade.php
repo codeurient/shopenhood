@@ -114,11 +114,12 @@
                                                 {{ $listing->is_visible ? 'Hide' : 'Show' }}
                                             </button>
                                         </form>
-                                        <form action="{{ route('user.listings.destroy', $listing) }}" method="POST" class="inline"
-                                              onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                                        <form action="{{ route('user.listings.destroy', $listing) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
+                                            <button type="button"
+                                                @click="$dispatch('open-confirm-modal', { message: 'Are you sure you want to delete this listing?', form: $el.closest('form') })"
+                                                class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
                                                 Delete
                                             </button>
                                         </form>
@@ -162,24 +163,24 @@
                     <div class="flex items-center gap-2 flex-wrap">
                         {{-- Permanently Delete Selected --}}
                         <form action="{{ route('user.listings.bulk-force-destroy-trashed') }}" method="POST"
-                              x-show="selectedTrashedIds.length > 0"
-                              @submit.prevent="if(confirm('Permanently delete selected listings? This cannot be undone.')) $el.submit()">
+                              x-show="selectedTrashedIds.length > 0">
                             @csrf
                             <template x-for="id in selectedTrashedIds" :key="id">
                                 <input type="hidden" name="ids[]" :value="id">
                             </template>
-                            <button type="submit"
-                                    class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium transition">
+                            <button type="button"
+                                @click="$dispatch('open-confirm-modal', { message: 'Permanently delete selected listings? This cannot be undone.', form: $el.closest('form') })"
+                                class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium transition">
                                 Permanently Delete Selected
                             </button>
                         </form>
 
                         {{-- Permanently Delete All --}}
-                        <form action="{{ route('user.listings.force-destroy-all-trashed') }}" method="POST"
-                              onsubmit="return confirm('Permanently delete ALL deleted listings? This cannot be undone.');">
+                        <form action="{{ route('user.listings.force-destroy-all-trashed') }}" method="POST">
                             @csrf
-                            <button type="submit"
-                                    class="px-3 py-1.5 bg-red-700 text-white rounded hover:bg-red-800 text-xs font-medium transition">
+                            <button type="button"
+                                @click="$dispatch('open-confirm-modal', { message: 'Permanently delete ALL deleted listings? This cannot be undone.', form: $el.closest('form') })"
+                                class="px-3 py-1.5 bg-red-700 text-white rounded hover:bg-red-800 text-xs font-medium transition">
                                 Delete All Permanently
                             </button>
                         </form>
@@ -222,11 +223,12 @@
                                                 Reshare
                                             </button>
                                         </form>
-                                        <form action="{{ route('user.listings.force-destroy', $listing->id) }}" method="POST" class="inline"
-                                              onsubmit="return confirm('Permanently delete this listing? This cannot be undone.');">
+                                        <form action="{{ route('user.listings.force-destroy', $listing->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
+                                            <button type="button"
+                                                @click="$dispatch('open-confirm-modal', { message: 'Permanently delete this listing? This cannot be undone.', form: $el.closest('form') })"
+                                                class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
                                                 Permanently Delete
                                             </button>
                                         </form>

@@ -244,6 +244,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             // Bulk Actions
             Route::post('bulk-delete', [ListingController::class, 'bulkDelete'])->name('bulk-delete');
+            Route::post('bulk-force-destroy', [ListingController::class, 'bulkForceDestroy'])->name('bulk-force-destroy');
+            Route::post('force-destroy-all-trashed', [ListingController::class, 'forceDestroyAllTrashed'])->name('force-destroy-all-trashed');
             Route::post('bulk-approve', [ListingController::class, 'bulkApprove'])->name('bulk-approve');
             Route::post('bulk-reject', [ListingController::class, 'bulkReject'])->name('bulk-reject');
             Route::post('bulk-activate', [ListingController::class, 'bulkActivate'])->name('bulk-activate');
