@@ -40,6 +40,35 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        // BUSINESS USER
+        DB::table('users')->insert([
+            'name' => 'Business User',
+            'email' => 'business@example.com',
+            'email_verified_at' => Carbon::now(),
+
+            'password' => Hash::make('11111111'),
+
+            'phone' => '0557654321',
+            'phone_verified_at' => Carbon::now(),
+
+            'current_role' => 'business_user',
+            'is_business_enabled' => true,
+            'business_valid_until' => null,
+
+            'status' => 'active',
+
+            'daily_listing_count' => 0,
+            'last_listing_date' => null,
+
+            'avatar' => null,
+            'bio' => 'Biznes istifadəçisi',
+
+            'remember_token' => Str::random(10),
+
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         // ADMIN USER
         DB::table('users')->insert([
             'name' => 'Admin User',

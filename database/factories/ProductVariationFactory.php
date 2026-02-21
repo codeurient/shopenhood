@@ -27,4 +27,14 @@ class ProductVariationFactory extends Factory
             'sort_order' => 0,
         ];
     }
+
+    /**
+     * Mark this variation as the default for its listing.
+     */
+    public function asDefault(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_default' => true,
+        ]);
+    }
 }

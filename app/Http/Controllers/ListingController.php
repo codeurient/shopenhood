@@ -207,14 +207,13 @@ class ListingController extends Controller
         $relatedListings = Listing::publiclyVisible()
             ->where('category_id', $listing->category_id)
             ->where('id', '!=', $listing->id)
-            ->with(['primaryImage', 'firstImage'])
+            ->with([
+                'primaryImage', 'firstImage', 'user',
+                'defaultVariation.primaryImage', 'defaultVariation.firstImage',
+                'location.parent',
+            ])
             ->latest()
             ->limit(6)
-            ->get();
-
-        $reviews = ListingReview::where('listing_id', $listing->id)
-            ->with('user')
-            ->latest()
             ->get();
 
         // Resolve variant_attributes JSON to human-readable labels for the show view
@@ -233,21 +232,29 @@ class ListingController extends Controller
             }
         }
 
-        $user = auth()->user();
-
+        $reviews = collect();
         $canReview = false;
         $alreadyReviewed = false;
 
-        if ($user) {
-            $alreadyReviewed = ListingReview::where('listing_id', $listing->id)
-                ->where('user_id', $user->id)
-                ->exists();
+        if ($listing->listing_mode === 'business') {
+            $reviews = ListingReview::where('listing_id', $listing->id)
+                ->with('user')
+                ->latest()
+                ->get();
 
-            if (! $alreadyReviewed) {
-                $canReview = Order::where('listing_id', $listing->id)
-                    ->where('buyer_id', $user->id)
-                    ->whereIn('status', ['delivered', 'completed'])
+            $user = auth()->user();
+
+            if ($user) {
+                $alreadyReviewed = ListingReview::where('listing_id', $listing->id)
+                    ->where('user_id', $user->id)
                     ->exists();
+
+                if (! $alreadyReviewed) {
+                    $canReview = Order::where('listing_id', $listing->id)
+                        ->where('buyer_id', $user->id)
+                        ->whereIn('status', ['delivered', 'completed'])
+                        ->exists();
+                }
             }
         }
 

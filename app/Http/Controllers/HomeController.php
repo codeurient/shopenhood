@@ -15,13 +15,19 @@ class HomeController extends Controller
         // Get the 'sell' listing type
         $sellType = ListingType::where('slug', 'sell')->first();
 
+        $cardRelations = [
+            'category', 'listingType', 'primaryImage', 'firstImage', 'user',
+            'defaultVariation.primaryImage', 'defaultVariation.firstImage',
+            'location.parent',
+        ];
+
         // Filter only 'sell' type listings by default
         $featuredListings = Listing::publiclyVisible()
             ->where('is_featured', true)
             ->when($sellType, function ($query) use ($sellType) {
                 return $query->where('listing_type_id', $sellType->id);
             })
-            ->with(['category', 'listingType', 'primaryImage', 'firstImage', 'user'])
+            ->with($cardRelations)
             ->latest()
             ->limit(15)
             ->get();
@@ -30,7 +36,7 @@ class HomeController extends Controller
             ->when($sellType, function ($query) use ($sellType) {
                 return $query->where('listing_type_id', $sellType->id);
             })
-            ->with(['category', 'listingType', 'primaryImage', 'firstImage', 'user'])
+            ->with($cardRelations)
             ->latest()
             ->limit(8)
             ->get();

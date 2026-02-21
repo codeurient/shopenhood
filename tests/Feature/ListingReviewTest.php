@@ -28,7 +28,7 @@ function makeDeliveredOrder(User $buyer, Listing $listing, string $status = 'del
 // ──────────────────────────────────────────────────────────────────────────────
 
 it('shows listing detail page with no reviews', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
 
     $response = $this->get(route('listings.show', $listing->slug));
 
@@ -36,8 +36,36 @@ it('shows listing detail page with no reviews', function () {
     $response->assertSee('No reviews yet');
 });
 
+it('does not show reviews section for normal listings', function () {
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'normal']);
+
+    $response = $this->get(route('listings.show', $listing->slug));
+
+    $response->assertSuccessful();
+    $response->assertDontSee('No reviews yet');
+    $response->assertDontSee('Write a Review');
+});
+
+it('shows quantity selector on business listing page', function () {
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
+
+    $response = $this->get(route('listings.show', $listing->slug));
+
+    $response->assertSuccessful();
+    $response->assertSee('id="qty-selector"', false);
+});
+
+it('does not show quantity selector on normal listing page', function () {
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'normal']);
+
+    $response = $this->get(route('listings.show', $listing->slug));
+
+    $response->assertSuccessful();
+    $response->assertDontSee('id="qty-selector"', false);
+});
+
 it('displays existing reviews on listing page', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
     $buyer = User::factory()->create();
     $order = makeDeliveredOrder($buyer, $listing);
 
@@ -64,7 +92,7 @@ it('displays existing reviews on listing page', function () {
 // ──────────────────────────────────────────────────────────────────────────────
 
 it('allows a buyer with a delivered order to submit a review', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
     $buyer = User::factory()->create();
     makeDeliveredOrder($buyer, $listing, 'delivered');
 
@@ -87,7 +115,7 @@ it('allows a buyer with a delivered order to submit a review', function () {
 });
 
 it('allows a buyer with a completed order to submit a review', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
     $buyer = User::factory()->create();
     makeDeliveredOrder($buyer, $listing, 'completed');
 
@@ -107,8 +135,28 @@ it('allows a buyer with a completed order to submit a review', function () {
     ]);
 });
 
+it('prevents reviewing a normal listing', function () {
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'normal']);
+    $buyer = User::factory()->create();
+    makeDeliveredOrder($buyer, $listing);
+
+    $this->actingAs($buyer);
+
+    $response = $this->post(route('listings.reviews.store', $listing), [
+        'rating' => 5,
+        'body' => 'Nice product.',
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('error');
+    $this->assertDatabaseMissing('listing_reviews', [
+        'listing_id' => $listing->id,
+        'user_id' => $buyer->id,
+    ]);
+});
+
 it('prevents a user without a delivered order from reviewing', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
     $buyer = User::factory()->create();
     // No order created
 
@@ -128,7 +176,7 @@ it('prevents a user without a delivered order from reviewing', function () {
 });
 
 it('prevents reviewing when order status is only shipped (not delivered)', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
     $buyer = User::factory()->create();
     makeDeliveredOrder($buyer, $listing, 'shipped');
 
@@ -144,7 +192,7 @@ it('prevents reviewing when order status is only shipped (not delivered)', funct
 });
 
 it('prevents duplicate reviews from the same buyer', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
     $buyer = User::factory()->create();
     $order = makeDeliveredOrder($buyer, $listing);
 
@@ -169,7 +217,7 @@ it('prevents duplicate reviews from the same buyer', function () {
 });
 
 it('requires a rating between 1 and 5', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
     $buyer = User::factory()->create();
     makeDeliveredOrder($buyer, $listing);
 
@@ -183,7 +231,7 @@ it('requires a rating between 1 and 5', function () {
 });
 
 it('redirects guests to login when trying to review', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
 
     $response = $this->post(route('listings.reviews.store', $listing), [
         'rating' => 5,
@@ -197,7 +245,7 @@ it('redirects guests to login when trying to review', function () {
 // ──────────────────────────────────────────────────────────────────────────────
 
 it('allows a user to delete their own review', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
     $buyer = User::factory()->create();
     $order = makeDeliveredOrder($buyer, $listing);
 
@@ -219,7 +267,7 @@ it('allows a user to delete their own review', function () {
 });
 
 it('prevents a user from deleting another user\'s review', function () {
-    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true]);
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
     $buyer = User::factory()->create();
     $otherUser = User::factory()->create();
     $order = makeDeliveredOrder($buyer, $listing);

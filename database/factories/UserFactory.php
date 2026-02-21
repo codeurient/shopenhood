@@ -41,4 +41,27 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Normal user state (limited to 1 listing, no business features).
+     */
+    public function normalUser(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'current_role' => 'normal_user',
+            'is_business_enabled' => false,
+        ]);
+    }
+
+    /**
+     * Business user state (active subscription, unlimited listings, variants, etc.).
+     */
+    public function businessUser(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'current_role' => 'business_user',
+            'is_business_enabled' => true,
+            'business_valid_until' => null,
+        ]);
+    }
 }

@@ -1,16 +1,55 @@
 @props(['listing'])
 
+@php
+    // Image: listing images first, then default variation images as fallback
+    $cardImage = $listing->primaryImage
+        ?? $listing->firstImage
+        ?? $listing->defaultVariation?->primaryImage
+        ?? $listing->defaultVariation?->firstImage;
+
+    // Price: listing base_price first, then default variation price as fallback
+    $cardPrice = null;
+    $cardDiscountPrice = null;
+    if ($listing->base_price) {
+        $cardPrice = $listing->base_price;
+        if (
+            $listing->discount_price &&
+            $listing->discount_start_date &&
+            $listing->discount_end_date &&
+            now()->between($listing->discount_start_date, $listing->discount_end_date)
+        ) {
+            $cardDiscountPrice = $listing->discount_price;
+        }
+    } elseif ($listing->defaultVariation) {
+        $v = $listing->defaultVariation;
+        $cardPrice = $v->price;
+        if ($v->hasActiveDiscount()) {
+            $cardDiscountPrice = $v->discount_price;
+        }
+    }
+
+    // Location: country/city strings first, then location relationship as fallback
+    $displayCode = null;
+    $displayCity = null;
+    if ($listing->country && $listing->city) {
+        $displayCode = $listing->country_code;
+        $displayCity = $listing->city;
+    } elseif ($listing->location) {
+        $displayCity = $listing->location->name;
+        if ($listing->location->parent) {
+            $displayCode = $listing->location->parent->code ?? substr($listing->location->parent->name, 0, 2);
+        }
+    }
+@endphp
+
 <!-- Listing Card -->
 <a href="{{ route('listings.show', $listing->slug) }}"
    class="block bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
 
     <!-- Image Container -->
     <div class="relative aspect-square bg-gray-100">
-        @if($listing->primaryImage || $listing->firstImage)
-            @php
-                $image = $listing->primaryImage ?? $listing->firstImage;
-            @endphp
-            <img src="{{ asset('storage/' . $image->image_path) }}"
+        @if($cardImage)
+            <img src="{{ asset('storage/' . $cardImage->image_path) }}"
                  alt="{{ $listing->title }}"
                  class="w-full h-full object-cover">
         @else
@@ -72,16 +111,16 @@
     <div class="p-2 space-y-1">
         <!-- Price -->
         <div class="flex items-center gap-1">
-            @if($listing->discount_price && $listing->discount_start_date && $listing->discount_end_date && now()->between($listing->discount_start_date, $listing->discount_end_date))
+            @if($cardDiscountPrice)
                 <span class="font-bold text-primary-600" style="font-size: 15px;">
-                    ${{ number_format($listing->discount_price, 2) }}
+                    ${{ number_format($cardDiscountPrice, 2) }}
                 </span>
                 <span class="text-gray-500 line-through" style="font-size: 11px;">
-                    ${{ number_format($listing->base_price, 2) }}
+                    ${{ number_format($cardPrice, 2) }}
                 </span>
-            @elseif($listing->base_price)
+            @elseif($cardPrice)
                 <span class="font-bold text-gray-900" style="font-size: 15px;">
-                    ${{ number_format($listing->base_price, 2) }}
+                    ${{ number_format($cardPrice, 2) }}
                 </span>
             @else
                 <span class="font-medium text-gray-600" style="font-size: 11px;">
@@ -99,8 +138,8 @@
         <div class="flex items-center justify-between text-gray-500" style="font-size: 11px;">
             <!-- Left: Country Code, City -->
             <span class="truncate">
-                @if($listing->country && $listing->city)
-                    {{ $listing->country_code }}, {{ $listing->city }}
+                @if($displayCode && $displayCity)
+                    {{ $displayCode }}, {{ $displayCity }}
                 @else
                     Location N/A
                 @endif

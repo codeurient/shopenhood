@@ -438,10 +438,11 @@
         @endif
 
         {{-- ================================================================ --}}
-        {{-- QUANTITY                                                          --}}
+        {{-- QUANTITY (business listings only — normal listings have no stock) --}}
         {{-- ================================================================ --}}
-        <div class="bg-white mt-2 px-4 py-3 flex items-center justify-between">
-            <span class="text-sm font-medium text-gray-700">Qty</span>
+        @if($listing->listing_mode === 'business')
+        <div id="qty-selector" class="bg-white mt-2 px-4 py-3 flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-700">Quantity</span>
             <div class="flex items-center gap-4">
                 <button @click="decreaseQty()"
                         class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-gray-400 transition-colors">
@@ -460,6 +461,7 @@
                 </button>
             </div>
         </div>
+        @endif {{-- listing_mode === 'business' --}}
 
         {{-- ================================================================ --}}
         {{-- DESCRIPTION & CHARACTERISTICS                                     --}}
@@ -640,8 +642,9 @@
         </div>
 
         {{-- ================================================================ --}}
-        {{-- RATINGS & REVIEWS                                                 --}}
+        {{-- RATINGS & REVIEWS (business listings only)                        --}}
         {{-- ================================================================ --}}
+        @if($listing->listing_mode === 'business')
         @php
             $avgRating = $reviews->count() ? round($reviews->avg('rating'), 1) : 0;
             $reviewCount = $reviews->count();
@@ -789,6 +792,7 @@
             </div>
             @endif
         </div>
+        @endif {{-- listing_mode === 'business' --}}
 
         {{-- ================================================================ --}}
         {{-- SELLER INFO                                                       --}}

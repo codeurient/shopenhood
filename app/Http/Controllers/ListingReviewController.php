@@ -12,6 +12,10 @@ class ListingReviewController extends Controller
 {
     public function store(StoreListingReviewRequest $request, Listing $listing): RedirectResponse
     {
+        if ($listing->listing_mode !== 'business') {
+            return back()->with('error', 'Reviews are only available for business listings.');
+        }
+
         $user = auth()->user();
 
         // Check the user has a delivered or completed order for this listing
