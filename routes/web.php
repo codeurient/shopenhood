@@ -135,20 +135,22 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile/edit', [UserBusinessProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [UserBusinessProfileController::class, 'update'])->name('profile.update');
 
-        // Upgrade info page (all authenticated users)
-        Route::get('/upgrade', fn () => view('business.upgrade'))->name('upgrade');
-
-        // Business listings (requires active business subscription)
-        Route::prefix('listings')->name('listings.')->middleware('business.user')->group(function () {
+        // Business listings
+        Route::prefix('listings')->name('listings.')->group(function () {
+            // Index is accessible to all authenticated users (shows upgrade info if not a business user)
             Route::get('/', [BusinessListingController::class, 'index'])->name('index');
-            Route::get('/create', [BusinessListingController::class, 'create'])->name('create');
-            Route::post('/', [BusinessListingController::class, 'store'])->name('store');
-            Route::get('/{listing}/edit', [BusinessListingController::class, 'edit'])->name('edit');
-            Route::put('/{listing}', [BusinessListingController::class, 'update'])->name('update');
-            Route::patch('/{listing}/toggle', [BusinessListingController::class, 'toggleVisibility'])->name('toggle');
-            Route::delete('/{listing}', [BusinessListingController::class, 'destroy'])->name('destroy');
-            Route::delete('/{listing_id}/force', [BusinessListingController::class, 'forceDestroy'])->name('force-destroy');
-            Route::post('/{listing_id}/reshare', [BusinessListingController::class, 'reshare'])->name('reshare');
+
+            // All write/management routes require an active business subscription
+            Route::middleware('business.user')->group(function () {
+                Route::get('/create', [BusinessListingController::class, 'create'])->name('create');
+                Route::post('/', [BusinessListingController::class, 'store'])->name('store');
+                Route::get('/{listing}/edit', [BusinessListingController::class, 'edit'])->name('edit');
+                Route::put('/{listing}', [BusinessListingController::class, 'update'])->name('update');
+                Route::patch('/{listing}/toggle', [BusinessListingController::class, 'toggleVisibility'])->name('toggle');
+                Route::delete('/{listing}', [BusinessListingController::class, 'destroy'])->name('destroy');
+                Route::delete('/{listing_id}/force', [BusinessListingController::class, 'forceDestroy'])->name('force-destroy');
+                Route::post('/{listing_id}/reshare', [BusinessListingController::class, 'reshare'])->name('reshare');
+            });
         });
     });
 });

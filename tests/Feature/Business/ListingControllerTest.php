@@ -16,13 +16,14 @@ beforeEach(function () {
     $this->listingType = ListingType::factory()->create();
 });
 
-test('non-business user is redirected to upgrade page', function () {
+test('non-business user can view business listings index with upgrade info', function () {
     $normalUser = User::factory()->create(['current_role' => 'normal_user']);
     $this->actingAs($normalUser);
 
     $response = $this->get(route('business.listings.index'));
 
-    $response->assertRedirect(route('business.upgrade'));
+    $response->assertSuccessful();
+    $response->assertSee('Upgrade to Business Account');
 });
 
 test('non-business user cannot post to business store', function () {
@@ -37,7 +38,7 @@ test('non-business user cannot post to business store', function () {
         'condition' => 'new',
     ]);
 
-    $response->assertRedirect(route('business.upgrade'));
+    $response->assertRedirect(route('business.listings.index'));
 });
 
 test('business user can view business listings index', function () {

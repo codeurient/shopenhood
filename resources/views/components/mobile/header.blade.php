@@ -36,11 +36,11 @@
         </div>
 
         <!-- Favorites Icon with Badge -->
-        <a href="#favorites"
-           class="relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex-shrink-0">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        <a href="#favorites" class="relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex-shrink-0">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l2 12h10l2-8H6M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/>
             </svg>
+
             <!-- Notification Badge -->
             <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-danger-500 rounded-full">
                 2

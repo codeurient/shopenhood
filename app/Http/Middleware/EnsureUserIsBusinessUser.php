@@ -16,7 +16,7 @@ class EnsureUserIsBusinessUser
     public function handle(Request $request, Closure $next): Response
     {
         if (! auth()->check() || ! auth()->user()->isBusinessUser()) {
-            return redirect()->route('business.upgrade');
+            return redirect()->route('business.listings.index');
         }
 
         return $next($request);

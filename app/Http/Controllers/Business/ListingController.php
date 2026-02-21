@@ -24,6 +24,16 @@ class ListingController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $retentionDays = $this->listingService->getSoftDeleteRetentionDays();
+
+        if (! $user->isBusinessUser()) {
+            return view('business.listings.index', [
+                'activeListings' => collect(),
+                'trashedListings' => collect(),
+                'retentionDays' => $retentionDays,
+                'user' => $user,
+            ]);
+        }
 
         $activeListings = Listing::businessMode()
             ->forUser($user->id)
@@ -37,8 +47,6 @@ class ListingController extends Controller
             ->with(['category', 'listingType'])
             ->latest('deleted_at')
             ->get();
-
-        $retentionDays = $this->listingService->getSoftDeleteRetentionDays();
 
         return view('business.listings.index', compact(
             'activeListings',

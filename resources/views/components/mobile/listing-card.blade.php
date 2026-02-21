@@ -70,6 +70,13 @@
 
         <!-- Right Side Icons Container -->
         <div class="absolute top-2 right-2 flex flex-col gap-2">
+            <!-- Favorite Button -->
+            <button type="button"
+                    onclick="event.preventDefault(); event.stopPropagation();"
+                    class="flex items-center justify-center w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-md transition-all">
+                <i class="fa-regular fa-heart text-gray-700 hover:text-red-500 transition-colors" style="font-size: 18px;"></i>
+            </button>
+
             <!-- Price Negotiable Icon -->
             @if($listing->is_negotiable)
                 <button type="button"
@@ -78,13 +85,6 @@
                     <i class="fa-solid fa-handshake text-gray-700" style="font-size: 16px;"></i>
                 </button>
             @endif
-
-            <!-- Favorite Button -->
-            <button type="button"
-                    onclick="event.preventDefault(); event.stopPropagation();"
-                    class="flex items-center justify-center w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-md transition-all">
-                <i class="fa-regular fa-heart text-gray-700 hover:text-red-500 transition-colors" style="font-size: 18px;"></i>
-            </button>
         </div>
 
         <!-- Store Badge & Wholesale Icon (Bottom) -->
