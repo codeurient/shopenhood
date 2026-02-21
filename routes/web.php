@@ -102,6 +102,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [UserListingController::class, 'index'])->name('index');
         Route::get('/create', [UserListingController::class, 'create'])->name('create');
         Route::post('/', [UserListingController::class, 'store'])->name('store');
+        Route::delete('/bulk-destroy', [UserListingController::class, 'bulkDestroy'])->name('bulk-destroy');
         Route::post('/bulk-force-destroy-trashed', [UserListingController::class, 'bulkForceDestroyTrashed'])->name('bulk-force-destroy-trashed');
         Route::post('/force-destroy-all-trashed', [UserListingController::class, 'forceDestroyAllTrashed'])->name('force-destroy-all-trashed');
         Route::get('/{listing}', [UserListingController::class, 'show'])->name('show');

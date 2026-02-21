@@ -217,6 +217,8 @@
         }"
         @open-confirm-modal.window="open($event.detail.message, $event.detail.form)"
         x-show="show"
+        x-cloak
+        style="display: none;"
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
         role="dialog"
         aria-modal="true">

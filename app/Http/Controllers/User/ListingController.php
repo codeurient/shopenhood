@@ -362,6 +362,27 @@ class ListingController extends Controller
             ->with('success', 'Listing permanently deleted.');
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return back()->with('error', 'No listings selected.');
+        }
+
+        $user = auth()->user();
+
+        Listing::normalMode()
+            ->forUser($user->id)
+            ->whereIn('id', $ids)
+            ->get()
+            ->each(fn ($listing) => $this->listingService->softDeleteListing($user, $listing));
+
+        return redirect()
+            ->route('user.listings.index')
+            ->with('success', 'Selected listings deleted.');
+    }
+
     public function bulkForceDestroyTrashed(Request $request)
     {
         $ids = $request->input('ids', []);

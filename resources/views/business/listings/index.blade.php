@@ -34,7 +34,7 @@
                      x-data="{ selectedActiveIds: [] }">
                     <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-4 flex-wrap">
                         <h3 class="text-lg font-semibold text-gray-900">Active Listings ({{ $activeListings->count() }})</h3>
-                        <div class="flex items-center gap-2" x-show="selectedActiveIds.length > 0">
+                        <div class="flex items-center gap-2" x-show="selectedActiveIds.length > 0" style="display: none;">
                             <form action="{{ route('business.listings.bulk-destroy') }}" method="POST">
                                 @csrf
                                 @method('DELETE')
@@ -173,7 +173,7 @@
                         </div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <form action="{{ route('business.listings.bulk-force-destroy-trashed') }}" method="POST"
-                                  x-show="selectedTrashedIds.length > 0">
+                                  x-show="selectedTrashedIds.length > 0" style="display: none;">
                                 @csrf
                                 <template x-for="id in selectedTrashedIds" :key="id">
                                     <input type="hidden" name="ids[]" :value="id">

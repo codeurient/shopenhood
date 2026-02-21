@@ -566,6 +566,35 @@ test('normal user can force delete own trashed listing and files are cleaned up'
     Storage::disk('public')->assertMissing($imagePath);
 });
 
+test('user can bulk soft-delete selected active listings', function () {
+    $listing1 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);
+    $listing2 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);
+
+    $response = $this->delete(route('user.listings.bulk-destroy'), ['ids' => [$listing1->id]]);
+
+    $response->assertRedirect(route('user.listings.index'));
+    $response->assertSessionHas('success');
+
+    $this->assertSoftDeleted('listings', ['id' => $listing1->id]);
+    $this->assertDatabaseHas('listings', ['id' => $listing2->id, 'deleted_at' => null]);
+});
+
+test('user bulk destroy returns error when no ids given', function () {
+    $response = $this->delete(route('user.listings.bulk-destroy'), ['ids' => []]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('error');
+});
+
+test('user bulk destroy cannot delete another users listings', function () {
+    $other = User::factory()->create();
+    $listing = Listing::factory()->create(['user_id' => $other->id, 'listing_mode' => 'normal']);
+
+    $this->delete(route('user.listings.bulk-destroy'), ['ids' => [$listing->id]]);
+
+    $this->assertDatabaseHas('listings', ['id' => $listing->id, 'deleted_at' => null]);
+});
+
 test('user can bulk force destroy selected trashed listings', function () {
     $listing1 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);
     $listing2 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);

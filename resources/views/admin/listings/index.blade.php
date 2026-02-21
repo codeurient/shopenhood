@@ -104,7 +104,7 @@
     </div>
 
     <!-- Bulk Action Bar -->
-    <div x-show="hasSelected"
+    <div x-show="hasSelected" style="display: none;"
          class="mb-4 p-4 bg-gray-100 border border-gray-300 rounded-lg flex items-center gap-3 flex-wrap">
         <span class="text-sm text-gray-700 font-medium" x-text="`${selectedIds.length} listing(s) selected`"></span>
 
