@@ -14,9 +14,8 @@
         $cardPrice = $listing->base_price;
         if (
             $listing->discount_price &&
-            $listing->discount_start_date &&
             $listing->discount_end_date &&
-            now()->between($listing->discount_start_date, $listing->discount_end_date)
+            now()->lt($listing->discount_end_date)
         ) {
             $cardDiscountPrice = $listing->discount_price;
         }
@@ -70,13 +69,6 @@
 
         <!-- Right Side Icons Container -->
         <div class="absolute top-2 right-2 flex flex-col gap-2">
-            <!-- Favorite Button -->
-            <button type="button"
-                    onclick="event.preventDefault(); event.stopPropagation();"
-                    class="flex items-center justify-center w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-md transition-all">
-                <i class="fa-regular fa-heart text-gray-700 hover:text-red-500 transition-colors" style="font-size: 18px;"></i>
-            </button>
-
             <!-- Price Negotiable Icon -->
             @if($listing->is_negotiable)
                 <button type="button"
@@ -85,6 +77,15 @@
                     <i class="fa-solid fa-handshake text-gray-700" style="font-size: 16px;"></i>
                 </button>
             @endif
+
+            <!-- Favorite Button -->
+            <button type="button"
+                    onclick="event.preventDefault(); event.stopPropagation();"
+                    class="flex items-center justify-center w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-md transition-all">
+                <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+            </button>
         </div>
 
         <!-- Store Badge & Wholesale Icon (Bottom) -->

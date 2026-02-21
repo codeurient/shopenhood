@@ -102,6 +102,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [UserListingController::class, 'index'])->name('index');
         Route::get('/create', [UserListingController::class, 'create'])->name('create');
         Route::post('/', [UserListingController::class, 'store'])->name('store');
+        Route::post('/bulk-force-destroy-trashed', [UserListingController::class, 'bulkForceDestroyTrashed'])->name('bulk-force-destroy-trashed');
+        Route::post('/force-destroy-all-trashed', [UserListingController::class, 'forceDestroyAllTrashed'])->name('force-destroy-all-trashed');
         Route::get('/{listing}', [UserListingController::class, 'show'])->name('show');
         Route::get('/{listing}/edit', [UserListingController::class, 'edit'])->name('edit');
         Route::put('/{listing}', [UserListingController::class, 'update'])->name('update');
@@ -144,6 +146,9 @@ Route::middleware('auth')->group(function () {
             Route::middleware('business.user')->group(function () {
                 Route::get('/create', [BusinessListingController::class, 'create'])->name('create');
                 Route::post('/', [BusinessListingController::class, 'store'])->name('store');
+                Route::delete('/bulk-destroy', [BusinessListingController::class, 'bulkDestroy'])->name('bulk-destroy');
+                Route::post('/bulk-force-destroy-trashed', [BusinessListingController::class, 'bulkForceDestroyTrashed'])->name('bulk-force-destroy-trashed');
+                Route::post('/force-destroy-all-trashed', [BusinessListingController::class, 'forceDestroyAllTrashed'])->name('force-destroy-all-trashed');
                 Route::get('/{listing}/edit', [BusinessListingController::class, 'edit'])->name('edit');
                 Route::put('/{listing}', [BusinessListingController::class, 'update'])->name('update');
                 Route::patch('/{listing}/toggle', [BusinessListingController::class, 'toggleVisibility'])->name('toggle');

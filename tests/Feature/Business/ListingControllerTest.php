@@ -4,6 +4,7 @@ use App\Models\Category;
 use App\Models\Listing;
 use App\Models\ListingType;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->businessUser = User::factory()->create([
@@ -321,4 +322,117 @@ test('business user can create listing with product variations', function () {
     expect($listing)->not->toBeNull();
     expect($listing->variations)->toHaveCount(2);
     expect($listing->variations->first()->sku)->toBe('VAR-001');
+});
+
+test('business user can bulk soft delete selected active listings', function () {
+    $listing1 = Listing::factory()->create([
+        'user_id' => $this->businessUser->id,
+        'listing_mode' => 'business',
+    ]);
+    $listing2 = Listing::factory()->create([
+        'user_id' => $this->businessUser->id,
+        'listing_mode' => 'business',
+    ]);
+
+    $response = $this->delete(route('business.listings.bulk-destroy'), [
+        'ids' => [$listing1->id, $listing2->id],
+    ]);
+
+    $response->assertRedirect(route('business.listings.index'));
+    $response->assertSessionHas('success');
+    expect(Listing::find($listing1->id))->toBeNull();
+    expect(Listing::find($listing2->id))->toBeNull();
+    expect(Listing::withTrashed()->find($listing1->id))->not->toBeNull();
+});
+
+test('business bulk destroy only soft deletes own listings', function () {
+    $otherUser = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+    ]);
+    $otherListing = Listing::factory()->create([
+        'user_id' => $otherUser->id,
+        'listing_mode' => 'business',
+    ]);
+
+    $response = $this->delete(route('business.listings.bulk-destroy'), [
+        'ids' => [$otherListing->id],
+    ]);
+
+    $response->assertRedirect(route('business.listings.index'));
+    expect(Listing::find($otherListing->id))->not->toBeNull();
+});
+
+test('business bulk destroy returns error when no ids given', function () {
+    $response = $this->delete(route('business.listings.bulk-destroy'), []);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('error');
+});
+
+test('business user can bulk force destroy selected trashed listings', function () {
+    $listing1 = Listing::factory()->create([
+        'user_id' => $this->businessUser->id,
+        'listing_mode' => 'business',
+    ]);
+    $listing2 = Listing::factory()->create([
+        'user_id' => $this->businessUser->id,
+        'listing_mode' => 'business',
+    ]);
+    $listing1->delete();
+    $listing2->delete();
+
+    $response = $this->post(route('business.listings.bulk-force-destroy-trashed'), [
+        'ids' => [$listing1->id, $listing2->id],
+    ]);
+
+    $response->assertRedirect(route('business.listings.index'));
+    $response->assertSessionHas('success');
+    expect(Listing::withTrashed()->find($listing1->id))->toBeNull();
+    expect(Listing::withTrashed()->find($listing2->id))->toBeNull();
+});
+
+test('business user can force destroy all trashed listings at once', function () {
+    $listing1 = Listing::factory()->create([
+        'user_id' => $this->businessUser->id,
+        'listing_mode' => 'business',
+    ]);
+    $listing2 = Listing::factory()->create([
+        'user_id' => $this->businessUser->id,
+        'listing_mode' => 'business',
+    ]);
+    $listing1->delete();
+    $listing2->delete();
+
+    $response = $this->post(route('business.listings.force-destroy-all-trashed'));
+
+    $response->assertRedirect(route('business.listings.index'));
+    $response->assertSessionHas('success');
+    expect(Listing::withTrashed()->forUser($this->businessUser->id)->businessMode()->count())->toBe(0);
+});
+
+test('force deleting a listing removes its image files from storage', function () {
+    Storage::fake('public');
+
+    $listing = Listing::factory()->create([
+        'user_id' => $this->businessUser->id,
+        'listing_mode' => 'business',
+    ]);
+
+    $imagePath = 'listings/'.$listing->id.'/photo.jpg';
+    Storage::disk('public')->put($imagePath, 'fake');
+    $listing->images()->create([
+        'image_path' => $imagePath,
+        'original_filename' => 'photo.jpg',
+        'file_size' => 500,
+        'mime_type' => 'image/jpeg',
+        'sort_order' => 0,
+        'is_primary' => true,
+    ]);
+
+    $listing->delete();
+
+    $this->delete(route('business.listings.force-destroy', $listing->id));
+
+    Storage::disk('public')->assertMissing($imagePath);
 });

@@ -540,3 +540,100 @@ test('index page only shows normal mode listings', function () {
     $response->assertSee('Normal Listing');
     $response->assertDontSee('Business Listing Hidden');
 });
+
+test('normal user can force delete own trashed listing and files are cleaned up', function () {
+    Storage::fake('public');
+
+    $listing = Listing::factory()->create(['user_id' => $this->user->id]);
+
+    $imagePath = 'listings/'.$listing->id.'/image.jpg';
+    Storage::disk('public')->put($imagePath, 'fake');
+    $listing->images()->create([
+        'image_path' => $imagePath,
+        'original_filename' => 'image.jpg',
+        'file_size' => 1000,
+        'mime_type' => 'image/jpeg',
+        'sort_order' => 0,
+        'is_primary' => true,
+    ]);
+
+    $listing->delete();
+
+    $response = $this->delete(route('user.listings.force-destroy', $listing->id));
+
+    $response->assertRedirect(route('user.listings.index'));
+    expect(Listing::withTrashed()->find($listing->id))->toBeNull();
+    Storage::disk('public')->assertMissing($imagePath);
+});
+
+test('user can bulk force destroy selected trashed listings', function () {
+    $listing1 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);
+    $listing2 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);
+    $listing1->delete();
+    $listing2->delete();
+
+    $response = $this->post(route('user.listings.bulk-force-destroy-trashed'), [
+        'ids' => [$listing1->id, $listing2->id],
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+    $response->assertSessionHas('success');
+    expect(Listing::withTrashed()->find($listing1->id))->toBeNull();
+    expect(Listing::withTrashed()->find($listing2->id))->toBeNull();
+});
+
+test('bulk force destroy only deletes the requesting users trashed listings', function () {
+    $otherUser = User::factory()->create();
+    $otherListing = Listing::factory()->create(['user_id' => $otherUser->id, 'listing_mode' => 'normal']);
+    $otherListing->delete();
+
+    $response = $this->post(route('user.listings.bulk-force-destroy-trashed'), [
+        'ids' => [$otherListing->id],
+    ]);
+
+    $response->assertRedirect(route('user.listings.index'));
+    // Other user's listing should NOT be deleted
+    expect(Listing::withTrashed()->find($otherListing->id))->not->toBeNull();
+});
+
+test('bulk force destroy returns error when no ids given', function () {
+    $response = $this->post(route('user.listings.bulk-force-destroy-trashed'), []);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('error');
+});
+
+test('user can force destroy all trashed listings at once', function () {
+    $listing1 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);
+    $listing2 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);
+    $listing1->delete();
+    $listing2->delete();
+
+    $response = $this->post(route('user.listings.force-destroy-all-trashed'));
+
+    $response->assertRedirect(route('user.listings.index'));
+    $response->assertSessionHas('success');
+    expect(Listing::withTrashed()->forUser($this->user->id)->normalMode()->count())->toBe(0);
+});
+
+test('deleting image record removes file from storage', function () {
+    Storage::fake('public');
+
+    $listing = Listing::factory()->create(['user_id' => $this->user->id]);
+
+    $imagePath = 'listings/'.$listing->id.'/photo.jpg';
+    Storage::disk('public')->put($imagePath, 'fake');
+
+    $image = $listing->images()->create([
+        'image_path' => $imagePath,
+        'original_filename' => 'photo.jpg',
+        'file_size' => 500,
+        'mime_type' => 'image/jpeg',
+        'sort_order' => 0,
+        'is_primary' => true,
+    ]);
+
+    $image->delete();
+
+    Storage::disk('public')->assertMissing($imagePath);
+});

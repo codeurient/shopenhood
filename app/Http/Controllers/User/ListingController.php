@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Listing;
 use App\Models\ListingType;
 use App\Services\ListingService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -253,9 +254,9 @@ class ListingController extends Controller
 
             $listing->update($validated);
 
-            // Handle image deletions
+            // Handle image deletions (model-level so deleting events fire and files are cleaned up)
             if (! empty($request->delete_images)) {
-                $listing->images()->whereIn('id', $request->delete_images)->delete();
+                $listing->images()->whereIn('id', $request->delete_images)->get()->each->delete();
 
                 if (! $listing->images()->where('is_primary', true)->exists()) {
                     $listing->images()->orderBy('sort_order')->first()?->update(['is_primary' => true]);
@@ -359,6 +360,43 @@ class ListingController extends Controller
         return redirect()
             ->route('user.listings.index')
             ->with('success', 'Listing permanently deleted.');
+    }
+
+    public function bulkForceDestroyTrashed(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return back()->with('error', 'No listings selected.');
+        }
+
+        $user = auth()->user();
+
+        Listing::onlyTrashed()
+            ->normalMode()
+            ->forUser($user->id)
+            ->whereIn('id', $ids)
+            ->get()
+            ->each(fn ($listing) => $this->listingService->forceDeleteListing($user, $listing));
+
+        return redirect()
+            ->route('user.listings.index')
+            ->with('success', 'Selected listings permanently deleted.');
+    }
+
+    public function forceDestroyAllTrashed()
+    {
+        $user = auth()->user();
+
+        Listing::onlyTrashed()
+            ->normalMode()
+            ->forUser($user->id)
+            ->get()
+            ->each(fn ($listing) => $this->listingService->forceDeleteListing($user, $listing));
+
+        return redirect()
+            ->route('user.listings.index')
+            ->with('success', 'All deleted listings permanently removed.');
     }
 
     public function reshare(int $listing_id)

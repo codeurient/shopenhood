@@ -148,20 +148,53 @@
 
             <!-- Trashed Listings -->
             @if($trashedListings->count() > 0)
-            <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        Deleted Listings ({{ $trashedListings->count() }})
-                    </h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Deleted listings are kept for {{ $retentionDays }} days before being permanently removed.
-                    </p>
+            <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden"
+                 x-data="{ selectedTrashedIds: [] }">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between gap-4 flex-wrap">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            Deleted Listings ({{ $trashedListings->count() }})
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Deleted listings are kept for {{ $retentionDays }} days before being permanently removed.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        {{-- Permanently Delete Selected --}}
+                        <form action="{{ route('user.listings.bulk-force-destroy-trashed') }}" method="POST"
+                              x-show="selectedTrashedIds.length > 0"
+                              @submit.prevent="if(confirm('Permanently delete selected listings? This cannot be undone.')) $el.submit()">
+                            @csrf
+                            <template x-for="id in selectedTrashedIds" :key="id">
+                                <input type="hidden" name="ids[]" :value="id">
+                            </template>
+                            <button type="submit"
+                                    class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium transition">
+                                Permanently Delete Selected
+                            </button>
+                        </form>
+
+                        {{-- Permanently Delete All --}}
+                        <form action="{{ route('user.listings.force-destroy-all-trashed') }}" method="POST"
+                              onsubmit="return confirm('Permanently delete ALL deleted listings? This cannot be undone.');">
+                            @csrf
+                            <button type="submit"
+                                    class="px-3 py-1.5 bg-red-700 text-white rounded hover:bg-red-800 text-xs font-medium transition">
+                                Delete All Permanently
+                            </button>
+                        </form>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
+                                <th class="px-4 py-3">
+                                    <input type="checkbox"
+                                           @change="selectedTrashedIds = $event.target.checked ? [{{ $trashedListings->pluck('id')->join(',') }}] : []"
+                                           class="rounded border-gray-300 dark:border-gray-600">
+                                </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Listing</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Deleted</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
@@ -170,6 +203,10 @@
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                             @foreach($trashedListings as $listing)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 opacity-75">
+                                <td class="px-4 py-4">
+                                    <input type="checkbox" :value="{{ $listing->id }}" x-model="selectedTrashedIds"
+                                           class="rounded border-gray-300 dark:border-gray-600">
+                                </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $listing->title }}</div>
                                     <div class="text-xs text-gray-500 dark:text-gray-400">{{ $listing->category->name ?? '-' }}</div>
@@ -185,7 +222,6 @@
                                                 Reshare
                                             </button>
                                         </form>
-                                        @if($user->isBusinessUser())
                                         <form action="{{ route('user.listings.force-destroy', $listing->id) }}" method="POST" class="inline"
                                               onsubmit="return confirm('Permanently delete this listing? This cannot be undone.');">
                                             @csrf
@@ -194,7 +230,6 @@
                                                 Permanently Delete
                                             </button>
                                         </form>
-                                        @endif
                                     </div>
                                 </td>
                             </tr>

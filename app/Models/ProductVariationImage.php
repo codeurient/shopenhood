@@ -4,10 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class ProductVariationImage extends Model
 {
     use HasFactory;
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::deleting(function (ProductVariationImage $image): void {
+            Storage::disk('public')->delete($image->image_path);
+        });
+    }
 
     protected $fillable = [
         'product_variation_id',

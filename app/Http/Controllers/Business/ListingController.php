@@ -192,11 +192,11 @@ class ListingController extends Controller
 
             $listing->update($validated);
 
-            // Handle variation image deletions
+            // Handle variation image deletions (model-level so deleting events fire and files are cleaned up)
             if (! empty($request->delete_variation_image_ids)) {
                 ProductVariationImage::whereIn('id', $request->delete_variation_image_ids)
                     ->whereHas('productVariation', fn ($q) => $q->where('listing_id', $listing->id))
-                    ->delete();
+                    ->get()->each->delete();
             }
 
             $listing->listingVariants()->delete();
@@ -207,7 +207,7 @@ class ListingController extends Controller
             if (! empty($variationsData)) {
                 $this->updateProductVariations($listing, $variationsData, $request);
             } else {
-                $listing->variations()->delete();
+                $this->deleteVariationsWithFiles($listing);
             }
 
             DB::commit();
@@ -264,6 +264,64 @@ class ListingController extends Controller
         return redirect()
             ->route('business.listings.index')
             ->with('success', 'Listing permanently deleted.');
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return back()->with('error', 'No listings selected.');
+        }
+
+        $user = auth()->user();
+
+        Listing::businessMode()
+            ->forUser($user->id)
+            ->whereIn('id', $ids)
+            ->get()
+            ->each(fn ($listing) => $this->listingService->softDeleteListing($user, $listing));
+
+        return redirect()
+            ->route('business.listings.index')
+            ->with('success', 'Selected listings deleted.');
+    }
+
+    public function bulkForceDestroyTrashed(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return back()->with('error', 'No listings selected.');
+        }
+
+        $user = auth()->user();
+
+        Listing::onlyTrashed()
+            ->businessMode()
+            ->forUser($user->id)
+            ->whereIn('id', $ids)
+            ->get()
+            ->each(fn ($listing) => $this->listingService->forceDeleteListing($user, $listing));
+
+        return redirect()
+            ->route('business.listings.index')
+            ->with('success', 'Selected listings permanently deleted.');
+    }
+
+    public function forceDestroyAllTrashed()
+    {
+        $user = auth()->user();
+
+        Listing::onlyTrashed()
+            ->businessMode()
+            ->forUser($user->id)
+            ->get()
+            ->each(fn ($listing) => $this->listingService->forceDeleteListing($user, $listing));
+
+        return redirect()
+            ->route('business.listings.index')
+            ->with('success', 'All deleted listings permanently removed.');
     }
 
     public function reshare(int $listing_id)
@@ -569,8 +627,19 @@ class ListingController extends Controller
         }
 
         if (! empty($updatedIds)) {
-            $listing->variations()->whereNotIn('id', $updatedIds)->delete();
+            $listing->variations()->whereNotIn('id', $updatedIds)->with('images')->get()->each(function ($variation): void {
+                $variation->images->each->delete();
+                $variation->delete();
+            });
         }
+    }
+
+    private function deleteVariationsWithFiles(Listing $listing): void
+    {
+        $listing->variations()->with('images')->get()->each(function ($variation): void {
+            $variation->images->each->delete();
+            $variation->delete();
+        });
     }
 
     private function syncPriceTiers($variation, array $tiers): void

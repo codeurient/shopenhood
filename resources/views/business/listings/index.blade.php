@@ -30,9 +30,24 @@
                 </div>
 
                 <!-- Active Listings -->
-                <div class="bg-white rounded-lg shadow overflow-hidden mt-4">
-                    <div class="px-6 py-4 border-b border-gray-200">
+                <div class="bg-white rounded-lg shadow overflow-hidden mt-4"
+                     x-data="{ selectedActiveIds: [] }">
+                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-4 flex-wrap">
                         <h3 class="text-lg font-semibold text-gray-900">Active Listings ({{ $activeListings->count() }})</h3>
+                        <div class="flex items-center gap-2" x-show="selectedActiveIds.length > 0">
+                            <form action="{{ route('business.listings.bulk-destroy') }}" method="POST"
+                                  @submit.prevent="if(confirm('Delete selected listings?')) $el.submit()">
+                                @csrf
+                                @method('DELETE')
+                                <template x-for="id in selectedActiveIds" :key="id">
+                                    <input type="hidden" name="ids[]" :value="id">
+                                </template>
+                                <button type="submit"
+                                        class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium transition">
+                                    Delete Selected
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
                     @if($activeListings->count() > 0)
@@ -40,6 +55,11 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
+                                    <th class="px-4 py-3">
+                                        <input type="checkbox"
+                                               @change="selectedActiveIds = $event.target.checked ? [{{ $activeListings->pluck('id')->join(',') }}] : []"
+                                               class="rounded border-gray-300">
+                                    </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Variations</th>
@@ -50,6 +70,10 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($activeListings as $listing)
                                 <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-4">
+                                        <input type="checkbox" :value="{{ $listing->id }}" x-model="selectedActiveIds"
+                                               class="rounded border-gray-300">
+                                    </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
                                             <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center mr-3">
@@ -135,20 +159,51 @@
 
                 <!-- Deleted Listings -->
                 @if($trashedListings->count() > 0)
-                <div class="mt-6 bg-white rounded-lg shadow overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            Deleted Listings ({{ $trashedListings->count() }})
-                        </h3>
-                        <p class="text-xs text-gray-500 mt-1">
-                            Deleted listings are kept for {{ $retentionDays }} days before being permanently removed.
-                        </p>
+                <div class="mt-6 bg-white rounded-lg shadow overflow-hidden"
+                     x-data="{ selectedTrashedIds: [] }">
+                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-4 flex-wrap">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                Deleted Listings ({{ $trashedListings->count() }})
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Deleted listings are kept for {{ $retentionDays }} days before being permanently removed.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <form action="{{ route('business.listings.bulk-force-destroy-trashed') }}" method="POST"
+                                  x-show="selectedTrashedIds.length > 0"
+                                  @submit.prevent="if(confirm('Permanently delete selected listings? This cannot be undone.')) $el.submit()">
+                                @csrf
+                                <template x-for="id in selectedTrashedIds" :key="id">
+                                    <input type="hidden" name="ids[]" :value="id">
+                                </template>
+                                <button type="submit"
+                                        class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-medium transition">
+                                    Permanently Delete Selected
+                                </button>
+                            </form>
+
+                            <form action="{{ route('business.listings.force-destroy-all-trashed') }}" method="POST"
+                                  onsubmit="return confirm('Permanently delete ALL deleted listings? This cannot be undone.');">
+                                @csrf
+                                <button type="submit"
+                                        class="px-3 py-1.5 bg-red-700 text-white rounded hover:bg-red-800 text-xs font-medium transition">
+                                    Delete All Permanently
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
+                                    <th class="px-4 py-3">
+                                        <input type="checkbox"
+                                               @change="selectedTrashedIds = $event.target.checked ? [{{ $trashedListings->pluck('id')->join(',') }}] : []"
+                                               class="rounded border-gray-300">
+                                    </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deleted</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -157,6 +212,10 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($trashedListings as $listing)
                                 <tr class="hover:bg-gray-50 opacity-75">
+                                    <td class="px-4 py-4">
+                                        <input type="checkbox" :value="{{ $listing->id }}" x-model="selectedTrashedIds"
+                                               class="rounded border-gray-300">
+                                    </td>
                                     <td class="px-6 py-4">
                                         <div class="text-sm font-medium text-gray-900">{{ $listing->title }}</div>
                                         <div class="text-xs text-gray-500">{{ $listing->category->name ?? '-' }}</div>

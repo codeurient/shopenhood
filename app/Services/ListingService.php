@@ -200,11 +200,19 @@ class ListingService
     }
 
     /**
-     * Force delete a listing. Only for already-trashed listings.
+     * Force delete a listing and all its associated files. Only for already-trashed listings.
      */
     public function forceDeleteListing(User $user, Listing $listing): void
     {
         if ($listing->trashed()) {
+            // Delete listing image files (model events fire, cleaning up storage)
+            $listing->images->each->delete();
+
+            // Delete variation image files via model events
+            $listing->variations()->with('images')->get()->each(function ($variation): void {
+                $variation->images->each->delete();
+            });
+
             $listing->forceDelete();
         }
     }
