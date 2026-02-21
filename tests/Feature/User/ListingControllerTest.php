@@ -53,6 +53,7 @@ test('user can create a listing', function () {
     expect($listing)->not->toBeNull();
     expect($listing->title)->toBe('My Test Listing');
     expect($listing->status)->toBe('pending');
+    expect($listing->listing_mode)->toBe('normal');
     expect($listing->created_as_role)->toBe('normal_user');
     expect($listing->expires_at)->not->toBeNull();
 });
@@ -65,6 +66,7 @@ test('user cannot create listing when at limit via store', function () {
         'category_id' => $this->category->id,
         'title' => 'Another Listing',
         'description' => 'Description',
+        'base_price' => 50.00,
         'condition' => 'new',
     ]);
 
@@ -104,6 +106,7 @@ test('user can update own listing', function () {
         'category_id' => $this->category->id,
         'title' => 'Updated Title',
         'description' => 'Updated description',
+        'base_price' => 49.99,
         'condition' => 'new',
     ]);
 
@@ -151,26 +154,8 @@ test('user can reshare a trashed listing', function () {
     expect($listing->status)->toBe('pending');
 });
 
-test('normal user cannot force delete', function () {
+test('normal user can force delete own trashed listing', function () {
     $listing = Listing::factory()->create(['user_id' => $this->user->id]);
-    $listing->delete();
-
-    $response = $this->delete(route('user.listings.force-destroy', $listing->id));
-
-    $response->assertRedirect();
-    $response->assertSessionHas('error');
-
-    expect(Listing::withTrashed()->find($listing->id))->not->toBeNull();
-});
-
-test('business user can force delete trashed listing', function () {
-    $businessUser = User::factory()->create([
-        'current_role' => 'business_user',
-        'is_business_enabled' => true,
-    ]);
-    $this->actingAs($businessUser);
-
-    $listing = Listing::factory()->create(['user_id' => $businessUser->id]);
     $listing->delete();
 
     $response = $this->delete(route('user.listings.force-destroy', $listing->id));
@@ -226,6 +211,7 @@ test('user can create listing with main image and detail images', function () {
         'category_id' => $this->category->id,
         'title' => 'Listing With Images',
         'description' => 'Description with images',
+        'base_price' => 25.00,
         'condition' => 'new',
         'main_image' => UploadedFile::fake()->image('main.jpg'),
         'detail_images' => [
@@ -257,7 +243,6 @@ test('user can update listing with new main image', function () {
         'listing_type_id' => $this->listingType->id,
     ]);
 
-    // Add existing primary image
     $listing->images()->create([
         'image_path' => 'listings/old-main.jpg',
         'original_filename' => 'old-main.jpg',
@@ -272,6 +257,7 @@ test('user can update listing with new main image', function () {
         'category_id' => $this->category->id,
         'title' => 'Updated With New Image',
         'description' => 'Updated description',
+        'base_price' => 50.00,
         'condition' => 'new',
         'main_image' => UploadedFile::fake()->image('new-main.jpg'),
     ]);
@@ -281,11 +267,9 @@ test('user can update listing with new main image', function () {
     $listing->refresh();
     $listing->load('images');
 
-    // Old primary should now be non-primary
     $oldImage = $listing->images->where('image_path', 'listings/old-main.jpg')->first();
     expect($oldImage->is_primary)->toBeFalse();
 
-    // New primary should exist
     $newPrimary = $listing->images->where('is_primary', true)->first();
     expect($newPrimary)->not->toBeNull();
     expect($newPrimary->sort_order)->toBe(0);
@@ -312,6 +296,7 @@ test('user can delete images during update', function () {
         'category_id' => $this->category->id,
         'title' => $listing->title,
         'description' => $listing->description,
+        'base_price' => 30.00,
         'condition' => 'new',
         'delete_images' => [$image->id],
     ]);
@@ -321,34 +306,13 @@ test('user can delete images during update', function () {
     expect($listing->images()->count())->toBe(0);
 });
 
-test('business user can set store name on listing', function () {
-    $businessUser = User::factory()->create([
-        'current_role' => 'business_user',
-        'is_business_enabled' => true,
-    ]);
-    $this->actingAs($businessUser);
-
-    $response = $this->post(route('user.listings.store'), [
-        'listing_type_id' => $this->listingType->id,
-        'category_id' => $this->category->id,
-        'title' => 'Business Listing',
-        'description' => 'From my store',
-        'condition' => 'new',
-        'store_name' => 'My Awesome Store',
-    ]);
-
-    $response->assertRedirect(route('user.listings.index'));
-
-    $listing = Listing::where('user_id', $businessUser->id)->first();
-    expect($listing->store_name)->toBe('My Awesome Store');
-});
-
 test('normal user store name is ignored', function () {
     $response = $this->post(route('user.listings.store'), [
         'listing_type_id' => $this->listingType->id,
         'category_id' => $this->category->id,
         'title' => 'Normal User Listing',
         'description' => 'Description',
+        'base_price' => 20.00,
         'condition' => 'new',
         'store_name' => 'Should Be Ignored',
     ]);
@@ -360,7 +324,7 @@ test('normal user store name is ignored', function () {
 });
 
 test('public category children api returns root categories', function () {
-    $parent = Category::factory()->create([
+    Category::factory()->create([
         'parent_id' => null,
         'is_active' => true,
         'name' => 'Root Category',
@@ -380,7 +344,7 @@ test('public category children api returns child categories', function () {
         'name' => 'Parent',
     ]);
 
-    $child = Category::factory()->create([
+    Category::factory()->create([
         'parent_id' => $parent->id,
         'is_active' => true,
         'name' => 'Child Category',
@@ -412,8 +376,8 @@ test('user can create listing with discount fields', function () {
         'category_id' => $this->category->id,
         'title' => 'Discounted Item',
         'description' => 'A discounted listing',
-        'condition' => 'new',
         'base_price' => 100.00,
+        'condition' => 'new',
         'discount_price' => 79.99,
         'discount_start_date' => '2026-03-01 00:00:00',
         'discount_end_date' => '2026-03-31 23:59:59',
@@ -425,44 +389,6 @@ test('user can create listing with discount fields', function () {
     expect($listing->discount_price)->toBe('79.99');
     expect($listing->discount_start_date)->not->toBeNull();
     expect($listing->discount_end_date)->not->toBeNull();
-});
-
-test('business user can create listing with availability type', function () {
-    $businessUser = User::factory()->create([
-        'current_role' => 'business_user',
-        'is_business_enabled' => true,
-    ]);
-    $this->actingAs($businessUser);
-
-    $response = $this->post(route('user.listings.store'), [
-        'listing_type_id' => $this->listingType->id,
-        'category_id' => $this->category->id,
-        'title' => 'Available By Order Item',
-        'description' => 'An on-demand listing',
-        'condition' => 'new',
-        'availability_type' => 'available_by_order',
-    ]);
-
-    $response->assertRedirect(route('user.listings.index'));
-
-    $listing = Listing::where('user_id', $businessUser->id)->first();
-    expect($listing->availability_type)->toBe('available_by_order');
-});
-
-test('normal user availability type is ignored', function () {
-    $response = $this->post(route('user.listings.store'), [
-        'listing_type_id' => $this->listingType->id,
-        'category_id' => $this->category->id,
-        'title' => 'Normal User Listing',
-        'description' => 'Description',
-        'condition' => 'new',
-        'availability_type' => 'available_by_order',
-    ]);
-
-    $response->assertRedirect(route('user.listings.index'));
-
-    $listing = Listing::where('user_id', $this->user->id)->first();
-    expect($listing->availability_type)->toBe('in_stock'); // Default value, not the submitted one
 });
 
 test('user can create listing with delivery options', function () {
@@ -496,6 +422,7 @@ test('delivery defaults to false when checkbox not submitted', function () {
         'category_id' => $this->category->id,
         'title' => 'No Delivery Item',
         'description' => 'A listing without delivery',
+        'base_price' => 15.00,
         'condition' => 'new',
     ]);
 
@@ -520,6 +447,7 @@ test('user can update listing with delivery options', function () {
         'category_id' => $this->category->id,
         'title' => $listing->title,
         'description' => $listing->description,
+        'base_price' => 30.00,
         'condition' => 'new',
         'has_delivery' => '1',
         'has_domestic_delivery' => '1',
@@ -553,4 +481,62 @@ test('edit page passes category chain for pre-selection', function () {
     expect($chain)->toHaveCount(2);
     expect($chain[0]['id'])->toBe($parent->id);
     expect($chain[1]['id'])->toBe($child->id);
+});
+
+test('business user is still capped at 1 normal listing', function () {
+    $businessUser = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+        'listing_limit' => null, // unlimited business listings
+    ]);
+    $this->actingAs($businessUser);
+
+    Listing::factory()->create([
+        'user_id' => $businessUser->id,
+        'listing_mode' => 'normal',
+    ]);
+
+    $response = $this->get(route('user.listings.create'));
+
+    $response->assertRedirect(route('user.listings.index'));
+    $response->assertSessionHas('error');
+});
+
+test('business user with business listing can still create one normal listing', function () {
+    $businessUser = User::factory()->create([
+        'current_role' => 'business_user',
+        'is_business_enabled' => true,
+        'listing_limit' => null,
+    ]);
+    $this->actingAs($businessUser);
+
+    // A business listing should NOT count toward the normal listing limit
+    Listing::factory()->create([
+        'user_id' => $businessUser->id,
+        'listing_mode' => 'business',
+    ]);
+
+    $response = $this->get(route('user.listings.create'));
+
+    $response->assertSuccessful();
+});
+
+test('index page only shows normal mode listings', function () {
+    $normalListing = Listing::factory()->create([
+        'user_id' => $this->user->id,
+        'title' => 'Normal Listing',
+        'listing_mode' => 'normal',
+    ]);
+
+    Listing::factory()->create([
+        'user_id' => $this->user->id,
+        'title' => 'Business Listing Hidden',
+        'listing_mode' => 'business',
+    ]);
+
+    $response = $this->get(route('user.listings.index'));
+
+    $response->assertSuccessful();
+    $response->assertSee('Normal Listing');
+    $response->assertDontSee('Business Listing Hidden');
 });

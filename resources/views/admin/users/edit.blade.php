@@ -48,13 +48,47 @@
 
             <div class="space-y-4">
                 <div>
-                    <label for="current_role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                    <select name="current_role" id="current_role" x-model="role"
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="normal_user">Normal User</option>
-                        <option value="business_user">Business User</option>
-                        <option value="admin">Admin</option>
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        {{-- Normal User --}}
+                        <label class="cursor-pointer">
+                            <input type="radio" name="current_role" value="normal_user" x-model="role" class="sr-only peer">
+                            <div x-bind:class="role === 'normal_user' ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-gray-200 hover:border-gray-300'"
+                                 class="rounded-lg border-2 p-4 text-center transition select-none">
+                                <svg class="w-7 h-7 mx-auto mb-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                <span class="block text-sm font-medium text-gray-800">Normal User</span>
+                                <span class="block text-xs text-gray-400 mt-0.5">Standard account</span>
+                            </div>
+                        </label>
+
+                        {{-- Business User --}}
+                        <label class="cursor-pointer">
+                            <input type="radio" name="current_role" value="business_user" x-model="role" class="sr-only peer">
+                            <div x-bind:class="role === 'business_user' ? 'border-green-500 bg-green-50 ring-1 ring-green-500' : 'border-gray-200 hover:border-gray-300'"
+                                 class="rounded-lg border-2 p-4 text-center transition select-none">
+                                <svg class="w-7 h-7 mx-auto mb-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                <span class="block text-sm font-medium text-gray-800">Business User</span>
+                                <span class="block text-xs text-gray-400 mt-0.5">Enables business features</span>
+                            </div>
+                        </label>
+
+                        {{-- Admin --}}
+                        <label class="cursor-pointer">
+                            <input type="radio" name="current_role" value="admin" x-model="role" class="sr-only peer">
+                            <div x-bind:class="role === 'admin' ? 'border-red-500 bg-red-50 ring-1 ring-red-500' : 'border-gray-200 hover:border-gray-300'"
+                                 class="rounded-lg border-2 p-4 text-center transition select-none">
+                                <svg class="w-7 h-7 mx-auto mb-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                <span class="block text-sm font-medium text-gray-800">Admin</span>
+                                <span class="block text-xs text-gray-400 mt-0.5">Full platform access</span>
+                            </div>
+                        </label>
+                    </div>
                     @error('current_role')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

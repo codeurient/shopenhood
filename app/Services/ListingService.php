@@ -33,6 +33,31 @@ class ListingService
     }
 
     /**
+     * Check if user can create a normal (simple) listing.
+     * Always capped at 1 regardless of business status.
+     */
+    public function canUserCreateNormalListing(User $user): bool
+    {
+        return Listing::normalMode()->forUser($user->id)->count() < 1;
+    }
+
+    /**
+     * Check if user can reshare a trashed normal listing.
+     */
+    public function canReshareNormalListing(User $user, Listing $listing): bool
+    {
+        if (! $listing->trashed()) {
+            return false;
+        }
+
+        if (! $listing->belongsToUser($user->id)) {
+            return false;
+        }
+
+        return $this->canUserCreateNormalListing($user);
+    }
+
+    /**
      * Get remaining listing slots for a user.
      * Returns null for unlimited.
      */

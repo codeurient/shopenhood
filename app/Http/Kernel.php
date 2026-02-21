@@ -52,5 +52,8 @@ class Kernel extends HttpKernel
         'auth.admin' => \App\Http\Middleware\AdminAuthenticate::class,
         'role' => \App\Http\Middleware\CheckUserRole::class,
         'log.activity' => \App\Http\Middleware\LogActivity::class,
+
+        // Business User Middleware
+        'business.user' => \App\Http\Middleware\EnsureUserIsBusinessUser::class,
     ];
 }

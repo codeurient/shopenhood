@@ -4,7 +4,11 @@
       "Bash(php artisan:*)",
       "Bash(composer install:*)",
       "Bash(vendor/bin/pint:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(\"/c/laragon/www/shopenhood/database/migrations/2026_02_20_012545_add_wholesale_fields_to_product_variations_table.php\":*)",
+      "Bash(__NEW_LINE_86e840c16ababdee__ cat)",
+      "Bash(\"/c/laragon/www/shopenhood/database/migrations/2026_02_20_012546_add_variant_attributes_to_listings_table.php\":*)",
+      "Bash(__NEW_LINE_86e840c16ababdee__ echo \"Both migrations written\")"
     ]
   }
 }

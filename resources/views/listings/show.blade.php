@@ -85,6 +85,11 @@
                     this.currentImage = (this.currentImage + 1) % this.totalImages;
                 }, 5000);
             },
+            selectBaseProduct() {
+                this.selectedVariantItemIds = {};
+                this.selectedVariants = {};
+                this.updateDisplay();
+            },
             selectVariant(variantId, itemId) {
                 this.selectedVariantItemIds[variantId] = itemId;
                 this.selectedVariants[variantId] = (this.allVariantItemValues[variantId] || {})[itemId] ?? '';
@@ -355,6 +360,26 @@
         {{-- ================================================================ --}}
         @if(count($variantsData) > 0)
         <div class="bg-white mt-2 px-4 py-3 space-y-4">
+            {{-- Base Product option — always the first selectable option --}}
+            @if($listing->base_price)
+            <div>
+                <div class="flex items-center gap-1.5 mb-2.5">
+                    <span class="text-sm text-gray-500">Base Product:</span>
+                    <span class="text-sm font-semibold text-gray-900"
+                          x-show="Object.keys(selectedVariantItemIds).length === 0">Base</span>
+                </div>
+                <button type="button"
+                        @click="selectBaseProduct()"
+                        :class="{
+                            'border-green-500 text-green-700 bg-green-50 font-semibold': Object.keys(selectedVariantItemIds).length === 0,
+                            'border-gray-300 text-gray-700 bg-white': Object.keys(selectedVariantItemIds).length > 0
+                        }"
+                        class="px-3 py-1.5 rounded-lg border text-sm transition-colors">
+                    Base
+                </button>
+            </div>
+            @endif
+
             @foreach($variantsData as $variant)
             <div>
                 {{-- Label row: "Color: Silver" --}}
@@ -524,6 +549,18 @@
                         <span class="text-sm text-green-600 font-medium">{{ $listing->store_name }}</span>
                     </div>
                 </div>
+                @endif
+
+                {{-- Variant Attributes (non-main-shown, business listings) --}}
+                @if(!empty($variantAttributeLabels))
+                    @foreach($variantAttributeLabels as $label => $value)
+                    <div class="py-2.5 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">{{ $label }}</span>
+                            <span class="text-sm text-green-600 font-medium">{{ $value }}</span>
+                        </div>
+                    </div>
+                    @endforeach
                 @endif
 
                 {{-- More characteristics collapsed --}}

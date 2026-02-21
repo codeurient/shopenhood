@@ -58,6 +58,7 @@
                     </template>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Price</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Discount</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Wholesale</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Stock</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Images</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Default</th>
@@ -105,14 +106,34 @@
                                    class="w-24 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
                         </td>
 
-                        <!-- Discount Price -->
+                        <!-- Discount -->
                         <td class="px-4 py-3 whitespace-nowrap">
-                            <input type="number"
-                                   :name="`variations[${index}][discount_price]`"
-                                   x-model="variation.discount_price"
-                                   step="0.01"
-                                   placeholder="Optional"
-                                   class="w-24 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                            <button type="button"
+                                    @click="openDiscountModal(index)"
+                                    :class="variation.discount_price ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-600' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600'"
+                                    class="px-2 py-1 text-xs border rounded transition whitespace-nowrap">
+                                <span x-text="variation.discount_price ? 'Discounted ✓' : 'Set Discount'"></span>
+                            </button>
+                            <input type="hidden" :name="`variations[${index}][discount_price]`" :value="variation.discount_price || ''">
+                            <input type="hidden" :name="`variations[${index}][discount_start_date]`" :value="variation.discount_start_date || ''">
+                            <input type="hidden" :name="`variations[${index}][discount_end_date]`" :value="variation.discount_end_date || ''">
+                        </td>
+
+                        <!-- Wholesale -->
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <button type="button"
+                                    @click="openWholesaleModal(index)"
+                                    :class="variation.is_wholesale ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-600' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600'"
+                                    class="px-2 py-1 text-xs border rounded transition">
+                                <span x-text="variation.is_wholesale ? 'Wholesale ✓' : 'Wholesale'"></span>
+                            </button>
+                            <input type="hidden" :name="`variations[${index}][is_wholesale]`" :value="variation.is_wholesale ? 1 : 0">
+                            <input type="hidden" :name="`variations[${index}][wholesale_min_order_qty]`" :value="variation.wholesale_min_order_qty || ''">
+                            <input type="hidden" :name="`variations[${index}][wholesale_qty_increment]`" :value="variation.wholesale_qty_increment || 1">
+                            <input type="hidden" :name="`variations[${index}][wholesale_lead_time_days]`" :value="variation.wholesale_lead_time_days || ''">
+                            <input type="hidden" :name="`variations[${index}][wholesale_sample_available]`" :value="variation.wholesale_sample_available ? 1 : 0">
+                            <input type="hidden" :name="`variations[${index}][wholesale_sample_price]`" :value="variation.wholesale_sample_price || ''">
+                            <input type="hidden" :name="`variations[${index}][wholesale_terms]`" :value="variation.wholesale_terms || ''">
                         </td>
 
                         <!-- Stock -->
@@ -315,6 +336,156 @@
         </div>
     </div>
 
+    <!-- Discount Modal -->
+    <div x-show="showDiscountModal"
+         x-cloak
+         class="fixed inset-0 z-50 overflow-y-auto"
+         style="display: none;">
+        <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeDiscountModal()"></div>
+        <div class="flex min-h-screen items-center justify-center p-4">
+            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6" @click.stop>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Set Discount</h3>
+                    <button type="button" @click="closeDiscountModal()"
+                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <template x-if="discountModalIndex !== null">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Discount Price</label>
+                            <input type="number"
+                                   x-model="variations[discountModalIndex].discount_price"
+                                   step="0.01" min="0"
+                                   placeholder="Enter discounted price"
+                                   class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                                <input type="date"
+                                       x-model="variations[discountModalIndex].discount_start_date"
+                                       class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                                <input type="date"
+                                       x-model="variations[discountModalIndex].discount_end_date"
+                                       class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                            </div>
+                        </div>
+                        <div class="flex gap-3 justify-between pt-2">
+                            <button type="button"
+                                    @click="clearDiscount(discountModalIndex)"
+                                    class="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition text-sm">
+                                Clear Discount
+                            </button>
+                            <button type="button"
+                                    @click="closeDiscountModal()"
+                                    class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition text-sm">
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wholesale Modal -->
+    <div x-show="showWholesaleModal"
+         x-cloak
+         class="fixed inset-0 z-50 overflow-y-auto"
+         style="display: none;">
+        <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeWholesaleModal()"></div>
+        <div class="flex min-h-screen items-center justify-center p-4">
+            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6" @click.stop>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Wholesale Settings</h3>
+                    <button type="button" @click="closeWholesaleModal()"
+                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <template x-if="wholesaleModalIndex !== null">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox"
+                                   x-model="variations[wholesaleModalIndex].is_wholesale"
+                                   :id="`wholesale_toggle_${wholesaleModalIndex}`"
+                                   class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
+                            <label :for="`wholesale_toggle_${wholesaleModalIndex}`"
+                                   class="text-sm font-medium text-gray-700 dark:text-gray-300">Enable wholesale for this variant</label>
+                        </div>
+                        <template x-if="variations[wholesaleModalIndex].is_wholesale">
+                            <div class="space-y-4 pt-2 border-t border-gray-200 dark:border-gray-600">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Order Qty</label>
+                                        <input type="number"
+                                               x-model="variations[wholesaleModalIndex].wholesale_min_order_qty"
+                                               min="1" placeholder="e.g. 10"
+                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Qty Increment</label>
+                                        <input type="number"
+                                               x-model="variations[wholesaleModalIndex].wholesale_qty_increment"
+                                               min="1" placeholder="e.g. 5"
+                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lead Time (days)</label>
+                                    <input type="number"
+                                           x-model="variations[wholesaleModalIndex].wholesale_lead_time_days"
+                                           min="0" placeholder="e.g. 7"
+                                           class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox"
+                                           x-model="variations[wholesaleModalIndex].wholesale_sample_available"
+                                           :id="`sample_toggle_${wholesaleModalIndex}`"
+                                           class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
+                                    <label :for="`sample_toggle_${wholesaleModalIndex}`"
+                                           class="text-sm font-medium text-gray-700 dark:text-gray-300">Samples available</label>
+                                </div>
+                                <template x-if="variations[wholesaleModalIndex].wholesale_sample_available">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sample Price</label>
+                                        <input type="number"
+                                               x-model="variations[wholesaleModalIndex].wholesale_sample_price"
+                                               step="0.01" min="0" placeholder="0.00"
+                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                                    </div>
+                                </template>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Wholesale Terms</label>
+                                    <textarea x-model="variations[wholesaleModalIndex].wholesale_terms"
+                                              rows="3"
+                                              placeholder="Describe wholesale terms, requirements, or conditions..."
+                                              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"></textarea>
+                                </div>
+                            </div>
+                        </template>
+                        <div class="flex justify-end pt-2">
+                            <button type="button"
+                                    @click="closeWholesaleModal()"
+                                    class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition text-sm">
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
     <!-- Bulk Action Modal -->
     <div x-show="showModal"
          x-cloak
@@ -377,6 +548,10 @@ function variationManager() {
         modalAction: null,
         showImageModal: false,
         imageModalIndex: null,
+        showDiscountModal: false,
+        discountModalIndex: null,
+        showWholesaleModal: false,
+        wholesaleModalIndex: null,
 
         init() {
             // Load existing variations from global variable (edit mode)
@@ -514,6 +689,8 @@ function variationManager() {
                 attributes: {},
                 price: '',
                 discount_price: '',
+                discount_start_date: '',
+                discount_end_date: '',
                 stock_quantity: 0,
                 low_stock_threshold: 10,
                 manage_stock: true,
@@ -523,6 +700,13 @@ function variationManager() {
                 deleted_image_ids: [],
                 is_default: false,
                 is_active: true,
+                is_wholesale: false,
+                wholesale_min_order_qty: '',
+                wholesale_qty_increment: 1,
+                wholesale_lead_time_days: '',
+                wholesale_sample_available: false,
+                wholesale_sample_price: '',
+                wholesale_terms: '',
             }));
 
             this.defaultVariationIndex = null;
@@ -535,6 +719,8 @@ function variationManager() {
                     attributes: {...combo},
                     price: '',
                     discount_price: '',
+                    discount_start_date: '',
+                    discount_end_date: '',
                     stock_quantity: 0,
                     low_stock_threshold: 10,
                     manage_stock: true,
@@ -544,6 +730,13 @@ function variationManager() {
                     deleted_image_ids: [],
                     is_default: false,
                     is_active: true,
+                    is_wholesale: false,
+                    wholesale_min_order_qty: '',
+                    wholesale_qty_increment: 1,
+                    wholesale_lead_time_days: '',
+                    wholesale_sample_available: false,
+                    wholesale_sample_price: '',
+                    wholesale_terms: '',
                 }));
             });
         },
@@ -618,6 +811,8 @@ function variationManager() {
                 attributes: {},
                 price: '',
                 discount_price: '',
+                discount_start_date: '',
+                discount_end_date: '',
                 stock_quantity: 0,
                 low_stock_threshold: 10,
                 manage_stock: true,
@@ -627,6 +822,13 @@ function variationManager() {
                 deleted_image_ids: [],
                 is_default: false,
                 is_active: true,
+                is_wholesale: false,
+                wholesale_min_order_qty: '',
+                wholesale_qty_increment: 1,
+                wholesale_lead_time_days: '',
+                wholesale_sample_available: false,
+                wholesale_sample_price: '',
+                wholesale_terms: '',
             };
 
             this.variations.push(newVariation);
@@ -708,6 +910,32 @@ function variationManager() {
 
         previewUrl(file) {
             return URL.createObjectURL(file);
+        },
+
+        openDiscountModal(index) {
+            this.discountModalIndex = index;
+            this.showDiscountModal = true;
+        },
+
+        closeDiscountModal() {
+            this.showDiscountModal = false;
+            this.discountModalIndex = null;
+        },
+
+        clearDiscount(index) {
+            this.variations[index].discount_price = '';
+            this.variations[index].discount_start_date = '';
+            this.variations[index].discount_end_date = '';
+        },
+
+        openWholesaleModal(index) {
+            this.wholesaleModalIndex = index;
+            this.showWholesaleModal = true;
+        },
+
+        closeWholesaleModal() {
+            this.showWholesaleModal = false;
+            this.wholesaleModalIndex = null;
         },
 
         bulkSetPrice() {

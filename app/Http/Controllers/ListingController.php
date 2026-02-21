@@ -9,6 +9,8 @@ use App\Models\ListingType;
 use App\Models\Order;
 use App\Models\ProductVariation;
 use App\Models\SearchQuery;
+use App\Models\Variant;
+use App\Models\VariantItem;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -136,15 +138,17 @@ class ListingController extends Controller
             ];
         });
 
-        // When no ProductVariation records exist, represent the listing's basic info
-        // as a synthetic default variation so the price/stock logic works uniformly.
-        if ($variationsData->isEmpty() && $listing->base_price) {
+        // Always include the Basic Information as a selectable option when a base_price exists.
+        // It is the default when no real ProductVariation has is_default = true.
+        if ($listing->base_price) {
             $listingHasDiscount = $listing->discount_price
                 && $listing->discount_start_date
                 && $listing->discount_end_date
                 && now()->between($listing->discount_start_date, $listing->discount_end_date);
 
-            $variationsData = collect([[
+            $basicIsDefault = ! $variationsData->contains('is_default', true);
+
+            $basicVariation = [[
                 'id' => null,
                 'sku' => null,
                 'price' => (float) $listing->base_price,
@@ -157,10 +161,13 @@ class ListingController extends Controller
                 'stock_quantity' => null,
                 'is_in_stock' => true,
                 'is_low_stock' => false,
-                'is_default' => true,
+                'is_default' => $basicIsDefault,
                 'attributes' => [],
                 'images' => [],
-            ]]);
+            ]];
+
+            // Prepend so the base product always appears first.
+            $variationsData = collect($basicVariation)->concat($variationsData);
         }
 
         // Build variant selectors from the listing's actual variation attributes.
@@ -210,6 +217,22 @@ class ListingController extends Controller
             ->latest()
             ->get();
 
+        // Resolve variant_attributes JSON to human-readable labels for the show view
+        $variantAttributeLabels = [];
+        if (! empty($listing->variant_attributes)) {
+            $variantIds = array_keys($listing->variant_attributes);
+            $itemIds = array_values($listing->variant_attributes);
+
+            $variants = Variant::whereIn('id', $variantIds)->get()->keyBy('id');
+            $items = VariantItem::whereIn('id', $itemIds)->get()->keyBy('id');
+
+            foreach ($listing->variant_attributes as $variantId => $itemId) {
+                if (isset($variants[$variantId]) && isset($items[$itemId])) {
+                    $variantAttributeLabels[$variants[$variantId]->name] = $items[$itemId]->value;
+                }
+            }
+        }
+
         $user = auth()->user();
 
         $canReview = false;
@@ -233,6 +256,7 @@ class ListingController extends Controller
             'defaultVariation',
             'variationsData',
             'variantsData',
+            'variantAttributeLabels',
             'relatedListings',
             'reviews',
             'canReview',

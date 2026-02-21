@@ -32,14 +32,13 @@ test('business user can create listing with seo fields', function () {
         'title' => 'SEO Test Product',
         'description' => 'A product with SEO optimization.',
         'condition' => 'new',
-        'base_price' => 50.00,
         'meta_title' => 'Premium Cotton T-Shirts Wholesale | TestBrand',
         'meta_description' => 'Shop premium cotton t-shirts in bulk. MOQ 10 pieces. Free shipping on orders over $500.',
     ];
 
-    $response = $this->post(route('user.listings.store'), $data);
+    $response = $this->post(route('business.listings.store'), $data);
 
-    $response->assertRedirect(route('user.listings.index'));
+    $response->assertRedirect(route('business.listings.index'));
 
     $this->assertDatabaseHas('listings', [
         'title' => 'SEO Test Product',
@@ -79,6 +78,7 @@ test('business user can update listing with seo fields', function () {
         'user_id' => $this->businessUser->id,
         'category_id' => $this->category->id,
         'listing_type_id' => $this->listingType->id,
+        'listing_mode' => 'business',
         'meta_title' => null,
         'meta_description' => null,
         'status' => 'active',
@@ -94,9 +94,9 @@ test('business user can update listing with seo fields', function () {
         'meta_description' => 'Updated SEO description with keywords and benefits.',
     ];
 
-    $response = $this->put(route('user.listings.update', $listing), $data);
+    $response = $this->put(route('business.listings.update', $listing), $data);
 
-    $response->assertRedirect(route('user.listings.index'));
+    $response->assertRedirect(route('business.listings.index'));
 
     $listing->refresh();
     expect($listing->meta_title)->toBe('Updated SEO Title | Brand');
@@ -121,6 +121,7 @@ test('normal user cannot update seo fields on listing', function () {
         'title' => $listing->title,
         'description' => $listing->description,
         'condition' => 'new',
+        'base_price' => 25.00,
         'meta_title' => 'Should Not Be Saved',
         'meta_description' => 'This should not be saved.',
     ];
@@ -150,7 +151,7 @@ test('meta title cannot exceed 60 characters', function () {
         'meta_title' => str_repeat('a', 61),
     ];
 
-    $response = $this->post(route('user.listings.store'), $data);
+    $response = $this->post(route('business.listings.store'), $data);
 
     $response->assertSessionHasErrors('meta_title');
 });
@@ -167,7 +168,7 @@ test('meta description cannot exceed 160 characters', function () {
         'meta_description' => str_repeat('a', 161),
     ];
 
-    $response = $this->post(route('user.listings.store'), $data);
+    $response = $this->post(route('business.listings.store'), $data);
 
     $response->assertSessionHasErrors('meta_description');
 });
@@ -184,10 +185,10 @@ test('meta title at max length is valid', function () {
         'meta_title' => str_repeat('a', 60),
     ];
 
-    $response = $this->post(route('user.listings.store'), $data);
+    $response = $this->post(route('business.listings.store'), $data);
 
     $response->assertSessionDoesntHaveErrors('meta_title');
-    $response->assertRedirect(route('user.listings.index'));
+    $response->assertRedirect(route('business.listings.index'));
 
     $this->assertDatabaseHas('listings', [
         'title' => 'Test Product',
@@ -207,10 +208,10 @@ test('meta description at max length is valid', function () {
         'meta_description' => str_repeat('a', 160),
     ];
 
-    $response = $this->post(route('user.listings.store'), $data);
+    $response = $this->post(route('business.listings.store'), $data);
 
     $response->assertSessionDoesntHaveErrors('meta_description');
-    $response->assertRedirect(route('user.listings.index'));
+    $response->assertRedirect(route('business.listings.index'));
 
     $this->assertDatabaseHas('listings', [
         'title' => 'Test Product',
@@ -231,12 +232,11 @@ test('seo fields are optional for business users', function () {
         'title' => 'Product Without SEO',
         'description' => 'A product without any SEO fields set.',
         'condition' => 'new',
-        'base_price' => 25.00,
     ];
 
-    $response = $this->post(route('user.listings.store'), $data);
+    $response = $this->post(route('business.listings.store'), $data);
 
-    $response->assertRedirect(route('user.listings.index'));
+    $response->assertRedirect(route('business.listings.index'));
     $response->assertSessionDoesntHaveErrors(['meta_title', 'meta_description']);
 
     $this->assertDatabaseHas('listings', [
@@ -253,6 +253,7 @@ test('business user can clear seo fields on update', function () {
         'user_id' => $this->businessUser->id,
         'category_id' => $this->category->id,
         'listing_type_id' => $this->listingType->id,
+        'listing_mode' => 'business',
         'meta_title' => 'Original SEO Title',
         'meta_description' => 'Original SEO description.',
         'status' => 'active',
@@ -268,9 +269,9 @@ test('business user can clear seo fields on update', function () {
         'meta_description' => '',
     ];
 
-    $response = $this->put(route('user.listings.update', $listing), $data);
+    $response = $this->put(route('business.listings.update', $listing), $data);
 
-    $response->assertRedirect(route('user.listings.index'));
+    $response->assertRedirect(route('business.listings.index'));
 
     $listing->refresh();
     expect($listing->meta_title)->toBeNull();

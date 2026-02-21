@@ -57,6 +57,8 @@ class Listing extends Model
         'approved_at',
         'rejected_at',
         'rejection_reason',
+        'variant_attributes',
+        'listing_mode',
     ];
 
     protected $casts = [
@@ -83,6 +85,7 @@ class Listing extends Model
         'domestic_delivery_price' => 'decimal:2',
         'has_international_delivery' => 'boolean',
         'international_delivery_price' => 'decimal:2',
+        'variant_attributes' => 'array',
     ];
 
     /**
@@ -312,6 +315,16 @@ class Listing extends Model
     public function scopeWholesale($query)
     {
         return $query->where('is_wholesale', true);
+    }
+
+    public function scopeNormalMode($query)
+    {
+        return $query->where('listing_mode', 'normal');
+    }
+
+    public function scopeBusinessMode($query)
+    {
+        return $query->where('listing_mode', 'business');
     }
 
     // ============================================

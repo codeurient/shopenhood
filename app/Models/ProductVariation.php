@@ -33,6 +33,13 @@ class ProductVariation extends Model
         'is_active',
         'is_default',
         'sort_order',
+        'is_wholesale',
+        'wholesale_min_order_qty',
+        'wholesale_qty_increment',
+        'wholesale_lead_time_days',
+        'wholesale_sample_available',
+        'wholesale_sample_price',
+        'wholesale_terms',
     ];
 
     protected $casts = [
@@ -55,6 +62,12 @@ class ProductVariation extends Model
         'is_active' => 'boolean',
         'is_default' => 'boolean',
         'sort_order' => 'integer',
+        'is_wholesale' => 'boolean',
+        'wholesale_min_order_qty' => 'integer',
+        'wholesale_qty_increment' => 'integer',
+        'wholesale_lead_time_days' => 'integer',
+        'wholesale_sample_available' => 'boolean',
+        'wholesale_sample_price' => 'decimal:2',
     ];
 
     // ==================== Relationships ====================

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Business\ListingController as BusinessListingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
@@ -125,13 +126,30 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/user/addresses', [UserAddressController::class, 'getAddresses'])->name('api.user.addresses');
     Route::get('/api/user/addresses/{address}', [UserAddressController::class, 'getAddress'])->name('api.user.address');
 
-    // Business Profile (for business users)
+    // Business Profile & Listings
     Route::prefix('business')->name('business.')->group(function () {
+        // Business profile (existing)
         Route::get('/profile', [UserBusinessProfileController::class, 'show'])->name('profile');
         Route::get('/profile/create', [UserBusinessProfileController::class, 'create'])->name('profile.create');
         Route::post('/profile', [UserBusinessProfileController::class, 'store'])->name('profile.store');
         Route::get('/profile/edit', [UserBusinessProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [UserBusinessProfileController::class, 'update'])->name('profile.update');
+
+        // Upgrade info page (all authenticated users)
+        Route::get('/upgrade', fn () => view('business.upgrade'))->name('upgrade');
+
+        // Business listings (requires active business subscription)
+        Route::prefix('listings')->name('listings.')->middleware('business.user')->group(function () {
+            Route::get('/', [BusinessListingController::class, 'index'])->name('index');
+            Route::get('/create', [BusinessListingController::class, 'create'])->name('create');
+            Route::post('/', [BusinessListingController::class, 'store'])->name('store');
+            Route::get('/{listing}/edit', [BusinessListingController::class, 'edit'])->name('edit');
+            Route::put('/{listing}', [BusinessListingController::class, 'update'])->name('update');
+            Route::patch('/{listing}/toggle', [BusinessListingController::class, 'toggleVisibility'])->name('toggle');
+            Route::delete('/{listing}', [BusinessListingController::class, 'destroy'])->name('destroy');
+            Route::delete('/{listing_id}/force', [BusinessListingController::class, 'forceDestroy'])->name('force-destroy');
+            Route::post('/{listing_id}/reshare', [BusinessListingController::class, 'reshare'])->name('reshare');
+        });
     });
 });
 
