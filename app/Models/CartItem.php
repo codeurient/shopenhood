@@ -38,7 +38,7 @@ class CartItem extends Model
         return $this->belongsTo(ProductVariation::class, 'variation_id');
     }
 
-    /** Unit price: discount price if active, otherwise base price. */
+    /** Unit price: applies discounts in priority order, falls back to variation price for business listings. */
     public function getUnitPriceAttribute(): float
     {
         $listing = $this->listing;
@@ -51,7 +51,21 @@ class CartItem extends Model
             return (float) $listing->discount_price;
         }
 
-        return (float) ($listing->base_price ?? 0);
+        if ($listing->base_price) {
+            return (float) $listing->base_price;
+        }
+
+        $variation = $this->variation ?? $listing->defaultVariation;
+
+        if ($variation) {
+            if ($variation->hasActiveDiscount()) {
+                return (float) $variation->discount_price;
+            }
+
+            return (float) $variation->price;
+        }
+
+        return 0.0;
     }
 
     /** Delivery cost for this item (domestic delivery price as default). */

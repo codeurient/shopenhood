@@ -16,8 +16,12 @@ class CartController extends Controller
             ->where('user_id', Auth::id())
             ->with([
                 'listing.primaryImage',
+                'listing.firstImage',
                 'listing.user',
-                'variation',
+                'listing.defaultVariation.primaryImage',
+                'listing.defaultVariation.firstImage',
+                'variation.primaryImage',
+                'variation.firstImage',
             ])
             ->latest()
             ->get();
@@ -127,13 +131,31 @@ class CartController extends Controller
     private function formatItem(CartItem $item): array
     {
         $listing = $item->listing;
-        $image = $listing?->primaryImage?->image_path
-            ? asset('storage/'.$listing->primaryImage->image_path)
-            : null;
+        $variation = $item->variation ?? $listing?->defaultVariation;
+        $imagePath = $listing?->primaryImage?->image_path
+            ?? $listing?->firstImage?->image_path
+            ?? $variation?->primaryImage?->image_path
+            ?? $variation?->firstImage?->image_path;
+        $image = $imagePath ? asset('storage/'.$imagePath) : null;
 
-        $hasActiveDiscount = $listing?->discount_price &&
+        $hasListingDiscount = $listing?->discount_price &&
             $listing->discount_start_date <= now() &&
             $listing->discount_end_date >= now();
+
+        // Resolve base price and discount price (listing-level first, variation as fallback)
+        $basePrice = (float) ($listing?->base_price ?? 0);
+        $discountPrice = null;
+
+        if ($hasListingDiscount) {
+            $discountPrice = (float) $listing->discount_price;
+        } elseif (! $basePrice) {
+            if ($variation) {
+                $basePrice = (float) $variation->price;
+                if ($variation->hasActiveDiscount()) {
+                    $discountPrice = (float) $variation->discount_price;
+                }
+            }
+        }
 
         return [
             'id' => $item->id,
@@ -145,8 +167,8 @@ class CartController extends Controller
             'seller_name' => $listing?->user?->name ?? '—',
             'image_url' => $image,
             'currency' => $listing?->currency ?? 'USD',
-            'base_price' => (float) ($listing?->base_price ?? 0),
-            'discount_price' => $hasActiveDiscount ? (float) $listing->discount_price : null,
+            'base_price' => $basePrice,
+            'discount_price' => $discountPrice,
             'unit_price' => $item->unit_price,
             'line_total' => $item->line_total,
             'has_delivery' => (bool) $listing?->has_delivery,

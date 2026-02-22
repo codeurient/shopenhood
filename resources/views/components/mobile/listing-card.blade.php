@@ -86,6 +86,27 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
             </button>
+
+            @if($listing->listing_mode === 'business')
+            <!-- Add to Cart Button (business listings only) -->
+            <button type="button"
+                    x-data="cardCartBtn({{ $listing->id }})"
+                    @click.prevent.stop="add()"
+                    :disabled="adding"
+                    :title="added ? 'Added!' : 'Add to cart'"
+                    class="flex items-center justify-center w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-md transition-all disabled:opacity-60">
+                <template x-if="!added">
+                    <svg class="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l2 12h10l2-8H6M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/>
+                    </svg>
+                </template>
+                <template x-if="added">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </template>
+            </button>
+            @endif
         </div>
 
         <!-- Store Badge & Wholesale Icon (Bottom) -->
@@ -162,3 +183,36 @@
         </div>
     </div>
 </a>
+
+@once
+<script>
+function cardCartBtn(listingId) {
+    return {
+        adding: false,
+        added: false,
+        add() {
+            @guest
+                window.location.href = '{{ route('login') }}';
+                return;
+            @endguest
+            if (this.adding) { return; }
+            this.adding = true;
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+            fetch('/api/cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                body: JSON.stringify({ listing_id: listingId, quantity: 1 }),
+            })
+            .then(r => r.json())
+            .then(() => {
+                this.adding = false;
+                this.added = true;
+                window.dispatchEvent(new CustomEvent('cart-updated'));
+                setTimeout(() => { this.added = false; }, 2500);
+            })
+            .catch(() => { this.adding = false; });
+        },
+    };
+}
+</script>
+@endonce

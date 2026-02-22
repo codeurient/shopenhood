@@ -60,7 +60,7 @@
         <div class="absolute inset-0 bg-black/40" @click="open = false"></div>
 
         <!-- Panel -->
-        <div class="relative w-full max-w-sm bg-white flex flex-col shadow-xl h-full"
+        <div class="relative w-full bg-white flex flex-col shadow-xl h-full"
              @click.stop>
 
             <!-- Header -->
@@ -222,6 +222,9 @@ function cartPanel() {
         },
 
         init() {
+            this.$watch('open', (value) => {
+                document.body.style.overflow = value ? 'hidden' : '';
+            });
             @auth
                 this.fetchCount();
                 window.addEventListener('cart-updated', () => this.fetchCount());
