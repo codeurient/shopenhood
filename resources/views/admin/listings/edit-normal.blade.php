@@ -189,27 +189,6 @@
                             </div>
                         </div>
 
-                        <!-- Product Availability -->
-                        <div class="border-t pt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-3">
-                                Product Availability <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex gap-6">
-                                <label class="flex items-center">
-                                    <input type="radio" name="availability_type" value="in_stock"
-                                           {{ old('availability_type', $listing->availability_type ?? 'in_stock') === 'in_stock' ? 'checked' : '' }}
-                                           class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    <span class="ml-2 text-sm text-gray-700">In Stock</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="radio" name="availability_type" value="available_by_order"
-                                           {{ old('availability_type', $listing->availability_type) === 'available_by_order' ? 'checked' : '' }}
-                                           class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    <span class="ml-2 text-sm text-gray-700">Available by Order</span>
-                                </label>
-                            </div>
-                        </div>
-
                         <!-- Delivery Options -->
                         <div class="border-t pt-4">
                             <div class="flex items-center mb-3">
@@ -249,20 +228,6 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-6 border-t pt-4">
-                            <label class="flex items-center">
-                                <input type="checkbox" name="is_visible" value="1"
-                                       {{ old('is_visible', $listing->is_visible) ? 'checked' : '' }}
-                                       class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
-                                <span class="ml-2 text-sm text-gray-700">Visible to public</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" name="is_featured" value="1"
-                                       {{ old('is_featured', $listing->is_featured) ? 'checked' : '' }}
-                                       class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
-                                <span class="ml-2 text-sm text-gray-700">Featured</span>
-                            </label>
-                        </div>
                     </div>
                 </div>
 

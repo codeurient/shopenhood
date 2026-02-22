@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Business\ListingController as BusinessListingController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
@@ -159,6 +160,17 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
+});
+
+// Cart API (auth required, JSON responses)
+Route::prefix('api/cart')->name('cart.')->middleware(['auth'])->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::post('/', [CartController::class, 'store'])->name('store');
+    Route::patch('/{cartItem}', [CartController::class, 'update'])->name('update');
+    Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
+    Route::post('/select-all', [CartController::class, 'selectAll'])->name('select-all');
+    Route::delete('/selected', [CartController::class, 'destroySelected'])->name('destroy-selected');
+    Route::delete('/{cartItem}', [CartController::class, 'destroy'])->name('destroy');
 });
 
 require __DIR__.'/auth.php';

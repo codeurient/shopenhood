@@ -873,18 +873,57 @@
         {{-- ================================================================ --}}
         {{-- STICKY BOTTOM ACTION BAR                                          --}}
         {{-- ================================================================ --}}
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3 z-30">
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3 z-30"
+             x-data="addToCart({{ $listing->id }})">
             <button class="flex-shrink-0 flex items-center justify-center w-11 h-11 border border-gray-300 rounded-xl">
                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                 </svg>
             </button>
-            <button class="flex-1 h-11 bg-orange-400 hover:bg-orange-500 text-white font-semibold rounded-xl text-sm transition-colors">
-                Add to Cart
+            <button @click="add()"
+                    :disabled="adding"
+                    class="flex-1 h-11 bg-orange-400 hover:bg-orange-500 disabled:opacity-60 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+                <svg x-show="adding" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span x-text="adding ? 'Adding...' : (added ? '✓ Added' : 'Add to Cart')"></span>
             </button>
             <button class="flex-1 h-11 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl text-sm transition-colors">
                 Buy Now
             </button>
         </div>
+
+        @push('scripts')
+        <script>
+        function addToCart(listingId) {
+            return {
+                adding: false,
+                added: false,
+                add() {
+                    @guest
+                        window.location.href = '{{ route('login') }}';
+                        return;
+                    @endguest
+                    this.adding = true;
+                    const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+                    fetch('/api/cart', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                        body: JSON.stringify({ listing_id: listingId, quantity: 1 }),
+                    })
+                    .then(r => r.json())
+                    .then(() => {
+                        this.adding = false;
+                        this.added = true;
+                        window.dispatchEvent(new CustomEvent('cart-updated'));
+                        setTimeout(() => { this.added = false; }, 3000);
+                    })
+                    .catch(() => { this.adding = false; });
+                },
+            };
+        }
+        </script>
+        @endpush
     </div>
 </x-guest-layout>
