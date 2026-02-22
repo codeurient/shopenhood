@@ -534,7 +534,11 @@ class ListingController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.listings.edit', compact('listing', 'listingTypes'));
+        $view = $listing->listing_mode === 'normal'
+            ? 'admin.listings.edit-normal'
+            : 'admin.listings.edit';
+
+        return view($view, compact('listing', 'listingTypes'));
     }
 
     /**
@@ -575,6 +579,8 @@ class ListingController extends Controller
             'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'detail_images' => 'nullable|array',
             'detail_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'product_images' => 'nullable|array',
+            'product_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
             'delete_images' => 'nullable|array',
             'delete_images.*' => 'integer|exists:listing_images,id',
 
@@ -626,6 +632,25 @@ class ListingController extends Controller
             // Handle new detail images
             if ($request->hasFile('detail_images')) {
                 $this->uploadDetailImages($listing, $request->file('detail_images'));
+            }
+
+            // Handle combined product images (normal-mode form)
+            if ($request->hasFile('product_images')) {
+                $listing->images()->where('is_primary', true)->update(['is_primary' => false]);
+                $maxSort = $listing->images()->max('sort_order') ?? -1;
+
+                foreach ($request->file('product_images') as $index => $image) {
+                    $path = $image->store('listings/'.$listing->id, 'public');
+
+                    $listing->images()->create([
+                        'image_path' => $path,
+                        'original_filename' => $image->getClientOriginalName(),
+                        'file_size' => $image->getSize(),
+                        'mime_type' => $image->getMimeType(),
+                        'sort_order' => $maxSort + $index + 1,
+                        'is_primary' => $index === 0,
+                    ]);
+                }
             }
 
             // Handle variations update
