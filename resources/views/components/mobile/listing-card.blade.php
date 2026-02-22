@@ -90,7 +90,7 @@
             @if($listing->listing_mode === 'business')
             <!-- Add to Cart Button (business listings only) -->
             <button type="button"
-                    x-data="cardCartBtn({{ $listing->id }})"
+                    x-data="cardCartBtn({{ $listing->id }}, {{ $listing->defaultVariation?->id ?? 'null' }})"
                     @click.prevent.stop="add()"
                     :disabled="adding"
                     :title="added ? 'Added!' : 'Add to cart'"
@@ -186,7 +186,7 @@
 
 @once
 <script>
-function cardCartBtn(listingId) {
+function cardCartBtn(listingId, variationId) {
     return {
         adding: false,
         added: false,
@@ -201,7 +201,7 @@ function cardCartBtn(listingId) {
             fetch('/api/cart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
-                body: JSON.stringify({ listing_id: listingId, quantity: 1 }),
+                body: JSON.stringify({ listing_id: listingId, variation_id: variationId, quantity: 1 }),
             })
             .then(r => r.json())
             .then(() => {

@@ -50,6 +50,8 @@
             displayImages: [],
             displayPrice: null,
             displayStock: null,
+            adding: false,
+            added: false,
 
             prevImage() {
                 this.currentImage = (this.currentImage - 1 + this.totalImages) % this.totalImages;
@@ -195,6 +197,31 @@
                     }
                 }
             },
+            add() {
+                @guest
+                    window.location.href = '{{ route('login') }}';
+                    return;
+                @endguest
+                if (this.adding) { return; }
+                this.adding = true;
+                const variation = this.findMatchingVariation();
+                const defaultVar = this.allVariations.find(v => v.is_default) || this.allVariations[0] || null;
+                const variationId = (variation || defaultVar)?.id ?? null;
+                const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '';
+                fetch('/api/cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    body: JSON.stringify({ listing_id: {{ $listing->id }}, variation_id: variationId, quantity: this.quantity }),
+                })
+                .then(r => r.json())
+                .then(() => {
+                    this.adding = false;
+                    this.added = true;
+                    window.dispatchEvent(new CustomEvent('cart-updated'));
+                    setTimeout(() => { this.added = false; }, 3000);
+                })
+                .catch(() => { this.adding = false; });
+            },
             init() {
                 const defaultVar = this.allVariations.find(v => v.is_default) || null;
                 if (defaultVar) {
@@ -258,8 +285,7 @@
                     </svg>
                 </button>
                 @if($listing->listing_mode === 'business')
-                <button x-data="addToCart({{ $listing->id }})"
-                        @click.stop="add()"
+                <button @click.stop="add()"
                         :disabled="adding"
                         :title="added ? 'Added!' : 'Add to cart'"
                         class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm disabled:opacity-60 transition">
@@ -897,8 +923,7 @@
         {{-- ================================================================ --}}
         {{-- STICKY BOTTOM ACTION BAR                                          --}}
         {{-- ================================================================ --}}
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3 z-30"
-             x-data="addToCart({{ $listing->id }})">
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3 z-30">
             <button class="flex-shrink-0 flex items-center justify-center w-11 h-11 border border-gray-300 rounded-xl">
                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
@@ -918,36 +943,5 @@
             </button>
         </div>
 
-        @push('scripts')
-        <script>
-        function addToCart(listingId) {
-            return {
-                adding: false,
-                added: false,
-                add() {
-                    @guest
-                        window.location.href = '{{ route('login') }}';
-                        return;
-                    @endguest
-                    this.adding = true;
-                    const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-                    fetch('/api/cart', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
-                        body: JSON.stringify({ listing_id: listingId, quantity: 1 }),
-                    })
-                    .then(r => r.json())
-                    .then(() => {
-                        this.adding = false;
-                        this.added = true;
-                        window.dispatchEvent(new CustomEvent('cart-updated'));
-                        setTimeout(() => { this.added = false; }, 3000);
-                    })
-                    .catch(() => { this.adding = false; });
-                },
-            };
-        }
-        </script>
-        @endpush
     </div>
 </x-guest-layout>
