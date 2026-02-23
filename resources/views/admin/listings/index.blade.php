@@ -61,11 +61,17 @@
 
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow p-6 mb-6">
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
                 <input type="text" name="search" value="{{ request('search') }}"
                        placeholder="Search listings..."
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">User</label>
+                <input type="text" name="user_search" value="{{ request('user_search') }}"
+                       placeholder="Name or email..."
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
             </div>
             <div>
@@ -167,6 +173,7 @@
                                class="rounded border-gray-300">
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
@@ -197,6 +204,14 @@
                                 <div class="text-sm text-gray-500">{{ $listing->slug }}</div>
                             </div>
                         </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        @if($listing->user)
+                            <div class="text-sm font-medium text-gray-900">{{ $listing->user->name }}</div>
+                            <div class="text-xs text-gray-500">{{ $listing->user->email }}</div>
+                        @else
+                            <span class="text-xs text-gray-400">—</span>
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-900">
                         {{ $listing->category->name }}
@@ -283,7 +298,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-12 text-center">
+                    <td colspan="8" class="px-6 py-12 text-center">
                         <div class="text-6xl mb-4">📦</div>
                         <p class="text-gray-600 text-lg mb-2">No listings found</p>
                         <a href="{{ route('admin.listings.create') }}" class="text-primary-600 hover:underline">

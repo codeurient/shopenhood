@@ -45,6 +45,14 @@ class ListingController extends Controller
             });
         }
 
+        // Filter by user name or email
+        if ($request->filled('user_search')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->user_search.'%')
+                    ->orWhere('email', 'like', '%'.$request->user_search.'%');
+            });
+        }
+
         // Filter by category
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
