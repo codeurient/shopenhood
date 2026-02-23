@@ -16,7 +16,26 @@
                     <p class="text-sm text-gray-500 mt-1">{{ $businessProfile->legal_name }}</p>
                 @endif
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center flex-wrap">
+                @if($businessProfile->isApproved())
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Verified
+                    </span>
+                    <form action="{{ route('admin.business-profiles.revoke', $businessProfile) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
+                            Revoke Badge
+                        </button>
+                    </form>
+                @else
+                    <form action="{{ route('admin.business-profiles.approve', $businessProfile) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
+                            Approve &amp; Verify
+                        </button>
+                    </form>
+                @endif
                 <a href="{{ route('admin.business-profiles.edit', $businessProfile) }}"
                    class="inline-flex items-center px-4 py-2 bg-primary-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600">
                     Edit Profile
@@ -37,6 +56,91 @@
             <div class="mb-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded-lg">
                 {{ session('success') }}
             </div>
+        @endif
+
+        {{-- Confident Seller Review Panel --}}
+        @if($businessProfile->confident_seller_status)
+        <div x-data="{ rejectOpen: false }" class="mb-6 rounded-lg border-2 p-5
+            {{ $businessProfile->isConfidentSellerApproved() ? 'border-green-400 bg-green-50' : '' }}
+            {{ $businessProfile->isConfidentSellerRejected() ? 'border-yellow-400 bg-yellow-50' : '' }}
+            {{ $businessProfile->isConfidentSellerPending() ? 'border-red-400 bg-red-50' : '' }}">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        @if($businessProfile->isConfidentSellerApproved())
+                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800">&#10003; Confident Seller &mdash; Approved</span>
+                        @elseif($businessProfile->isConfidentSellerRejected())
+                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-800">&#10007; Confident Seller &mdash; Rejected</span>
+                        @else
+                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-800">&#9679; Confident Seller &mdash; Pending Review</span>
+                        @endif
+                    </div>
+                    @if($businessProfile->isConfidentSellerRejected() && $businessProfile->confident_seller_rejection_reason)
+                        <p class="mt-2 text-sm text-yellow-800">
+                            <span class="font-medium">Rejection reason:</span> {{ $businessProfile->confident_seller_rejection_reason }}
+                        </p>
+                    @endif
+                </div>
+
+                <div class="flex gap-2">
+                    @if(! $businessProfile->isConfidentSellerApproved())
+                        <form action="{{ route('admin.business-profiles.confident-seller.approve', $businessProfile) }}" method="POST">
+                            @csrf
+                            <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-xs font-semibold rounded-md uppercase tracking-widest hover:bg-green-700 transition">
+                                Approve
+                            </button>
+                        </form>
+                    @endif
+                    @if(! $businessProfile->isConfidentSellerRejected())
+                        <button type="button" @click="rejectOpen = true"
+                                class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white text-xs font-semibold rounded-md uppercase tracking-widest hover:bg-yellow-600 transition">
+                            Reject
+                        </button>
+                    @endif
+                </div>
+            </div>
+
+            @if($businessProfile->isConfidentSellerRejected() && ! $businessProfile->isConfidentSellerApproved())
+                <div class="mt-3 text-sm text-yellow-700">
+                    User can reapply by updating their business profile.
+                </div>
+            @endif
+
+            {{-- Rejection Modal --}}
+            <div x-show="rejectOpen" x-cloak style="display:none"
+                 class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/50" @click="rejectOpen = false"></div>
+                <div class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 z-10" @click.stop>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Reject Application</h3>
+                    <p class="text-sm text-gray-500 mb-4">This will notify the user with your reason.</p>
+                    <form action="{{ route('admin.business-profiles.confident-seller.reject', $businessProfile) }}" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Rejection Reason <span class="text-red-500">*</span>
+                            </label>
+                            <textarea name="rejection_reason" rows="4" required
+                                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                                      placeholder="Explain why this application is being rejected…"></textarea>
+                            @error('rejection_reason')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="flex justify-end gap-3">
+                            <button type="button" @click="rejectOpen = false"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition">
+                                Submit Rejection
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         @endif
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -256,6 +360,16 @@
                         <div>
                             <dt class="font-medium text-gray-500">Updated</dt>
                             <dd class="mt-1 text-gray-900">{{ $businessProfile->updated_at->format('M d, Y H:i') }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-500">Verified</dt>
+                            <dd class="mt-1 text-gray-900">
+                                @if($businessProfile->isApproved())
+                                    <span class="text-blue-700 font-medium">{{ $businessProfile->approved_at->format('M d, Y H:i') }}</span>
+                                @else
+                                    <span class="text-gray-400">Not verified</span>
+                                @endif
+                            </dd>
                         </div>
                     </div>
                 </div>

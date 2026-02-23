@@ -135,22 +135,6 @@
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
-
-                        {{-- Business Profile Link --}}
-                        <div class="pt-4 border-t border-gray-200">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Business Profile</label>
-                            @if($user->hasBusinessProfile())
-                                <div class="flex items-center gap-3">
-                                    <span class="text-sm text-gray-600">{{ $user->businessProfile->business_name }}</span>
-                                    <a href="{{ route('admin.business-profiles.show', $user->businessProfile) }}" class="text-sm text-blue-600 hover:underline">View</a>
-                                    <a href="{{ route('admin.business-profiles.edit', $user->businessProfile) }}" class="text-sm text-blue-600 hover:underline">Edit</a>
-                                </div>
-                            @else
-                                <a href="{{ route('admin.business-profiles.create', $user) }}" class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700">
-                                    Create Business Profile
-                                </a>
-                            @endif
-                        </div>
                     </div>
                 </div>
             </div>

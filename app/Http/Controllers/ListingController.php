@@ -19,7 +19,7 @@ class ListingController extends Controller
     public function index(Request $request): View
     {
         $query = Listing::publiclyVisible()
-            ->with(['category', 'listingType', 'primaryImage', 'firstImage']);
+            ->with(['category', 'listingType', 'primaryImage', 'firstImage', 'user.businessProfile']);
 
         if ($request->filled('search')) {
             $query->search($request->search);
@@ -90,7 +90,7 @@ class ListingController extends Controller
             'category',
             'listingType',
             'images',
-            'user',
+            'user.businessProfile',
             'variations' => function ($query) {
                 $query->active()
                     ->with([

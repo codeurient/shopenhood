@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::withCount('listings');
+        $query = User::withCount('listings')->with('businessProfile');
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {

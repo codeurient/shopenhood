@@ -16,7 +16,7 @@ class HomeController extends Controller
         $sellType = ListingType::where('slug', 'sell')->first();
 
         $cardRelations = [
-            'category', 'listingType', 'primaryImage', 'firstImage', 'user',
+            'category', 'listingType', 'primaryImage', 'firstImage', 'user.businessProfile',
             'defaultVariation.primaryImage', 'defaultVariation.firstImage',
             'location.parent',
         ];

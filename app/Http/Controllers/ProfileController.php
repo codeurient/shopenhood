@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UpdateProfileBrandingRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -35,6 +37,32 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Update the business user's branding (logo and banner).
+     */
+    public function updateBranding(UpdateProfileBrandingRequest $request): RedirectResponse
+    {
+        $businessProfile = $request->user()->businessProfile;
+
+        if ($request->hasFile('logo')) {
+            if ($businessProfile->logo) {
+                Storage::disk('public')->delete($businessProfile->logo);
+            }
+            $businessProfile->logo = $request->file('logo')->store('business/logos', 'public');
+        }
+
+        if ($request->hasFile('banner')) {
+            if ($businessProfile->banner) {
+                Storage::disk('public')->delete($businessProfile->banner);
+            }
+            $businessProfile->banner = $request->file('banner')->store('business/banners', 'public');
+        }
+
+        $businessProfile->save();
+
+        return Redirect::route('profile.edit')->with('status', 'branding-updated');
     }
 
     /**

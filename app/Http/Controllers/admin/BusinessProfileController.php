@@ -8,6 +8,8 @@ use App\Http\Requests\Admin\UpdateBusinessProfileRequest;
 use App\Models\BusinessProfile;
 use App\Models\Location;
 use App\Models\User;
+use App\Notifications\ConfidentSellerApprovedNotification;
+use App\Notifications\ConfidentSellerRejectedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -131,6 +133,52 @@ class BusinessProfileController extends Controller
 
         return redirect()->route('admin.business-profiles.show', $businessProfile)
             ->with('success', 'Business profile updated successfully.');
+    }
+
+    public function approve(BusinessProfile $businessProfile): \Illuminate\Http\RedirectResponse
+    {
+        $businessProfile->update(['approved_at' => now()]);
+
+        return redirect()->route('admin.business-profiles.show', $businessProfile)
+            ->with('success', 'Business profile approved. The verified badge will now appear on their listings.');
+    }
+
+    public function revoke(BusinessProfile $businessProfile): \Illuminate\Http\RedirectResponse
+    {
+        $businessProfile->update(['approved_at' => null]);
+
+        return redirect()->route('admin.business-profiles.show', $businessProfile)
+            ->with('success', 'Verification revoked.');
+    }
+
+    public function approveConfidentSeller(BusinessProfile $businessProfile): \Illuminate\Http\RedirectResponse
+    {
+        $businessProfile->update([
+            'confident_seller_status' => 'approved',
+            'confident_seller_rejection_reason' => null,
+        ]);
+
+        $businessProfile->user->notify(new ConfidentSellerApprovedNotification($businessProfile));
+
+        return redirect()->route('admin.business-profiles.show', $businessProfile)
+            ->with('success', 'Confident Seller status approved and user has been notified.');
+    }
+
+    public function rejectConfidentSeller(Request $request, BusinessProfile $businessProfile): \Illuminate\Http\RedirectResponse
+    {
+        $request->validate([
+            'rejection_reason' => ['required', 'string', 'max:1000'],
+        ]);
+
+        $businessProfile->update([
+            'confident_seller_status' => 'rejected',
+            'confident_seller_rejection_reason' => $request->rejection_reason,
+        ]);
+
+        $businessProfile->user->notify(new ConfidentSellerRejectedNotification($businessProfile, $request->rejection_reason));
+
+        return redirect()->route('admin.business-profiles.show', $businessProfile)
+            ->with('success', 'Confident Seller application rejected and user has been notified.');
     }
 
     public function destroy(BusinessProfile $businessProfile)

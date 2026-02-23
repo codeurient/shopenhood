@@ -28,10 +28,6 @@ class StoreBusinessProfileRequest extends FormRequest
             'business_email' => 'nullable|email|max:255',
             'business_phone' => 'nullable|string|max:30',
             'website' => 'nullable|url|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'banner' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
-            'return_policy' => 'nullable|string|max:5000',
-            'shipping_policy' => 'nullable|string|max:5000',
         ];
     }
 
@@ -39,10 +35,6 @@ class StoreBusinessProfileRequest extends FormRequest
     {
         return [
             'business_name.required' => 'Please enter your business name.',
-            'logo.image' => 'Logo must be an image file.',
-            'logo.max' => 'Logo file size cannot exceed 2MB.',
-            'banner.image' => 'Banner must be an image file.',
-            'banner.max' => 'Banner file size cannot exceed 4MB.',
             'website.url' => 'Please enter a valid website URL.',
             'business_email.email' => 'Please enter a valid email address.',
         ];

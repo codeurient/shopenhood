@@ -9,7 +9,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Profile Information</h3>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Update your account's name and email address.
+                    Update your account's name, email address, and contact details.
                 </p>
 
                 <form method="POST" action="{{ route('profile.update') }}" class="mt-6 space-y-4">
@@ -45,6 +45,26 @@
                         @endif
                     </div>
 
+                    <div>
+                        <x-input-label for="whatsapp_number" :value="__('WhatsApp Number')" />
+                        <x-text-input id="whatsapp_number" name="whatsapp_number" type="text" class="block mt-1 w-full" :value="old('whatsapp_number', $user->whatsapp_number)" autocomplete="tel" placeholder="+1234567890" />
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Include country code (e.g. +1234567890). Used so buyers can contact you via WhatsApp.</p>
+                        <x-input-error :messages="$errors->get('whatsapp_number')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <x-input-label for="default_currency" :value="__('Default Currency')" />
+                        <select id="default_currency" name="default_currency"
+                                class="w-full px-4 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-primary-500 dark:focus:border-primary-500 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-500 rounded-lg shadow-sm transition block mt-1 w-full">
+                            <option value="">— Select currency —</option>
+                            <option value="USD" {{ old('default_currency', $user->default_currency) === 'USD' ? 'selected' : '' }}>USD – US Dollar</option>
+                            <option value="EUR" {{ old('default_currency', $user->default_currency) === 'EUR' ? 'selected' : '' }}>EUR – Euro</option>
+                            <option value="GBP" {{ old('default_currency', $user->default_currency) === 'GBP' ? 'selected' : '' }}>GBP – British Pound</option>
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Pre-selects the currency when you create a new listing.</p>
+                        <x-input-error :messages="$errors->get('default_currency')" class="mt-2" />
+                    </div>
+
                     <div class="flex items-center gap-4">
                         <x-primary-button>{{ __('Save') }}</x-primary-button>
 
@@ -58,6 +78,57 @@
                     @csrf
                 </form>
             </div>
+
+            @if($user->isBusinessUser() && $user->businessProfile)
+            <!-- Branding -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Branding</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Update your business logo and banner image.
+                </p>
+
+                <form method="POST" action="{{ route('profile.branding') }}" enctype="multipart/form-data" class="mt-6">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <x-input-label for="logo" :value="__('Logo')" />
+                            @if($user->businessProfile->logo)
+                                <div class="mt-1 mb-2">
+                                    <img src="{{ asset('storage/' . $user->businessProfile->logo) }}" alt="Current logo" class="w-20 h-20 rounded-lg object-cover">
+                                </div>
+                            @endif
+                            <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/jpg,image/webp"
+                                   class="block mt-1 w-full text-sm text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 dark:bg-gray-700 focus:ring-2 focus:ring-primary-500">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max 2MB. JPEG, PNG, WEBP. Leave empty to keep current.</p>
+                            <x-input-error :messages="$errors->get('logo')" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="banner" :value="__('Banner')" />
+                            @if($user->businessProfile->banner)
+                                <div class="mt-1 mb-2">
+                                    <img src="{{ asset('storage/' . $user->businessProfile->banner) }}" alt="Current banner" class="w-full h-20 rounded-lg object-cover">
+                                </div>
+                            @endif
+                            <input type="file" id="banner" name="banner" accept="image/jpeg,image/png,image/jpg,image/webp"
+                                   class="block mt-1 w-full text-sm text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 dark:bg-gray-700 focus:ring-2 focus:ring-primary-500">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max 4MB. JPEG, PNG, WEBP. Leave empty to keep current.</p>
+                            <x-input-error :messages="$errors->get('banner')" class="mt-2" />
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 mt-4">
+                        <x-primary-button>{{ __('Save Branding') }}</x-primary-button>
+
+                        @if (session('status') === 'branding-updated')
+                            <p class="text-sm text-green-600 dark:text-green-400">Saved.</p>
+                        @endif
+                    </div>
+                </form>
+            </div>
+            @endif
 
             <!-- Update Password -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">

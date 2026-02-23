@@ -321,6 +321,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/{businessProfile}/edit', [BusinessProfileController::class, 'edit'])->name('edit');
             Route::put('/{businessProfile}', [BusinessProfileController::class, 'update'])->name('update');
             Route::delete('/{businessProfile}', [BusinessProfileController::class, 'destroy'])->name('destroy');
+            Route::post('/{businessProfile}/approve', [BusinessProfileController::class, 'approve'])->name('approve');
+            Route::post('/{businessProfile}/revoke', [BusinessProfileController::class, 'revoke'])->name('revoke');
+            Route::post('/{businessProfile}/confident-seller/approve', [BusinessProfileController::class, 'approveConfidentSeller'])->name('confident-seller.approve');
+            Route::post('/{businessProfile}/confident-seller/reject', [BusinessProfileController::class, 'rejectConfidentSeller'])->name('confident-seller.reject');
         });
 
         // ====================================================================

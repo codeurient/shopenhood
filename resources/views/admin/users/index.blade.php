@@ -114,7 +114,31 @@
                             @if($user->business_valid_until->isPast())
                                 <span class="text-red-500">(Expired)</span>
                             @endif
-                        @else
+                        @endif
+                        @if($user->businessProfile)
+                            @php $cs = $user->businessProfile->confident_seller_status; @endphp
+                            <div class="mt-1">
+                                @if($cs === 'approved')
+                                    <a href="{{ route('admin.business-profiles.show', $user->businessProfile) }}"
+                                       class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800 hover:bg-green-200 transition">
+                                        ✓ Confident Seller
+                                    </a>
+                                @elseif($cs === 'rejected')
+                                    <a href="{{ route('admin.business-profiles.show', $user->businessProfile) }}"
+                                       class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition">
+                                        ✗ Confident Seller
+                                    </a>
+                                @elseif($cs === 'pending')
+                                    <a href="{{ route('admin.business-profiles.show', $user->businessProfile) }}"
+                                       class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800 hover:bg-red-200 transition">
+                                        ● Confident Seller
+                                    </a>
+                                @else
+                                    <a href="{{ route('admin.business-profiles.show', $user->businessProfile) }}"
+                                       class="text-xs text-blue-600 hover:underline">View profile</a>
+                                @endif
+                            </div>
+                        @elseif(!$user->business_valid_until)
                             -
                         @endif
                     </td>

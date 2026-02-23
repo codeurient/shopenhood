@@ -71,6 +71,7 @@
                     <th class="px-4 py-3">Owner</th>
                     <th class="px-4 py-3">Industry</th>
                     <th class="px-4 py-3">Location</th>
+                    <th class="px-4 py-3">Status</th>
                     <th class="px-4 py-3">Created</th>
                     <th class="px-4 py-3 text-right">Actions</th>
                 </tr>
@@ -115,6 +116,16 @@
                             <span class="text-gray-400">-</span>
                         @endif
                     </td>
+                    <td class="px-4 py-3">
+                        @if($profile->isApproved())
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Verified
+                            </span>
+                        @else
+                            <span class="text-xs text-gray-400">Pending</span>
+                        @endif
+                    </td>
                     <td class="px-4 py-3 text-xs text-gray-500">{{ $profile->created_at->format('M d, Y') }}</td>
                     <td class="px-4 py-3 text-right">
                         <div class="flex justify-end gap-2">
@@ -130,7 +141,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-gray-500">No business profiles found.</td>
+                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">No business profiles found.</td>
                 </tr>
                 @endforelse
             </tbody>

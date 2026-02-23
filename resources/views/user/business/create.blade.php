@@ -100,7 +100,7 @@
 
                         <div>
                             <label for="business_phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Business Phone</label>
-                            <input type="text" name="business_phone" id="business_phone" value="{{ old('business_phone') }}"
+                            <input type="text" name="business_phone" id="business_phone" value="{{ old('business_phone') }}" placeholder="+1234567890"
                                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             @error('business_phone')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -178,58 +178,6 @@
                                 @endforeach
                             </select>
                             @error('country_id')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Branding -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Branding</h3>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label for="logo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Logo</label>
-                            <input type="file" name="logo" id="logo" accept="image/jpeg,image/png,image/jpg,image/webp"
-                                   class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max 2MB. JPEG, PNG, WEBP</p>
-                            @error('logo')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="banner" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Banner</label>
-                            <input type="file" name="banner" id="banner" accept="image/jpeg,image/png,image/jpg,image/webp"
-                                   class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max 4MB. JPEG, PNG, WEBP</p>
-                            @error('banner')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Policies -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Policies</h3>
-
-                    <div class="space-y-4">
-                        <div>
-                            <label for="return_policy" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Return Policy</label>
-                            <textarea name="return_policy" id="return_policy" rows="3" placeholder="Describe your return policy..."
-                                      class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ old('return_policy') }}</textarea>
-                            @error('return_policy')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="shipping_policy" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Shipping Policy</label>
-                            <textarea name="shipping_policy" id="shipping_policy" rows="3" placeholder="Describe your shipping policy..."
-                                      class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ old('shipping_policy') }}</textarea>
-                            @error('shipping_policy')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>

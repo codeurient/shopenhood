@@ -36,11 +36,15 @@ class BusinessProfile extends Model
         'timezone',
         'return_policy',
         'shipping_policy',
+        'approved_at',
+        'confident_seller_status',
+        'confident_seller_rejection_reason',
     ];
 
     protected $casts = [
         'country_id' => 'integer',
         'user_id' => 'integer',
+        'approved_at' => 'datetime',
     ];
 
     // ============================================
@@ -74,8 +78,37 @@ class BusinessProfile extends Model
     }
 
     // ============================================
+    // HELPERS
+    // ============================================
+
+    public function isApproved(): bool
+    {
+        return $this->approved_at !== null;
+    }
+
+    public function isConfidentSellerPending(): bool
+    {
+        return $this->confident_seller_status === 'pending';
+    }
+
+    public function isConfidentSellerApproved(): bool
+    {
+        return $this->confident_seller_status === 'approved';
+    }
+
+    public function isConfidentSellerRejected(): bool
+    {
+        return $this->confident_seller_status === 'rejected';
+    }
+
+    // ============================================
     // SCOPES
     // ============================================
+
+    public function scopeApproved($query)
+    {
+        return $query->whereNotNull('approved_at');
+    }
 
     public function scopeByIndustry($query, string $industry)
     {

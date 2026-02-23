@@ -24,6 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
+        'whatsapp_number',
+        'default_currency',
         'email_verified_at',
         'phone_verified_at',
         'daily_listing_count',

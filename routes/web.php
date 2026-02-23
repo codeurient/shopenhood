@@ -13,6 +13,7 @@ use App\Http\Controllers\User\BusinessProfileController as UserBusinessProfileCo
 use App\Http\Controllers\User\CouponController as UserCouponController;
 use App\Http\Controllers\User\FavoriteController as UserFavoriteController;
 use App\Http\Controllers\User\ListingController as UserListingController;
+use App\Http\Controllers\User\NotificationsController as UserNotificationsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -82,6 +83,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/branding', [ProfileController::class, 'updateBranding'])->name('profile.branding');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Notifications
@@ -118,6 +120,13 @@ Route::middleware('auth')->group(function () {
 
     // Favorites
     Route::get('/my-favorites', [UserFavoriteController::class, 'index'])->name('user.favorites.index');
+
+    // Notifications
+    Route::prefix('notifications')->name('user.notifications.')->group(function () {
+        Route::get('/', [UserNotificationsController::class, 'index'])->name('index');
+        Route::post('/read-all', [UserNotificationsController::class, 'markAllRead'])->name('read-all');
+        Route::post('/{id}/read', [UserNotificationsController::class, 'markRead'])->name('read');
+    });
 
     // User Address Management
     Route::prefix('my-addresses')->name('user.addresses.')->group(function () {
