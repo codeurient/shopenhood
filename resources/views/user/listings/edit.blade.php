@@ -503,8 +503,6 @@
         input.dispatchEvent(new Event('change'));
     }
 
-    loadCategoriesForLevel(0, null);
-
     categoryContainer.addEventListener('change', function(e) {
         if (e.target.classList.contains('category-select')) {
             const level = parseInt(e.target.dataset.level);
@@ -531,11 +529,17 @@
 
     const selectClass = 'w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 category-select';
 
+    const pendingCategoryFetches = {};
+
     function loadCategoriesForLevel(level, parentId) {
+        if (pendingCategoryFetches[level]) { pendingCategoryFetches[level].abort(); }
+        const controller = new AbortController();
+        pendingCategoryFetches[level] = controller;
         const url = parentId ? `/api/categories/children/${parentId}` : '/api/categories/children';
-        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+        fetch(url, { signal: controller.signal, headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
         .then(r => r.json())
         .then(data => {
+            delete pendingCategoryFetches[level];
             if (data.success && data.categories.length > 0) {
                 const existing = document.getElementById('category_level_' + level);
                 if (existing) { existing.remove(); }
@@ -552,7 +556,8 @@
                 });
                 categoryContainer.appendChild(sel);
             }
-        });
+        })
+        .catch(err => { if (err.name !== 'AbortError') { console.error('Category load error:', err); } });
     }
 
     function removeSelectsAfterLevel(level) {
@@ -672,11 +677,13 @@
         });
     }
 
-    // Pre-populate category hierarchy on page load
+    // Initialize category dropdowns — exactly one fetch path runs, never both at once
     document.addEventListener('DOMContentLoaded', function() {
         @if($listing->category_id)
             categoryHiddenInput.value = '{{ $listing->category_id }}';
             loadCategoryHierarchy({{ $listing->category_id }});
+        @else
+            loadCategoriesForLevel(0, null);
         @endif
     });
 
