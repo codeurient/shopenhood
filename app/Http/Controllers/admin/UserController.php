@@ -90,23 +90,18 @@ class UserController extends Controller
 
     private function deactivateExcessListings(User $user): void
     {
-        $listings = Listing::forUser($user->id)
+        // Hide all business-mode listings; normal-mode listings remain visible
+        Listing::forUser($user->id)
+            ->businessMode()
             ->where('status', 'active')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        // Skip the most recent listing — it stays active
-        $listingsToHide = $listings->slice(1);
-
-        foreach ($listingsToHide as $listing) {
-            $listing->update(['hidden_due_to_role_change' => true]);
-        }
+            ->update(['hidden_due_to_role_change' => true]);
     }
 
     private function reactivateRoleRestrictedListings(User $user): void
     {
         Listing::withTrashed()
             ->forUser($user->id)
+            ->businessMode()
             ->where('hidden_due_to_role_change', true)
             ->update(['hidden_due_to_role_change' => false]);
     }

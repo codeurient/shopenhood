@@ -39,6 +39,16 @@
             $displayCode = $listing->location->parent->code ?? substr($listing->location->parent->name, 0, 2);
         }
     }
+
+    // Favorite state: load auth user's favorite IDs once per request (static cache)
+    $isFavorited = false;
+    if (auth()->check()) {
+        static $authFavoriteIds = null;
+        if ($authFavoriteIds === null) {
+            $authFavoriteIds = auth()->user()->favoriteListings()->pluck('listings.id')->all();
+        }
+        $isFavorited = in_array($listing->id, $authFavoriteIds);
+    }
 @endphp
 
 <!-- Listing Card -->
@@ -80,9 +90,14 @@
 
             <!-- Favorite Button -->
             <button type="button"
-                    onclick="event.preventDefault(); event.stopPropagation();"
+                    x-data="cardFavoriteBtn({{ $listing->id }}, {{ $isFavorited ? 'true' : 'false' }})"
+                    @click.prevent.stop="toggle()"
+                    :title="favorited ? 'Remove from favorites' : 'Add to favorites'"
                     class="flex items-center justify-center w-8 h-8 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-md transition-all">
-                <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 transition-colors"
+                     :class="favorited ? 'text-red-500' : 'text-gray-700'"
+                     :fill="favorited ? 'currentColor' : 'none'"
+                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
             </button>
@@ -109,9 +124,9 @@
             @endif
         </div>
 
-        <!-- Store Badge & Wholesale Icon (Bottom) -->
+        <!-- Store Badge & Wholesale Icon (Bottom Left) -->
         <div class="absolute bottom-2 left-2 flex items-center gap-2">
-            @if($listing->user && method_exists($listing->user, 'isBusinessUser') && $listing->user->isBusinessUser())
+            @if($listing->listing_mode === 'business')
                 <span class="px-2 py-0.5 text-xs font-semibold text-white bg-primary-600 rounded-md shadow-md">
                     Store
                 </span>
@@ -175,7 +190,7 @@
                     </svg>
                     New
                 </span>
-            @elseif($listing->condition === 'second_hand')
+            @elseif($listing->condition === 'used')
                 <span class="px-1.5 py-0.5 font-medium text-yellow-700 bg-yellow-50 rounded-md ml-1 flex-shrink-0">
                     Second
                 </span>
@@ -186,6 +201,32 @@
 
 @once
 <script>
+function cardFavoriteBtn(listingId, initialFavorited) {
+    return {
+        favorited: initialFavorited,
+        loading: false,
+        toggle() {
+            @guest
+                window.location.href = '{{ route('login') }}';
+                return;
+            @endguest
+            if (this.loading) { return; }
+            this.loading = true;
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+            fetch(`/api/favorites/${listingId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+            })
+            .then(r => r.json())
+            .then(data => {
+                this.favorited = data.favorited;
+                this.loading = false;
+            })
+            .catch(() => { this.loading = false; });
+        },
+    };
+}
+
 function cardCartBtn(listingId, variationId) {
     return {
         adding: false,

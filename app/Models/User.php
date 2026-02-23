@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->hasMany(Listing::class);
     }
 
+    public function favoriteListings(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Listing::class, 'favorites');
+    }
+
     public function coupons(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Coupon::class);

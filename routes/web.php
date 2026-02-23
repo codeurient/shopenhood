@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\AddressController as UserAddressController;
 use App\Http\Controllers\User\BusinessProfileController as UserBusinessProfileController;
 use App\Http\Controllers\User\CouponController as UserCouponController;
+use App\Http\Controllers\User\FavoriteController as UserFavoriteController;
 use App\Http\Controllers\User\ListingController as UserListingController;
 use Illuminate\Support\Facades\Route;
 
@@ -115,6 +116,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/{listing_id}/reshare', [UserListingController::class, 'reshare'])->name('reshare');
     });
 
+    // Favorites
+    Route::get('/my-favorites', [UserFavoriteController::class, 'index'])->name('user.favorites.index');
+
     // User Address Management
     Route::prefix('my-addresses')->name('user.addresses.')->group(function () {
         Route::get('/', [UserAddressController::class, 'index'])->name('index');
@@ -161,6 +165,9 @@ Route::middleware('auth')->group(function () {
         });
     });
 });
+
+// Favorites API (auth required, JSON response)
+Route::post('/api/favorites/{listing:id}', [UserFavoriteController::class, 'toggle'])->middleware('auth')->name('api.favorites.toggle');
 
 // Cart API (auth required, JSON responses)
 Route::prefix('api/cart')->name('cart.')->middleware(['auth'])->group(function () {

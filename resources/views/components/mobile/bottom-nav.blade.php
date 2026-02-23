@@ -12,9 +12,9 @@
 
         <!-- Favorites -->
         @auth
-            <a href="#favorites"
-               class="flex flex-col items-center justify-center flex-1 h-full space-y-1 text-gray-600 hover:text-primary-600 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="{{ route('user.favorites.index') }}"
+               class="flex flex-col items-center justify-center flex-1 h-full space-y-1 {{ request()->routeIs('user.favorites.index') ? 'text-primary-600' : 'text-gray-600' }} hover:text-primary-600 transition-colors">
+                <svg class="w-6 h-6" fill="{{ request()->routeIs('user.favorites.index') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                 </svg>
                 <span class="text-xs font-medium">FAVORITES</span>

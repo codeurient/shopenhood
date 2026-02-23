@@ -160,7 +160,7 @@
                                                 class="w-7 h-7 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition font-bold">−</button>
                                         <span class="w-8 text-center text-sm font-medium text-gray-800" x-text="item.quantity"></span>
                                         <button @click="changeQty(item, 1)"
-                                                :disabled="item.quantity >= 99"
+                                                :disabled="item.quantity >= 99 || (item.max_qty !== null && item.quantity >= item.max_qty)"
                                                 class="w-7 h-7 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition font-bold">+</button>
                                     </div>
 
@@ -286,6 +286,7 @@ function cartPanel() {
         changeQty(item, delta) {
             const newQty = item.quantity + delta;
             if (newQty < 1 || newQty > 99) { return; }
+            if (delta > 0 && item.max_qty !== null && newQty > item.max_qty) { return; }
             item.quantity = newQty;
             this.recalcTotal();
             const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';

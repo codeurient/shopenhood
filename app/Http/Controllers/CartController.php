@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CartItem;
+use App\Models\ProductVariation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +55,22 @@ class CartController extends Controller
             'variation_id' => $request->variation_id,
         ]);
 
-        $cartItem->quantity = ($cartItem->exists ? $cartItem->quantity : 0) + ($request->quantity ?? 1);
+        $addQty = $request->quantity ?? 1;
+        $existingQty = $cartItem->exists ? $cartItem->quantity : 0;
+        $newQty = $existingQty + $addQty;
+
+        if ($request->variation_id) {
+            $variation = ProductVariation::find($request->variation_id);
+            if ($variation && $variation->manage_stock && ! $variation->allow_backorder) {
+                if ($newQty > $variation->stock_quantity) {
+                    return response()->json([
+                        'message' => 'Only '.$variation->stock_quantity.' item(s) available in stock.',
+                    ], 422);
+                }
+            }
+        }
+
+        $cartItem->quantity = $newQty;
         $cartItem->is_selected = true;
         $cartItem->save();
 
@@ -157,6 +173,11 @@ class CartController extends Controller
             }
         }
 
+        $maxQty = null;
+        if ($variation && $variation->manage_stock && ! $variation->allow_backorder) {
+            $maxQty = max(0, $variation->stock_quantity);
+        }
+
         return [
             'id' => $item->id,
             'listing_id' => $item->listing_id,
@@ -173,6 +194,7 @@ class CartController extends Controller
             'line_total' => $item->line_total,
             'has_delivery' => (bool) $listing?->has_delivery,
             'delivery_cost' => $item->delivery_cost,
+            'max_qty' => $maxQty,
         ];
     }
 }

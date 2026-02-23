@@ -221,8 +221,7 @@ class Listing extends Model
     // Users who favorited this listing
     public function favoritedBy()
     {
-        return $this->belongsToMany(User::class, 'favorites')
-            ->withTimestamps();
+        return $this->belongsToMany(User::class, 'favorites');
     }
 
     // Favorites count relationship
