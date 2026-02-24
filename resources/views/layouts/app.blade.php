@@ -90,6 +90,22 @@
                     <span class="font-medium">My Addresses</span>
                 </a>
 
+                <a href="{{ route('user.purchases.index') }}"
+                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('user.purchases.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                    <span class="font-medium">My Orders</span>
+                </a>
+
+                <a href="{{ route('user.sales.index') }}"
+                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('user.sales.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+                    </svg>
+                    <span class="font-medium">My Sales</span>
+                </a>
+
                 @php $unreadCount = auth()->user()->unreadNotifications()->count(); @endphp
                 <a href="{{ route('user.notifications.index') }}"
                    class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('user.notifications.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
@@ -274,5 +290,6 @@
             </div>
         </div>
     </div>
+
 </body>
 </html>

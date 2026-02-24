@@ -10,6 +10,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
+        'purchase_id',
         'order_number',
         'buyer_id',
         'seller_id',
@@ -26,6 +27,8 @@ class Order extends Model
         'status',
         'payment_status',
         'payment_method',
+        'delivery_option_name',
+        'delivery_cost_paid_by',
         'shipping_address_id',
         'billing_address_id',
         'tracking_number',
@@ -50,6 +53,11 @@ class Order extends Model
     ];
 
     // ==================== Relationships ====================
+
+    public function purchase()
+    {
+        return $this->belongsTo(Purchase::class);
+    }
 
     public function buyer()
     {

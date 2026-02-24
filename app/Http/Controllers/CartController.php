@@ -47,6 +47,8 @@ class CartController extends Controller
             'listing_id' => ['required', 'integer', 'exists:listings,id'],
             'variation_id' => ['nullable', 'integer', 'exists:product_variations,id'],
             'quantity' => ['sometimes', 'integer', 'min:1', 'max:99'],
+            'coupon_code' => ['nullable', 'string', 'max:50'],
+            'coupon_discount' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $cartItem = CartItem::firstOrNew([
@@ -72,6 +74,12 @@ class CartController extends Controller
 
         $cartItem->quantity = $newQty;
         $cartItem->is_selected = true;
+
+        if ($request->filled('coupon_code')) {
+            $cartItem->coupon_code = strtoupper($request->coupon_code);
+            $cartItem->coupon_discount = (float) $request->coupon_discount;
+        }
+
         $cartItem->save();
 
         return response()->json([

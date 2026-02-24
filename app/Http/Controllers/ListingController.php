@@ -234,6 +234,24 @@ class ListingController extends Controller
             }
         }
 
+        $hasCoupons = Coupon::active()
+            ->where(function ($q) use ($listing) {
+                $q->where('applicable_to', 'all')
+                    ->orWhere(function ($q2) use ($listing) {
+                        $q2->where('applicable_to', 'listings')
+                            ->whereHas('restrictions', fn ($r) => $r
+                                ->where('restrictable_type', Listing::class)
+                                ->where('restrictable_id', $listing->id));
+                    })
+                    ->orWhere(function ($q2) use ($listing) {
+                        $q2->where('applicable_to', 'categories')
+                            ->whereHas('restrictions', fn ($r) => $r
+                                ->where('restrictable_type', Category::class)
+                                ->where('restrictable_id', $listing->category_id));
+                    });
+            })
+            ->exists();
+
         $reviews = collect();
         $canReview = false;
         $alreadyReviewed = false;
@@ -267,6 +285,7 @@ class ListingController extends Controller
             'variantsData',
             'variantAttributeLabels',
             'relatedListings',
+            'hasCoupons',
             'reviews',
             'canReview',
             'alreadyReviewed'
@@ -280,7 +299,7 @@ class ListingController extends Controller
     {
         $request->validate(['code' => 'required|string|max:50']);
 
-        $coupon = Coupon::where('code', $request->code)->first();
+        $coupon = Coupon::whereRaw('UPPER(code) = UPPER(?)', [$request->code])->first();
 
         if (! $coupon) {
             return response()->json(['success' => false, 'message' => 'Invalid coupon code.'], 422);

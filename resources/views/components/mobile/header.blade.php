@@ -198,9 +198,11 @@
                         <span class="text-base font-semibold text-gray-900">Total</span>
                         <span class="text-base font-bold text-gray-900" x-text="fmt(total, 'USD')"></span>
                     </div>
-                    <button class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition-colors">
+                    <a href="{{ route('checkout.index') }}"
+                       :class="selectedCount === 0 ? 'pointer-events-none opacity-50' : ''"
+                       class="block w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition-colors text-center">
                         Place Order
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -262,6 +264,15 @@ function cartPanel() {
                 .catch(() => { this.loading = false; });
         },
 
+        _syncCheckout() {
+            if (!window.location.pathname.startsWith('/checkout')) { return; }
+            if (this.selectedCount === 0) {
+                window.location.replace('{{ route('home') }}');
+            } else {
+                window.location.reload();
+            }
+        },
+
         toggleSelectAll(checked) {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
             fetch('/api/cart/select-all', {
@@ -271,6 +282,7 @@ function cartPanel() {
             }).then(() => {
                 this.items.forEach(i => i.is_selected = checked);
                 this.recalcTotal();
+                this._syncCheckout();
             });
         },
 
@@ -282,7 +294,7 @@ function cartPanel() {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
                 body: JSON.stringify({ is_selected: checked }),
-            });
+            }).then(() => this._syncCheckout());
         },
 
         changeQty(item, delta) {
@@ -296,6 +308,10 @@ function cartPanel() {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
                 body: JSON.stringify({ quantity: newQty }),
+            }).then(() => {
+                if (window.location.pathname.startsWith('/checkout')) {
+                    window.location.reload();
+                }
             });
         },
 
@@ -308,6 +324,7 @@ function cartPanel() {
                 this.items = this.items.filter(i => i.id !== item.id);
                 this.count = data.count;
                 this.recalcTotal();
+                this._syncCheckout();
             });
         },
 
@@ -320,6 +337,7 @@ function cartPanel() {
                 this.items = this.items.filter(i => !i.is_selected);
                 this.count = data.count;
                 this.recalcTotal();
+                this._syncCheckout();
             });
         },
 

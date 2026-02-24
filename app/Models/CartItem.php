@@ -16,11 +16,14 @@ class CartItem extends Model
         'variation_id',
         'quantity',
         'is_selected',
+        'coupon_code',
+        'coupon_discount',
     ];
 
     protected $casts = [
         'quantity' => 'integer',
         'is_selected' => 'boolean',
+        'coupon_discount' => 'float',
     ];
 
     public function user(): BelongsTo

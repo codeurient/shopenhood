@@ -218,7 +218,13 @@
                 fetch('/api/cart', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
-                    body: JSON.stringify({ listing_id: {{ $listing->id }}, variation_id: variationId, quantity: this.quantity }),
+                    body: JSON.stringify({
+                        listing_id: {{ $listing->id }},
+                        variation_id: variationId,
+                        quantity: this.quantity,
+                        coupon_code: this.couponApplied ? this.couponCode.toUpperCase() : null,
+                        coupon_discount: this.couponApplied ? this.couponDiscountAmount : null,
+                    }),
                 })
                 .then(r => r.json())
                 .then(() => {
@@ -234,7 +240,9 @@
                 this.couponLoading = true;
                 this.couponError = '';
                 this.couponSuccess = '';
-                const currentPrice = this.displayPrice ? this.displayPrice.current_price : 0;
+                const currentPrice = this.displayPrice
+                    ? this.displayPrice.current_price
+                    : (window.LISTING_PAGE.listingPrice?.current_price ?? 0);
                 const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '';
                 fetch('{{ route('listings.coupon.validate', $listing) }}', {
                     method: 'POST',
@@ -452,6 +460,7 @@
         {{-- ================================================================ --}}
         {{-- COUPON                                                            --}}
         {{-- ================================================================ --}}
+        @if($hasCoupons)
         <div class="bg-white mt-2 px-4 py-3">
             <div class="flex items-center gap-2">
                 <div class="relative flex-1">
@@ -506,6 +515,7 @@
                 </p>
             </div>
         </div>
+        @endif
 
         {{-- ================================================================ --}}
         {{-- VARIANTS                                                          --}}

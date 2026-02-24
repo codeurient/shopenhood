@@ -10,10 +10,13 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\AddressController as UserAddressController;
 use App\Http\Controllers\User\BusinessProfileController as UserBusinessProfileController;
+use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\CouponController as UserCouponController;
 use App\Http\Controllers\User\FavoriteController as UserFavoriteController;
 use App\Http\Controllers\User\ListingController as UserListingController;
 use App\Http\Controllers\User\NotificationsController as UserNotificationsController;
+use App\Http\Controllers\User\PurchaseController;
+use App\Http\Controllers\User\SalesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -145,6 +148,18 @@ Route::middleware('auth')->group(function () {
     // API: User Addresses (for checkout)
     Route::get('/api/user/addresses', [UserAddressController::class, 'getAddresses'])->name('api.user.addresses');
     Route::get('/api/user/addresses/{address}', [UserAddressController::class, 'getAddress'])->name('api.user.address');
+
+    // Checkout
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::get('/api/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
+    Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
+
+    // Buyer purchase history
+    Route::get('/my-orders', [PurchaseController::class, 'index'])->name('user.purchases.index');
+    Route::get('/my-orders/{purchase}', [PurchaseController::class, 'show'])->name('user.purchases.show');
+
+    // Seller incoming orders
+    Route::get('/my-sales', [SalesController::class, 'index'])->name('user.sales.index');
 
     // Business Profile & Listings
     Route::prefix('business')->name('business.')->group(function () {
