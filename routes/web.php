@@ -67,6 +67,9 @@ Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])
 Route::post('/listings/{listing}/available-options', [ListingController::class, 'getAvailableOptions'])
     ->middleware('throttle:60,1')
     ->name('listings.available-options');
+Route::post('/listings/{listing}/coupon/validate', [ListingController::class, 'validateCoupon'])
+    ->middleware('throttle:20,1')
+    ->name('listings.coupon.validate');
 Route::get('/variations/{variation}', [ListingController::class, 'getVariation'])
     ->where('variation', '[0-9]+')
     ->name('variations.show');

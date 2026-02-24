@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Coupon;
 use App\Models\Listing;
 use App\Models\ListingReview;
 use App\Models\ListingType;
@@ -11,6 +12,7 @@ use App\Models\ProductVariation;
 use App\Models\SearchQuery;
 use App\Models\Variant;
 use App\Models\VariantItem;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -269,6 +271,93 @@ class ListingController extends Controller
             'canReview',
             'alreadyReviewed'
         ));
+    }
+
+    /**
+     * Validate a coupon code against a specific listing and return the discount amount.
+     */
+    public function validateCoupon(Request $request, Listing $listing): JsonResponse
+    {
+        $request->validate(['code' => 'required|string|max:50']);
+
+        $coupon = Coupon::where('code', $request->code)->first();
+
+        if (! $coupon) {
+            return response()->json(['success' => false, 'message' => 'Invalid coupon code.'], 422);
+        }
+
+        if (! $coupon->is_active) {
+            return response()->json(['success' => false, 'message' => 'This coupon is no longer active.'], 422);
+        }
+
+        if ($coupon->starts_at && $coupon->starts_at->isFuture()) {
+            return response()->json(['success' => false, 'message' => 'This coupon is not yet valid.'], 422);
+        }
+
+        if ($coupon->expires_at && $coupon->expires_at->isPast()) {
+            return response()->json(['success' => false, 'message' => 'This coupon has expired.'], 422);
+        }
+
+        if ($coupon->usage_limit !== null && $coupon->usage_count >= $coupon->usage_limit) {
+            return response()->json(['success' => false, 'message' => 'The limit has been reached.'], 422);
+        }
+
+        if ($coupon->per_user_limit !== null && auth()->check()) {
+            $userUsageCount = $coupon->usages()->where('user_id', auth()->id())->count();
+            if ($userUsageCount >= $coupon->per_user_limit) {
+                return response()->json(['success' => false, 'message' => 'You have already used this coupon the maximum number of times.'], 422);
+            }
+        }
+
+        if ($coupon->applicable_to === 'listings') {
+            $isRestricted = $coupon->restrictions()
+                ->where('restrictable_type', Listing::class)
+                ->where('restrictable_id', $listing->id)
+                ->exists();
+            if (! $isRestricted) {
+                return response()->json(['success' => false, 'message' => 'This coupon is not applicable to this product.'], 422);
+            }
+        } elseif ($coupon->applicable_to === 'categories') {
+            $isRestricted = $coupon->restrictions()
+                ->where('restrictable_type', Category::class)
+                ->where('restrictable_id', $listing->category_id)
+                ->exists();
+            if (! $isRestricted) {
+                return response()->json(['success' => false, 'message' => 'This coupon is not applicable to this category.'], 422);
+            }
+        } elseif ($coupon->applicable_to === 'users') {
+            return response()->json(['success' => false, 'message' => 'This coupon is not applicable here.'], 422);
+        }
+
+        $price = (float) $request->input('price', $listing->base_price ?? 0);
+
+        if ($coupon->min_purchase_amount !== null && $price < (float) $coupon->min_purchase_amount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'A minimum purchase of '.number_format($coupon->min_purchase_amount, 2).' is required.',
+            ], 422);
+        }
+
+        if ($coupon->type === 'percentage') {
+            $discount = $price * ((float) $coupon->value / 100);
+            if ($coupon->max_discount_amount !== null) {
+                $discount = min($discount, (float) $coupon->max_discount_amount);
+            }
+        } else {
+            $discount = min((float) $coupon->value, $price);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Coupon applied successfully!',
+            'coupon' => [
+                'code' => $coupon->code,
+                'type' => $coupon->type,
+                'value' => (float) $coupon->value,
+                'discount_amount' => round($discount, 2),
+                'final_price' => round(max(0, $price - $discount), 2),
+            ],
+        ]);
     }
 
     /**

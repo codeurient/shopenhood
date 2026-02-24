@@ -169,6 +169,7 @@
                 <tr>
                     <th class="px-4 py-3">
                         <input type="checkbox"
+                               id="select-all"
                                @change="selectedIds = $event.target.checked ? [{{ $listings->pluck('id')->join(',') }}] : []"
                                class="rounded border-gray-300">
                     </th>

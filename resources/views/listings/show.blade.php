@@ -53,6 +53,13 @@
             adding: false,
             added: false,
 
+            couponCode: '',
+            couponLoading: false,
+            couponError: '',
+            couponSuccess: '',
+            couponDiscountAmount: 0,
+            couponApplied: false,
+
             prevImage() {
                 this.currentImage = (this.currentImage - 1 + this.totalImages) % this.totalImages;
                 this.resetAutoSlide();
@@ -221,6 +228,43 @@
                     setTimeout(() => { this.added = false; }, 3000);
                 })
                 .catch(() => { this.adding = false; });
+            },
+            applyCoupon() {
+                if (!this.couponCode.trim() || this.couponLoading) return;
+                this.couponLoading = true;
+                this.couponError = '';
+                this.couponSuccess = '';
+                const currentPrice = this.displayPrice ? this.displayPrice.current_price : 0;
+                const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '';
+                fetch('{{ route('listings.coupon.validate', $listing) }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    body: JSON.stringify({ code: this.couponCode, price: currentPrice }),
+                })
+                .then(r => r.json().then(data => ({ ok: r.ok, data })))
+                .then(({ ok, data }) => {
+                    this.couponLoading = false;
+                    if (ok && data.success) {
+                        this.couponApplied = true;
+                        this.couponDiscountAmount = data.coupon.discount_amount;
+                        this.couponSuccess = data.message;
+                    } else {
+                        this.couponApplied = false;
+                        this.couponDiscountAmount = 0;
+                        this.couponError = data.message || 'Invalid coupon code.';
+                    }
+                })
+                .catch(() => {
+                    this.couponLoading = false;
+                    this.couponError = 'Something went wrong. Please try again.';
+                });
+            },
+            removeCoupon() {
+                this.couponApplied = false;
+                this.couponDiscountAmount = 0;
+                this.couponCode = '';
+                this.couponSuccess = '';
+                this.couponError = '';
             },
             init() {
                 const defaultVar = this.allVariations.find(v => v.is_default) || null;
@@ -402,6 +446,64 @@
                         Out of stock
                     </span>
                 </template>
+            </div>
+        </div>
+
+        {{-- ================================================================ --}}
+        {{-- COUPON                                                            --}}
+        {{-- ================================================================ --}}
+        <div class="bg-white mt-2 px-4 py-3">
+            <div class="flex items-center gap-2">
+                <div class="relative flex-1">
+                    <input type="text"
+                           id="coupon_code"
+                           name="coupon_code"
+                           x-model="couponCode"
+                           :disabled="couponApplied"
+                           @keydown.enter.prevent="applyCoupon()"
+                           placeholder="Enter coupon code"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500 uppercase placeholder:normal-case"
+                           autocomplete="off">
+                </div>
+                <template x-if="!couponApplied">
+                    <button @click="applyCoupon()"
+                            :disabled="!couponCode.trim() || couponLoading"
+                            class="flex-shrink-0 px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                        <svg x-show="couponLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span x-text="couponLoading ? 'Checking...' : 'Apply'"></span>
+                    </button>
+                </template>
+                <template x-if="couponApplied">
+                    <button @click="removeCoupon()"
+                            class="flex-shrink-0 px-4 py-2 border border-gray-300 hover:border-gray-400 text-gray-600 text-sm font-semibold rounded-lg transition-colors">
+                        Remove
+                    </button>
+                </template>
+            </div>
+
+            {{-- Success --}}
+            <div x-show="couponApplied && couponSuccess" x-cloak class="mt-2 flex items-center justify-between">
+                <span class="text-xs text-success-600 font-medium flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span x-text="couponSuccess"></span>
+                </span>
+                <span class="text-xs font-semibold text-success-600"
+                      x-text="'−' + formatPrice(couponDiscountAmount) + ' ' + currency"></span>
+            </div>
+
+            {{-- Error --}}
+            <div x-show="couponError" x-cloak class="mt-2">
+                <p class="text-xs text-danger-500 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <span x-text="couponError"></span>
+                </p>
             </div>
         </div>
 

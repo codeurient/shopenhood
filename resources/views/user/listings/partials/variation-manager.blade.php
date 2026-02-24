@@ -428,6 +428,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Order Qty</label>
                                         <input type="number"
+                                               id="wholesale_min_order_qty"
                                                x-model="variations[wholesaleModalIndex].wholesale_min_order_qty"
                                                min="1" placeholder="e.g. 10"
                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
@@ -435,6 +436,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Qty Increment</label>
                                         <input type="number"
+                                               id="wholesale_qty_increment"
                                                x-model="variations[wholesaleModalIndex].wholesale_qty_increment"
                                                min="1" placeholder="e.g. 5"
                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
@@ -443,6 +445,7 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lead Time (days)</label>
                                     <input type="number"
+                                           id="wholesale_lead_time_days"
                                            x-model="variations[wholesaleModalIndex].wholesale_lead_time_days"
                                            min="0" placeholder="e.g. 7"
                                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
@@ -459,6 +462,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sample Price</label>
                                         <input type="number"
+                                               id="wholesale_sample_price"
                                                x-model="variations[wholesaleModalIndex].wholesale_sample_price"
                                                step="0.01" min="0" placeholder="0.00"
                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
@@ -466,7 +470,8 @@
                                 </template>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Wholesale Terms</label>
-                                    <textarea x-model="variations[wholesaleModalIndex].wholesale_terms"
+                                    <textarea id="wholesale_terms"
+                                              x-model="variations[wholesaleModalIndex].wholesale_terms"
                                               rows="3"
                                               placeholder="Describe wholesale terms, requirements, or conditions..."
                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"></textarea>

@@ -55,6 +55,7 @@
                             <tr>
                                 <th class="px-4 py-3">
                                     <input type="checkbox"
+                                           id="select-all-active"
                                            @change="selectedActiveIds = $event.target.checked ? [{{ $activeListings->pluck('id')->join(',') }}] : []"
                                            class="rounded border-gray-300 dark:border-gray-600">
                                 </th>
@@ -217,6 +218,7 @@
                             <tr>
                                 <th class="px-4 py-3">
                                     <input type="checkbox"
+                                           id="select-all-trashed"
                                            @change="selectedTrashedIds = $event.target.checked ? [{{ $trashedListings->pluck('id')->join(',') }}] : []"
                                            class="rounded border-gray-300 dark:border-gray-600">
                                 </th>

@@ -95,6 +95,7 @@
                 <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 flex-shrink-0">
                     <label class="flex items-center gap-2 cursor-pointer select-none">
                         <input type="checkbox"
+                               id="select-all-cart"
                                :checked="allSelected"
                                @change="toggleSelectAll($event.target.checked)"
                                class="w-5 h-5 rounded">
@@ -116,6 +117,7 @@
                             <!-- Checkbox -->
                             <div class="flex-shrink-0 pt-1">
                                 <input type="checkbox"
+                                       :id="`cart-item-${item.id}`"
                                        :checked="item.is_selected"
                                        @change="toggleItem(item, $event.target.checked)"
                                        class="w-5 h-5 rounded">
