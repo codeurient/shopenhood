@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-guest-layout>
     <x-slot name="header">
         <div>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Set Up Your Business Profile</h2>
@@ -8,6 +8,10 @@
 
     <div class="py-6">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="mb-6 px-4 sm:px-0">
+                <h1 class="text-xl font-semibold text-gray-800">Set Up Your Business Profile</h1>
+                <p class="text-sm text-gray-500 mt-1">Complete your business profile to start selling</p>
+            </div>
             @if(session('info'))
                 <div class="mb-4 p-4 bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-200 rounded-lg">
                     {{ session('info') }}
@@ -191,4 +195,4 @@
             </form>
         </div>
     </div>
-</x-app-layout>
+</x-guest-layout>

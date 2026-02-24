@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-guest-layout>
     <x-slot name="header">
         <div>
             <a href="{{ route('business.profile') }}" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 mb-2 inline-block">
@@ -166,4 +166,4 @@
             </form>
         </div>
     </div>
-</x-app-layout>
+</x-guest-layout>
