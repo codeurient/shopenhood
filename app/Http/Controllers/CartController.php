@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CartItem;
+use App\Models\Listing;
 use App\Models\ProductVariation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -50,6 +51,12 @@ class CartController extends Controller
             'coupon_code' => ['nullable', 'string', 'max:50'],
             'coupon_discount' => ['nullable', 'numeric', 'min:0'],
         ]);
+
+        $listing = Listing::findOrFail($request->listing_id);
+
+        if ($listing->user_id === Auth::id()) {
+            return response()->json(['message' => 'You cannot add your own listing to the cart.'], 422);
+        }
 
         $cartItem = CartItem::firstOrNew([
             'user_id' => Auth::id(),

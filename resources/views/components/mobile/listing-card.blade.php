@@ -105,8 +105,8 @@
                 </svg>
             </button>
 
-            @if($listing->listing_mode === 'business')
-            <!-- Add to Cart Button (business listings only) -->
+            @if($listing->listing_mode === 'business' && (!auth()->check() || auth()->id() !== $listing->user_id))
+            <!-- Add to Cart Button (business listings only, hidden for listing owner) -->
             <button type="button"
                     x-data="cardCartBtn({{ $listing->id }}, {{ $listing->defaultVariation?->id ?? 'null' }})"
                     @click.prevent.stop="add()"

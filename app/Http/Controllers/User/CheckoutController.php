@@ -187,6 +187,11 @@ class CheckoutController extends Controller
             return response()->json(['message' => 'No items selected for checkout.'], 422);
         }
 
+        $ownedItem = $items->first(fn (CartItem $item) => $item->listing?->user_id === Auth::id());
+        if ($ownedItem) {
+            return response()->json(['message' => 'You cannot purchase your own item.'], 422);
+        }
+
         $currency = $items->first()?->listing?->currency ?? 'USD';
         $deliverySelections = $request->delivery_selections ?? [];
 

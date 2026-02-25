@@ -303,3 +303,72 @@ it('confirm returns redirect url to purchase show page', function () {
 
     expect($response->json('redirect_url'))->toContain('/my-orders/');
 });
+
+// ==========================================
+// OWNERSHIP RESTRICTION — CONFIRM
+// ==========================================
+
+it('confirm blocks checkout when selected cart items include the buyer\'s own listing', function () {
+    $owner = User::factory()->create();
+    $address = makeAddress($owner);
+
+    // Owner adds their own listing to cart directly (bypassing cart store validation)
+    $listing = Listing::factory()->for($owner)->create([
+        'status' => 'active',
+        'base_price' => 30.00,
+        'currency' => 'USD',
+        'listing_mode' => 'business',
+    ]);
+    addToCart($owner, $listing, selected: true);
+
+    $this->actingAs($owner)->postJson(route('checkout.confirm'), [
+        'address_id' => $address->id,
+        'payment_method' => 'cash_on_delivery',
+    ])->assertUnprocessable()
+        ->assertJson(['message' => 'You cannot purchase your own item.']);
+});
+
+it('confirm blocks checkout when only one of multiple items belongs to the buyer', function () {
+    $owner = User::factory()->create();
+    $address = makeAddress($owner);
+
+    // Own listing
+    $ownListing = Listing::factory()->for($owner)->create([
+        'status' => 'active',
+        'base_price' => 20.00,
+        'currency' => 'USD',
+        'listing_mode' => 'business',
+    ]);
+    addToCart($owner, $ownListing, selected: true);
+
+    // Listing from another seller
+    [$otherSeller, $otherListing] = makeSellerWithListing(['listing_mode' => 'business']);
+    addToCart($owner, $otherListing, selected: true);
+
+    $this->actingAs($owner)->postJson(route('checkout.confirm'), [
+        'address_id' => $address->id,
+        'payment_method' => 'cash_on_delivery',
+    ])->assertUnprocessable()
+        ->assertJson(['message' => 'You cannot purchase your own item.']);
+});
+
+it('confirm does not create any order when blocked by ownership restriction', function () {
+    $owner = User::factory()->create();
+    $address = makeAddress($owner);
+
+    $listing = Listing::factory()->for($owner)->create([
+        'status' => 'active',
+        'base_price' => 15.00,
+        'currency' => 'USD',
+        'listing_mode' => 'business',
+    ]);
+    addToCart($owner, $listing, selected: true);
+
+    $this->actingAs($owner)->postJson(route('checkout.confirm'), [
+        'address_id' => $address->id,
+        'payment_method' => 'cash_on_delivery',
+    ])->assertUnprocessable();
+
+    expect(Purchase::where('buyer_id', $owner->id)->count())->toBe(0);
+    expect(Order::where('buyer_id', $owner->id)->count())->toBe(0);
+});
