@@ -79,6 +79,85 @@
                 </form>
             </div>
 
+            <!-- Profile Picture -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Profile Picture</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Upload a profile picture that will be shown on your listings and seller profile.
+                </p>
+
+                <form method="POST" action="{{ route('profile.avatar') }}" enctype="multipart/form-data" class="mt-6">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                            @if($user->avatar)
+                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="Profile picture" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center bg-gray-700">
+                                    <span class="text-lg font-bold text-white">{{ strtoupper(substr($user->name, 0, 2)) }}</span>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="flex-1">
+                            <input type="file" id="avatar" name="avatar" accept="image/jpeg,image/png,image/jpg,image/webp"
+                                   class="block w-full text-sm text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 dark:bg-gray-700 focus:ring-2 focus:ring-primary-500">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max 2MB. JPEG, PNG, WEBP. Leave empty to keep current.</p>
+                            <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 mt-4">
+                        <x-primary-button>{{ __('Save Picture') }}</x-primary-button>
+
+                        @if (session('status') === 'avatar-updated')
+                            <p class="text-sm text-green-600 dark:text-green-400">Saved.</p>
+                        @endif
+                    </div>
+                </form>
+            </div>
+
+            <!-- Banner Image -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Banner Image</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Upload a banner image shown at the top of your seller profile.
+                </p>
+
+                <form method="POST" action="{{ route('profile.banner') }}" enctype="multipart/form-data" class="mt-6">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="space-y-3">
+                        @if($user->banner)
+                            <div class="w-full h-24 rounded-lg overflow-hidden bg-gray-100">
+                                <img src="{{ asset('storage/' . $user->banner) }}" alt="Banner" class="w-full h-full object-cover">
+                            </div>
+                        @else
+                            <div class="w-full h-24 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                <span class="text-sm text-gray-400 dark:text-gray-500">No banner uploaded</span>
+                            </div>
+                        @endif
+
+                        <div>
+                            <input type="file" id="banner" name="banner" accept="image/jpeg,image/png,image/jpg,image/webp"
+                                   class="block w-full text-sm text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 dark:bg-gray-700 focus:ring-2 focus:ring-primary-500">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max 4MB. JPEG, PNG, WEBP. Recommended: 1200×300px.</p>
+                            <x-input-error :messages="$errors->get('banner')" class="mt-2" />
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 mt-4">
+                        <x-primary-button>{{ __('Save Banner') }}</x-primary-button>
+
+                        @if (session('status') === 'banner-updated')
+                            <p class="text-sm text-green-600 dark:text-green-400">Saved.</p>
+                        @endif
+                    </div>
+                </form>
+            </div>
+
             @if($user->isBusinessUser() && $user->businessProfile)
             <!-- Branding -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">

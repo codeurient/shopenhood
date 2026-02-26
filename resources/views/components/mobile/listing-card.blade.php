@@ -52,6 +52,32 @@
 
     // Verified badge: seller has an admin-approved business profile
     $isOwnerVerified = $listing->user?->businessProfile?->isApproved() ?? false;
+
+    // Seller total sold (static cache to avoid N+1 per seller across card renders)
+    static $sellerTotals = [];
+    $sellerId = $listing->user_id;
+    if ($listing->user && ! array_key_exists($sellerId, $sellerTotals)) {
+        $sellerTotals[$sellerId] = (int) \App\Models\Order::where('seller_id', $sellerId)
+            ->whereNotIn('status', ['cancelled'])
+            ->sum('quantity');
+    }
+    $sellerTotalSold = $sellerTotals[$sellerId] ?? 0;
+
+    // Seller status badge
+    $sellerBadge = null;
+    if ($sellerTotalSold >= 100000) {
+        $sellerBadge = ['label' => 'Expert Seller', 'color' => 'text-yellow-500'];
+    } elseif ($sellerTotalSold >= 50000) {
+        $sellerBadge = ['label' => 'Top Seller', 'color' => 'text-red-400'];
+    } elseif ($sellerTotalSold >= 10000) {
+        $sellerBadge = ['label' => 'Rising Seller', 'color' => 'text-blue-400'];
+    }
+
+    // Seller logo: business profile logo first, then user avatar, then initials fallback
+    $sellerLogo = $listing->user?->businessProfile?->logo
+        ? asset('storage/' . $listing->user->businessProfile->logo)
+        : ($listing->user?->avatar ? asset('storage/' . $listing->user->avatar) : null);
+    $sellerInitials = $listing->user ? strtoupper(substr($listing->user->name, 0, 2)) : 'S';
 @endphp
 
 <!-- Listing Card -->
@@ -181,6 +207,28 @@
             </h3>
         </div>
 
+
+        <!-- Sold + Seller row -->
+        <div class="flex items-center gap-1.5 mt-1 overflow-hidden" style="font-size: 10px;">
+            <span class="text-gray-500 flex-shrink-0">{{ number_format($sellerTotalSold) }}+ sold</span>
+            <span class="text-gray-300 flex-shrink-0">|</span>
+            <div class="flex items-center gap-1 min-w-0">
+                @if($sellerLogo)
+                    <img src="{{ $sellerLogo }}" alt="Seller" class="w-3 h-3 rounded-full object-cover flex-shrink-0">
+                @else
+                    <div class="w-3 h-3 rounded-full bg-gray-700 flex-shrink-0"></div>
+                @endif
+                <span class="text-gray-500 flex-shrink-0">Seller</span>
+                @if($sellerBadge)
+                    <svg class="w-2.5 h-2.5 {{ $sellerBadge['color'] }} flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <span class="{{ $sellerBadge['color'] }} font-semibold truncate">{{ $sellerBadge['label'] }}</span>
+                @endif
+            </div>
+        </div>
+
+
         <!-- Location & Condition -->
         <div class="flex items-center justify-between text-gray-500" style="font-size: 11px;">
             <!-- Left: Country Code, City -->
@@ -206,6 +254,8 @@
                 </span>
             @endif
         </div>
+
+
     </div>
 </a>
 

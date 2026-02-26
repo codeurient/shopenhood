@@ -278,6 +278,28 @@ class ListingController extends Controller
             }
         }
 
+        $isFavorited = auth()->check()
+            && auth()->user()->favoriteListings()->where('listing_id', $listing->id)->exists();
+
+        $listingTotalSold = (int) Order::where('listing_id', $listing->id)
+            ->whereNotIn('status', ['cancelled'])
+            ->sum('quantity');
+
+        $listingSeller = $listing->user;
+
+        $sellerTotalSold = $listingSeller
+            ? (int) Order::where('seller_id', $listingSeller->id)
+                ->whereNotIn('status', ['cancelled'])
+                ->sum('quantity')
+            : 0;
+
+        $sellerAvgRating = 0;
+        if ($listingSeller) {
+            $avg = ListingReview::whereHas('listing', fn ($q) => $q->where('user_id', $listingSeller->id))
+                ->avg('rating');
+            $sellerAvgRating = round($avg ?? 0, 1);
+        }
+
         return view('listings.show', compact(
             'listing',
             'defaultVariation',
@@ -288,7 +310,11 @@ class ListingController extends Controller
             'hasCoupons',
             'reviews',
             'canReview',
-            'alreadyReviewed'
+            'alreadyReviewed',
+            'isFavorited',
+            'listingTotalSold',
+            'sellerTotalSold',
+            'sellerAvgRating'
         ));
     }
 

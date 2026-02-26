@@ -40,6 +40,48 @@ class ProfileController extends Controller
     }
 
     /**
+     * Update the user's avatar (profile picture).
+     */
+    public function updateAvatar(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'avatar' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $user->avatar = $request->file('avatar')->store('avatars', 'public');
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('status', 'avatar-updated');
+    }
+
+    /**
+     * Update the user's banner image.
+     */
+    public function updateBanner(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'banner' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:4096'],
+        ]);
+
+        $user = $request->user();
+
+        if ($user->banner) {
+            Storage::disk('public')->delete($user->banner);
+        }
+
+        $user->banner = $request->file('banner')->store('banners', 'public');
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('status', 'banner-updated');
+    }
+
+    /**
      * Update the business user's branding (logo and banner).
      */
     public function updateBranding(UpdateProfileBrandingRequest $request): RedirectResponse

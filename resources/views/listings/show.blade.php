@@ -13,6 +13,33 @@
 
     @push('scripts')
     <script>
+        function showFavoriteBtn(listingId, initialFavorited) {
+            return {
+                favorited: initialFavorited,
+                loading: false,
+                toggle() {
+                    @guest
+                        window.location.href = '{{ route('login') }}';
+                        return;
+                    @endguest
+                    if (this.loading) { return; }
+                    this.loading = true;
+                    const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+                    fetch(`/api/favorites/${listingId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        this.favorited = data.favorited;
+                        this.loading = false;
+                    })
+                    .catch(() => { this.loading = false; });
+                },
+            };
+        }
+    </script>
+    <script>
         window.LISTING_PAGE = {
             allVariations: @json($variationsData->values()),
             listingImages: @json($images->map(fn($img) => ['url' => asset('storage/' . $img->image_path)])->values()),
@@ -331,8 +358,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
                     </svg>
                 </button>
-                <button class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button x-data="showFavoriteBtn({{ $listing->id }}, {{ $isFavorited ? 'true' : 'false' }})"
+                        @click.stop="toggle()"
+                        :title="favorited ? 'Remove from favorites' : 'Add to favorites'"
+                        class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm">
+                    <svg class="w-5 h-5 transition-colors"
+                         :fill="favorited ? '#ef4444' : 'none'"
+                         :stroke="favorited ? '#ef4444' : 'white'"
+                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                     </svg>
                 </button>
@@ -395,12 +428,35 @@
             </div>
 
             {{-- Sold + Seller row --}}
+            @php
+                $sellerDisplayBadge = null;
+                if ($sellerTotalSold >= 100000) {
+                    $sellerDisplayBadge = ['label' => 'Expert Seller', 'color' => 'text-yellow-500'];
+                } elseif ($sellerTotalSold >= 50000) {
+                    $sellerDisplayBadge = ['label' => 'Top Seller', 'color' => 'text-red-400'];
+                } elseif ($sellerTotalSold >= 10000) {
+                    $sellerDisplayBadge = ['label' => 'Rising Seller', 'color' => 'text-blue-400'];
+                }
+                $sellerLogoForInfo = $seller?->businessProfile?->logo
+                    ? asset('storage/' . $seller->businessProfile->logo)
+                    : ($seller?->avatar ? asset('storage/' . $seller->avatar) : null);
+            @endphp
             <div class="flex items-center gap-2 mt-1.5">
-                <span class="text-xs text-gray-500">{{ number_format($listing->views_count ?? 0) }}+ sold</span>
+                <span class="text-xs text-gray-500">{{ number_format($listingTotalSold) }}+ sold</span>
                 <span class="text-gray-300 text-xs">|</span>
                 <div class="flex items-center gap-1">
+                    @if($sellerLogoForInfo)
+                        <img src="{{ $sellerLogoForInfo }}" alt="Seller" class="w-3 h-3 rounded-full object-cover">
+                    @else
+                        <div class="w-3 h-3 rounded-full bg-gray-700"></div>
+                    @endif
                     <span class="text-xs text-gray-500">Seller</span>
-                    <div class="w-3 h-3 rounded-full bg-gray-700"></div>
+                    @if($sellerDisplayBadge)
+                        <svg class="w-3 h-3 {{ $sellerDisplayBadge['color'] }}" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        <span class="text-xs {{ $sellerDisplayBadge['color'] }} font-semibold">{{ $sellerDisplayBadge['label'] }}</span>
+                    @endif
                 </div>
             </div>
 
@@ -1001,12 +1057,17 @@
         {{-- SELLER INFO                                                       --}}
         {{-- ================================================================ --}}
         @if($seller)
+        @php
+            $sellerSectionLogo = $seller->businessProfile?->logo
+                ? asset('storage/' . $seller->businessProfile->logo)
+                : ($seller->avatar ? asset('storage/' . $seller->avatar) : null);
+        @endphp
         <div class="bg-white mt-2 px-4 py-4">
             <div class="flex items-center gap-3">
                 {{-- Avatar --}}
                 <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-                    @if($seller->profile_photo_path)
-                        <img src="{{ asset('storage/' . $seller->profile_photo_path) }}" alt="{{ $seller->name }}" class="w-full h-full object-cover">
+                    @if($sellerSectionLogo)
+                        <img src="{{ $sellerSectionLogo }}" alt="{{ $seller->name }}" class="w-full h-full object-cover">
                     @else
                         <div class="w-full h-full flex items-center justify-center bg-gray-700">
                             <span class="text-sm font-bold text-white">{{ strtoupper(substr($seller->name, 0, 2)) }}</span>
@@ -1018,18 +1079,18 @@
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-1.5 flex-wrap">
                         <span class="text-sm font-semibold text-gray-900 truncate">{{ $seller->name }}</span>
-                        @if(method_exists($seller, 'isBusinessUser') && $seller->isBusinessUser())
-                        <span class="flex items-center gap-0.5 text-xs text-orange-500 font-semibold">
+                        @if($sellerDisplayBadge)
+                        <span class="flex items-center gap-0.5 text-xs {{ $sellerDisplayBadge['color'] }} font-semibold">
                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
-                            Star Seller
+                            {{ $sellerDisplayBadge['label'] }}
                         </span>
                         @endif
                     </div>
                     <p class="text-xs text-gray-500 mt-0.5">
                         @if($listing->store_name){{ $listing->store_name }} · @endif
-                        4.7 ★
+                        {{ $sellerAvgRating > 0 ? $sellerAvgRating . ' ★' : 'No ratings yet' }}
                     </p>
                     <div class="flex items-center gap-1 mt-0.5">
                         <div class="w-2 h-2 rounded-full bg-green-500"></div>

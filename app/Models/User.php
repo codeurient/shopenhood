@@ -31,6 +31,7 @@ class User extends Authenticatable
         'daily_listing_count',
         'last_listing_date',
         'avatar',
+        'banner',
         'bio',
     ];
 
