@@ -87,6 +87,9 @@
         ? asset('storage/' . $listing->user->businessProfile->logo)
         : ($listing->user?->avatar ? asset('storage/' . $listing->user->avatar) : null);
     $sellerInitials = $listing->user ? strtoupper(substr($listing->user->name, 0, 2)) : 'S';
+
+    // Availability
+    $isByOrder = $listing->availability_type === 'available_by_order';
 @endphp
 
 <!-- Listing Card -->
@@ -105,6 +108,15 @@
                 <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
+            </div>
+        @endif
+
+        {{-- By Order badge (right side) --}}
+        @if($isByOrder)
+            <div class="absolute bottom-2 right-2 pointer-events-none">
+                <span class="px-2 py-0.5 text-xs font-semibold text-white bg-gray-700 rounded-md shadow-md">
+                    By Order
+                </span>
             </div>
         @endif
 
@@ -164,19 +176,13 @@
 
         <!-- Store Badge & Wholesale Icon (Bottom Left) -->
         <div class="absolute bottom-2 left-2 flex items-center gap-2">
-            @if($listing->listing_mode === 'business')
+            @if($listing->has_store)
                 <span class="px-2 py-0.5 text-xs font-semibold text-white bg-primary-600 rounded-md shadow-md">
                     Store
                 </span>
             @endif
 
-            @if($listing->is_by_order)
-                <span class="px-2 py-0.5 text-xs font-semibold text-white bg-gray-700 rounded-md shadow-md">
-                    By Order
-                </span>
-            @endif
-
-            @if($listing->is_wholesale && $listing->is_by_order)
+            @if($listing->is_wholesale)
                 <i class="fa-brands fa-shirtsinbulk text-white" style="font-size: 25px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>
             @endif
         </div>

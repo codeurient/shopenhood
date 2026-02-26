@@ -144,6 +144,46 @@
                                     </div>
                                 </div>
 
+                                {{-- Product Availability --}}
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Product Availability <span class="text-red-500">*</span></label>
+                                    <div class="flex gap-6">
+                                        <label class="flex items-center">
+                                            <input type="radio" name="availability_type" value="in_stock"
+                                                   {{ old('availability_type', 'in_stock') === 'in_stock' ? 'checked' : '' }}
+                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">In Stock</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="availability_type" value="available_by_order"
+                                                   {{ old('availability_type') === 'available_by_order' ? 'checked' : '' }}
+                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Available by Order</span>
+                                        </label>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Select "Available by Order" if the item is not currently in stock but can be supplied upon request.</p>
+                                </div>
+
+                                {{-- Store Type --}}
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Store Type</label>
+                                    <div class="flex gap-6">
+                                        <label class="flex items-center">
+                                            <input type="radio" name="has_store" value="0"
+                                                   {{ old('has_store', '0') === '0' ? 'checked' : '' }}
+                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">No Store</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="has_store" value="1"
+                                                   {{ old('has_store') === '1' ? 'checked' : '' }}
+                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
+                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Store</span>
+                                        </label>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Select "Store" if this product is sold from a physical store location.</p>
+                                </div>
+
                                 {{-- Delivery Options --}}
                                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                                     <div class="flex items-center mb-3">

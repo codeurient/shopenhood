@@ -25,6 +25,7 @@ class StoreBusinessListingRequest extends FormRequest
             'condition' => 'required|in:new,used',
             'store_name' => 'nullable|string|max:255',
             'availability_type' => 'nullable|in:in_stock,available_by_order',
+            'has_store' => 'nullable|boolean',
             'has_delivery' => 'nullable|boolean',
             'has_domestic_delivery' => 'nullable|boolean',
             'domestic_delivery_price' => 'nullable|numeric|min:0',
