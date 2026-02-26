@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Listing;
+use App\Models\ListingReview;
 use App\Models\Order;
 use App\Models\User;
 
@@ -123,4 +124,49 @@ test('show page passes sellerAvgRating as zero when no reviews', function () {
 
     $response->assertSuccessful();
     $response->assertViewHas('sellerAvgRating', 0.0);
+});
+
+// ==========================================
+// LISTING RATING DISPLAY
+// ==========================================
+
+test('show page does not display rating section when business listing has no reviews', function () {
+    $listing = Listing::factory()->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
+
+    $response = $this->get(route('listings.show', $listing->slug));
+
+    $response->assertSuccessful();
+    $response->assertViewHas('reviews', fn ($reviews) => $reviews->isEmpty());
+});
+
+test('show page displays correct average rating when business listing has reviews', function () {
+    $seller = User::factory()->create();
+    $listing = Listing::factory()->for($seller)->create(['status' => 'active', 'is_visible' => true, 'listing_mode' => 'business']);
+
+    $order1 = Order::factory()->create(['listing_id' => $listing->id, 'seller_id' => $seller->id, 'status' => 'delivered']);
+    $order2 = Order::factory()->create(['listing_id' => $listing->id, 'seller_id' => $seller->id, 'status' => 'delivered']);
+
+    ListingReview::create([
+        'listing_id' => $listing->id,
+        'user_id' => User::factory()->create()->id,
+        'order_id' => $order1->id,
+        'rating' => 4,
+        'title' => 'Good',
+        'body' => 'Nice product',
+    ]);
+    ListingReview::create([
+        'listing_id' => $listing->id,
+        'user_id' => User::factory()->create()->id,
+        'order_id' => $order2->id,
+        'rating' => 5,
+        'title' => 'Excellent',
+        'body' => 'Loved it',
+    ]);
+
+    $response = $this->get(route('listings.show', $listing->slug));
+
+    $response->assertSuccessful();
+    // Average of (4+5)/2 = 4.5, with 2 reviews
+    $response->assertSee('4.5');
+    $response->assertSee('(2)');
 });

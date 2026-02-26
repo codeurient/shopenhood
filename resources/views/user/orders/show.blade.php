@@ -86,7 +86,7 @@
                                 ];
                                 $orderStatusColor = $orderStatusColors[$order->status] ?? 'bg-gray-100 text-gray-700';
                             @endphp
-                            <div class="flex items-start gap-3 px-5 py-4">
+                            <div class="flex items-start gap-3 px-5 py-4" x-data="{ cancelOpen: false }">
                                 @if($img)
                                     <img src="{{ asset('storage/'.$img->image_path) }}"
                                          alt="{{ $order->listing?->title }}"
@@ -126,6 +126,22 @@
                                             @endif
                                         </p>
                                     @endif
+                                    @if($order->tracking_number)
+                                        <p class="text-xs text-indigo-600 dark:text-indigo-400 mt-1 font-medium">
+                                            Tracking: {{ $order->tracking_number }}
+                                        </p>
+                                    @endif
+                                    @if($order->isCancelled() && $order->cancellation_reason)
+                                        <p class="text-xs text-red-500 mt-1">
+                                            Reason: {{ $order->cancellation_reason }}
+                                        </p>
+                                    @endif
+                                    @if($order->canBeCancelled())
+                                        <button @click="cancelOpen = true" type="button"
+                                                class="mt-2 text-xs text-red-500 hover:text-red-700 underline underline-offset-2 transition">
+                                            Cancel this order
+                                        </button>
+                                    @endif
                                 </div>
                                 <div class="text-right flex-shrink-0">
                                     <p class="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -135,6 +151,37 @@
                                         {{ number_format($order->unit_price, 2) }} × {{ $order->quantity }}
                                     </p>
                                 </div>
+
+                                {{-- Cancel Order Modal --}}
+                                <template x-teleport="body">
+                                    <div x-show="cancelOpen" x-cloak
+                                         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+                                         @click.self="cancelOpen = false">
+                                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm p-6">
+                                            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">Cancel Order</h3>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                                                Cancel <span class="font-mono font-semibold">{{ $order->order_number }}</span>?
+                                                This cannot be undone.
+                                            </p>
+                                            <form method="POST" action="{{ route('user.orders.cancel', $order) }}">
+                                                @csrf
+                                                <textarea name="reason" rows="3"
+                                                          placeholder="Reason for cancellation (optional)"
+                                                          class="w-full text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-red-400 resize-none"></textarea>
+                                                <div class="flex gap-3 mt-4">
+                                                    <button type="submit"
+                                                            class="flex-1 py-2 text-sm font-semibold bg-red-500 hover:bg-red-600 text-white rounded-lg transition">
+                                                        Yes, Cancel
+                                                    </button>
+                                                    <button type="button" @click="cancelOpen = false"
+                                                            class="flex-1 py-2 text-sm font-semibold border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                                        Keep Order
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
                         @endforeach
                     </div>

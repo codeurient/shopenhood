@@ -46,6 +46,11 @@ class OrderObserver
             $order->variation_id) {
             $this->restoreStock($order);
         }
+
+        // Sync the parent purchase status whenever this order's status changes
+        if ($order->wasChanged('status') && $order->purchase_id) {
+            $order->purchase->syncStatus();
+        }
     }
 
     /**

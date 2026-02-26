@@ -94,4 +94,32 @@ class Purchase extends Model
     {
         return $this->status === 'cancelled';
     }
+
+    /**
+     * Derive and persist purchase status from the current state of its orders.
+     *
+     * Rules (non-cancelled orders drive the outcome):
+     *   - all cancelled                → cancelled
+     *   - all non-cancelled completed  → completed
+     *   - any shipped/delivered        → processing
+     *   - otherwise                    → pending
+     */
+    public function syncStatus(): void
+    {
+        $orders = $this->orders()->get();
+        $nonCancelled = $orders->filter(fn ($o) => $o->status !== 'cancelled');
+
+        if ($nonCancelled->isEmpty()) {
+            $status = 'cancelled';
+        } elseif ($nonCancelled->every(fn ($o) => in_array($o->status, ['completed', 'delivered']))) {
+            // All fulfilled (delivered counts as completed — no separate UI action exists)
+            $status = 'completed';
+        } elseif ($nonCancelled->contains(fn ($o) => in_array($o->status, ['shipped', 'delivered', 'processing']))) {
+            $status = 'processing';
+        } else {
+            $status = 'pending';
+        }
+
+        $this->update(['status' => $status]);
+    }
 }

@@ -159,9 +159,13 @@ Route::middleware('auth')->group(function () {
     // Buyer purchase history
     Route::get('/my-orders', [PurchaseController::class, 'index'])->name('user.purchases.index');
     Route::get('/my-orders/{purchase}', [PurchaseController::class, 'show'])->name('user.purchases.show');
+    Route::post('/my-orders/{order}/cancel', [PurchaseController::class, 'cancel'])->name('user.orders.cancel');
 
     // Seller incoming orders
     Route::get('/my-sales', [SalesController::class, 'index'])->name('user.sales.index');
+    Route::post('/my-sales/{order}/ship', [SalesController::class, 'ship'])->name('user.sales.ship');
+    Route::post('/my-sales/{order}/deliver', [SalesController::class, 'deliver'])->name('user.sales.deliver');
+    Route::post('/my-sales/{order}/cannot-ship', [SalesController::class, 'cannotShip'])->name('user.sales.cannot-ship');
 
     // Business Profile & Listings
     Route::prefix('business')->name('business.')->group(function () {

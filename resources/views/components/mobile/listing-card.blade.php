@@ -53,6 +53,15 @@
     // Verified badge: seller has an admin-approved business profile
     $isOwnerVerified = $listing->user?->businessProfile?->isApproved() ?? false;
 
+    // Per-listing sold count (static cache to avoid N+1 across card renders)
+    static $listingTotals = [];
+    if (! array_key_exists($listing->id, $listingTotals)) {
+        $listingTotals[$listing->id] = (int) \App\Models\Order::where('listing_id', $listing->id)
+            ->whereNotIn('status', ['cancelled'])
+            ->sum('quantity');
+    }
+    $listingTotalSold = $listingTotals[$listing->id];
+
     // Seller total sold (static cache to avoid N+1 per seller across card renders)
     static $sellerTotals = [];
     $sellerId = $listing->user_id;
@@ -210,8 +219,10 @@
 
         <!-- Sold + Seller row -->
         <div class="flex items-center gap-1.5 mt-1 overflow-hidden" style="font-size: 10px;">
-            <span class="text-gray-500 flex-shrink-0">{{ number_format($sellerTotalSold) }}+ sold</span>
-            <span class="text-gray-300 flex-shrink-0">|</span>
+            @if($listing->listing_mode === 'business')
+                <span class="text-gray-500 flex-shrink-0">{{ number_format($listingTotalSold) }}+ sold</span>
+                <span class="text-gray-300 flex-shrink-0">|</span>
+            @endif
             <div class="flex items-center gap-1 min-w-0">
                 @if($sellerLogo)
                     <img src="{{ $sellerLogo }}" alt="Seller" class="w-3 h-3 rounded-full object-cover flex-shrink-0">

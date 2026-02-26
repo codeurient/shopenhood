@@ -158,6 +158,16 @@ class Order extends Model
         return in_array($this->status, ['pending', 'paid', 'processing']);
     }
 
+    public function canBeShipped(): bool
+    {
+        return in_array($this->status, ['pending', 'paid', 'processing']);
+    }
+
+    public function canBeMarkedDelivered(): bool
+    {
+        return $this->status === 'shipped';
+    }
+
     public function canBeRefunded(): bool
     {
         return $this->isPaid() && ! $this->isRefunded();
