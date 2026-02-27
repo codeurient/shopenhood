@@ -17,6 +17,7 @@ use App\Http\Controllers\User\ListingController as UserListingController;
 use App\Http\Controllers\User\NotificationsController as UserNotificationsController;
 use App\Http\Controllers\User\PurchaseController;
 use App\Http\Controllers\User\SalesController;
+use App\Http\Controllers\User\StockManagementController as UserStockManagementController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -175,6 +176,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/profile', [UserBusinessProfileController::class, 'store'])->name('profile.store');
         Route::get('/profile/edit', [UserBusinessProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [UserBusinessProfileController::class, 'update'])->name('profile.update');
+
+        // Stock management (business.user only)
+        Route::prefix('stock')->name('stock.')->middleware('business.user')->group(function () {
+            Route::get('/', [UserStockManagementController::class, 'index'])->name('index');
+            Route::get('/{variation}/edit', [UserStockManagementController::class, 'edit'])->name('edit');
+            Route::post('/{variation}/adjust', [UserStockManagementController::class, 'adjust'])->name('adjust');
+        });
 
         // Business listings
         Route::prefix('listings')->name('listings.')->group(function () {

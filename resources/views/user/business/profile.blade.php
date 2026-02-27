@@ -22,10 +22,16 @@
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Business Profile</h2>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage your business information</p>
                 </div>
-                <a href="{{ route('business.profile.edit') }}"
-                   class="inline-flex items-center px-4 py-2 bg-primary-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600 transition">
-                    Edit Profile
-                </a>
+                <div class="flex gap-2">
+                    <a href="{{ route('business.stock.index') }}"
+                       class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-200 uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                        Stock Management
+                    </a>
+                    <a href="{{ route('business.profile.edit') }}"
+                       class="inline-flex items-center px-4 py-2 bg-primary-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600 transition">
+                        Edit Profile
+                    </a>
+                </div>
             </div>
 
             @if(session('success'))
