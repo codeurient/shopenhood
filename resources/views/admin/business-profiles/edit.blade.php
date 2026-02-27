@@ -102,11 +102,13 @@
         {{-- Registration & Tax --}}
         <div class="bg-white rounded-lg shadow p-6 mb-6">
             <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">Registration & Tax</h2>
+            <p class="text-xs text-gray-500 mb-4">These values will be re-encrypted on save.</p>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label for="registration_number" class="block text-sm font-medium text-gray-700 mb-1">Registration Number</label>
-                    <input type="text" name="registration_number" id="registration_number" value="{{ old('registration_number', $businessProfile->registration_number) }}"
+                    <input type="text" name="registration_number" id="registration_number"
+                           value="{{ old('registration_number', $sensitiveData['registration_number']) }}"
                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     @error('registration_number')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -115,13 +117,42 @@
 
                 <div>
                     <label for="tax_id" class="block text-sm font-medium text-gray-700 mb-1">Tax ID (VAT/GST)</label>
-                    <input type="text" name="tax_id" id="tax_id" value="{{ old('tax_id', $businessProfile->tax_id) }}"
+                    <input type="text" name="tax_id" id="tax_id"
+                           value="{{ old('tax_id', $sensitiveData['tax_id']) }}"
                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     @error('tax_id')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
+        </div>
+
+        {{-- User-Submitted Identity Data (read-only) --}}
+        <div class="bg-white rounded-lg shadow p-6 mb-6 border border-red-200">
+            <div class="flex items-center justify-between mb-4 pb-2 border-b border-red-100">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <h2 class="text-base font-semibold text-red-800">User-Submitted Identity Data</h2>
+                </div>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700 border border-red-300">Read-only</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">These fields were submitted once by the user and cannot be edited here. Contact the user for corrections.</p>
+            <dl class="grid grid-cols-2 gap-4 text-sm">
+                <div class="col-span-2">
+                    <dt class="font-medium text-gray-500">Full Name (as on ID)</dt>
+                    <dd class="mt-1 font-mono text-gray-900">{{ $sensitiveData['id_full_name'] ?? '— Not provided —' }}</dd>
+                </div>
+                <div>
+                    <dt class="font-medium text-gray-500">ID / Passport Number</dt>
+                    <dd class="mt-1 font-mono text-gray-900">{{ $sensitiveData['id_number'] ?? '— Not provided —' }}</dd>
+                </div>
+                <div>
+                    <dt class="font-medium text-gray-500">FIN (Financial ID Number)</dt>
+                    <dd class="mt-1 font-mono text-gray-900">{{ $sensitiveData['fin'] ?? '— Not provided —' }}</dd>
+                </div>
+            </dl>
         </div>
 
         {{-- Contact Information --}}

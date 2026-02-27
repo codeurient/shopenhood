@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Services\SensitiveDataEncryptionService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -26,8 +27,8 @@ class BusinessProfileFactory extends Factory
             'legal_name' => $businessName.' LLC',
             'slug' => Str::slug($businessName).'-'.Str::random(6),
             'description' => fake()->paragraph(),
-            'registration_number' => fake()->numerify('REG-######'),
-            'tax_id' => fake()->numerify('TAX-########'),
+            'registration_number' => app(SensitiveDataEncryptionService::class)->encrypt(fake()->numerify('REG-######')),
+            'tax_id' => app(SensitiveDataEncryptionService::class)->encrypt(fake()->numerify('TAX-########')),
             'industry' => fake()->randomElement(['retail', 'wholesale', 'manufacturing', 'services', 'technology']),
             'business_type' => fake()->randomElement(['sole_proprietor', 'partnership', 'llc', 'corporation']),
             'address_line_1' => fake()->streetAddress(),

@@ -28,6 +28,13 @@ class StoreBusinessProfileRequest extends FormRequest
             'business_email' => 'nullable|email|max:255',
             'business_phone' => 'nullable|string|max:30',
             'website' => 'nullable|url|max:255',
+
+            // Sensitive identity & tax fields — encrypted before storage, admin-readable only
+            'registration_number' => 'nullable|string|max:100',
+            'tax_id' => 'nullable|string|max:100',
+            'fin' => 'nullable|string|max:100',
+            'id_number' => 'nullable|string|max:100',
+            'id_full_name' => 'nullable|string|max:255',
         ];
     }
 

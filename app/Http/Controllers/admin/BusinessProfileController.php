@@ -10,11 +10,14 @@ use App\Models\Location;
 use App\Models\User;
 use App\Notifications\ConfidentSellerApprovedNotification;
 use App\Notifications\ConfidentSellerRejectedNotification;
+use App\Services\SensitiveDataEncryptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class BusinessProfileController extends Controller
 {
+    public function __construct(private readonly SensitiveDataEncryptionService $encryption) {}
+
     public function index(Request $request)
     {
         $query = BusinessProfile::with(['user', 'country']);
@@ -47,7 +50,10 @@ class BusinessProfileController extends Controller
     {
         $businessProfile->load(['user', 'country']);
 
-        return view('admin.business-profiles.show', compact('businessProfile'));
+        $admin = auth()->guard('admin')->user();
+        $sensitiveData = $businessProfile->decryptSensitiveData($admin);
+
+        return view('admin.business-profiles.show', compact('businessProfile', 'sensitiveData'));
     }
 
     public function create(User $user)
@@ -83,6 +89,10 @@ class BusinessProfileController extends Controller
         $data['user_id'] = $user->id;
         $data['slug'] = Str::slug($data['business_name']).'-'.Str::random(6);
 
+        // Encrypt admin-entered sensitive fields before persisting
+        $data['registration_number'] = $this->encryption->encryptNullable($data['registration_number'] ?? null);
+        $data['tax_id'] = $this->encryption->encryptNullable($data['tax_id'] ?? null);
+
         // Handle logo upload
         if ($request->hasFile('logo')) {
             $data['logo'] = $request->file('logo')->store('business/logos', 'public');
@@ -104,12 +114,19 @@ class BusinessProfileController extends Controller
         $businessProfile->load(['user', 'country']);
         $countries = Location::countries()->active()->orderBy('name')->get();
 
-        return view('admin.business-profiles.edit', compact('businessProfile', 'countries'));
+        $admin = auth()->guard('admin')->user();
+        $sensitiveData = $businessProfile->decryptSensitiveData($admin);
+
+        return view('admin.business-profiles.edit', compact('businessProfile', 'countries', 'sensitiveData'));
     }
 
     public function update(UpdateBusinessProfileRequest $request, BusinessProfile $businessProfile)
     {
         $data = $request->validated();
+
+        // Encrypt admin-entered sensitive fields before persisting
+        $data['registration_number'] = $this->encryption->encryptNullable($data['registration_number'] ?? null);
+        $data['tax_id'] = $this->encryption->encryptNullable($data['tax_id'] ?? null);
 
         // Handle logo upload
         if ($request->hasFile('logo')) {

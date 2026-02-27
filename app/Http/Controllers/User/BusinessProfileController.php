@@ -7,10 +7,13 @@ use App\Http\Requests\User\StoreBusinessProfileRequest;
 use App\Http\Requests\User\UpdateBusinessProfileRequest;
 use App\Models\BusinessProfile;
 use App\Models\Location;
+use App\Services\SensitiveDataEncryptionService;
 use Illuminate\Support\Str;
 
 class BusinessProfileController extends Controller
 {
+    public function __construct(private readonly SensitiveDataEncryptionService $encryption) {}
+
     public function show()
     {
         $user = auth()->user();
@@ -29,7 +32,9 @@ class BusinessProfileController extends Controller
 
         $businessProfile->load('country');
 
-        return view('user.business.profile', compact('businessProfile'));
+        $sensitiveData = $businessProfile->decryptForOwner($user);
+
+        return view('user.business.profile', compact('businessProfile', 'sensitiveData'));
     }
 
     public function create()
@@ -64,6 +69,13 @@ class BusinessProfileController extends Controller
         $data['slug'] = Str::slug($data['business_name']).'-'.Str::random(6);
         $data['confident_seller_status'] = 'pending';
 
+        // Encrypt all sensitive fields before persisting
+        $data['registration_number'] = $this->encryption->encryptNullable($data['registration_number'] ?? null);
+        $data['tax_id'] = $this->encryption->encryptNullable($data['tax_id'] ?? null);
+        $data['fin'] = $this->encryption->encryptNullable($data['fin'] ?? null);
+        $data['id_number'] = $this->encryption->encryptNullable($data['id_number'] ?? null);
+        $data['id_full_name'] = $this->encryption->encryptNullable($data['id_full_name'] ?? null);
+
         BusinessProfile::create($data);
 
         return redirect()->route('business.profile')
@@ -87,7 +99,9 @@ class BusinessProfileController extends Controller
 
         $countries = Location::countries()->active()->orderBy('name')->get();
 
-        return view('user.business.edit', compact('businessProfile', 'countries'));
+        $sensitiveData = $businessProfile->decryptForOwner($user);
+
+        return view('user.business.edit', compact('businessProfile', 'countries', 'sensitiveData'));
     }
 
     public function update(UpdateBusinessProfileRequest $request)

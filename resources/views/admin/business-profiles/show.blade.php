@@ -195,18 +195,6 @@
                                 <dd class="mt-1 text-sm text-gray-900">{{ str_replace('_', ' ', ucfirst($businessProfile->business_type)) }}</dd>
                             </div>
                             @endif
-                            @if($businessProfile->registration_number)
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Registration Number</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $businessProfile->registration_number }}</dd>
-                            </div>
-                            @endif
-                            @if($businessProfile->tax_id)
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Tax ID</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $businessProfile->tax_id }}</dd>
-                            </div>
-                            @endif
                         </dl>
 
                         @if($businessProfile->description)
@@ -217,6 +205,54 @@
                             </dd>
                         </div>
                         @endif
+                    </div>
+                </div>
+
+                <!-- Sensitive Identity & Tax Data -->
+                <div class="bg-white shadow rounded-lg overflow-hidden border border-red-200">
+                    <div class="px-6 py-4 border-b border-red-100 bg-red-50 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <h3 class="text-base font-semibold text-red-800">Sensitive Identity & Tax Data</h3>
+                        </div>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700 border border-red-300">Confidential</span>
+                    </div>
+                    <div class="px-6 py-4">
+                        <p class="text-xs text-gray-500 mb-4">These fields are stored encrypted (AES-256-GCM) and are only visible to administrators.</p>
+                        <dl class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+                            <div class="sm:col-span-2">
+                                <dt class="text-sm font-medium text-gray-500">Full Name (as on ID)</dt>
+                                <dd class="mt-1 text-sm text-gray-900 font-mono">
+                                    {{ $sensitiveData['id_full_name'] ?? '— Not provided —' }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">ID / Passport Number</dt>
+                                <dd class="mt-1 text-sm text-gray-900 font-mono">
+                                    {{ $sensitiveData['id_number'] ?? '— Not provided —' }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">FIN (Financial ID Number)</dt>
+                                <dd class="mt-1 text-sm text-gray-900 font-mono">
+                                    {{ $sensitiveData['fin'] ?? '— Not provided —' }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Registration Number</dt>
+                                <dd class="mt-1 text-sm text-gray-900 font-mono">
+                                    {{ $sensitiveData['registration_number'] ?? '— Not provided —' }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Tax ID (VAT/GST)</dt>
+                                <dd class="mt-1 text-sm text-gray-900 font-mono">
+                                    {{ $sensitiveData['tax_id'] ?? '— Not provided —' }}
+                                </dd>
+                            </div>
+                        </dl>
                     </div>
                 </div>
 

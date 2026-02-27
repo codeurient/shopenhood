@@ -10,6 +10,14 @@
 
     <div class="py-6">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="mb-6">
+                <a href="{{ route('business.profile') }}" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 mb-2 inline-block">
+                    &larr; Back to Profile
+                </a>
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">Edit Business Profile</h2>
+            </div>
+
             @if(session('success'))
                 <div class="mb-4 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 rounded-lg">
                     {{ session('success') }}
@@ -157,6 +165,54 @@
                             @enderror
                         </div>
                     </div>
+                </div>
+
+                <!-- Identity & Tax (read-only) -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6 border border-amber-200 dark:border-amber-700">
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-amber-200 dark:border-amber-700">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">Identity & Tax Information</h3>
+                        </div>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-600">Read-only</span>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                        These fields are encrypted and cannot be changed through this form. If you need to update this information, please contact support with your request and the reason for the change.
+                    </p>
+                    <dl class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+                        <div class="sm:col-span-2">
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Full Name (as on ID)</dt>
+                            <dd class="mt-1 w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-mono text-gray-600 dark:text-gray-400">
+                                {{ $sensitiveData['id_full_name'] ?? '— Not provided —' }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">ID / Passport Number</dt>
+                            <dd class="mt-1 w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-mono text-gray-600 dark:text-gray-400">
+                                {{ $sensitiveData['id_number'] ?? '— Not provided —' }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">FIN (Financial ID Number)</dt>
+                            <dd class="mt-1 w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-mono text-gray-600 dark:text-gray-400">
+                                {{ $sensitiveData['fin'] ?? '— Not provided —' }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Registration Number</dt>
+                            <dd class="mt-1 w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-mono text-gray-600 dark:text-gray-400">
+                                {{ $sensitiveData['registration_number'] ?? '— Not provided —' }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Tax ID (VAT/GST)</dt>
+                            <dd class="mt-1 w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-mono text-gray-600 dark:text-gray-400">
+                                {{ $sensitiveData['tax_id'] ?? '— Not provided —' }}
+                            </dd>
+                        </div>
+                    </dl>
                 </div>
 
                 <div class="flex justify-between">
