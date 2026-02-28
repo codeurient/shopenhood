@@ -11,7 +11,7 @@
 
     <!-- Filter Bar -->
     <div class="bg-white border-b border-gray-200">
-        <div class="max-w-screen-2xl mx-auto px-4 md:px-6 py-2 flex items-center justify-between gap-2">
+        <div class="max-w-[1250px] mx-auto px-4 md:px-6 py-2 flex items-center justify-between gap-2">
             <!-- Active Filters -->
             <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide flex-1">
                 @if(request('search'))
@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <div class="max-w-screen-2xl mx-auto px-4 md:px-6 pt-3 pb-6 md:pb-10">
+    <div class="max-w-[1250px] mx-auto px-4 md:px-6 pt-3 pb-6 md:pb-10">
         <!-- Results Count -->
         <p class="text-xs text-gray-500 mb-3">{{ number_format($listings->total()) }} listing{{ $listings->total() !== 1 ? 's' : '' }} found</p>
 

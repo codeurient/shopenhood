@@ -1,7 +1,7 @@
 @props(['mainSliders', 'smallBanners'])
 
 <!-- Home Slider Section -->
-<div class="px-4 md:px-6 py-4 md:py-6 space-y-3 md:space-y-4 max-w-screen-2xl mx-auto" x-data="homeSlider()">
+<div x-data="homeSlider()" class="max-w-[1250px] mx-auto px-4 md:px-6 py-4 md:py-6 space-y-3 md:space-y-4">
     <!-- Main Slider -->
     @if($mainSliders->count() > 0)
     <div class="relative overflow-hidden rounded-2xl h-[250px]">
@@ -77,7 +77,6 @@
                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-200">
         </a>
         @endforeach
-
     </div>
 </div>
 

@@ -14,7 +14,7 @@
         <!-- Featured/Premium Listings Section -->
         @if($featuredListings->isNotEmpty())
         <section x-data="premiumCarousel()">
-            <div class="flex items-center justify-between px-4 md:px-6 mb-3 max-w-screen-2xl mx-auto">
+            <div class="flex items-center justify-between px-4 md:px-6 mb-3 max-w-[1250px] mx-auto">
                 <h2 class="text-lg md:text-xl font-bold text-gray-900">Premium Listings</h2>
                 <a href="{{ route('listings.index', ['featured' => 1]) }}"
                    class="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
@@ -23,7 +23,7 @@
             </div>
 
             <!-- Carousel wrapper -->
-            <div class="relative max-w-screen-2xl mx-auto overflow-hidden pl-4 md:pl-6 pr-4 md:pr-8">
+            <div class="relative max-w-[1250px] mx-auto overflow-hidden px-4 md:px-6">
                 <!-- Track: touch scroll on mobile, overflow-hidden (button-controlled) on desktop -->
                 <div class="overflow-x-auto md:overflow-hidden scrollbar-hide"
                      x-ref="track"
@@ -61,7 +61,7 @@
         <!-- Recent Listings Section -->
         @if($latestListings->isNotEmpty())
         <section>
-            <div class="flex items-center justify-between px-4 md:px-6 mb-3 max-w-screen-2xl mx-auto">
+            <div class="flex items-center justify-between px-4 md:px-6 mb-3 max-w-[1250px] mx-auto">
                 <h2 class="text-lg md:text-xl font-bold text-gray-900">Recent Listings</h2>
                 <a href="{{ route('listings.index') }}"
                    class="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
@@ -70,7 +70,7 @@
             </div>
 
             <!-- Listings Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 md:gap-4 px-4 md:px-6 max-w-screen-2xl mx-auto">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 md:gap-4 px-4 md:px-6 max-w-[1250px] mx-auto">
                 @foreach($latestListings as $listing)
                     <x-mobile.listing-card :listing="$listing" />
                 @endforeach

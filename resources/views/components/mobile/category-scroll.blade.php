@@ -2,7 +2,7 @@
 
 <!-- Horizontal Category Scroll -->
 <div class="bg-white border-b border-gray-200" x-data="{ categoryPanelOpen: false }">
-    <div class="max-w-screen-2xl mx-auto">
+    <div class="max-w-[1250px] mx-auto">
         <div class="flex gap-3 px-4 md:px-6 py-4 overflow-x-auto scrollbar-hide">
             <!-- Grid Button (Opens Full Category Panel) -->
             <button type="button"

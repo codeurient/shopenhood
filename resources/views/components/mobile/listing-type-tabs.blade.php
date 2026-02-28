@@ -2,7 +2,7 @@
 
 <!-- Listing Type Tabs -->
 <div class="bg-gray-700 border-b border-gray-600">
-    <div class="max-w-screen-2xl mx-auto px-0 md:px-6">
+    <div class="max-w-[1250px] mx-auto px-0 md:px-6">
         <div class="flex gap-0 overflow-x-auto scrollbar-hide justify-between">
             @foreach($listingTypes as $type)
             <button type="button"
