@@ -9,37 +9,60 @@
     <x-mobile.home-slider :mainSliders="$mainSliders" :smallBanners="$smallBanners" />
 
     <!-- Main Content -->
-    <div class="space-y-6">
+    <div class="space-y-6 md:space-y-10 pb-6 md:pb-10">
 
-        <!-- Featured/Premium Listings Section (Horizontally Scrollable) -->
+        <!-- Featured/Premium Listings Section -->
         @if($featuredListings->isNotEmpty())
-        <section>
-            <div class="flex items-center justify-between px-4 mb-3">
-                <h2 class="text-lg font-bold text-gray-900">Premium Listings</h2>
+        <section x-data="premiumCarousel()">
+            <div class="flex items-center justify-between px-4 md:px-6 mb-3 max-w-screen-2xl mx-auto">
+                <h2 class="text-lg md:text-xl font-bold text-gray-900">Premium Listings</h2>
                 <a href="{{ route('listings.index', ['featured' => 1]) }}"
                    class="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
                     View All
                 </a>
             </div>
 
-            <!-- Horizontal Scroll Container -->
-            <div class="overflow-x-auto scrollbar-hide px-4">
-                <div class="flex gap-3 pb-2">
-                    @foreach($featuredListings as $listing)
-                        <div class="w-40 flex-shrink-0">
-                            <x-mobile.listing-card :listing="$listing" />
-                        </div>
-                    @endforeach
+            <!-- Carousel wrapper -->
+            <div class="relative max-w-screen-2xl mx-auto overflow-hidden pl-4 md:pl-6 pr-4 md:pr-8">
+                <!-- Track: touch scroll on mobile, overflow-hidden (button-controlled) on desktop -->
+                <div class="overflow-x-auto md:overflow-hidden scrollbar-hide"
+                     x-ref="track"
+                     data-carousel>
+                    <div class="flex gap-3 pb-2">
+                        @foreach($featuredListings as $listing)
+                            <div class="w-40 md:w-48 flex-shrink-0">
+                                <x-mobile.listing-card :listing="$listing" />
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
+
+                <!-- Prev Button (desktop only) -->
+                <button @click="prev()"
+                        :disabled="!canScrollPrev"
+                        class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-white shadow-md rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 hover:shadow-lg transition-all disabled:opacity-30 disabled:cursor-default disabled:hover:bg-white disabled:hover:shadow-md">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+
+                <!-- Next Button (desktop only) -->
+                <button @click="next()"
+                        :disabled="!canScrollNext"
+                        class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-white shadow-md rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 hover:shadow-lg transition-all disabled:opacity-30 disabled:cursor-default disabled:hover:bg-white disabled:hover:shadow-md">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
             </div>
         </section>
         @endif
 
-        <!-- Recent Listings Section (Grid) -->
+        <!-- Recent Listings Section -->
         @if($latestListings->isNotEmpty())
         <section>
-            <div class="flex items-center justify-between px-4 mb-3">
-                <h2 class="text-lg font-bold text-gray-900">Recent Listings</h2>
+            <div class="flex items-center justify-between px-4 md:px-6 mb-3 max-w-screen-2xl mx-auto">
+                <h2 class="text-lg md:text-xl font-bold text-gray-900">Recent Listings</h2>
                 <a href="{{ route('listings.index') }}"
                    class="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
                     View All
@@ -47,7 +70,7 @@
             </div>
 
             <!-- Listings Grid -->
-            <div class="grid grid-cols-2 gap-3 px-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 md:gap-4 px-4 md:px-6 max-w-screen-2xl mx-auto">
                 @foreach($latestListings as $listing)
                     <x-mobile.listing-card :listing="$listing" />
                 @endforeach
@@ -85,15 +108,45 @@
 
     @push('scripts')
     <script>
-        // Filter Panel Toggle
+        function premiumCarousel() {
+            return {
+                canScrollPrev: false,
+                canScrollNext: true,
+
+                init() {
+                    this.$nextTick(() => this.updateButtons());
+                },
+
+                updateButtons() {
+                    const t = this.$refs.track;
+                    this.canScrollPrev = t.scrollLeft > 1;
+                    this.canScrollNext = t.scrollLeft < t.scrollWidth - t.clientWidth - 1;
+                },
+
+                cardWidth() {
+                    const card = this.$refs.track.children[0]?.children[0];
+                    return card ? card.offsetWidth + 12 : 204;
+                },
+
+                prev() {
+                    if (!this.canScrollPrev) { return; }
+                    this.$refs.track.scrollBy({ left: -this.cardWidth(), behavior: 'smooth' });
+                    setTimeout(() => this.updateButtons(), 400);
+                },
+
+                next() {
+                    if (!this.canScrollNext) { return; }
+                    this.$refs.track.scrollBy({ left: this.cardWidth(), behavior: 'smooth' });
+                    setTimeout(() => this.updateButtons(), 400);
+                },
+            };
+        }
+
         function toggleFilterPanel() {
-            // Filter panel functionality to be implemented
             console.log('Filter panel clicked');
         }
 
-        // Filter by Type (AJAX with Vanilla JavaScript)
         function filterByType(typeSlug) {
-            // Update active tab
             document.querySelectorAll('.listing-type-tab').forEach(tab => {
                 if (tab.dataset.type === typeSlug) {
                     tab.classList.add('bg-gray-800', 'border-b-2', 'border-primary-500');
@@ -102,7 +155,6 @@
                 }
             });
 
-            // Fetch listings by type using AJAX
             fetch(`{{ route('home') }}?type=${typeSlug}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -111,7 +163,6 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Update listings sections
                 updateListingsSection('featured', data.featuredListings);
                 updateListingsSection('recent', data.latestListings);
             })
@@ -119,16 +170,14 @@
         }
 
         function updateListingsSection(section, listings) {
-            // Update the DOM with new listings
-            // This will be fully implemented when we add the API endpoint
             console.log(`Updating ${section} section with`, listings);
         }
 
-        // Smooth scroll for horizontal scroll containers
         document.addEventListener('DOMContentLoaded', function() {
             const scrollContainers = document.querySelectorAll('.scrollbar-hide');
 
             scrollContainers.forEach(container => {
+                if (container.hasAttribute('data-carousel')) { return; }
                 let isDown = false;
                 let startX;
                 let scrollLeft;
@@ -162,16 +211,8 @@
     </script>
 
     <style>
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .scrollbar-hide {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
     @endpush
 </x-guest-layout>

@@ -1,44 +1,92 @@
-<!-- Mobile Header -->
+<!-- Responsive Header: compact on mobile, full nav on desktop -->
 <header class="sticky top-0 z-40 bg-gray-800 shadow-sm"
         x-data="cartPanel()"
         x-init="init()">
-    <div class="flex items-center gap-3 px-4 py-3">
-        <!-- Hamburger Menu Button -->
+
+    <div class="flex items-center gap-3 px-4 md:px-6 py-3 md:h-16 max-w-screen-2xl mx-auto">
+
+        <!-- Hamburger Menu Button (mobile only) -->
         <button @click="sidebarOpen = true"
                 type="button"
-                class="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex-shrink-0">
+                class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors flex-shrink-0">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
         </button>
 
-        <!-- Search Bar with Filter -->
-        <div class="flex-1 relative">
-            <form action="{{ route('listings.index') }}" method="GET" class="relative">
-                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Logo (desktop only) -->
+        <a href="{{ route('home') }}"
+           class="hidden md:flex items-center gap-2 flex-shrink-0 text-white font-bold text-xl tracking-tight hover:text-primary-300 transition-colors whitespace-nowrap">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            {{ config('app.name', 'Shopenhood') }}
+        </a>
+
+<!-- Search Bar -->
+        <div class="flex-1">
+            <form action="{{ route('listings.index') }}" method="GET" class="flex gap-0 md:gap-2">
+                <div class="relative flex-1">
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2">
+                        <svg class="w-5 h-5 text-primary-600 md:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           placeholder="Search for items or services..."
+                           class="w-full pl-10 pr-10 md:pr-4 py-2.5 text-sm bg-white border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+                    <!-- Filter button (mobile only) -->
+                    <button type="button"
+                            onclick="toggleFilterPanel()"
+                            class="md:hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 transition-colors">
+                        <i class="fa-solid fa-filter text-lg"></i>
+                    </button>
+                </div>
+                <!-- Search submit button (desktop only) -->
+                <button type="submit"
+                        class="hidden md:flex items-center gap-2 px-5 py-2.5 bg-success-500 hover:bg-success-600 text-white text-sm font-semibold rounded-lg transition-colors flex-shrink-0 whitespace-nowrap">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
-                </div>
-
-                <input type="text"
-                       name="search"
-                       value="{{ request('search') }}"
-                       placeholder="Search..."
-                       class="w-full pl-10 pr-10 py-2.5 text-sm bg-white border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
-
-                <button type="button"
-                        onclick="toggleFilterPanel()"
-                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary-600 transition-colors">
-                    <i class="fa-solid fa-filter text-lg"></i>
+                    <span class="hidden lg:inline">Search</span>
                 </button>
             </form>
         </div>
 
-        <!-- Cart Icon with Badge -->
+        <!-- User Account (desktop only) -->
+        @auth
+        <button type="button"
+                @click="accountPanelOpen = true"
+                class="hidden md:flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-700 text-white transition-colors flex-shrink-0">
+            <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-sm font-bold select-none">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            </div>
+        </button>
+        @else
+        <a href="{{ route('login') }}"
+           class="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700 text-white text-sm transition-colors flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+        </a>
+        @endauth
+
+        <!-- Favorites Icon (authenticated users) -->
+        @auth
+        <a href="{{ route('user.favorites.index') }}"
+           class="relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+        </a>
+        @endauth
+
+        <!-- Cart Icon with Badge (both mobile and desktop) -->
         <button @click="openCart()"
                 type="button"
-                class="relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex-shrink-0">
+                class="relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors flex-shrink-0">
             <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l2 12h10l2-8H6M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/>
             </svg>
@@ -60,7 +108,7 @@
         <div class="absolute inset-0 bg-black/40" @click="open = false"></div>
 
         <!-- Panel -->
-        <div class="relative w-full bg-white flex flex-col shadow-xl h-full"
+        <div class="relative w-full sm:max-w-sm bg-white flex flex-col shadow-xl h-full"
              @click.stop>
 
             <!-- Header -->
