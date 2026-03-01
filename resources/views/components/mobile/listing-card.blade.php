@@ -229,7 +229,9 @@
                 <span class="text-gray-500 flex-shrink-0">{{ number_format($listingTotalSold) }}+ sold</span>
                 <span class="text-gray-300 flex-shrink-0">|</span>
             @endif
-            <div class="flex items-center gap-1 min-w-0">
+            @if($listing->user)
+            <div class="flex items-center gap-1 min-w-0 cursor-pointer hover:text-primary-600 transition-colors"
+                 onclick="event.preventDefault(); event.stopPropagation(); window.location.href='{{ route('sellers.show', $listing->user_id) }}';">
                 @if($sellerLogo)
                     <img src="{{ $sellerLogo }}" alt="Seller" class="w-3 h-3 rounded-full object-cover flex-shrink-0">
                 @else
@@ -243,6 +245,12 @@
                     <span class="{{ $sellerBadge['color'] }} font-semibold truncate">{{ $sellerBadge['label'] }}</span>
                 @endif
             </div>
+            @else
+            <div class="flex items-center gap-1 min-w-0">
+                <div class="w-3 h-3 rounded-full bg-gray-700 flex-shrink-0"></div>
+                <span class="text-gray-500 flex-shrink-0">Seller</span>
+            </div>
+            @endif
         </div>
 
 

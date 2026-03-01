@@ -8,12 +8,13 @@
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0"
      @click="accountPanelOpen = false"
-     class="fixed inset-0 z-[60] bg-black bg-opacity-50 lg:hidden"
+     class="fixed inset-0 z-[60] bg-black bg-opacity-50"
      style="display: none;">
 </div>
 
 {{-- Panel --}}
 <aside x-show="accountPanelOpen"
+       x-trap.inert="accountPanelOpen"
        x-transition:enter="transition ease-out duration-300 transform"
        x-transition:enter-start="-translate-x-full"
        x-transition:enter-end="translate-x-0"
@@ -21,6 +22,9 @@
        x-transition:leave-start="translate-x-0"
        x-transition:leave-end="-translate-x-full"
        class="fixed inset-y-0 left-0 z-[61] w-80 bg-white shadow-xl overflow-y-auto flex flex-col"
+       role="dialog"
+       aria-modal="true"
+       aria-label="Account menu"
        style="display: none;">
 
     {{-- Header: avatar + name + email --}}

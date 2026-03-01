@@ -58,7 +58,7 @@ class ListingController extends Controller
         if ($request->filled('search')) {
             SearchQuery::create([
                 'query' => $request->search,
-                'user_id' => auth()->id(),
+                'user_id' => auth()->user()?->id,
                 'results_count' => $listings->total(),
                 'filters' => array_filter([
                     'category' => $request->category,
@@ -72,6 +72,12 @@ class ListingController extends Controller
 
         $categories = Category::whereNull('parent_id')
             ->where('is_active', true)
+            ->with(['children' => function ($query) {
+                $query->where('is_active', true)->orderBy('sort_order')
+                    ->with(['children' => function ($q) {
+                        $q->where('is_active', true)->orderBy('sort_order');
+                    }]);
+            }])
             ->orderBy('sort_order')
             ->get();
 

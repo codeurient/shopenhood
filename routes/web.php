@@ -8,6 +8,8 @@ use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ListingReviewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchSuggestionController;
+use App\Http\Controllers\SellerController;
 use App\Http\Controllers\User\AddressController as UserAddressController;
 use App\Http\Controllers\User\BusinessProfileController as UserBusinessProfileController;
 use App\Http\Controllers\User\CheckoutController;
@@ -62,6 +64,14 @@ Route::get('/api/locations/{country}/cities', function (\App\Models\Location $co
             ->get(['id', 'name', 'code']),
     ]);
 })->name('api.locations.cities');
+
+// Search Suggestions
+Route::get('/search/suggestions', [SearchSuggestionController::class, 'index'])
+    ->middleware('throttle:120,1')
+    ->name('search.suggestions');
+
+// Public Seller Profiles
+Route::get('/sellers/{user}', [SellerController::class, 'show'])->name('sellers.show');
 
 // Public Listing Routes
 Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');

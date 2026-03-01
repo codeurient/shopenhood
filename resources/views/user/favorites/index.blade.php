@@ -1,7 +1,7 @@
 <x-guest-layout>
     <x-slot name="title">My Favorites — {{ config('app.name') }}</x-slot>
 
-    <div class="px-4 pt-4 pb-6">
+    <div class="max-w-[1250px] mx-auto px-4 md:px-6 pt-4 pb-6">
         <!-- Page Header -->
         <div class="flex items-center gap-3 mb-4">
             <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24">
@@ -26,7 +26,7 @@
             </div>
         @else
             <!-- Listings Grid -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 @foreach($listings as $listing)
                     <x-mobile.listing-card :listing="$listing" />
                 @endforeach

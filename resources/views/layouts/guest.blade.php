@@ -66,6 +66,10 @@
     <!-- Mobile-First Layout -->
     <div x-data="{ sidebarOpen: false, accountPanelOpen: false }"
          x-on:keydown.escape.window="sidebarOpen = false; accountPanelOpen = false"
+         x-init="
+    $watch('sidebarOpen', val => document.body.style.overflow = (val || accountPanelOpen) ? 'hidden' : '');
+    $watch('accountPanelOpen', val => document.body.style.overflow = (val || sidebarOpen) ? 'hidden' : '');
+"
          class="min-h-screen">
 
         <!-- Sidebar Component -->

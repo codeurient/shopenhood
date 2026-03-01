@@ -312,12 +312,19 @@
                 this.updateDisplay();
             }
          }"
-         class="bg-gray-50 pb-20">
+         class="bg-gray-50 pb-20 md:pb-0">
+
+        {{-- Desktop two-column layout wrapper --}}
+        <div class="md:max-w-[1250px] md:mx-auto md:px-6 md:py-6">
+        <div class="md:grid md:grid-cols-[1fr_380px] md:gap-6 md:items-start">
+
+        {{-- LEFT COLUMN: Sticky image gallery --}}
+        <div class="md:sticky md:top-[68px] md:self-start md:rounded-2xl md:overflow-hidden md:shadow-sm">
 
         {{-- ================================================================ --}}
         {{-- IMAGE GALLERY                                                     --}}
         {{-- ================================================================ --}}
-        <div class="relative bg-white overflow-hidden select-none" style="height: 340px; touch-action: none;">
+        <div class="relative bg-white overflow-hidden select-none h-[340px] md:h-[500px]" style="touch-action: none;">
 
             {{-- Draggable image strip --}}
             <div x-show="displayImages.length > 0"
@@ -404,11 +411,15 @@
                 </template>
             </div>
         </div>
+        </div>{{-- end LEFT COLUMN --}}
+
+        {{-- RIGHT COLUMN: Product info + purchase --}}
+        <div>
 
         {{-- ================================================================ --}}
         {{-- PRODUCT INFO                                                      --}}
         {{-- ================================================================ --}}
-        <div class="bg-white mt-2 px-4 py-3">
+        <div class="bg-white mt-2 px-4 py-3 md:mt-0 md:rounded-t-xl">
 
             {{-- Title row --}}
             <div class="flex items-start justify-between gap-2">
@@ -444,7 +455,7 @@
             <div class="flex items-center gap-2 mt-1.5">
                 <span class="text-xs text-gray-500">{{ number_format($listingTotalSold) }}+ sold</span>
                 <span class="text-gray-300 text-xs">|</span>
-                <div class="flex items-center gap-1">
+                <a href="{{ route('sellers.show', $seller) }}" class="flex items-center gap-1 hover:text-primary-600 transition-colors">
                     @if($sellerLogoForInfo)
                         <img src="{{ $sellerLogoForInfo }}" alt="Seller" class="w-3 h-3 rounded-full object-cover">
                     @else
@@ -457,7 +468,7 @@
                         </svg>
                         <span class="text-xs {{ $sellerDisplayBadge['color'] }} font-semibold">{{ $sellerDisplayBadge['label'] }}</span>
                     @endif
-                </div>
+                </a>
             </div>
 
             {{-- Rating --}}
@@ -730,10 +741,36 @@
         </div>
         @endif
 
+        {{-- Desktop CTA — mirrors the mobile fixed bar, only shown on md+ --}}
+        @if(!auth()->check() || auth()->id() !== $listing->user_id)
+        <div class="hidden md:flex items-center gap-3 bg-white mt-2 px-4 py-3 rounded-b-xl">
+            <button class="flex-shrink-0 flex items-center justify-center w-11 h-11 border border-gray-300 rounded-xl">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+            </button>
+            <button @click="add()"
+                    :disabled="adding"
+                    class="flex-1 h-11 bg-orange-400 hover:bg-orange-500 disabled:opacity-60 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+                <svg x-show="adding" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span x-text="adding ? 'Adding...' : (added ? '✓ Added' : 'Add to Cart')"></span>
+            </button>
+            <button class="flex-1 h-11 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl text-sm transition-colors">
+                Buy Now
+            </button>
+        </div>
+        @endif
+
+        </div>{{-- end RIGHT COLUMN --}}
+        </div>{{-- end desktop grid --}}
+
         {{-- ================================================================ --}}
         {{-- DESCRIPTION & CHARACTERISTICS                                     --}}
         {{-- ================================================================ --}}
-        <div class="bg-white mt-2 px-4 py-4">
+        <div class="bg-white mt-2 px-4 py-4 md:mt-4 md:rounded-xl">
 
             {{-- Description --}}
             <h2 class="text-base font-bold text-gray-900">Description</h2>
@@ -869,7 +906,7 @@
         {{-- ================================================================ --}}
         {{-- DELIVERY                                                          --}}
         {{-- ================================================================ --}}
-        <div class="bg-white mt-2">
+        <div class="bg-white mt-2 md:rounded-xl md:overflow-hidden">
             <a href="#" class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100">
                 <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/>
@@ -916,7 +953,7 @@
             $avgRating = $reviews->count() ? round($reviews->avg('rating'), 1) : 0;
             $reviewCount = $reviews->count();
         @endphp
-        <div class="bg-white mt-2 px-4 py-4" id="reviews">
+        <div class="bg-white mt-2 px-4 py-4 md:rounded-xl" id="reviews">
 
             {{-- Flash messages --}}
             @if(session('success'))
@@ -1070,7 +1107,7 @@
                 ? asset('storage/' . $seller->businessProfile->logo)
                 : ($seller->avatar ? asset('storage/' . $seller->avatar) : null);
         @endphp
-        <div class="bg-white mt-2 px-4 py-4">
+        <div class="bg-white mt-2 px-4 py-4 md:rounded-xl">
             <div class="flex items-center gap-3">
                 {{-- Avatar --}}
                 <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
@@ -1106,7 +1143,7 @@
                     </div>
                 </div>
 
-                <a href="#" class="text-xs text-primary-600 font-medium border border-primary-300 px-3 py-1.5 rounded-lg">
+                <a href="{{ route('sellers.show', $seller) }}" class="text-xs text-primary-600 font-medium border border-primary-300 px-3 py-1.5 rounded-lg">
                     Visit
                 </a>
             </div>
@@ -1117,7 +1154,7 @@
         {{-- RECOMMENDED LISTINGS                                              --}}
         {{-- ================================================================ --}}
         @if($relatedListings->count() > 0)
-        <div class="bg-white mt-2">
+        <div class="bg-white mt-2 md:rounded-xl md:overflow-hidden md:mt-4">
 
             {{-- Tab bar --}}
             <div class="flex border-b border-gray-100 overflow-x-auto scrollbar-hide">
@@ -1134,7 +1171,7 @@
             </div>
 
             {{-- Product grid --}}
-            <div class="grid grid-cols-2 gap-2 p-2">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 p-2">
                 @foreach($relatedListings as $related)
                 <x-mobile.listing-card :listing="$related" />
                 @endforeach
@@ -1142,10 +1179,12 @@
         </div>
         @endif
 
+        </div>{{-- end desktop container --}}
+
         {{-- ================================================================ --}}
-        {{-- STICKY BOTTOM ACTION BAR                                          --}}
+        {{-- STICKY BOTTOM ACTION BAR (mobile only)                           --}}
         {{-- ================================================================ --}}
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3 z-30">
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3 z-30">
             <button class="flex-shrink-0 flex items-center justify-center w-11 h-11 border border-gray-300 rounded-xl">
                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>

@@ -46,6 +46,12 @@ class HomeController extends Controller
             ->withCount(['listings' => function ($query) {
                 $query->where('status', 'active')->where('is_visible', true);
             }])
+            ->with(['children' => function ($query) {
+                $query->where('is_active', true)->orderBy('sort_order')
+                    ->with(['children' => function ($q) {
+                        $q->where('is_active', true)->orderBy('sort_order');
+                    }]);
+            }])
             ->orderBy('sort_order')
             ->get();
 
