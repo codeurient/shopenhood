@@ -72,7 +72,7 @@ Route::get('/search/suggestions', [SearchSuggestionController::class, 'index'])
 
 // Public Seller Profiles
 Route::get('/sellers/{user}', [SellerController::class, 'show'])->name('sellers.show');
-
+    
 // Public Listing Routes
 Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');
 Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])

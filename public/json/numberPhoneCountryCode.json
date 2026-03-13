@@ -1,0 +1,1922 @@
+{
+  "AD": {
+    "code": "AD",
+    "name": "Andorra",
+    "nativeName": "Andorra",
+    "phoneCode": "+376",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "AE": {
+    "code": "AE",
+    "name": "United Arab Emirates",
+    "nativeName": "الإمارات العربية المتحدة",
+    "phoneCode": "+971",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "AF": {
+    "code": "AF",
+    "name": "Afghanistan",
+    "nativeName": "افغانستان",
+    "phoneCode": "+93",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "AG": {
+    "code": "AG",
+    "name": "Antigua and Barbuda",
+    "nativeName": "Antigua and Barbuda",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "AI": {
+    "code": "AI",
+    "name": "Anguilla",
+    "nativeName": "Anguilla",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "AL": {
+    "code": "AL",
+    "name": "Albania",
+    "nativeName": "Shqipëria",
+    "phoneCode": "+355",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "AM": {
+    "code": "AM",
+    "name": "Armenia",
+    "nativeName": "Հայաստան",
+    "phoneCode": "+374",
+    "trunkPrefix": "00",
+    "iddPrefix": "8"
+  },
+  "AO": {
+    "code": "AO",
+    "name": "Angola",
+    "nativeName": "Angola",
+    "phoneCode": "+244",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "AQ": {
+    "code": "AQ",
+    "name": "Antarctica",
+    "nativeName": "Antarctica",
+    "phoneCode": "+672",
+    "trunkPrefix": null,
+    "iddPrefix": null
+  },
+  "AR": {
+    "code": "AR",
+    "name": "Argentina",
+    "nativeName": "Argentina",
+    "phoneCode": "+54",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "AS": {
+    "code": "AS",
+    "name": "American Samoa",
+    "nativeName": "American Samoa",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "AT": {
+    "code": "AT",
+    "name": "Austria",
+    "nativeName": "Österreich",
+    "phoneCode": "+43",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "AU": {
+    "code": "AU",
+    "name": "Australia",
+    "nativeName": "Australia",
+    "phoneCode": "+61",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "AW": {
+    "code": "AW",
+    "name": "Aruba",
+    "nativeName": "Aruba",
+    "phoneCode": "+297",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "AZ": {
+    "code": "AZ",
+    "name": "Azerbaijan",
+    "nativeName": "Azərbaycan",
+    "phoneCode": "+994",
+    "trunkPrefix": "00",
+    "iddPrefix": "8"
+  },
+  "BA": {
+    "code": "BA",
+    "name": "Bosnia and Herzegovina",
+    "nativeName": "Bosna i Hercegovina",
+    "phoneCode": "+387",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "BB": {
+    "code": "BB",
+    "name": "Barbados",
+    "nativeName": "Barbados",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "BD": {
+    "code": "BD",
+    "name": "Bangladesh",
+    "nativeName": "বাংলাদেশ",
+    "phoneCode": "+880",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "BE": {
+    "code": "BE",
+    "name": "Belgium",
+    "nativeName": "België",
+    "phoneCode": "+32",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "BF": {
+    "code": "BF",
+    "name": "Burkina Faso",
+    "nativeName": "Burkina Faso",
+    "phoneCode": "+226",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "BG": {
+    "code": "BG",
+    "name": "Bulgaria",
+    "nativeName": "България",
+    "phoneCode": "+359",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "BH": {
+    "code": "BH",
+    "name": "Bahrain",
+    "nativeName": "البحرين",
+    "phoneCode": "+973",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "BI": {
+    "code": "BI",
+    "name": "Burundi",
+    "nativeName": "Burundi",
+    "phoneCode": "+257",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "BJ": {
+    "code": "BJ",
+    "name": "Benin",
+    "nativeName": "Bénin",
+    "phoneCode": "+229",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "BM": {
+    "code": "BM",
+    "name": "Bermuda",
+    "nativeName": "Bermuda",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "BN": {
+    "code": "BN",
+    "name": "Brunei",
+    "nativeName": "Brunei",
+    "phoneCode": "+673",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "BO": {
+    "code": "BO",
+    "name": "Bolivia",
+    "nativeName": "Bolivia",
+    "phoneCode": "+591",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "BR": {
+    "code": "BR",
+    "name": "Brazil",
+    "nativeName": "Brasil",
+    "phoneCode": "+55",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "BS": {
+    "code": "BS",
+    "name": "Bahamas",
+    "nativeName": "Bahamas",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "BT": {
+    "code": "BT",
+    "name": "Bhutan",
+    "nativeName": "འབྲུག་ཡུལ",
+    "phoneCode": "+975",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "BW": {
+    "code": "BW",
+    "name": "Botswana",
+    "nativeName": "Botswana",
+    "phoneCode": "+267",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "BY": {
+    "code": "BY",
+    "name": "Belarus",
+    "nativeName": "Беларусь",
+    "phoneCode": "+375",
+    "trunkPrefix": "810",
+    "iddPrefix": "8"
+  },
+  "BZ": {
+    "code": "BZ",
+    "name": "Belize",
+    "nativeName": "Belize",
+    "phoneCode": "+501",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "CA": {
+    "code": "CA",
+    "name": "Canada",
+    "nativeName": "Canada",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "CC": {
+    "code": "CC",
+    "name": "Cocos Islands",
+    "nativeName": "Cocos Islands",
+    "phoneCode": "+61",
+    "trunkPrefix": "0011",
+    "iddPrefix": "0"
+  },
+  "CD": {
+    "code": "CD",
+    "name": "DR Congo",
+    "nativeName": "République Démocratique du Congo",
+    "phoneCode": "+243",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "CF": {
+    "code": "CF",
+    "name": "Central African Republic",
+    "nativeName": "République Centrafricaine",
+    "phoneCode": "+236",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "CG": {
+    "code": "CG",
+    "name": "Republic of the Congo",
+    "nativeName": "République du Congo",
+    "phoneCode": "+242",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "CH": {
+    "code": "CH",
+    "name": "Switzerland",
+    "nativeName": "Schweiz",
+    "phoneCode": "+41",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "CI": {
+    "code": "CI",
+    "name": "Côte d'Ivoire",
+    "nativeName": "Côte d'Ivoire",
+    "phoneCode": "+225",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "CK": {
+    "code": "CK",
+    "name": "Cook Islands",
+    "nativeName": "Cook Islands",
+    "phoneCode": "+682",
+    "trunkPrefix": "00",
+    "iddPrefix": "00"
+  },
+  "CL": {
+    "code": "CL",
+    "name": "Chile",
+    "nativeName": "Chile",
+    "phoneCode": "+56",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "CM": {
+    "code": "CM",
+    "name": "Cameroon",
+    "nativeName": "Cameroun",
+    "phoneCode": "+237",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "CN": {
+    "code": "CN",
+    "name": "China",
+    "nativeName": "中国",
+    "phoneCode": "+86",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "CO": {
+    "code": "CO",
+    "name": "Colombia",
+    "nativeName": "Colombia",
+    "phoneCode": "+57",
+    "trunkPrefix": "009",
+    "iddPrefix": "09"
+  },
+  "CR": {
+    "code": "CR",
+    "name": "Costa Rica",
+    "nativeName": "Costa Rica",
+    "phoneCode": "+506",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "CU": {
+    "code": "CU",
+    "name": "Cuba",
+    "nativeName": "Cuba",
+    "phoneCode": "+53",
+    "trunkPrefix": "119",
+    "iddPrefix": "0"
+  },
+  "CV": {
+    "code": "CV",
+    "name": "Cape Verde",
+    "nativeName": "Cabo Verde",
+    "phoneCode": "+238",
+    "trunkPrefix": "0",
+    "iddPrefix": null
+  },
+  "CX": {
+    "code": "CX",
+    "name": "Christmas Island",
+    "nativeName": "Christmas Island",
+    "phoneCode": "+61",
+    "trunkPrefix": "0011",
+    "iddPrefix": "0"
+  },
+  "CY": {
+    "code": "CY",
+    "name": "Cyprus",
+    "nativeName": "Κύπρος",
+    "phoneCode": "+357",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "CZ": {
+    "code": "CZ",
+    "name": "Czech Republic",
+    "nativeName": "Česká republika",
+    "phoneCode": "+420",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "DE": {
+    "code": "DE",
+    "name": "Germany",
+    "nativeName": "Deutschland",
+    "phoneCode": "+49",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "DJ": {
+    "code": "DJ",
+    "name": "Djibouti",
+    "nativeName": "Djibouti",
+    "phoneCode": "+253",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "DK": {
+    "code": "DK",
+    "name": "Denmark",
+    "nativeName": "Danmark",
+    "phoneCode": "+45",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "DM": {
+    "code": "DM",
+    "name": "Dominica",
+    "nativeName": "Dominica",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "DO": {
+    "code": "DO",
+    "name": "Dominican Republic",
+    "nativeName": "República Dominicana",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "DZ": {
+    "code": "DZ",
+    "name": "Algeria",
+    "nativeName": "الجزائر",
+    "phoneCode": "+213",
+    "trunkPrefix": "00",
+    "iddPrefix": "7"
+  },
+  "EC": {
+    "code": "EC",
+    "name": "Ecuador",
+    "nativeName": "Ecuador",
+    "phoneCode": "+593",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "EE": {
+    "code": "EE",
+    "name": "Estonia",
+    "nativeName": "Eesti",
+    "phoneCode": "+372",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "EG": {
+    "code": "EG",
+    "name": "Egypt",
+    "nativeName": "مصر",
+    "phoneCode": "+20",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "ES": {
+    "code": "ES",
+    "name": "Spain",
+    "nativeName": "España",
+    "phoneCode": "+34",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "ET": {
+    "code": "ET",
+    "name": "Ethiopia",
+    "nativeName": "ኢትዮጵያ",
+    "phoneCode": "+251",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "FI": {
+    "code": "FI",
+    "name": "Finland",
+    "nativeName": "Suomi",
+    "phoneCode": "+358",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "FJ": {
+    "code": "FJ",
+    "name": "Fiji",
+    "nativeName": "Fiji",
+    "phoneCode": "+679",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "FK": {
+    "code": "FK",
+    "name": "Falkland Islands",
+    "nativeName": "Falkland Islands",
+    "phoneCode": "+500",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "FM": {
+    "code": "FM",
+    "name": "Micronesia",
+    "nativeName": "Micronesia",
+    "phoneCode": "+691",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "FO": {
+    "code": "FO",
+    "name": "Faroe Islands",
+    "nativeName": "Føroyar",
+    "phoneCode": "+298",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "FR": {
+    "code": "FR",
+    "name": "France",
+    "nativeName": "France",
+    "phoneCode": "+33",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GA": {
+    "code": "GA",
+    "name": "Gabon",
+    "nativeName": "Gabon",
+    "phoneCode": "+241",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GB": {
+    "code": "GB",
+    "name": "United Kingdom",
+    "nativeName": "United Kingdom",
+    "phoneCode": "+44",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "GD": {
+    "code": "GD",
+    "name": "Grenada",
+    "nativeName": "Grenada",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "GE": {
+    "code": "GE",
+    "name": "Georgia",
+    "nativeName": "საქართველო",
+    "phoneCode": "+995",
+    "trunkPrefix": "810",
+    "iddPrefix": "8"
+  },
+  "GF": {
+    "code": "GF",
+    "name": "French Guiana",
+    "nativeName": "Guyane française",
+    "phoneCode": "+594",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GG": {
+    "code": "GG",
+    "name": "Guernsey",
+    "nativeName": "Guernsey",
+    "phoneCode": "+44",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "GH": {
+    "code": "GH",
+    "name": "Ghana",
+    "nativeName": "Ghana",
+    "phoneCode": "+233",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "GI": {
+    "code": "GI",
+    "name": "Gibraltar",
+    "nativeName": "Gibraltar",
+    "phoneCode": "+350",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GL": {
+    "code": "GL",
+    "name": "Greenland",
+    "nativeName": "Kalaallit Nunaat",
+    "phoneCode": "+299",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GM": {
+    "code": "GM",
+    "name": "Gambia",
+    "nativeName": "Gambia",
+    "phoneCode": "+220",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GN": {
+    "code": "GN",
+    "name": "Guinea",
+    "nativeName": "Guinée",
+    "phoneCode": "+224",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GP": {
+    "code": "GP",
+    "name": "Guadeloupe",
+    "nativeName": "Guadeloupe",
+    "phoneCode": "+590",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GQ": {
+    "code": "GQ",
+    "name": "Equatorial Guinea",
+    "nativeName": "Guinea Ecuatorial",
+    "phoneCode": "+240",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GR": {
+    "code": "GR",
+    "name": "Greece",
+    "nativeName": "Ελλάδα",
+    "phoneCode": "+30",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GT": {
+    "code": "GT",
+    "name": "Guatemala",
+    "nativeName": "Guatemala",
+    "phoneCode": "+502",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GU": {
+    "code": "GU",
+    "name": "Guam",
+    "nativeName": "Guam",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "GW": {
+    "code": "GW",
+    "name": "Guinea-Bissau",
+    "nativeName": "Guiné-Bissau",
+    "phoneCode": "+245",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "GY": {
+    "code": "GY",
+    "name": "Guyana",
+    "nativeName": "Guyana",
+    "phoneCode": "+592",
+    "trunkPrefix": "001",
+    "iddPrefix": null
+  },
+  "HK": {
+    "code": "HK",
+    "name": "Hong Kong",
+    "nativeName": "香港",
+    "phoneCode": "+852",
+    "trunkPrefix": "001",
+    "iddPrefix": null
+  },
+  "HM": {
+    "code": "HM",
+    "name": "Heard Island and McDonald Islands",
+    "nativeName": "Heard Island and McDonald Islands",
+    "phoneCode": "+672",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "HN": {
+    "code": "HN",
+    "name": "Honduras",
+    "nativeName": "Honduras",
+    "phoneCode": "+504",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "HR": {
+    "code": "HR",
+    "name": "Croatia",
+    "nativeName": "Hrvatska",
+    "phoneCode": "+385",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "HT": {
+    "code": "HT",
+    "name": "Haiti",
+    "nativeName": "Haïti",
+    "phoneCode": "+509",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "HU": {
+    "code": "HU",
+    "name": "Hungary",
+    "nativeName": "Magyarország",
+    "phoneCode": "+36",
+    "trunkPrefix": "00",
+    "iddPrefix": "06"
+  },
+  "ID": {
+    "code": "ID",
+    "name": "Indonesia",
+    "nativeName": "Indonesia",
+    "phoneCode": "+62",
+    "trunkPrefix": "001",
+    "iddPrefix": "0"
+  },
+  "IE": {
+    "code": "IE",
+    "name": "Ireland",
+    "nativeName": "Ireland",
+    "phoneCode": "+353",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "IL": {
+    "code": "IL",
+    "name": "Israel",
+    "nativeName": "ישראל",
+    "phoneCode": "+972",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "IM": {
+    "code": "IM",
+    "name": "Isle of Man",
+    "nativeName": "Isle of Man",
+    "phoneCode": "+44",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "IN": {
+    "code": "IN",
+    "name": "India",
+    "nativeName": "भारत",
+    "phoneCode": "+91",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "IO": {
+    "code": "IO",
+    "name": "British Indian Ocean Territory",
+    "nativeName": "British Indian Ocean Territory",
+    "phoneCode": "+246",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "IQ": {
+    "code": "IQ",
+    "name": "Iraq",
+    "nativeName": "العراق",
+    "phoneCode": "+964",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "IR": {
+    "code": "IR",
+    "name": "Iran",
+    "nativeName": "ایران",
+    "phoneCode": "+98",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "IS": {
+    "code": "IS",
+    "name": "Iceland",
+    "nativeName": "Ísland",
+    "phoneCode": "+354",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "IT": {
+    "code": "IT",
+    "name": "Italy",
+    "nativeName": "Italia",
+    "phoneCode": "+39",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "JE": {
+    "code": "JE",
+    "name": "Jersey",
+    "nativeName": "Jersey",
+    "phoneCode": "+44",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "JM": {
+    "code": "JM",
+    "name": "Jamaica",
+    "nativeName": "Jamaica",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "JO": {
+    "code": "JO",
+    "name": "Jordan",
+    "nativeName": "الأردن",
+    "phoneCode": "+962",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "JP": {
+    "code": "JP",
+    "name": "Japan",
+    "nativeName": "日本",
+    "phoneCode": "+81",
+    "trunkPrefix": "001",
+    "iddPrefix": "0"
+  },
+  "KE": {
+    "code": "KE",
+    "name": "Kenya",
+    "nativeName": "Kenya",
+    "phoneCode": "+254",
+    "trunkPrefix": "000",
+    "iddPrefix": "0"
+  },
+  "KG": {
+    "code": "KG",
+    "name": "Kyrgyzstan",
+    "nativeName": "Кыргызстан",
+    "phoneCode": "+996",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "KH": {
+    "code": "KH",
+    "name": "Cambodia",
+    "nativeName": "កម្ពុជា",
+    "phoneCode": "+855",
+    "trunkPrefix": "001",
+    "iddPrefix": "0"
+  },
+  "KI": {
+    "code": "KI",
+    "name": "Kiribati",
+    "nativeName": "Kiribati",
+    "phoneCode": "+686",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "KM": {
+    "code": "KM",
+    "name": "Comoros",
+    "nativeName": "Komori",
+    "phoneCode": "+269",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "KN": {
+    "code": "KN",
+    "name": "Saint Kitts and Nevis",
+    "nativeName": "Saint Kitts and Nevis",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "KP": {
+    "code": "KP",
+    "name": "North Korea",
+    "nativeName": "조선",
+    "phoneCode": "+850",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "KR": {
+    "code": "KR",
+    "name": "South Korea",
+    "nativeName": "대한민국",
+    "phoneCode": "+82",
+    "trunkPrefix": "001",
+    "iddPrefix": "0"
+  },
+  "KW": {
+    "code": "KW",
+    "name": "Kuwait",
+    "nativeName": "الكويت",
+    "phoneCode": "+965",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "KY": {
+    "code": "KY",
+    "name": "Cayman Islands",
+    "nativeName": "Cayman Islands",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "KZ": {
+    "code": "KZ",
+    "name": "Kazakhstan",
+    "nativeName": "Қазақстан",
+    "phoneCode": "+7",
+    "trunkPrefix": "810",
+    "iddPrefix": "8"
+  },
+  "LA": {
+    "code": "LA",
+    "name": "Laos",
+    "nativeName": "ລາວ",
+    "phoneCode": "+856",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "LB": {
+    "code": "LB",
+    "name": "Lebanon",
+    "nativeName": "لبنان",
+    "phoneCode": "+961",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "LC": {
+    "code": "LC",
+    "name": "Saint Lucia",
+    "nativeName": "Saint Lucia",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "LI": {
+    "code": "LI",
+    "name": "Liechtenstein",
+    "nativeName": "Liechtenstein",
+    "phoneCode": "+423",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "LK": {
+    "code": "LK",
+    "name": "Sri Lanka",
+    "nativeName": "ශ්‍රී ලංකාව",
+    "phoneCode": "+94",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "LR": {
+    "code": "LR",
+    "name": "Liberia",
+    "nativeName": "Liberia",
+    "phoneCode": "+231",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "LS": {
+    "code": "LS",
+    "name": "Lesotho",
+    "nativeName": "Lesotho",
+    "phoneCode": "+266",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "LT": {
+    "code": "LT",
+    "name": "Lithuania",
+    "nativeName": "Lietuva",
+    "phoneCode": "+370",
+    "trunkPrefix": "00",
+    "iddPrefix": "8"
+  },
+  "LU": {
+    "code": "LU",
+    "name": "Luxembourg",
+    "nativeName": "Luxembourg",
+    "phoneCode": "+352",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "LV": {
+    "code": "LV",
+    "name": "Latvia",
+    "nativeName": "Latvija",
+    "phoneCode": "+371",
+    "trunkPrefix": "00",
+    "iddPrefix": "8"
+  },
+  "LY": {
+    "code": "LY",
+    "name": "Libya",
+    "nativeName": "ليبيا",
+    "phoneCode": "+218",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "MA": {
+    "code": "MA",
+    "name": "Morocco",
+    "nativeName": "المغرب",
+    "phoneCode": "+212",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MC": {
+    "code": "MC",
+    "name": "Monaco",
+    "nativeName": "Monaco",
+    "phoneCode": "+377",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "MD": {
+    "code": "MD",
+    "name": "Moldova",
+    "nativeName": "Moldova",
+    "phoneCode": "+373",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "ME": {
+    "code": "ME",
+    "name": "Montenegro",
+    "nativeName": "Crna Gora",
+    "phoneCode": "+382",
+    "trunkPrefix": "99",
+    "iddPrefix": "0"
+  },
+  "MG": {
+    "code": "MG",
+    "name": "Madagascar",
+    "nativeName": "Madagasikara",
+    "phoneCode": "+261",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MH": {
+    "code": "MH",
+    "name": "Marshall Islands",
+    "nativeName": "Marshall Islands",
+    "phoneCode": "+692",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "MK": {
+    "code": "MK",
+    "name": "North Macedonia",
+    "nativeName": "Северна Македонија",
+    "phoneCode": "+389",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "ML": {
+    "code": "ML",
+    "name": "Mali",
+    "nativeName": "Mali",
+    "phoneCode": "+223",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MM": {
+    "code": "MM",
+    "name": "Myanmar",
+    "nativeName": "မြန်မာ",
+    "phoneCode": "+95",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "MN": {
+    "code": "MN",
+    "name": "Mongolia",
+    "nativeName": "Монгол улс",
+    "phoneCode": "+976",
+    "trunkPrefix": "001",
+    "iddPrefix": "0"
+  },
+  "MO": {
+    "code": "MO",
+    "name": "Macau",
+    "nativeName": "澳門",
+    "phoneCode": "+853",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MP": {
+    "code": "MP",
+    "name": "Northern Mariana Islands",
+    "nativeName": "Northern Mariana Islands",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "MQ": {
+    "code": "MQ",
+    "name": "Martinique",
+    "nativeName": "Martinique",
+    "phoneCode": "+596",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MR": {
+    "code": "MR",
+    "name": "Mauritania",
+    "nativeName": "موريتانيا",
+    "phoneCode": "+222",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MS": {
+    "code": "MS",
+    "name": "Montserrat",
+    "nativeName": "Montserrat",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "MT": {
+    "code": "MT",
+    "name": "Malta",
+    "nativeName": "Malta",
+    "phoneCode": "+356",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MU": {
+    "code": "MU",
+    "name": "Mauritius",
+    "nativeName": "Mauritius",
+    "phoneCode": "+230",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MV": {
+    "code": "MV",
+    "name": "Maldives",
+    "nativeName": "ދިވެހިރާއްޖެ",
+    "phoneCode": "+960",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MW": {
+    "code": "MW",
+    "name": "Malawi",
+    "nativeName": "Malawi",
+    "phoneCode": "+265",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "MX": {
+    "code": "MX",
+    "name": "Mexico",
+    "nativeName": "México",
+    "phoneCode": "+52",
+    "trunkPrefix": "00",
+    "iddPrefix": "01"
+  },
+  "MY": {
+    "code": "MY",
+    "name": "Malaysia",
+    "nativeName": "Malaysia",
+    "phoneCode": "+60",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "MZ": {
+    "code": "MZ",
+    "name": "Mozambique",
+    "nativeName": "Moçambique",
+    "phoneCode": "+258",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "NA": {
+    "code": "NA",
+    "name": "Namibia",
+    "nativeName": "Namibia",
+    "phoneCode": "+264",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "NC": {
+    "code": "NC",
+    "name": "New Caledonia",
+    "nativeName": "Nouvelle-Calédonie",
+    "phoneCode": "+687",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "NE": {
+    "code": "NE",
+    "name": "Niger",
+    "nativeName": "Niger",
+    "phoneCode": "+227",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "NF": {
+    "code": "NF",
+    "name": "Norfolk Island",
+    "nativeName": "Norfolk Island",
+    "phoneCode": "+672",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "NG": {
+    "code": "NG",
+    "name": "Nigeria",
+    "nativeName": "Nigeria",
+    "phoneCode": "+234",
+    "trunkPrefix": "009",
+    "iddPrefix": "0"
+  },
+  "NI": {
+    "code": "NI",
+    "name": "Nicaragua",
+    "nativeName": "Nicaragua",
+    "phoneCode": "+505",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "NL": {
+    "code": "NL",
+    "name": "Netherlands",
+    "nativeName": "Nederland",
+    "phoneCode": "+31",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "NO": {
+    "code": "NO",
+    "name": "Norway",
+    "nativeName": "Norge",
+    "phoneCode": "+47",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "NP": {
+    "code": "NP",
+    "name": "Nepal",
+    "nativeName": "नेपाल",
+    "phoneCode": "+977",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "NR": {
+    "code": "NR",
+    "name": "Nauru",
+    "nativeName": "Nauru",
+    "phoneCode": "+674",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "NU": {
+    "code": "NU",
+    "name": "Niue",
+    "nativeName": "Niue",
+    "phoneCode": "+683",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "NZ": {
+    "code": "NZ",
+    "name": "New Zealand",
+    "nativeName": "New Zealand",
+    "phoneCode": "+64",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "OM": {
+    "code": "OM",
+    "name": "Oman",
+    "nativeName": "عمان",
+    "phoneCode": "+968",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "PA": {
+    "code": "PA",
+    "name": "Panama",
+    "nativeName": "Panamá",
+    "phoneCode": "+507",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "PE": {
+    "code": "PE",
+    "name": "Peru",
+    "nativeName": "Perú",
+    "phoneCode": "+51",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "PF": {
+    "code": "PF",
+    "name": "French Polynesia",
+    "nativeName": "Polynésie française",
+    "phoneCode": "+689",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "PG": {
+    "code": "PG",
+    "name": "Papua New Guinea",
+    "nativeName": "Papua New Guinea",
+    "phoneCode": "+675",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "PH": {
+    "code": "PH",
+    "name": "Philippines",
+    "nativeName": "Pilipinas",
+    "phoneCode": "+63",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "PK": {
+    "code": "PK",
+    "name": "Pakistan",
+    "nativeName": "پاکستان",
+    "phoneCode": "+92",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "PL": {
+    "code": "PL",
+    "name": "Poland",
+    "nativeName": "Polska",
+    "phoneCode": "+48",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "PM": {
+    "code": "PM",
+    "name": "Saint Pierre and Miquelon",
+    "nativeName": "Saint-Pierre-et-Miquelon",
+    "phoneCode": "+508",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "PN": {
+    "code": "PN",
+    "name": "Pitcairn Islands",
+    "nativeName": "Pitcairn Islands",
+    "phoneCode": "+64",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "PR": {
+    "code": "PR",
+    "name": "Puerto Rico",
+    "nativeName": "Puerto Rico",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "PS": {
+    "code": "PS",
+    "name": "Palestine",
+    "nativeName": "فلسطين",
+    "phoneCode": "+970",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "PT": {
+    "code": "PT",
+    "name": "Portugal",
+    "nativeName": "Portugal",
+    "phoneCode": "+351",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "PW": {
+    "code": "PW",
+    "name": "Palau",
+    "nativeName": "Palau",
+    "phoneCode": "+680",
+    "trunkPrefix": "011",
+    "iddPrefix": null
+  },
+  "PY": {
+    "code": "PY",
+    "name": "Paraguay",
+    "nativeName": "Paraguay",
+    "phoneCode": "+595",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "QA": {
+    "code": "QA",
+    "name": "Qatar",
+    "nativeName": "قطر",
+    "phoneCode": "+974",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "RE": {
+    "code": "RE",
+    "name": "Réunion",
+    "nativeName": "La Réunion",
+    "phoneCode": "+262",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "RO": {
+    "code": "RO",
+    "name": "Romania",
+    "nativeName": "România",
+    "phoneCode": "+40",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "RS": {
+    "code": "RS",
+    "name": "Serbia",
+    "nativeName": "Србија",
+    "phoneCode": "+381",
+    "trunkPrefix": "99",
+    "iddPrefix": "0"
+  },
+  "RU": {
+    "code": "RU",
+    "name": "Russia",
+    "nativeName": "Россия",
+    "phoneCode": "+7",
+    "trunkPrefix": "810",
+    "iddPrefix": "8"
+  },
+  "RW": {
+    "code": "RW",
+    "name": "Rwanda",
+    "nativeName": "Rwanda",
+    "phoneCode": "+250",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "SA": {
+    "code": "SA",
+    "name": "Saudi Arabia",
+    "nativeName": "المملكة العربية السعودية",
+    "phoneCode": "+966",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "SB": {
+    "code": "SB",
+    "name": "Solomon Islands",
+    "nativeName": "Solomon Islands",
+    "phoneCode": "+677",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "SC": {
+    "code": "SC",
+    "name": "Seychelles",
+    "nativeName": "Seychelles",
+    "phoneCode": "+248",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "SD": {
+    "code": "SD",
+    "name": "Sudan",
+    "nativeName": "السودان",
+    "phoneCode": "+249",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "SE": {
+    "code": "SE",
+    "name": "Sweden",
+    "nativeName": "Sverige",
+    "phoneCode": "+46",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "SG": {
+    "code": "SG",
+    "name": "Singapore",
+    "nativeName": "Singapore",
+    "phoneCode": "+65",
+    "trunkPrefix": "001",
+    "iddPrefix": null
+  },
+  "SH": {
+    "code": "SH",
+    "name": "Saint Helena",
+    "nativeName": "Saint Helena",
+    "phoneCode": "+290",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "SI": {
+    "code": "SI",
+    "name": "Slovenia",
+    "nativeName": "Slovenija",
+    "phoneCode": "+386",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "SJ": {
+    "code": "SJ",
+    "name": "Svalbard and Jan Mayen",
+    "nativeName": "Svalbard og Jan Mayen",
+    "phoneCode": "+47",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "SK": {
+    "code": "SK",
+    "name": "Slovakia",
+    "nativeName": "Slovensko",
+    "phoneCode": "+421",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "SL": {
+    "code": "SL",
+    "name": "Sierra Leone",
+    "nativeName": "Sierra Leone",
+    "phoneCode": "+232",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "SM": {
+    "code": "SM",
+    "name": "San Marino",
+    "nativeName": "San Marino",
+    "phoneCode": "+378",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "SN": {
+    "code": "SN",
+    "name": "Senegal",
+    "nativeName": "Sénégal",
+    "phoneCode": "+221",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "SO": {
+    "code": "SO",
+    "name": "Somalia",
+    "nativeName": "Soomaaliya",
+    "phoneCode": "+252",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "SR": {
+    "code": "SR",
+    "name": "Suriname",
+    "nativeName": "Suriname",
+    "phoneCode": "+597",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "SS": {
+    "code": "SS",
+    "name": "South Sudan",
+    "nativeName": "South Sudan",
+    "phoneCode": "+211",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "ST": {
+    "code": "ST",
+    "name": "São Tomé and Príncipe",
+    "nativeName": "São Tomé e Príncipe",
+    "phoneCode": "+239",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "SV": {
+    "code": "SV",
+    "name": "El Salvador",
+    "nativeName": "El Salvador",
+    "phoneCode": "+503",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "SY": {
+    "code": "SY",
+    "name": "Syria",
+    "nativeName": "سوريا",
+    "phoneCode": "+963",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "SZ": {
+    "code": "SZ",
+    "name": "Eswatini",
+    "nativeName": "Eswatini",
+    "phoneCode": "+268",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "TC": {
+    "code": "TC",
+    "name": "Turks and Caicos Islands",
+    "nativeName": "Turks and Caicos Islands",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "TD": {
+    "code": "TD",
+    "name": "Chad",
+    "nativeName": "Tchad",
+    "phoneCode": "+235",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "TF": {
+    "code": "TF",
+    "name": "French Southern and Antarctic Lands",
+    "nativeName": "Terres australes et antarctiques françaises",
+    "phoneCode": "+262",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "TG": {
+    "code": "TG",
+    "name": "Togo",
+    "nativeName": "Togo",
+    "phoneCode": "+228",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "TH": {
+    "code": "TH",
+    "name": "Thailand",
+    "nativeName": "ประเทศไทย",
+    "phoneCode": "+66",
+    "trunkPrefix": "001",
+    "iddPrefix": "0"
+  },
+  "TJ": {
+    "code": "TJ",
+    "name": "Tajikistan",
+    "nativeName": "Тоҷикистон",
+    "phoneCode": "+992",
+    "trunkPrefix": "810",
+    "iddPrefix": "8"
+  },
+  "TK": {
+    "code": "TK",
+    "name": "Tokelau",
+    "nativeName": "Tokelau",
+    "phoneCode": "+690",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "TL": {
+    "code": "TL",
+    "name": "Timor-Leste",
+    "nativeName": "Timor-Leste",
+    "phoneCode": "+670",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "TM": {
+    "code": "TM",
+    "name": "Turkmenistan",
+    "nativeName": "Türkmenistan",
+    "phoneCode": "+993",
+    "trunkPrefix": "810",
+    "iddPrefix": "8"
+  },
+  "TN": {
+    "code": "TN",
+    "name": "Tunisia",
+    "nativeName": "تونس",
+    "phoneCode": "+216",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "TO": {
+    "code": "TO",
+    "name": "Tonga",
+    "nativeName": "Tonga",
+    "phoneCode": "+676",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "TR": {
+    "code": "TR",
+    "name": "Turkey",
+    "nativeName": "Türkiye",
+    "phoneCode": "+90",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "TT": {
+    "code": "TT",
+    "name": "Trinidad and Tobago",
+    "nativeName": "Trinidad and Tobago",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "TV": {
+    "code": "TV",
+    "name": "Tuvalu",
+    "nativeName": "Tuvalu",
+    "phoneCode": "+688",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "TW": {
+    "code": "TW",
+    "name": "Taiwan",
+    "nativeName": "台灣",
+    "phoneCode": "+886",
+    "trunkPrefix": "002",
+    "iddPrefix": "0"
+  },
+  "TZ": {
+    "code": "TZ",
+    "name": "Tanzania",
+    "nativeName": "Tanzania",
+    "phoneCode": "+255",
+    "trunkPrefix": "000",
+    "iddPrefix": "0"
+  },
+  "UA": {
+    "code": "UA",
+    "name": "Ukraine",
+    "nativeName": "Україна",
+    "phoneCode": "+380",
+    "trunkPrefix": "810",
+    "iddPrefix": "8"
+  },
+  "UG": {
+    "code": "UG",
+    "name": "Uganda",
+    "nativeName": "Uganda",
+    "phoneCode": "+256",
+    "trunkPrefix": "000",
+    "iddPrefix": "0"
+  },
+  "UM": {
+    "code": "UM",
+    "name": "United States Minor Outlying Islands",
+    "nativeName": "United States Minor Outlying Islands",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "US": {
+    "code": "US",
+    "name": "United States",
+    "nativeName": "United States",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "UY": {
+    "code": "UY",
+    "name": "Uruguay",
+    "nativeName": "Uruguay",
+    "phoneCode": "+598",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "UZ": {
+    "code": "UZ",
+    "name": "Uzbekistan",
+    "nativeName": "Oʻzbekiston",
+    "phoneCode": "+998",
+    "trunkPrefix": "810",
+    "iddPrefix": "8"
+  },
+  "VA": {
+    "code": "VA",
+    "name": "Vatican City",
+    "nativeName": "Città del Vaticano",
+    "phoneCode": "+39",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "VC": {
+    "code": "VC",
+    "name": "Saint Vincent and the Grenadines",
+    "nativeName": "Saint Vincent and the Grenadines",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "VE": {
+    "code": "VE",
+    "name": "Venezuela",
+    "nativeName": "Venezuela",
+    "phoneCode": "+58",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "VG": {
+    "code": "VG",
+    "name": "British Virgin Islands",
+    "nativeName": "British Virgin Islands",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "VI": {
+    "code": "VI",
+    "name": "U.S. Virgin Islands",
+    "nativeName": "U.S. Virgin Islands",
+    "phoneCode": "+1",
+    "trunkPrefix": "011",
+    "iddPrefix": "1"
+  },
+  "VN": {
+    "code": "VN",
+    "name": "Vietnam",
+    "nativeName": "Việt Nam",
+    "phoneCode": "+84",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "VU": {
+    "code": "VU",
+    "name": "Vanuatu",
+    "nativeName": "Vanuatu",
+    "phoneCode": "+678",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "WF": {
+    "code": "WF",
+    "name": "Wallis and Futuna",
+    "nativeName": "Wallis-et-Futuna",
+    "phoneCode": "+681",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "WS": {
+    "code": "WS",
+    "name": "Samoa",
+    "nativeName": "Samoa",
+    "phoneCode": "+685",
+    "trunkPrefix": "0",
+    "iddPrefix": null
+  },
+  "XK": {
+    "code": "XK",
+    "name": "Kosovo",
+    "nativeName": "Kosova",
+    "phoneCode": "+383",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "YE": {
+    "code": "YE",
+    "name": "Yemen",
+    "nativeName": "اليمن",
+    "phoneCode": "+967",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "YT": {
+    "code": "YT",
+    "name": "Mayotte",
+    "nativeName": "Mayotte",
+    "phoneCode": "+262",
+    "trunkPrefix": "00",
+    "iddPrefix": null
+  },
+  "ZA": {
+    "code": "ZA",
+    "name": "South Africa",
+    "nativeName": "South Africa",
+    "phoneCode": "+27",
+    "trunkPrefix": "09",
+    "iddPrefix": "0"
+  },
+  "ZM": {
+    "code": "ZM",
+    "name": "Zambia",
+    "nativeName": "Zambia",
+    "phoneCode": "+260",
+    "trunkPrefix": "00",
+    "iddPrefix": "0"
+  },
+  "ZW": {
+    "code": "ZW",
+    "name": "Zimbabwe",
+    "nativeName": "Zimbabwe",
+    "phoneCode": "+263",
+    "trunkPrefix": "110",
+    "iddPrefix": "0"
+  }
+}
