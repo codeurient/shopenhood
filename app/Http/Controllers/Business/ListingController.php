@@ -118,6 +118,9 @@ class ListingController extends Controller
 
             if (! empty($variationsData)) {
                 $this->createProductVariations($listing, $variationsData, $request);
+                $listing->update([
+                    'is_wholesale' => collect($variationsData)->contains(fn ($v) => ($v['is_wholesale'] ?? false) == 1),
+                ]);
             }
 
             DB::commit();
@@ -206,8 +209,12 @@ class ListingController extends Controller
 
             if (! empty($variationsData)) {
                 $this->updateProductVariations($listing, $variationsData, $request);
+                $listing->update([
+                    'is_wholesale' => collect($variationsData)->contains(fn ($v) => ($v['is_wholesale'] ?? false) == 1),
+                ]);
             } else {
                 $this->deleteVariationsWithFiles($listing);
+                $listing->update(['is_wholesale' => false]);
             }
 
             DB::commit();

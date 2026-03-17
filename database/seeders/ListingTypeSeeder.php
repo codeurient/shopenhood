@@ -26,7 +26,7 @@ class ListingTypeSeeder extends Seeder
                 'name' => 'Buy',
                 'slug' => 'buy',
                 'description' => 'Post a request to buy a specific item',
-                'requires_price' => true,
+                'requires_price' => false,
                 'icon' => '🛒',
                 'is_active' => true,
                 'sort_order' => 2,

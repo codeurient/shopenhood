@@ -84,7 +84,16 @@
                     </div>
 
                     {{-- Section: Address Details --}}
-                    <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-6"
+                         x-data="{
+                             cities: {{ json_encode($cities->values()) }},
+                             loadCities(id) {
+                                 if (!id) { this.cities = []; return; }
+                                 fetch(`/api/locations/${id}/cities`)
+                                     .then(r => r.json())
+                                     .then(data => { this.cities = data.cities ?? []; });
+                             }
+                         }">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Address Details</h3>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -92,19 +101,32 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Country <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="country" required
-                                       value="{{ old('country', $address->country) }}"
-                                       placeholder="Country"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
+                                <select name="country" required
+                                        @change="loadCities($event.target.options[$event.target.selectedIndex].dataset.id)"
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
+                                    <option value="">— Select Country —</option>
+                                    @foreach($countries as $country)
+                                        <option value="{{ $country->name }}"
+                                                data-id="{{ $country->id }}"
+                                                {{ old('country', $address->country) === $country->name ? 'selected' : '' }}>
+                                            {{ $country->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     City <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="city" required
-                                       value="{{ old('city', $address->city) }}"
-                                       placeholder="City"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
+                                <select name="city" required
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
+                                    <option value="">— Select City —</option>
+                                    @php $selectedCity = old('city', $address->city); @endphp
+                                    <template x-for="city in cities" :key="city.id">
+                                        <option :value="city.name" x-text="city.name"
+                                                :selected="city.name === '{{ $selectedCity }}'"></option>
+                                    </template>
+                                </select>
                             </div>
                         </div>
 

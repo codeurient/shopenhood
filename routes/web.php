@@ -4,6 +4,7 @@ use App\Http\Controllers\Business\ListingController as BusinessListingController
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LegalCenterController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ListingReviewController;
 use App\Http\Controllers\NotificationController;
@@ -72,7 +73,7 @@ Route::get('/search/suggestions', [SearchSuggestionController::class, 'index'])
 
 // Public Seller Profiles
 Route::get('/sellers/{user}', [SellerController::class, 'show'])->name('sellers.show');
-    
+
 // Public Listing Routes
 Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');
 Route::get('/listings/{listing:slug}', [ListingController::class, 'show'])
@@ -87,6 +88,10 @@ Route::post('/listings/{listing}/coupon/validate', [ListingController::class, 'v
 Route::get('/variations/{variation}', [ListingController::class, 'getVariation'])
     ->where('variation', '[0-9]+')
     ->name('variations.show');
+
+// ── Legal Center (public) ────────────────────────────────────────────────────
+Route::get('/legal', [LegalCenterController::class, 'index'])->name('legal.index');
+Route::get('/legal/{policy:slug}', [LegalCenterController::class, 'show'])->name('legal.show');
 
 // Listing Reviews (auth required, rate limited)
 Route::middleware(['auth', 'throttle:10,1'])->group(function () {

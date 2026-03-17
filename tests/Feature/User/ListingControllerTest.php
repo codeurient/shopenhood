@@ -13,7 +13,7 @@ beforeEach(function () {
     $this->actingAs($this->user);
 
     $this->category = Category::factory()->create();
-    $this->listingType = ListingType::factory()->create();
+    $this->listingType = ListingType::factory()->sell()->create();
 });
 
 test('user can view my listings page', function () {

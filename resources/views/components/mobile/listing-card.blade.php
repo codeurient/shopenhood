@@ -152,6 +152,13 @@
                 </svg>
             </button>
 
+            @if($listing->is_wholesale)
+            <!-- Wholesale Badge -->
+            <div class="flex items-center justify-center w-8 h-8 bg-white bg-opacity-90 rounded-full shadow-md pointer-events-none" title="Wholesale">
+                <i class="fa-brands fa-shirtsinbulk text-gray-700" style="font-size: 14px;"></i>
+            </div>
+            @endif
+
             @if($listing->listing_mode === 'business' && (!auth()->check() || auth()->id() !== $listing->user_id))
             <!-- Add to Cart Button (business listings only, hidden for listing owner) -->
             <button type="button"
@@ -174,18 +181,14 @@
             @endif
         </div>
 
-        <!-- Store Badge & Wholesale Icon (Bottom Left) -->
-        <div class="absolute bottom-2 left-2 flex items-center gap-2">
-            @if($listing->has_store)
-                <span class="px-2 py-0.5 text-xs font-semibold text-white bg-primary-600 rounded-md shadow-md">
-                    Store
-                </span>
-            @endif
-
-            @if($listing->is_wholesale)
-                <i class="fa-brands fa-shirtsinbulk text-white" style="font-size: 25px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>
-            @endif
+        <!-- Store Badge (Bottom Left) -->
+        @if($listing->has_store)
+        <div class="absolute bottom-2 left-2">
+            <span class="px-2 py-0.5 text-xs font-semibold text-white bg-primary-600 rounded-md shadow-md">
+                Store
+            </span>
         </div>
+        @endif
     </div>
 
     <!-- Card Content -->

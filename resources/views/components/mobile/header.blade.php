@@ -3,24 +3,15 @@
         x-data="cartPanel()"
         x-init="init()">
 
-    <div class="flex items-center gap-3 px-4 md:px-6 py-3 md:h-16 max-w-[1250px] mx-auto">
-
-        <!-- Hamburger Menu Button -->
-        <button @click="sidebarOpen = true"
-                type="button"
-                class="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors flex-shrink-0">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-        </button>
+    <div class="flex items-center gap-2 px-3 md:px-6 py-3 md:h-16 max-w-[1250px] mx-auto">
 
         <!-- Logo (desktop only) -->
         <a href="{{ route('home') }}"
-           class="hidden md:flex items-center flex-shrink-0 text-white font-bold text-xl tracking-tight hover:text-primary-300 transition-colors whitespace-nowrap">
+           class="hidden md:flex items-center flex-shrink-0 text-white font-bold text-xl tracking-tight hover:text-primary-300 transition-colors whitespace-nowrap ml-1">
             {{ config('app.name', 'Shopenhood') }}
         </a>
 
-<!-- Search Bar -->
+        <!-- Search Bar -->
         <div class="flex-1"
              x-data="{
                  query: '{{ request('search') }}',
@@ -57,7 +48,7 @@
             <form action="{{ route('listings.index') }}" method="GET">
                 <div class="relative">
                     <div class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <svg class="w-5 h-5 text-primary-600 md:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-primary-600 md:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                     </div>
@@ -68,17 +59,17 @@
                            @focus="query.length >= 2 && suggestions.length > 0 && (open = true)"
                            autocomplete="off"
                            placeholder="Search for items or services..."
-                           class="w-full pl-10 pr-10 py-2.5 text-sm bg-white border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+                           class="w-full pl-9 pr-9 py-2 text-sm bg-white border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
                     <!-- Filter button (mobile only) -->
                     <button type="button"
                             onclick="toggleFilterPanel()"
                             class="md:hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 transition-colors">
-                        <i class="fa-solid fa-filter text-lg"></i>
+                        <i class="fa-solid fa-filter text-sm"></i>
                     </button>
-                    <!-- Search submit button (desktop only, inside input) -->
+                    <!-- Search submit button (desktop only) -->
                     <button type="submit"
                             class="hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 items-center justify-center text-gray-400 hover:text-primary-600 transition-colors">
-                        <i class="fa-solid fa-filter text-lg"></i>
+                        <i class="fa-solid fa-filter text-sm"></i>
                     </button>
 
                     <!-- Suggestions Dropdown -->
@@ -106,7 +97,6 @@
                             <template x-for="item in suggestions" :key="item.url">
                                 <a :href="item.url"
                                    class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
-                                    <!-- Thumbnail -->
                                     <div class="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-gray-100">
                                         <template x-if="item.image_url">
                                             <img :src="item.image_url" :alt="item.title" class="w-full h-full object-cover">
@@ -119,12 +109,10 @@
                                             </div>
                                         </template>
                                     </div>
-                                    <!-- Info -->
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-medium text-gray-900 truncate" x-text="item.title"></p>
                                         <p class="text-xs text-gray-400 truncate" x-text="item.category_name"></p>
                                     </div>
-                                    <!-- Price -->
                                     <span x-show="item.base_price" class="text-sm font-semibold text-gray-800 flex-shrink-0" x-text="fmt(item.base_price, item.currency)"></span>
                                 </a>
                             </template>
@@ -144,46 +132,46 @@
             </form>
         </div>
 
-        <!-- User Account (desktop only) -->
-        @auth
-        <button type="button"
-                @click="accountPanelOpen = true"
-                class="hidden md:flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-700 text-white transition-colors flex-shrink-0">
-            <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-sm font-bold select-none">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-            </div>
-        </button>
-        @else
-        <a href="{{ route('login') }}"
-           class="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-700 text-white text-sm transition-colors flex-shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-            </svg>
-        </a>
-        @endauth
+        <!-- Right: Favorites (auth) + Cart -->
+        <div class="flex items-center gap-1 flex-shrink-0">
 
-        <!-- Favorites Icon (authenticated users) -->
-        @auth
-        <a href="{{ route('user.favorites.index') }}"
-           class="relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors flex-shrink-0">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-            </svg>
-        </a>
-        @endauth
+            @auth
+            <a href="{{ route('user.favorites.index') }}"
+               class="relative flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+            </a>
+            @endauth
 
-        <!-- Cart Icon with Badge (both mobile and desktop) -->
-        <button @click="openCart()"
-                type="button"
-                class="relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-700 transition-colors flex-shrink-0">
-            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l2 12h10l2-8H6M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/>
-            </svg>
-            <span x-show="count > 0" x-cloak
-                  style="display:none;"
-                  class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-danger-500 rounded-full"
-                  x-text="count"></span>
-        </button>
+            <!-- Cart -->
+            <button @click="openCart()"
+                    type="button"
+                    class="relative flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l2 12h10l2-8H6M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/>
+                </svg>
+                <span x-show="count > 0" x-cloak
+                      style="display:none;"
+                      class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-danger-500 rounded-full"
+                      x-text="count"></span>
+            </button>
+
+            <!-- Account Panel Button -->
+            <button type="button"
+                    @click="accountPanelOpen = true"
+                    class="flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-700 transition-colors">
+                @auth
+                    <div class="w-7 h-7 rounded-full bg-primary-600 flex items-center justify-center text-xs font-bold text-white select-none">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </div>
+                @else
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                @endauth
+            </button>
+        </div>
     </div>
 
     <!-- Cart Drawer Overlay -->
@@ -279,7 +267,6 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-start justify-between gap-1">
                                     <p class="text-sm font-medium text-gray-900 leading-tight line-clamp-2" x-text="item.title"></p>
-                                    <!-- Remove -->
                                     <button @click="removeItem(item)"
                                             class="flex-shrink-0 p-1 text-gray-400 hover:text-red-500 transition ml-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,7 +279,6 @@
 
                                 <!-- Qty + price row -->
                                 <div class="flex items-center justify-between mt-2">
-                                    <!-- Quantity controls -->
                                     <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                                         <button @click="changeQty(item, -1)"
                                                 :disabled="item.quantity <= 1"
@@ -303,7 +289,6 @@
                                                 class="w-7 h-7 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition font-bold">+</button>
                                     </div>
 
-                                    <!-- Prices -->
                                     <div class="text-right">
                                         <template x-if="item.discount_price">
                                             <div>
@@ -317,7 +302,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Delivery fee -->
                                 <template x-if="item.has_delivery && item.delivery_cost > 0">
                                     <p class="text-xs text-gray-500 mt-1">+ Delivery: <span class="font-medium" x-text="fmt(item.delivery_cost, item.currency)"></span></p>
                                 </template>

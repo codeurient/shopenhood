@@ -1,11 +1,6 @@
 <x-guest-layout>
     <x-slot name="title">Browse Listings — {{ config('app.name') }}</x-slot>
 
-    <!-- Search Bar (mobile only — desktop uses header search) -->
-    <div class="md:hidden">
-        <x-mobile.search-bar />
-    </div>
-
     <!-- Category Scroll -->
     <x-mobile.category-scroll :categories="$categories" />
 

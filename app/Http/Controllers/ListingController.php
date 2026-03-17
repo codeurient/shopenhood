@@ -129,6 +129,12 @@ class ListingController extends Controller
                 'is_in_stock' => $variation->isInStock(),
                 'is_low_stock' => $variation->isLowStock(),
                 'is_default' => $variation->is_default,
+                'is_wholesale' => $variation->is_wholesale,
+                'wholesale_min_order_qty' => $variation->wholesale_min_order_qty,
+                'wholesale_qty_increment' => $variation->wholesale_qty_increment ?? 1,
+                'wholesale_sample_available' => $variation->wholesale_sample_available,
+                'wholesale_sample_price' => $variation->wholesale_sample_price ? (float) $variation->wholesale_sample_price : null,
+                'wholesale_terms' => $variation->wholesale_terms,
                 'attributes' => $variation->attributes->map(function ($attr) {
                     return [
                         'variant_id' => $attr->variant_id,

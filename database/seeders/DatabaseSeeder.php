@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             VariantSeeder::class,
             ListingSeeder::class,
+            PolicySeeder::class,
         ]);
     }
 }

@@ -910,27 +910,6 @@ class ListingController extends Controller
     }
 
     /**
-     * Permanently delete all soft-deleted listings.
-     */
-    public function forceDestroyAllTrashed()
-    {
-        $admin = auth()->guard('admin')->user();
-
-        $listings = Listing::onlyTrashed()->get();
-        $count = $listings->count();
-
-        $listings->each(fn ($listing) => $this->listingService->forceDeleteListing($admin, $listing));
-
-        activity()
-            ->causedBy($admin)
-            ->log("Permanently deleted all {$count} trashed listing(s)");
-
-        return redirect()
-            ->route('admin.listings.index', ['status' => 'deleted'])
-            ->with('success', "All {$count} deleted listing(s) permanently removed.");
-    }
-
-    /**
      * Restore a soft-deleted listing
      */
     public function restore(int $listing_id)

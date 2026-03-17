@@ -42,10 +42,15 @@ class Listing extends Model
         'availability_type',
         'has_store',
         'has_delivery',
+        'has_same_city_delivery',
+        'same_city_delivery_price',
+        'same_city_delivery_days',
         'has_domestic_delivery',
         'domestic_delivery_price',
+        'domestic_delivery_days',
         'has_international_delivery',
         'international_delivery_price',
+        'international_delivery_days',
         'location_id',
         'country',
         'city',
@@ -60,6 +65,11 @@ class Listing extends Model
         'rejection_reason',
         'variant_attributes',
         'listing_mode',
+        'budget_max',
+        'barter_exchange_for',
+        'auction_end_date',
+        'auction_reserve_price',
+        'auction_bid_increment',
     ];
 
     protected $casts = [
@@ -83,11 +93,20 @@ class Listing extends Model
         'discount_end_date' => 'datetime',
         'has_store' => 'boolean',
         'has_delivery' => 'boolean',
+        'has_same_city_delivery' => 'boolean',
+        'same_city_delivery_price' => 'decimal:2',
+        'same_city_delivery_days' => 'integer',
         'has_domestic_delivery' => 'boolean',
         'domestic_delivery_price' => 'decimal:2',
+        'domestic_delivery_days' => 'integer',
         'has_international_delivery' => 'boolean',
         'international_delivery_price' => 'decimal:2',
+        'international_delivery_days' => 'integer',
         'variant_attributes' => 'array',
+        'budget_max' => 'decimal:2',
+        'auction_reserve_price' => 'decimal:2',
+        'auction_bid_increment' => 'decimal:2',
+        'auction_end_date' => 'datetime',
     ];
 
     /**

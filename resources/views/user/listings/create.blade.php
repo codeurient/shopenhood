@@ -25,7 +25,8 @@
                 </div>
             @endif
 
-            <form action="{{ route('user.listings.store') }}" method="POST" enctype="multipart/form-data" id="listingForm">
+            <form action="{{ route('user.listings.store') }}" method="POST" enctype="multipart/form-data" id="listingForm"
+                  x-data="listingForm({{ Illuminate\Support\Js::from($listingTypes->mapWithKeys(fn($t) => [$t->id => $t->slug])) }}, '{{ old('listing_type_id', '') }}')">
                 @csrf
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -43,6 +44,7 @@
                                         Listing Type <span class="text-red-500">*</span>
                                     </label>
                                     <select name="listing_type_id" id="listing_type_id" required
+                                            x-model="selectedTypeId"
                                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
                                         <option value="">Select Type</option>
                                         @foreach($listingTypes as $type)
@@ -109,74 +111,167 @@
                             </div>
                         </div>
 
-                        {{-- Pricing --}}
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Pricing</h3>
+                        {{-- ── TYPE-SPECIFIC DETAILS CARD ── --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" x-show="listingType !== ''">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4"
+                                x-text="{'sell':'Pricing','buy':'Budget','gift':'Item Details','barter':'Item Details','auction':'Auction Pricing'}[listingType] || 'Details'"></h3>
 
                             <div class="space-y-4">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Base Price <span class="text-red-500">*</span></label>
-                                        <input type="number" name="base_price" step="0.01" min="0.01" required
-                                               value="{{ old('base_price') }}"
-                                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                                        @error('base_price')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Currency</label>
-                                        <select name="currency"
-                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                                            <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
-                                            <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR</option>
-                                            <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP</option>
-                                        </select>
+
+                                {{-- SELL + AUCTION: Base Price --}}
+                                <div x-show="['sell','auction'].includes(listingType)">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                <span x-text="listingType === 'auction' ? 'Starting Bid' : 'Price'"></span>
+                                                <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="number" name="base_price" step="0.01" min="0.01"
+                                                   :required="['sell','auction'].includes(listingType)"
+                                                   value="{{ old('base_price') }}"
+                                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                            @error('base_price')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Currency</label>
+                                            <select name="currency"
+                                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                                <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
+                                                <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR</option>
+                                                <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" name="is_negotiable" id="is_negotiable" value="1"
-                                           {{ old('is_negotiable') ? 'checked' : '' }}
-                                           class="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500">
-                                    <label for="is_negotiable" class="text-sm text-gray-700 dark:text-gray-300">Price is negotiable</label>
-                                </div>
-
-                                {{-- Discount Pricing --}}
-                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <div class="flex items-center mb-3">
-                                        <input type="checkbox" id="has_discount" class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                        <label for="has_discount" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Apply Discount</label>
+                                {{-- SELL: Negotiable + Discount --}}
+                                <div x-show="listingType === 'sell'" class="space-y-4">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" name="is_negotiable" id="is_negotiable" value="1"
+                                               {{ old('is_negotiable') ? 'checked' : '' }}
+                                               class="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500">
+                                        <label for="is_negotiable" class="text-sm text-gray-700 dark:text-gray-300">Price is negotiable</label>
                                     </div>
 
-                                    <div id="discountFields" class="hidden space-y-4">
-                                        <div class="grid grid-cols-3 gap-4">
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Discount Price</label>
-                                                <input type="number" name="discount_price" id="discount_price" step="0.01" min="0"
-                                                       value="{{ old('discount_price') }}"
-                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
-                                                <input type="datetime-local" name="discount_start_date" id="discount_start_date"
-                                                       value="{{ old('discount_start_date') }}"
-                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">End Date</label>
-                                                <input type="datetime-local" name="discount_end_date" id="discount_end_date"
-                                                       value="{{ old('discount_end_date') }}"
-                                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                        <div class="flex items-center mb-3">
+                                            <input type="checkbox" id="has_discount" class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
+                                            <label for="has_discount" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Apply Discount</label>
+                                        </div>
+                                        <div id="discountFields" class="hidden space-y-4">
+                                            <div class="grid grid-cols-3 gap-4">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Discount Price</label>
+                                                    <input type="number" name="discount_price" id="discount_price" step="0.01" min="0"
+                                                           value="{{ old('discount_price') }}"
+                                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
+                                                    <input type="datetime-local" name="discount_start_date" id="discount_start_date"
+                                                           value="{{ old('discount_start_date') }}"
+                                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">End Date</label>
+                                                    <input type="datetime-local" name="discount_end_date" id="discount_end_date"
+                                                           value="{{ old('discount_end_date') }}"
+                                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                                </div>
                                             </div>
                                         </div>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">The discount price will be shown with a strikethrough on the original price during the specified period.</p>
                                     </div>
                                 </div>
 
-                                {{-- Product Condition --}}
-                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Product Condition <span class="text-red-500">*</span></label>
+                                {{-- BUY: Max Budget --}}
+                                <div x-show="listingType === 'buy'">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Budget (optional)</label>
+                                            <input type="number" name="budget_max" step="0.01" min="0"
+                                                   value="{{ old('budget_max') }}"
+                                                   placeholder="Leave blank if flexible"
+                                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                            @error('budget_max')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Currency</label>
+                                            <select name="currency"
+                                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                                <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
+                                                <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR</option>
+                                                <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Post a request for an item you want to buy. Sellers with matching items can contact you.</p>
+                                </div>
+
+                                {{-- BARTER: What you want in exchange --}}
+                                <div x-show="listingType === 'barter'">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        What do you want in exchange? <span class="text-red-500">*</span>
+                                    </label>
+                                    <textarea name="barter_exchange_for" rows="3" maxlength="1000"
+                                              :required="listingType === 'barter'"
+                                              placeholder="Describe the item(s) or type of exchange you're looking for..."
+                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('barter_exchange_for') }}</textarea>
+                                    @error('barter_exchange_for')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                {{-- AUCTION: Auction details --}}
+                                <div x-show="listingType === 'auction'" class="space-y-4">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Auction End Date <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="datetime-local" name="auction_end_date"
+                                                   :required="listingType === 'auction'"
+                                                   value="{{ old('auction_end_date') }}"
+                                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                            @error('auction_end_date')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Reserve Price (optional)</label>
+                                            <input type="number" name="auction_reserve_price" step="0.01" min="0"
+                                                   value="{{ old('auction_reserve_price') }}"
+                                                   placeholder="Minimum price to sell"
+                                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Minimum Bid Increment (optional)</label>
+                                            <input type="number" name="auction_bid_increment" step="0.01" min="0.01"
+                                                   value="{{ old('auction_bid_increment') }}"
+                                                   placeholder="e.g. 1.00"
+                                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- GIFT: Info note --}}
+                                <div x-show="listingType === 'gift'">
+                                    <div class="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
+                                        <p class="text-sm text-green-700 dark:text-green-300">🎁 This item will be listed as <strong>free</strong>. Describe it in the Full Description above and specify any pickup or delivery arrangements below.</p>
+                                    </div>
+                                </div>
+
+                                {{-- Condition: all types --}}
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4" x-show="listingType !== ''">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                        <span x-text="listingType === 'buy' ? 'Preferred Condition' : 'Item Condition'"></span>
+                                        <span class="text-red-500">*</span>
+                                    </label>
                                     <div class="flex gap-6">
                                         <label class="flex items-center">
                                             <input type="radio" name="condition" value="new"
@@ -193,40 +288,82 @@
                                     </div>
                                 </div>
 
-                                {{-- Delivery Options --}}
-                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <div class="flex items-center mb-3">
+                                {{-- Delivery: all types except Buy --}}
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4" x-show="listingType !== '' && listingType !== 'buy'">
+                                    <div class="flex items-center mb-4">
                                         <input type="checkbox" id="has_delivery" name="has_delivery" value="1"
                                                {{ old('has_delivery') ? 'checked' : '' }}
                                                class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                         <label for="has_delivery" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Delivery Available</label>
                                     </div>
-
-                                    <div id="deliveryFields" class="{{ old('has_delivery') ? '' : 'hidden' }} space-y-3 ml-6">
-                                        <div class="flex items-start gap-4">
-                                            <label class="flex items-center mt-2">
+                                    <div id="deliveryFields" class="{{ old('has_delivery') ? '' : 'hidden' }} space-y-3">
+                                        {{-- Same City --}}
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                            <label class="flex items-center mb-3">
+                                                <input type="checkbox" name="has_same_city_delivery" value="1"
+                                                       {{ old('has_same_city_delivery') ? 'checked' : '' }}
+                                                       class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
+                                                <span class="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Same City</span>
+                                            </label>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Price</label>
+                                                    <input type="number" name="same_city_delivery_price" step="0.01" min="0"
+                                                           value="{{ old('same_city_delivery_price') }}" placeholder="0.00"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Days</label>
+                                                    <input type="number" name="same_city_delivery_days" min="1" max="365"
+                                                           value="{{ old('same_city_delivery_days') }}" placeholder="e.g. 1"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{-- Same Country --}}
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                            <label class="flex items-center mb-3">
                                                 <input type="checkbox" name="has_domestic_delivery" value="1"
                                                        {{ old('has_domestic_delivery') ? 'checked' : '' }}
                                                        class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Domestic Delivery</span>
+                                                <span class="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Same Country (Different City)</span>
                                             </label>
-                                            <div>
-                                                <input type="number" name="domestic_delivery_price" step="0.01" min="0"
-                                                       value="{{ old('domestic_delivery_price') }}" placeholder="Price"
-                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Price</label>
+                                                    <input type="number" name="domestic_delivery_price" step="0.01" min="0"
+                                                           value="{{ old('domestic_delivery_price') }}" placeholder="0.00"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Days</label>
+                                                    <input type="number" name="domestic_delivery_days" min="1" max="365"
+                                                           value="{{ old('domestic_delivery_days') }}" placeholder="e.g. 3"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="flex items-start gap-4">
-                                            <label class="flex items-center mt-2">
+                                        {{-- International --}}
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                            <label class="flex items-center mb-3">
                                                 <input type="checkbox" name="has_international_delivery" value="1"
                                                        {{ old('has_international_delivery') ? 'checked' : '' }}
                                                        class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">International Delivery</span>
+                                                <span class="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">International</span>
                                             </label>
-                                            <div>
-                                                <input type="number" name="international_delivery_price" step="0.01" min="0"
-                                                       value="{{ old('international_delivery_price') }}" placeholder="Price"
-                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Price</label>
+                                                    <input type="number" name="international_delivery_price" step="0.01" min="0"
+                                                           value="{{ old('international_delivery_price') }}" placeholder="0.00"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Days</label>
+                                                    <input type="number" name="international_delivery_days" min="1" max="365"
+                                                           value="{{ old('international_delivery_days') }}" placeholder="e.g. 14"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -237,7 +374,6 @@
                         {{-- Location --}}
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Location</h3>
-
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country</label>
@@ -306,6 +442,16 @@
 
     @push('scripts')
     <script>
+    function listingForm(types, initialTypeId) {
+        return {
+            types: types,
+            selectedTypeId: initialTypeId ? String(initialTypeId) : '',
+            get listingType() {
+                return this.selectedTypeId ? (this.types[this.selectedTypeId] || '') : '';
+            },
+        };
+    }
+
     const categoryContainer = document.getElementById('categorySelectsContainer');
     const categoryHiddenInput = document.getElementById('category_id_hidden');
     const variantsContainer = document.getElementById('variantsContainer');

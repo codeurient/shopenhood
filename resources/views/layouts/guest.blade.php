@@ -88,6 +88,85 @@
                 {{ $slot }}
             </main>
 
+            <!-- Footer -->
+            <footer class="bg-gray-900 text-gray-400 mt-auto">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+
+                        <!-- Brand -->
+                        <div class="col-span-2 md:col-span-1">
+                            <a href="{{ route('home') }}" class="text-white font-bold text-lg tracking-tight">
+                                {{ config('app.name', 'Shopenhood') }}
+                            </a>
+                            <p class="mt-2 text-xs leading-relaxed text-gray-500">
+                                Your local marketplace for buying and selling anything — fast, safe, and free.
+                            </p>
+                            <div class="flex gap-3 mt-4">
+                                <a href="#" class="w-7 h-7 rounded-full bg-gray-800 hover:bg-primary-600 flex items-center justify-center transition-colors">
+                                    <i class="fa-brands fa-facebook-f text-xs"></i>
+                                </a>
+                                <a href="#" class="w-7 h-7 rounded-full bg-gray-800 hover:bg-primary-600 flex items-center justify-center transition-colors">
+                                    <i class="fa-brands fa-instagram text-xs"></i>
+                                </a>
+                                <a href="#" class="w-7 h-7 rounded-full bg-gray-800 hover:bg-primary-600 flex items-center justify-center transition-colors">
+                                    <i class="fa-brands fa-x-twitter text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Shop -->
+                        <div>
+                            <h4 class="text-xs font-semibold text-white uppercase tracking-wider mb-3">Shop</h4>
+                            <ul class="space-y-2">
+                                <li><a href="{{ route('home') }}" class="text-xs hover:text-white transition-colors">Browse Listings</a></li>
+                                <li><a href="{{ route('home') }}" class="text-xs hover:text-white transition-colors">New Arrivals</a></li>
+                                <li><a href="{{ route('home') }}" class="text-xs hover:text-white transition-colors">Categories</a></li>
+                                <li><a href="{{ route('home') }}" class="text-xs hover:text-white transition-colors">Deals &amp; Offers</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Sell -->
+                        <div>
+                            <h4 class="text-xs font-semibold text-white uppercase tracking-wider mb-3">Sell</h4>
+                            <ul class="space-y-2">
+                                @auth
+                                    <li><a href="{{ route('user.listings.create') }}" class="text-xs hover:text-white transition-colors">Post a Listing</a></li>
+                                    <li><a href="{{ route('user.listings.index') }}" class="text-xs hover:text-white transition-colors">My Listings</a></li>
+                                @else
+                                    <li><a href="{{ route('register') }}" class="text-xs hover:text-white transition-colors">Start Selling</a></li>
+                                    <li><a href="{{ route('login') }}" class="text-xs hover:text-white transition-colors">Sign In</a></li>
+                                @endauth
+                                <li><a href="#" class="text-xs hover:text-white transition-colors">Seller Guide</a></li>
+                                <li><a href="#" class="text-xs hover:text-white transition-colors">Business Accounts</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Support -->
+                        <div>
+                            <h4 class="text-xs font-semibold text-white uppercase tracking-wider mb-3">Support</h4>
+                            <ul class="space-y-2">
+                                <li><a href="#" class="text-xs hover:text-white transition-colors">Help Center</a></li>
+                                <li><a href="#" class="text-xs hover:text-white transition-colors">Contact Us</a></li>
+                                <li><a href="#" class="text-xs hover:text-white transition-colors">Privacy Policy</a></li>
+                                <li><a href="#" class="text-xs hover:text-white transition-colors">Terms of Service</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Bottom bar -->
+                <div class="border-t border-gray-800">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-2">
+                        <p class="text-xs text-gray-600">&copy; {{ date('Y') }} {{ config('app.name', 'Shopenhood') }}. All rights reserved.</p>
+                        <div class="flex items-center gap-1 text-xs text-gray-600">
+                            <i class="fa-solid fa-shield-halved text-gray-700"></i>
+                            <span>Secure &amp; trusted marketplace</span>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+
             <!-- Bottom Navigation (Mobile Only) -->
             <x-mobile.bottom-nav />
         </div>

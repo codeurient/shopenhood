@@ -37,8 +37,7 @@ class LoginController extends Controller
 
         Auth::guard('admin')->logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $request->session()->migrate(true);
 
         return redirect()->route('admin.login')->with('success', 'You have been logged out successfully');
     }

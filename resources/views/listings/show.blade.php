@@ -77,6 +77,7 @@
             displayImages: [],
             displayPrice: null,
             displayStock: null,
+            displayWholesale: null,
             adding: false,
             added: false,
 
@@ -186,13 +187,44 @@
                 if (this.displayStock && this.displayStock.qty > 0 && this.quantity > this.displayStock.qty) {
                     this.quantity = this.displayStock.qty;
                 }
+                const wholesaleSrc = variation || priceSrc;
+                if (wholesaleSrc && wholesaleSrc.is_wholesale) {
+                    const minQty = wholesaleSrc.wholesale_min_order_qty || 1;
+                    const increment = wholesaleSrc.wholesale_qty_increment || 1;
+                    this.displayWholesale = {
+                        min_order_qty: minQty,
+                        qty_increment: increment,
+                        sample_available: wholesaleSrc.wholesale_sample_available,
+                        sample_price: wholesaleSrc.wholesale_sample_price,
+                        terms: wholesaleSrc.wholesale_terms,
+                    };
+                    if (this.quantity < minQty || (this.quantity - minQty) % increment !== 0) {
+                        this.quantity = minQty;
+                    }
+                } else {
+                    this.displayWholesale = null;
+                    if (this.quantity < 1) { this.quantity = 1; }
+                }
             },
             formatPrice(amount) {
                 return parseFloat(amount).toFixed(2);
             },
             maxQty() { return (this.displayStock && this.displayStock.qty > 0) ? this.displayStock.qty : Infinity; },
-            increaseQty() { if (this.quantity < this.maxQty()) this.quantity++; },
-            decreaseQty() { if (this.quantity > 1) this.quantity--; },
+            qtyIncrement() { return this.displayWholesale ? this.displayWholesale.qty_increment : 1; },
+            minQty() { return this.displayWholesale ? this.displayWholesale.min_order_qty : 1; },
+            increaseQty() {
+                const inc = this.qtyIncrement();
+                const min = this.minQty();
+                const max = this.maxQty();
+                const next = min + Math.ceil((this.quantity - min + 1) / inc) * inc;
+                this.quantity = Math.min(next, max);
+            },
+            decreaseQty() {
+                const inc = this.qtyIncrement();
+                const min = this.minQty();
+                const prev = min + Math.floor((this.quantity - min - 1) / inc) * inc;
+                this.quantity = Math.max(prev, min);
+            },
             isVariantItemAvailable(variantId, itemId) {
                 // Only apply constraints from dimensions that appear BEFORE this one.
                 // This prevents deadlocks: e.g. Color (position 0) is never blocked by
@@ -314,6 +346,23 @@
          }"
          class="bg-gray-50 pb-20 md:pb-0">
 
+        {{-- Breadcrumb --}}
+        <div class="max-w-[1250px] mx-auto px-4 md:px-6 py-3">
+            <nav class="flex items-center gap-1.5 text-sm text-gray-500 flex-wrap">
+                <a href="{{ route('home') }}" class="hover:text-primary-600 transition-colors">Home</a>
+                @if($listing->category)
+                    <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <a href="{{ route('listings.index', ['category' => $listing->category->slug]) }}" class="hover:text-primary-600 transition-colors truncate max-w-[120px]">{{ $listing->category->name }}</a>
+                @endif
+                <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-gray-800 font-medium truncate max-w-[180px] md:max-w-xs">{{ $listing->title }}</span>
+            </nav>
+        </div>
+
         {{-- Desktop two-column layout wrapper --}}
         <div class="md:max-w-[1250px] md:mx-auto md:px-6 md:py-6">
         <div class="md:grid md:grid-cols-[1fr_380px] md:gap-6 md:items-start">
@@ -350,14 +399,6 @@
                 </svg>
             </div>
 
-            {{-- Back button --}}
-            <a href="{{ url()->previous() }}"
-               class="absolute top-4 left-4 z-20 flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-            </a>
-
             {{-- Top-right actions --}}
             <div class="absolute top-4 right-4 z-20 flex flex-col gap-2">
                 <button class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm">
@@ -376,10 +417,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                     </svg>
                 </button>
+                @if($listing->is_wholesale)
+                <div class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm pointer-events-none" title="Wholesale">
+                    <i class="fa-brands fa-shirtsinbulk text-white" style="font-size: 16px;"></i>
+                </div>
+                @endif
                 @if($listing->listing_mode === 'business' && (!auth()->check() || auth()->id() !== $listing->user_id))
-                <button @click.stop="add()"
-                        :disabled="adding"
-                        :title="added ? 'Added!' : 'Add to cart'"
+                <button x-show="displayPrice"
+                        @click.stop="add()"
+                        :disabled="adding || (displayStock && displayStock.qty === 0)"
+                        :title="(displayStock && displayStock.qty === 0) ? 'Out of stock' : (added ? 'Added!' : 'Add to cart')"
                         class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm disabled:opacity-60 transition">
                     <template x-if="!added">
                         <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -410,6 +457,7 @@
                             class="h-1.5 rounded-full transition-all duration-300"></button>
                 </template>
             </div>
+
         </div>
         </div>{{-- end LEFT COLUMN --}}
 
@@ -677,28 +725,87 @@
         {{-- ================================================================ --}}
         {{-- QUANTITY (business listings only — normal listings have no stock) --}}
         {{-- ================================================================ --}}
-        @if($listing->listing_mode === 'business')
-        <div id="qty-selector" class="bg-white mt-2 px-4 py-3 flex items-center justify-between">
-            <span class="text-sm font-medium text-gray-700">Quantity</span>
-            <div class="flex items-center gap-4">
-                <button @click="decreaseQty()"
-                        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-gray-400 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
-                    </svg>
-                </button>
-                <span x-text="quantity" class="text-base font-semibold text-gray-900 w-6 text-center"></span>
-                <button @click="increaseQty()"
-                        :disabled="quantity >= maxQty()"
-                        :class="quantity >= maxQty() ? 'opacity-40 cursor-not-allowed border-gray-200' : 'hover:border-gray-400'"
-                        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                </button>
+        @if($listing->listing_mode === 'business' && (!auth()->check() || auth()->id() !== $listing->user_id))
+        <div x-show="displayPrice" class="bg-white mt-2 px-4 py-3">
+            {{-- Wholesale min order info --}}
+            <div x-show="displayWholesale" x-cloak class="mb-2 flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-lg text-xs font-semibold text-amber-700">
+                    <i class="fa-brands fa-shirtsinbulk" style="font-size: 12px;"></i>
+                    Wholesale &mdash; Min order: <span x-text="displayWholesale ? displayWholesale.min_order_qty + ' units' : ''"></span>
+                    <template x-if="displayWholesale && displayWholesale.qty_increment > 1">
+                        <span x-text="'· +' + displayWholesale.qty_increment + ' per step'"></span>
+                    </template>
+                </span>
+            </div>
+
+            {{-- Qty +/- control --}}
+            <div class="flex items-center gap-3">
+                <span class="text-sm text-gray-600 font-medium">Qty:</span>
+                <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                    <button type="button"
+                            @click="decreaseQty()"
+                            :disabled="quantity <= minQty()"
+                            class="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 transition-colors text-lg font-semibold">
+                        −
+                    </button>
+                    <span class="min-w-[3rem] text-center text-sm font-semibold text-gray-900 px-2" x-text="quantity"></span>
+                    <button type="button"
+                            @click="increaseQty()"
+                            :disabled="displayStock && displayStock.qty > 0 && quantity >= displayStock.qty"
+                            class="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 transition-colors text-lg font-semibold">
+                        +
+                    </button>
+                </div>
+                <template x-if="displayStock && displayStock.qty > 0">
+                    <span class="text-xs text-gray-400" x-text="displayStock.qty + ' available'"></span>
+                </template>
             </div>
         </div>
-        @endif {{-- listing_mode === 'business' --}}
+        @endif
+
+        {{-- ================================================================ --}}
+        {{-- WHOLESALE INFO (samples + terms, business listings only)         --}}
+        {{-- ================================================================ --}}
+        @if($listing->listing_mode === 'business' && $listing->is_wholesale)
+        <div x-show="displayWholesale" x-cloak class="bg-white mt-2 px-4 py-3 space-y-3">
+            {{-- Sample available --}}
+            <template x-if="displayWholesale && displayWholesale.sample_available">
+                <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.155-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-900">Samples Available</p>
+                        <template x-if="displayWholesale.sample_price">
+                            <p class="text-sm text-gray-600 mt-0.5">
+                                Sample price: <span class="font-semibold text-gray-900" x-text="formatPrice(displayWholesale.sample_price) + ' ' + currency"></span>
+                            </p>
+                        </template>
+                        <template x-if="!displayWholesale.sample_price">
+                            <p class="text-xs text-gray-500 mt-0.5">Contact seller for sample pricing</p>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            {{-- Wholesale terms --}}
+            <template x-if="displayWholesale && displayWholesale.terms">
+                <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-900 mb-1">Wholesale Terms</p>
+                        <p class="text-sm text-gray-600 leading-relaxed" x-text="displayWholesale.terms"></p>
+                    </div>
+                </div>
+            </template>
+        </div>
+        @endif
 
         {{-- ================================================================ --}}
         {{-- SELLER WHATSAPP CONTACT                                           --}}
@@ -741,28 +848,6 @@
         </div>
         @endif
 
-        {{-- Desktop CTA — mirrors the mobile fixed bar, only shown on md+ --}}
-        @if(!auth()->check() || auth()->id() !== $listing->user_id)
-        <div class="hidden md:flex items-center gap-3 bg-white mt-2 px-4 py-3 rounded-b-xl">
-            <button class="flex-shrink-0 flex items-center justify-center w-11 h-11 border border-gray-300 rounded-xl">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                </svg>
-            </button>
-            <button @click="add()"
-                    :disabled="adding"
-                    class="flex-1 h-11 bg-orange-400 hover:bg-orange-500 disabled:opacity-60 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-                <svg x-show="adding" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span x-text="adding ? 'Adding...' : (added ? '✓ Added' : 'Add to Cart')"></span>
-            </button>
-            <button class="flex-1 h-11 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl text-sm transition-colors">
-                Buy Now
-            </button>
-        </div>
-        @endif
 
         </div>{{-- end RIGHT COLUMN --}}
         </div>{{-- end desktop grid --}}
@@ -907,42 +992,58 @@
         {{-- DELIVERY                                                          --}}
         {{-- ================================================================ --}}
         <div class="bg-white mt-2 md:rounded-xl md:overflow-hidden">
-            <a href="#" class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100">
-                <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/>
-                    <circle cx="5.5" cy="18.5" r="2.5"/>
-                    <circle cx="18.5" cy="18.5" r="2.5"/>
-                </svg>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-gray-900">
-                        @if($listing->has_delivery && ($listing->domestic_delivery_price == 0 || !$listing->domestic_delivery_price))
-                            Free delivery
-                        @elseif($listing->has_delivery && $listing->domestic_delivery_price)
-                            Delivery: {{ $currency }} {{ number_format($listing->domestic_delivery_price, 2) }}
-                        @else
-                            Delivery not available
-                        @endif
-                    </p>
-                    <div class="flex gap-4 mt-0.5">
-                        <p class="text-xs text-gray-500">
-                            @if($listing->has_delivery)
-                                Standard:
-                                @if(!$listing->domestic_delivery_price || $listing->domestic_delivery_price == 0)
-                                    FREE.
-                                @else
-                                    {{ $currency }} {{ number_format($listing->domestic_delivery_price, 2) }}.
-                                @endif
-                                Arrives in 7+ days.
-                            @else
-                                Pickup only
+            @if($listing->has_delivery)
+                @php
+                    $deliveryTiers = [];
+                    if ($listing->has_same_city_delivery) {
+                        $deliveryTiers[] = ['label' => 'Same City', 'price' => $listing->same_city_delivery_price, 'days' => $listing->same_city_delivery_days];
+                    }
+                    if ($listing->has_domestic_delivery) {
+                        $deliveryTiers[] = ['label' => 'Same Country', 'price' => $listing->domestic_delivery_price, 'days' => $listing->domestic_delivery_days];
+                    }
+                    if ($listing->has_international_delivery) {
+                        $deliveryTiers[] = ['label' => 'International', 'price' => $listing->international_delivery_price, 'days' => $listing->international_delivery_days];
+                    }
+                @endphp
+                <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+                    <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/>
+                        <circle cx="5.5" cy="18.5" r="2.5"/>
+                        <circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                    <span class="text-sm font-semibold text-gray-900">Delivery Options</span>
+                </div>
+                @foreach($deliveryTiers as $tier)
+                    <div class="flex items-center justify-between px-4 py-3 {{ !$loop->last ? 'border-b border-gray-50' : '' }}">
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">{{ $tier['label'] }}</p>
+                            @if($tier['days'])
+                                <p class="text-xs text-gray-500 mt-0.5">Estimated {{ $tier['days'] }} day(s)</p>
                             @endif
-                        </p>
+                        </div>
+                        <span class="text-sm font-semibold {{ (!$tier['price'] || $tier['price'] == 0) ? 'text-green-600' : 'text-gray-900' }}">
+                            {{ (!$tier['price'] || $tier['price'] == 0) ? 'FREE' : $currency . ' ' . number_format($tier['price'], 2) }}
+                        </span>
+                    </div>
+                @endforeach
+                @if(empty($deliveryTiers))
+                    <div class="px-4 py-3">
+                        <p class="text-sm text-gray-500">Delivery available — contact seller for details.</p>
+                    </div>
+                @endif
+            @else
+                <div class="flex items-center gap-3 px-4 py-3.5">
+                    <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/>
+                        <circle cx="5.5" cy="18.5" r="2.5"/>
+                        <circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-500">Delivery not available</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Pickup only — arrange with seller</p>
                     </div>
                 </div>
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </a>
+            @endif
         </div>
 
         {{-- ================================================================ --}}
@@ -1181,30 +1282,6 @@
 
         </div>{{-- end desktop container --}}
 
-        {{-- ================================================================ --}}
-        {{-- STICKY BOTTOM ACTION BAR (mobile only)                           --}}
-        {{-- ================================================================ --}}
-        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3 z-30">
-            <button class="flex-shrink-0 flex items-center justify-center w-11 h-11 border border-gray-300 rounded-xl">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                </svg>
-            </button>
-            @if(!auth()->check() || auth()->id() !== $listing->user_id)
-            <button @click="add()"
-                    :disabled="adding"
-                    class="flex-1 h-11 bg-orange-400 hover:bg-orange-500 disabled:opacity-60 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-                <svg x-show="adding" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span x-text="adding ? 'Adding...' : (added ? '✓ Added' : 'Add to Cart')"></span>
-            </button>
-            @endif
-            <button class="flex-1 h-11 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl text-sm transition-colors">
-                Buy Now
-            </button>
-        </div>
 
     </div>
 </x-guest-layout>

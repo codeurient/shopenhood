@@ -25,7 +25,7 @@ class CheckoutController extends Controller
         $items = CartItem::query()
             ->where('user_id', Auth::id())
             ->where('is_selected', true)
-            ->with(['listing.user', 'listing.primaryImage', 'listing.firstImage', 'variation'])
+            ->with(['listing.user', 'listing.primaryImage', 'listing.firstImage', 'listing.location.parent', 'variation'])
             ->get();
 
         if ($items->isEmpty()) {
@@ -38,7 +38,10 @@ class CheckoutController extends Controller
             /** @var CartItem $first */
             $first = $sellerItems->first();
             $sellerName = $first->listing?->user?->name ?? 'Unknown Seller';
-            $deliveryOptions = $this->deriveDeliveryOptions($sellerItems);
+            $firstListing = $first->listing;
+            $sellerCity = $firstListing?->location?->name ?? $firstListing?->city ?? '';
+            $sellerCountry = $firstListing?->location?->parent?->name ?? $firstListing?->country ?? '';
+            $deliveryTiers = $this->buildDeliveryTiers($sellerItems);
 
             $formattedItems = $sellerItems->map(fn (CartItem $item) => [
                 'listing_id' => $item->listing_id,
@@ -58,9 +61,10 @@ class CheckoutController extends Controller
             return [
                 'seller_id' => $sellerId,
                 'seller_name' => $sellerName,
+                'seller_city' => $sellerCity,
+                'seller_country' => $sellerCountry,
                 'items' => $formattedItems->values()->toArray(),
-                'delivery_options' => $deliveryOptions,
-                'selected_delivery' => $deliveryOptions[0]['key'] ?? 'pickup',
+                'delivery_tiers' => $deliveryTiers,
             ];
         })->values()->toArray();
 
@@ -90,6 +94,7 @@ class CheckoutController extends Controller
                 'listing.user',
                 'listing.primaryImage',
                 'listing.firstImage',
+                'listing.location.parent',
                 'variation',
             ])
             ->get();
@@ -105,9 +110,11 @@ class CheckoutController extends Controller
             /** @var CartItem $first */
             $first = $sellerItems->first();
             $sellerName = $first->listing?->user?->name ?? 'Unknown Seller';
+            $firstListing = $first->listing;
+            $sellerCity = $firstListing?->location?->name ?? $firstListing?->city ?? '';
+            $sellerCountry = $firstListing?->location?->parent?->name ?? $firstListing?->country ?? '';
 
-            // Derive delivery options from listings
-            $deliveryOptions = $this->deriveDeliveryOptions($sellerItems);
+            $deliveryTiers = $this->buildDeliveryTiers($sellerItems);
 
             $formattedItems = $sellerItems->map(fn (CartItem $item) => [
                 'id' => $item->id,
@@ -128,8 +135,10 @@ class CheckoutController extends Controller
             return [
                 'seller_id' => $sellerId,
                 'seller_name' => $sellerName,
+                'seller_city' => $sellerCity,
+                'seller_country' => $sellerCountry,
                 'items' => $formattedItems->values(),
-                'delivery_options' => $deliveryOptions,
+                'delivery_tiers' => $deliveryTiers,
             ];
         })->values();
 
@@ -284,53 +293,46 @@ class CheckoutController extends Controller
      * @param  \Illuminate\Support\Collection<int, CartItem>  $sellerItems
      * @return array<int, array<string, mixed>>
      */
-    private function deriveDeliveryOptions($sellerItems): array
+    private function buildDeliveryTiers($sellerItems): array
     {
-        $options = [];
-
-        // Check listing delivery settings
-        $hasFreeDelivery = false;
-        $totalPaidDelivery = 0.0;
-        $hasPaidDelivery = false;
-
-        foreach ($sellerItems as $item) {
-            $listing = $item->listing;
-            if (! $listing) {
-                continue;
-            }
-
-            if ($listing->has_domestic_delivery) {
-                $price = (float) $listing->domestic_delivery_price;
-                if ($price <= 0) {
-                    $hasFreeDelivery = true;
-                } else {
-                    $hasPaidDelivery = true;
-                    $totalPaidDelivery += $price;
-                }
-            }
+        $listing = $sellerItems->first()?->listing;
+        if (! $listing) {
+            return [];
         }
 
-        if ($hasFreeDelivery) {
-            $options[] = [
-                'key' => 'free_shipping',
-                'name' => 'Free Shipping',
-                'cost' => 0.0,
-                'paid_by' => 'seller',
-                'note' => null,
+        $tiers = [];
+
+        if ($listing->has_same_city_delivery) {
+            $cost = (float) ($listing->same_city_delivery_price ?? 0);
+            $tiers[] = [
+                'key' => 'same_city',
+                'name' => 'Same City',
+                'cost' => $cost,
+                'days' => $listing->same_city_delivery_days,
             ];
         }
 
-        if ($hasPaidDelivery) {
-            $options[] = [
-                'key' => 'standard_delivery',
-                'name' => 'Standard Delivery',
-                'cost' => $totalPaidDelivery,
-                'paid_by' => 'buyer',
-                'note' => 'Delivery cost to be paid directly to the seller.',
+        if ($listing->has_domestic_delivery) {
+            $cost = (float) ($listing->domestic_delivery_price ?? 0);
+            $tiers[] = [
+                'key' => 'domestic',
+                'name' => 'Same Country',
+                'cost' => $cost,
+                'days' => $listing->domestic_delivery_days,
             ];
         }
 
-        return $options;
+        if ($listing->has_international_delivery) {
+            $cost = (float) ($listing->international_delivery_price ?? 0);
+            $tiers[] = [
+                'key' => 'international',
+                'name' => 'International',
+                'cost' => $cost,
+                'days' => $listing->international_delivery_days,
+            ];
+        }
+
+        return $tiers;
     }
 
     /**
@@ -341,13 +343,20 @@ class CheckoutController extends Controller
         $listing = $cartItem->listing;
 
         switch ($optionKey) {
-            case 'free_shipping':
-                return ['Free Shipping', 0.0, 'seller'];
+            case 'same_city':
+                $cost = $listing ? (float) ($listing->same_city_delivery_price ?? 0) : 0.0;
 
-            case 'standard_delivery':
-                $cost = $listing ? (float) $listing->domestic_delivery_price : 0.0;
+                return ['Same City Delivery', $cost, $cost === 0.0 ? 'seller' : 'buyer'];
 
-                return ['Standard Delivery', $cost, 'buyer'];
+            case 'domestic':
+                $cost = $listing ? (float) ($listing->domestic_delivery_price ?? 0) : 0.0;
+
+                return ['Same Country Delivery', $cost, $cost === 0.0 ? 'seller' : 'buyer'];
+
+            case 'international':
+                $cost = $listing ? (float) ($listing->international_delivery_price ?? 0) : 0.0;
+
+                return ['International Delivery', $cost, $cost === 0.0 ? 'seller' : 'buyer'];
 
             default:
                 return ['Pickup / Arrange with Seller', 0.0, 'seller'];

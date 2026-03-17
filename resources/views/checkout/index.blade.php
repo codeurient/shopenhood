@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="py-6">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8"
-             x-data="checkoutPage({{ Illuminate\Support\Js::from($sellers) }}, {{ $defaultAddressId ?? 'null' }}, {{ Illuminate\Support\Js::from($addresses->map(fn($a) => ['id' => $a->id, 'label' => $a->label, 'recipient_name' => $a->recipient_name, 'phone' => $a->phone, 'full_address' => $a->full_address, 'is_default' => $a->is_default])->values()) }})">
+             x-data="checkoutPage({{ Illuminate\Support\Js::from($sellers) }}, {{ $defaultAddressId ?? 'null' }}, {{ Illuminate\Support\Js::from($addresses->map(fn($a) => ['id' => $a->id, 'label' => $a->label, 'recipient_name' => $a->recipient_name, 'phone' => $a->phone, 'full_address' => $a->full_address, 'city' => $a->city, 'country' => $a->country, 'is_default' => $a->is_default])->values()) }})">
 
             {{-- Back link --}}
             <a href="{{ route('home') }}" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-5">
@@ -65,7 +65,7 @@
                     <div x-show="showAddressPicker" x-cloak class="px-5 pb-4 space-y-2">
                         <template x-for="addr in addresses" :key="addr.id">
                             <button type="button"
-                                    @click="selectedAddressId = addr.id; showAddressPicker = false"
+                                    @click="selectAddress(addr.id)"
                                     :class="selectedAddressId === addr.id
                                         ? 'border-green-500 bg-green-50'
                                         : 'border-gray-200 bg-white hover:border-gray-300'"
@@ -78,44 +78,35 @@
                     </div>
                 </div>
 
-                {{-- ── 2. DELIVERY METHOD ── --}}
-                @foreach($sellers as $idx => $seller)
+                {{-- ── 2. DELIVERY METHOD (auto-computed) ── --}}
+                <template x-for="(seller, idx) in sellers" :key="seller.seller_id">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <input type="hidden" :name="'delivery_selections[' + seller.seller_id + ']'" :value="seller.applicableTierKey">
                         <div class="px-5 py-4 border-b border-gray-100">
                             <h3 class="font-semibold text-gray-900">Delivery Method</h3>
-                            @if(count($sellers) > 1)
-                                <p class="text-xs text-gray-500 mt-0.5">Seller: {{ $seller['seller_name'] }}</p>
-                            @endif
+                            <p x-show="sellers.length > 1" class="text-xs text-gray-500 mt-0.5" x-text="'Seller: ' + seller.seller_name"></p>
                         </div>
-                        <div class="px-5 py-4 space-y-3">
-                            @foreach($seller['delivery_options'] as $option)
-                                <label class="flex items-start gap-3 cursor-pointer">
-                                    <input type="radio"
-                                           name="delivery_selections[{{ $seller['seller_id'] }}]"
-                                           value="{{ $option['key'] }}"
-                                           {{ $option['key'] === $seller['selected_delivery'] ? 'checked' : '' }}
-                                           @change="sellers[{{ $idx }}].selected_delivery = '{{ $option['key'] }}'"
-                                           class="mt-0.5 text-green-600 focus:ring-green-500">
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-sm font-medium text-gray-900">{{ $option['name'] }}</span>
-                                            @if($option['cost'] > 0)
-                                                <span class="text-sm font-semibold text-orange-600">
-                                                    {{ Number::currency($option['cost'], $seller['items'][0]['currency'] ?? 'USD') }}
-                                                </span>
-                                            @else
-                                                <span class="text-sm font-semibold text-green-600">FREE</span>
-                                            @endif
-                                        </div>
-                                        @if($option['note'])
-                                            <p class="text-xs text-gray-400 mt-0.5">{{ $option['note'] }}</p>
-                                        @endif
+                        <div class="px-5 py-4">
+                            <template x-if="seller.applicableTier">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900" x-text="seller.applicableTier.name"></p>
+                                        <p x-show="seller.applicableTier.days" class="text-xs text-gray-500 mt-0.5"
+                                           x-text="'Estimated ' + seller.applicableTier.days + ' day(s)'"></p>
                                     </div>
-                                </label>
-                            @endforeach
+                                    <span class="text-sm font-semibold"
+                                          :class="seller.applicableTier.cost > 0 ? 'text-orange-600' : 'text-green-600'"
+                                          x-text="seller.applicableTier.cost > 0 ? fmt(seller.applicableTier.cost) : 'FREE'"></span>
+                                </div>
+                            </template>
+                            <template x-if="!seller.applicableTier">
+                                <p class="text-sm text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
+                                    No delivery option available for your address. Contact the seller directly.
+                                </p>
+                            </template>
                         </div>
                     </div>
-                @endforeach
+                </template>
 
                 {{-- ── 3. PAYMENT METHOD ── --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100">
@@ -231,20 +222,52 @@
     <script>
     function checkoutPage(sellers, defaultAddressId, addresses) {
         return {
-            sellers: sellers.map(s => ({ ...s })),
+            sellers: sellers.map(s => ({ ...s, applicableTier: null, applicableTierKey: 'pickup' })),
             selectedAddressId: defaultAddressId,
             showAddressPicker: false,
             addresses: addresses,
+
+            init() {
+                this.recalcDelivery();
+            },
 
             get selectedAddress() {
                 return this.addresses.find(a => a.id === this.selectedAddressId) ?? null;
             },
 
+            selectAddress(id) {
+                this.selectedAddressId = id;
+                this.showAddressPicker = false;
+                this.recalcDelivery();
+            },
+
+            recalcDelivery() {
+                const addr = this.selectedAddress;
+                this.sellers.forEach(seller => {
+                    const tierKey = addr ? this.calcDeliveryTier(addr, seller) : null;
+                    const tier = tierKey ? (seller.delivery_tiers.find(t => t.key === tierKey) ?? null) : null;
+                    seller.applicableTier = tier;
+                    seller.applicableTierKey = tier ? tierKey : 'pickup';
+                });
+            },
+
+            calcDeliveryTier(address, seller) {
+                const buyerCity = (address.city || '').trim().toLowerCase();
+                const buyerCountry = (address.country || '').trim().toLowerCase();
+                const sellerCity = (seller.seller_city || '').trim().toLowerCase();
+                const sellerCountry = (seller.seller_country || '').trim().toLowerCase();
+
+                if (buyerCity && sellerCity && buyerCity === sellerCity) {
+                    return 'same_city';
+                }
+                if (buyerCountry && sellerCountry && buyerCountry === sellerCountry) {
+                    return 'domestic';
+                }
+                return 'international';
+            },
+
             get shipping() {
-                return this.sellers.reduce((sum, s) => {
-                    const opt = s.delivery_options.find(o => o.key === s.selected_delivery);
-                    return sum + (opt?.cost ?? 0);
-                }, 0);
+                return this.sellers.reduce((sum, s) => sum + (s.applicableTier?.cost ?? 0), 0);
             },
 
             get total() {

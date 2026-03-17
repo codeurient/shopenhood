@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Listeners\LogSuccessfulLogin;
+use App\Models\Listing;
 use App\Models\Order;
+use App\Observers\ListingObserver;
 use App\Observers\OrderObserver;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
@@ -32,6 +34,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Listing::observe(ListingObserver::class);
         Order::observe(OrderObserver::class);
     }
 

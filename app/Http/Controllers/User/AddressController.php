@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Location;
 use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,9 @@ class AddressController extends Controller
 
     public function create()
     {
-        return view('user.addresses.create');
+        $countries = Location::where('type', 'country')->where('is_active', true)->orderBy('name')->get();
+
+        return view('user.addresses.create', compact('countries'));
     }
 
     public function store(Request $request)
@@ -58,7 +61,15 @@ class AddressController extends Controller
     {
         $this->authorizeOwnership($address);
 
-        return view('user.addresses.edit', compact('address'));
+        $countries = Location::where('type', 'country')->where('is_active', true)->orderBy('name')->get();
+
+        $selectedCountry = Location::where('type', 'country')->where('name', $address->country)->first();
+
+        $cities = $selectedCountry
+            ? Location::where('type', 'city')->where('parent_id', $selectedCountry->id)->where('is_active', true)->orderBy('name')->get(['id', 'name'])
+            : collect();
+
+        return view('user.addresses.edit', compact('address', 'countries', 'selectedCountry', 'cities'));
     }
 
     public function update(Request $request, UserAddress $address)
@@ -121,6 +132,20 @@ class AddressController extends Controller
         return redirect()
             ->route('user.addresses.index')
             ->with('success', 'Default address updated.');
+    }
+
+    /**
+     * API endpoint to get cities for a given country.
+     */
+    public function getCities(Location $country): \Illuminate\Http\JsonResponse
+    {
+        $cities = Location::where('type', 'city')
+            ->where('parent_id', $country->id)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return response()->json(['cities' => $cities]);
     }
 
     /**

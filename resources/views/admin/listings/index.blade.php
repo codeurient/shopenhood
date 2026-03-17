@@ -14,9 +14,6 @@
             <h2 class="text-3xl font-bold text-gray-900">Listings</h2>
             <p class="text-gray-600 mt-1">Manage product listings</p>
         </div>
-        <a href="{{ route('admin.listings.create') }}" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
-            ➕ Create Listing
-        </a>
     </div>
 
     @if(session('success'))
@@ -148,19 +145,6 @@
         </button>
     </div>
 
-    @if(request('status') === 'deleted')
-    <!-- Delete All Trashed button (only shown on deleted filter) -->
-    <div class="mb-4 flex justify-end">
-        <form action="{{ route('admin.listings.force-destroy-all-trashed') }}" method="POST">
-            @csrf
-            <button type="button"
-                @click="$dispatch('open-confirm-modal', { message: 'Permanently delete ALL deleted listings? This cannot be undone.', form: $el.closest('form') })"
-                class="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 text-sm font-medium transition">
-                Delete All Permanently
-            </button>
-        </form>
-    </div>
-    @endif
 
     <!-- Listings Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -278,10 +262,6 @@
                                    class="px-3 py-1 bg-primary-500 text-white rounded hover:bg-primary-600 inline-block">
                                     View
                                 </a>
-                                <a href="{{ route('admin.listings.edit', $listing) }}"
-                                   class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 inline-block">
-                                    Edit
-                                </a>
                                 <form action="{{ route('admin.listings.destroy', $listing) }}"
                                       method="POST"
                                       class="inline-block">
@@ -301,10 +281,7 @@
                 <tr>
                     <td colspan="8" class="px-6 py-12 text-center">
                         <div class="text-6xl mb-4">📦</div>
-                        <p class="text-gray-600 text-lg mb-2">No listings found</p>
-                        <a href="{{ route('admin.listings.create') }}" class="text-primary-600 hover:underline">
-                            Create your first listing
-                        </a>
+                        <p class="text-gray-600 text-lg">No listings found</p>
                     </td>
                 </tr>
                 @endforelse

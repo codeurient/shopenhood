@@ -27,10 +27,15 @@ class StoreBusinessListingRequest extends FormRequest
             'availability_type' => 'nullable|in:in_stock,available_by_order',
             'has_store' => 'nullable|boolean',
             'has_delivery' => 'nullable|boolean',
+            'has_same_city_delivery' => 'nullable|boolean',
+            'same_city_delivery_price' => 'nullable|numeric|min:0',
+            'same_city_delivery_days' => 'nullable|integer|min:1|max:365',
             'has_domestic_delivery' => 'nullable|boolean',
             'domestic_delivery_price' => 'nullable|numeric|min:0',
+            'domestic_delivery_days' => 'nullable|integer|min:1|max:365',
             'has_international_delivery' => 'nullable|boolean',
             'international_delivery_price' => 'nullable|numeric|min:0',
+            'international_delivery_days' => 'nullable|integer|min:1|max:365',
             'location_id' => 'nullable|exists:locations,id',
 
             // Non-main-shown variant attribute selections

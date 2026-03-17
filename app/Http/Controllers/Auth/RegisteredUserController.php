@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\PhoneCountryCode;
+use App\Models\Policy;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -20,7 +22,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $phoneCodes = PhoneCountryCode::orderBy('name')->get();
+
+        return view('auth.register', compact('phoneCodes'));
     }
 
     /**
@@ -31,18 +35,30 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'phone_code' => ['required', 'string', 'max:10'],
+            'phone_number' => ['required', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'terms' => ['required', 'accepted'],
         ]);
 
+        $phone = '+'.$request->phone_code.$request->phone_number;
+
         $user = User::create([
-            'name' => $request->name,
+            'name' => trim($request->first_name.' '.$request->last_name),
             'email' => $request->email,
-            'phone' => $request->phone,
+            'phone' => $phone,
+            'whatsapp_number' => $phone,
             'password' => Hash::make($request->password),
         ]);
+
+        // Record acceptance for all policies required at registration
+        $registrationPolicies = Policy::forRegistration()->where('require_acceptance', true)->get();
+        foreach ($registrationPolicies as $policy) {
+            $policy->recordAcceptance($user, 'registration', $request->ip(), $request->userAgent());
+        }
 
         event(new Registered($user));
 

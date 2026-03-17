@@ -205,6 +205,10 @@ class ListingService
     public function forceDeleteListing(User $user, Listing $listing): void
     {
         if ($listing->trashed()) {
+            // Nullify FK references in orders and order_items to allow permanent deletion
+            \App\Models\Order::where('listing_id', $listing->id)->update(['listing_id' => null]);
+            \Illuminate\Support\Facades\DB::table('order_items')->where('listing_id', $listing->id)->update(['listing_id' => null]);
+
             // Delete listing image files (model events fire, cleaning up storage)
             $listing->images->each->delete();
 

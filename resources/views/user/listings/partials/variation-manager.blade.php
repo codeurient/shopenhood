@@ -130,7 +130,6 @@
                             <input type="hidden" :name="`variations[${index}][is_wholesale]`" :value="variation.is_wholesale ? 1 : 0">
                             <input type="hidden" :name="`variations[${index}][wholesale_min_order_qty]`" :value="variation.wholesale_min_order_qty || ''">
                             <input type="hidden" :name="`variations[${index}][wholesale_qty_increment]`" :value="variation.wholesale_qty_increment || 1">
-                            <input type="hidden" :name="`variations[${index}][wholesale_lead_time_days]`" :value="variation.wholesale_lead_time_days || ''">
                             <input type="hidden" :name="`variations[${index}][wholesale_sample_available]`" :value="variation.wholesale_sample_available ? 1 : 0">
                             <input type="hidden" :name="`variations[${index}][wholesale_sample_price]`" :value="variation.wholesale_sample_price || ''">
                             <input type="hidden" :name="`variations[${index}][wholesale_terms]`" :value="variation.wholesale_terms || ''">
@@ -442,14 +441,6 @@
                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lead Time (days)</label>
-                                    <input type="number"
-                                           id="wholesale_lead_time_days"
-                                           x-model="variations[wholesaleModalIndex].wholesale_lead_time_days"
-                                           min="0" placeholder="e.g. 7"
-                                           class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
-                                </div>
                                 <div class="flex items-center gap-3">
                                     <input type="checkbox"
                                            x-model="variations[wholesaleModalIndex].wholesale_sample_available"
@@ -708,7 +699,6 @@ function variationManager() {
                 is_wholesale: false,
                 wholesale_min_order_qty: '',
                 wholesale_qty_increment: 1,
-                wholesale_lead_time_days: '',
                 wholesale_sample_available: false,
                 wholesale_sample_price: '',
                 wholesale_terms: '',
@@ -830,7 +820,6 @@ function variationManager() {
                 is_wholesale: false,
                 wholesale_min_order_qty: '',
                 wholesale_qty_increment: 1,
-                wholesale_lead_time_days: '',
                 wholesale_sample_available: false,
                 wholesale_sample_price: '',
                 wholesale_terms: '',

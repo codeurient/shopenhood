@@ -192,31 +192,74 @@
                                                class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
                                         <label for="has_delivery" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Delivery Available</label>
                                     </div>
-                                    <div id="deliveryFields" class="{{ old('has_delivery') ? '' : 'hidden' }} space-y-3 ml-6">
-                                        <div class="flex items-start gap-4">
-                                            <label class="flex items-center mt-2">
+                                    <div id="deliveryFields" class="{{ old('has_delivery') ? '' : 'hidden' }} space-y-3">
+                                        {{-- Same City --}}
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                            <label class="flex items-center mb-3">
+                                                <input type="checkbox" name="has_same_city_delivery" value="1"
+                                                       {{ old('has_same_city_delivery') ? 'checked' : '' }}
+                                                       class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
+                                                <span class="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Same City</span>
+                                            </label>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Price</label>
+                                                    <input type="number" name="same_city_delivery_price" step="0.01" min="0"
+                                                           value="{{ old('same_city_delivery_price') }}" placeholder="0.00"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Days</label>
+                                                    <input type="number" name="same_city_delivery_days" min="1" max="365"
+                                                           value="{{ old('same_city_delivery_days') }}" placeholder="e.g. 1"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{-- Same Country --}}
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                            <label class="flex items-center mb-3">
                                                 <input type="checkbox" name="has_domestic_delivery" value="1"
                                                        {{ old('has_domestic_delivery') ? 'checked' : '' }}
                                                        class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Domestic Delivery</span>
+                                                <span class="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Same Country (Different City)</span>
                                             </label>
-                                            <div>
-                                                <input type="number" name="domestic_delivery_price" step="0.01" min="0"
-                                                       value="{{ old('domestic_delivery_price') }}" placeholder="Price"
-                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Price</label>
+                                                    <input type="number" name="domestic_delivery_price" step="0.01" min="0"
+                                                           value="{{ old('domestic_delivery_price') }}" placeholder="0.00"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Days</label>
+                                                    <input type="number" name="domestic_delivery_days" min="1" max="365"
+                                                           value="{{ old('domestic_delivery_days') }}" placeholder="e.g. 3"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="flex items-start gap-4">
-                                            <label class="flex items-center mt-2">
+                                        {{-- International --}}
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                            <label class="flex items-center mb-3">
                                                 <input type="checkbox" name="has_international_delivery" value="1"
                                                        {{ old('has_international_delivery') ? 'checked' : '' }}
                                                        class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">International Delivery</span>
+                                                <span class="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">International</span>
                                             </label>
-                                            <div>
-                                                <input type="number" name="international_delivery_price" step="0.01" min="0"
-                                                       value="{{ old('international_delivery_price') }}" placeholder="Price"
-                                                       class="w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Price</label>
+                                                    <input type="number" name="international_delivery_price" step="0.01" min="0"
+                                                           value="{{ old('international_delivery_price') }}" placeholder="0.00"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Days</label>
+                                                    <input type="number" name="international_delivery_days" min="1" max="365"
+                                                           value="{{ old('international_delivery_days') }}" placeholder="e.g. 14"
+                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

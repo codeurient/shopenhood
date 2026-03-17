@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CategoryVariantController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LegalController;
 use App\Http\Controllers\Admin\ListingApprovalController;
 use App\Http\Controllers\Admin\ListingController;
 use App\Http\Controllers\Admin\ListingImageController;
@@ -209,13 +210,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // ====================================================================
         Route::prefix('listings')->name('listings.')->group(function () {
 
-            // Main CRUD
+            // Main CRUD (create/edit restricted to users; admin can only view/moderate)
             Route::get('/', [ListingController::class, 'index'])->name('index');
-            Route::get('create', [ListingController::class, 'create'])->name('create');
-            Route::post('/', [ListingController::class, 'store'])->name('store');
             Route::get('{listing}', [ListingController::class, 'show'])->name('show');
-            Route::get('{listing}/edit', [ListingController::class, 'edit'])->name('edit');
-            Route::put('{listing}', [ListingController::class, 'update'])->name('update');
             Route::delete('{listing}', [ListingController::class, 'destroy'])->name('destroy');
 
             // AJAX endpoint for loading category variants
@@ -245,7 +242,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Bulk Actions
             Route::post('bulk-delete', [ListingController::class, 'bulkDelete'])->name('bulk-delete');
             Route::post('bulk-force-destroy', [ListingController::class, 'bulkForceDestroy'])->name('bulk-force-destroy');
-            Route::post('force-destroy-all-trashed', [ListingController::class, 'forceDestroyAllTrashed'])->name('force-destroy-all-trashed');
             Route::post('bulk-approve', [ListingController::class, 'bulkApprove'])->name('bulk-approve');
             Route::post('bulk-reject', [ListingController::class, 'bulkReject'])->name('bulk-reject');
             Route::post('bulk-activate', [ListingController::class, 'bulkActivate'])->name('bulk-activate');
@@ -378,6 +374,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('{loginHistory}', [LoginHistoryController::class, 'show'])->name('show');
             Route::get('user/{user}', [LoginHistoryController::class, 'userHistory'])->name('user');
             Route::post('block-ip', [LoginHistoryController::class, 'blockIp'])->name('block-ip');
+        });
+
+        // ====================================================================
+        // LEGAL & POLICIES
+        // ====================================================================
+        Route::prefix('legal')->name('legal.')->group(function () {
+            Route::get('/', [LegalController::class, 'index'])->name('index');
+            Route::get('create', [LegalController::class, 'create'])->name('create');
+            Route::post('/', [LegalController::class, 'store'])->name('store');
+            Route::get('{policy}', [LegalController::class, 'show'])->name('show');
+            Route::get('{policy}/edit', [LegalController::class, 'edit'])->name('edit');
+            Route::put('{policy}', [LegalController::class, 'update'])->name('update');
+            Route::delete('{policy}', [LegalController::class, 'destroy'])->name('destroy');
+            Route::patch('{policy}/toggle-status', [LegalController::class, 'toggleStatus'])->name('toggle-status');
         });
 
         // ====================================================================

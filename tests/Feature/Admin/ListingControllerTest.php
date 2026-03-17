@@ -2,12 +2,9 @@
 
 use App\Models\Category;
 use App\Models\Listing;
-use App\Models\ListingType;
-use App\Models\ProductVariation;
 use App\Models\User;
 use App\Models\Variant;
 use App\Models\VariantItem;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
@@ -15,243 +12,29 @@ beforeEach(function () {
     $this->actingAs($this->admin, 'admin');
 });
 
-test('admin can create a listing with required fields', function () {
-    Storage::fake('public');
+// Admin cannot create listings — they must register as a normal user to post listings.
+// The create/store/edit/update routes are intentionally removed from the admin panel.
 
-    $listingType = ListingType::factory()->create(['name' => 'Sell', 'requires_price' => true]);
-    $category = Category::factory()->create(['name' => 'Electronics']);
-
-    $data = [
-        'listing_type_id' => $listingType->id,
-        'category_id' => $category->id,
-        'title' => 'Test Product',
-        'slug' => 'test-product',
-        'description' => 'This is a test product description',
-        'short_description' => 'Test product summary',
-        'base_price' => 99.99,
-        'currency' => 'USD',
-        'status' => 'active',
-        'availability_type' => 'in_stock',
-        'country' => 'United States',
-        'city' => 'New York',
-        'created_as_role' => 'admin',
-    ];
-
-    $response = $this->post(route('admin.listings.store'), $data);
-
-    $response->assertRedirect();
-    $response->assertSessionHas('success');
-
-    $this->assertDatabaseHas('listings', [
-        'title' => 'Test Product',
-        'slug' => 'test-product',
-        'listing_type_id' => $listingType->id,
-        'category_id' => $category->id,
-        'short_description' => 'Test product summary',
-        'base_price' => 99.99,
-        'availability_type' => 'in_stock',
-        'country' => 'United States',
-        'city' => 'New York',
-    ]);
+test('admin cannot access listing create page', function () {
+    $response = $this->get('/admin/listings/create');
+    $response->assertNotFound();
 });
 
-test('admin can create a listing with discount pricing', function () {
-    Storage::fake('public');
-
-    $listingType = ListingType::factory()->create(['name' => 'Sell', 'requires_price' => true]);
-    $category = Category::factory()->create(['name' => 'Electronics']);
-
-    $data = [
-        'listing_type_id' => $listingType->id,
-        'category_id' => $category->id,
-        'title' => 'Discounted Product',
-        'description' => 'Product with discount',
-        'base_price' => 100.00,
-        'discount_price' => 79.99,
-        'discount_start_date' => now()->format('Y-m-d H:i:s'),
-        'discount_end_date' => now()->addDays(7)->format('Y-m-d H:i:s'),
-        'status' => 'active',
-    ];
-
-    $response = $this->post(route('admin.listings.store'), $data);
-
-    $response->assertRedirect();
-    $response->assertSessionHas('success');
-
-    $this->assertDatabaseHas('listings', [
-        'title' => 'Discounted Product',
-        'base_price' => 100.00,
-        'discount_price' => 79.99,
-    ]);
-
-    $listing = Listing::where('title', 'Discounted Product')->first();
-    expect($listing->discount_start_date)->not->toBeNull();
-    expect($listing->discount_end_date)->not->toBeNull();
+test('admin cannot post to listing store endpoint', function () {
+    $response = $this->post('/admin/listings', ['title' => 'Test']);
+    $response->assertStatus(405); // Method Not Allowed — store route removed
 });
 
-test('admin can create a listing with store name for business user', function () {
-    Storage::fake('public');
-
-    $listingType = ListingType::factory()->create(['name' => 'Sell']);
-    $category = Category::factory()->create(['name' => 'Electronics']);
-
-    $data = [
-        'listing_type_id' => $listingType->id,
-        'category_id' => $category->id,
-        'title' => 'Business Product',
-        'description' => 'Product from business',
-        'base_price' => 50.00,
-        'status' => 'active',
-        'created_as_role' => 'business_user',
-        'store_name' => 'My Test Store',
-    ];
-
-    $response = $this->post(route('admin.listings.store'), $data);
-
-    $response->assertRedirect();
-
-    $this->assertDatabaseHas('listings', [
-        'title' => 'Business Product',
-        'created_as_role' => 'business_user',
-        'store_name' => 'My Test Store',
-    ]);
+test('admin cannot access listing edit page', function () {
+    $listing = Listing::factory()->create();
+    $response = $this->get("/admin/listings/{$listing->id}/edit");
+    $response->assertNotFound();
 });
 
-test('admin can create a listing with images', function () {
-    Storage::fake('public');
-
-    $listingType = ListingType::factory()->create(['name' => 'Sell']);
-    $category = Category::factory()->create(['name' => 'Electronics']);
-
-    $mainImage = UploadedFile::fake()->image('main.jpg');
-    $detailImage1 = UploadedFile::fake()->image('detail1.jpg');
-    $detailImage2 = UploadedFile::fake()->image('detail2.jpg');
-
-    $data = [
-        'listing_type_id' => $listingType->id,
-        'category_id' => $category->id,
-        'title' => 'Product with Images',
-        'description' => 'Product description',
-        'base_price' => 75.00,
-        'status' => 'active',
-        'images' => [$mainImage],
-        'detail_images' => [$detailImage1, $detailImage2],
-    ];
-
-    $response = $this->post(route('admin.listings.store'), $data);
-
-    $response->assertRedirect();
-
-    $this->assertDatabaseHas('listings', [
-        'title' => 'Product with Images',
-    ]);
-
-    $listing = Listing::where('title', 'Product with Images')->first();
-    expect($listing->images)->toHaveCount(3);
-});
-
-test('listing creation requires category_id', function () {
-    $listingType = ListingType::factory()->create();
-
-    $data = [
-        'listing_type_id' => $listingType->id,
-        'title' => 'Test Product',
-        'description' => 'Description',
-        'status' => 'active',
-    ];
-
-    $response = $this->post(route('admin.listings.store'), $data);
-
-    $response->assertSessionHasErrors('category_id');
-});
-
-test('discount price must be less than base price', function () {
-    $listingType = ListingType::factory()->create();
-    $category = Category::factory()->create();
-
-    $data = [
-        'listing_type_id' => $listingType->id,
-        'category_id' => $category->id,
-        'title' => 'Invalid Discount',
-        'description' => 'Description',
-        'base_price' => 50.00,
-        'discount_price' => 60.00,
-        'status' => 'active',
-    ];
-
-    $response = $this->post(route('admin.listings.store'), $data);
-
-    $response->assertSessionHasErrors('discount_price');
-});
-
-test('updating a listing without variations deletes all existing variations', function () {
-    $listing = Listing::factory()->create(['user_id' => $this->admin->id]);
-
-    // Create some variations for the listing
-    ProductVariation::factory()->count(3)->create(['listing_id' => $listing->id]);
-
-    expect($listing->variations()->count())->toBe(3);
-
-    $data = [
-        'listing_type_id' => $listing->listing_type_id,
-        'category_id' => $listing->category_id,
-        'title' => $listing->title,
-        'description' => $listing->description,
-        'status' => $listing->status,
-        // No 'variations' key - user deleted all of them
-    ];
-
-    $response = $this->put(route('admin.listings.update', $listing), $data);
-
-    $response->assertRedirect();
-    $response->assertSessionHas('success');
-
-    expect($listing->fresh()->variations()->count())->toBe(0);
-});
-
-test('updating a listing with variations keeps provided ones and deletes removed ones', function () {
-    $listing = Listing::factory()->create(['user_id' => $this->admin->id]);
-
-    $keepVariation = ProductVariation::factory()->create([
-        'listing_id' => $listing->id,
-        'sku' => 'KEEP-001',
-        'price' => 50.00,
-    ]);
-    ProductVariation::factory()->create([
-        'listing_id' => $listing->id,
-        'sku' => 'DELETE-001',
-    ]);
-    ProductVariation::factory()->create([
-        'listing_id' => $listing->id,
-        'sku' => 'DELETE-002',
-    ]);
-
-    expect($listing->variations()->count())->toBe(3);
-
-    $data = [
-        'listing_type_id' => $listing->listing_type_id,
-        'category_id' => $listing->category_id,
-        'title' => $listing->title,
-        'description' => $listing->description,
-        'status' => $listing->status,
-        'variations' => [
-            [
-                'id' => $keepVariation->id,
-                'sku' => 'KEEP-001',
-                'price' => 55.00,
-            ],
-        ],
-    ];
-
-    $response = $this->put(route('admin.listings.update', $listing), $data);
-
-    $response->assertRedirect();
-    $response->assertSessionHas('success');
-
-    $remaining = $listing->fresh()->variations;
-    expect($remaining)->toHaveCount(1);
-    expect($remaining->first()->sku)->toBe('KEEP-001');
-    expect((float) $remaining->first()->price)->toBe(55.00);
+test('admin cannot put to listing update endpoint', function () {
+    $listing = Listing::factory()->create();
+    $response = $this->put("/admin/listings/{$listing->id}", ['title' => 'Updated']);
+    $response->assertStatus(405); // Method Not Allowed — update route removed
 });
 
 test('getCategoryVariants returns variants assigned to a category', function () {
@@ -442,26 +225,6 @@ test('admin bulk force destroy returns error when no ids given', function () {
 
     $response->assertRedirect();
     $response->assertSessionHas('error');
-});
-
-test('admin can permanently delete all trashed listings at once', function () {
-    Storage::fake('public');
-
-    $listing1 = Listing::factory()->create();
-    $listing2 = Listing::factory()->create();
-    $active = Listing::factory()->create(['status' => 'active']);
-
-    $listing1->delete();
-    $listing2->delete();
-
-    $response = $this->post(route('admin.listings.force-destroy-all-trashed'));
-
-    $response->assertRedirect();
-    $response->assertSessionHas('success');
-
-    $this->assertDatabaseMissing('listings', ['id' => $listing1->id]);
-    $this->assertDatabaseMissing('listings', ['id' => $listing2->id]);
-    $this->assertDatabaseHas('listings', ['id' => $active->id]);
 });
 
 test('admin force delete uses service to clean up listing image files', function () {

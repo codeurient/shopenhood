@@ -16,16 +16,59 @@ class ListingTypeFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->unique()->randomElement(['Sell', 'Buy', 'Gift', 'Barter', 'Auction', 'Rent', 'Trade', 'Service']);
-
         return [
-            'name' => $name,
-            'slug' => \Illuminate\Support\Str::slug($name),
+            'name' => 'Test Type ' . fake()->unique()->numberBetween(1, 9999),
+            'slug' => 'test-type-' . fake()->unique()->numberBetween(1, 9999),
             'description' => fake()->sentence(),
-            'requires_price' => fake()->boolean(70),
+            'requires_price' => false,
             'icon' => fake()->randomElement(['💰', '🛒', '🎁', '🔄', '🔨']),
             'is_active' => true,
             'sort_order' => fake()->numberBetween(1, 10),
         ];
+    }
+
+    public function sell(): static
+    {
+        return $this->state([
+            'name' => 'Sell',
+            'slug' => 'sell',
+            'requires_price' => true,
+        ]);
+    }
+
+    public function auction(): static
+    {
+        return $this->state([
+            'name' => 'Auction',
+            'slug' => 'auction',
+            'requires_price' => true,
+        ]);
+    }
+
+    public function buy(): static
+    {
+        return $this->state([
+            'name' => 'Buy',
+            'slug' => 'buy',
+            'requires_price' => false,
+        ]);
+    }
+
+    public function barter(): static
+    {
+        return $this->state([
+            'name' => 'Barter',
+            'slug' => 'barter',
+            'requires_price' => false,
+        ]);
+    }
+
+    public function gift(): static
+    {
+        return $this->state([
+            'name' => 'Gift',
+            'slug' => 'gift',
+            'requires_price' => false,
+        ]);
     }
 }

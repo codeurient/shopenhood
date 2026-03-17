@@ -88,7 +88,7 @@ it('prepare groups selected items by seller', function () {
     expect($sellerIds)->toContain($sellerB->id);
 });
 
-it('prepare returns empty delivery options when listing has no delivery configured', function () {
+it('prepare returns empty delivery tiers when listing has no delivery configured', function () {
     $buyer = User::factory()->create();
     [$seller, $listing] = makeSellerWithListing(['has_domestic_delivery' => false]);
     addToCart($buyer, $listing);
@@ -97,11 +97,11 @@ it('prepare returns empty delivery options when listing has no delivery configur
         ->getJson(route('checkout.prepare'))
         ->assertOk();
 
-    $deliveryOptions = $response->json('sellers.0.delivery_options');
-    expect($deliveryOptions)->toBeArray()->toBeEmpty();
+    $deliveryTiers = $response->json('sellers.0.delivery_tiers');
+    expect($deliveryTiers)->toBeArray()->toBeEmpty();
 });
 
-it('prepare includes free shipping option when domestic_delivery_price is 0', function () {
+it('prepare includes free domestic delivery tier when domestic_delivery_price is 0', function () {
     $buyer = User::factory()->create();
     [$seller, $listing] = makeSellerWithListing([
         'has_domestic_delivery' => true,
@@ -113,11 +113,11 @@ it('prepare includes free shipping option when domestic_delivery_price is 0', fu
         ->getJson(route('checkout.prepare'))
         ->assertOk();
 
-    $keys = collect($response->json('sellers.0.delivery_options'))->pluck('key')->toArray();
-    expect($keys)->toContain('free_shipping');
+    $keys = collect($response->json('sellers.0.delivery_tiers'))->pluck('key')->toArray();
+    expect($keys)->toContain('domestic');
 });
 
-it('prepare includes standard delivery with cost when domestic_delivery_price is positive', function () {
+it('prepare includes domestic delivery tier with cost when domestic_delivery_price is positive', function () {
     $buyer = User::factory()->create();
     [$seller, $listing] = makeSellerWithListing([
         'has_domestic_delivery' => true,
@@ -129,11 +129,10 @@ it('prepare includes standard delivery with cost when domestic_delivery_price is
         ->getJson(route('checkout.prepare'))
         ->assertOk();
 
-    $options = collect($response->json('sellers.0.delivery_options'));
-    $standard = $options->firstWhere('key', 'standard_delivery');
-    expect($standard)->not->toBeNull();
-    expect((float) $standard['cost'])->toBe(8.50);
-    expect($standard['paid_by'])->toBe('buyer');
+    $tiers = collect($response->json('sellers.0.delivery_tiers'));
+    $domestic = $tiers->firstWhere('key', 'domestic');
+    expect($domestic)->not->toBeNull();
+    expect((float) $domestic['cost'])->toBe(8.50);
 });
 
 it('prepare returns user addresses', function () {
@@ -263,11 +262,11 @@ it('confirm stores delivery_option_name and delivery_cost_paid_by on each order'
     $this->actingAs($buyer)->postJson(route('checkout.confirm'), [
         'address_id' => $address->id,
         'payment_method' => 'cash_on_delivery',
-        'delivery_selections' => [$seller->id => 'standard_delivery'],
+        'delivery_selections' => [$seller->id => 'domestic'],
     ])->assertOk();
 
     $order = Order::where('buyer_id', $buyer->id)->first();
-    expect($order->delivery_option_name)->toBe('Standard Delivery');
+    expect($order->delivery_option_name)->toBe('Same Country Delivery');
     expect($order->delivery_cost_paid_by)->toBe('buyer');
     expect((float) $order->shipping_cost)->toBe(5.00);
 });

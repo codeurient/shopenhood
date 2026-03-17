@@ -17,10 +17,6 @@
                 </p>
             </div>
             <div class="flex gap-2">
-                <a href="{{ route('admin.listings.edit', $listing) }}"
-                   class="inline-flex items-center px-4 py-2 bg-primary-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600">
-                    Edit Listing
-                </a>
                 <form action="{{ route('admin.listings.destroy', $listing) }}" method="POST" class="inline"
                       onsubmit="return confirm('Are you sure you want to delete this listing?');">
                     @csrf

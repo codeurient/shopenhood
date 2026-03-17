@@ -80,46 +80,42 @@
                         </template>
                     </div>
 
-                    {{-- ── DELIVERY METHOD (per seller) ───────────────────────── --}}
+                    {{-- ── DELIVERY (auto-computed from buyer address) ─────────── --}}
                     <div class="border-b border-gray-100">
                         <div class="px-4 pt-4 pb-1">
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Delivery Method</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Delivery</p>
                         </div>
 
                         <template x-for="(seller, sellerIdx) in sellers" :key="seller.seller_id">
                             <div class="px-4 py-3">
-                                {{-- Seller name header (only shown when >1 seller) --}}
                                 <template x-if="sellers.length > 1">
                                     <p class="text-xs font-semibold text-gray-700 mb-2"
                                        x-text="'From: ' + seller.seller_name"></p>
                                 </template>
 
-                                <div class="space-y-2">
-                                    <template x-for="option in seller.delivery_options" :key="option.key">
-                                        <label class="flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition"
-                                               :class="seller.selectedDelivery === option.key
-                                                   ? 'border-primary-500 bg-primary-50'
-                                                   : 'border-gray-200 bg-white hover:border-gray-300'">
-                                            <input type="radio"
-                                                   :name="'delivery_' + seller.seller_id"
-                                                   :value="option.key"
-                                                   :checked="seller.selectedDelivery === option.key"
-                                                   @change="selectDelivery(sellerIdx, option)"
-                                                   class="mt-0.5 text-primary-600 flex-shrink-0">
-                                            <div class="flex-1 min-w-0">
-                                                <div class="flex items-center justify-between gap-2">
-                                                    <span class="text-sm font-medium text-gray-900" x-text="option.name"></span>
-                                                    <span class="text-sm font-semibold flex-shrink-0"
-                                                          :class="option.cost > 0 ? 'text-orange-600' : 'text-green-600'"
-                                                          x-text="option.cost > 0 ? fmt(option.cost, totals.currency) : 'FREE'"></span>
-                                                </div>
-                                                <template x-if="option.note">
-                                                    <p class="text-xs text-orange-500 mt-0.5" x-text="option.note"></p>
-                                                </template>
-                                            </div>
-                                        </label>
-                                    </template>
-                                </div>
+                                <template x-if="seller.applicableTier">
+                                    <div class="flex items-center justify-between p-3 rounded-xl border border-primary-500 bg-primary-50">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900" x-text="seller.applicableTier.name"></p>
+                                            <template x-if="seller.applicableTier.days">
+                                                <p class="text-xs text-gray-500 mt-0.5"
+                                                   x-text="'Estimated ' + seller.applicableTier.days + ' day(s)'"></p>
+                                            </template>
+                                        </div>
+                                        <span class="text-sm font-semibold flex-shrink-0"
+                                              :class="seller.applicableTier.cost > 0 ? 'text-orange-600' : 'text-green-600'"
+                                              x-text="seller.applicableTier.cost > 0 ? fmt(seller.applicableTier.cost, totals.currency) : 'FREE'"></span>
+                                    </div>
+                                </template>
+
+                                <template x-if="!seller.applicableTier">
+                                    <div class="flex items-start gap-2 p-3 rounded-xl border border-amber-200 bg-amber-50">
+                                        <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                        </svg>
+                                        <span class="text-xs text-amber-700">No delivery to this address — contact seller to arrange.</span>
+                                    </div>
+                                </template>
                             </div>
                         </template>
                     </div>
@@ -340,13 +336,14 @@ function checkoutModal() {
                     this.selectedAddressId = data.default_address_id;
                     this.sellers = data.sellers.map(s => ({
                         ...s,
-                        selectedDelivery: s.delivery_options[0]?.key ?? null,
-                        selectedDeliveryCost: s.delivery_options[0]?.cost ?? 0,
+                        selectedDelivery: null,
+                        selectedDeliveryCost: 0,
+                        applicableTier: null,
                     }));
                     this.totals.subtotal = data.totals.subtotal;
                     this.totals.count = data.totals.item_count;
                     this.totals.currency = data.totals.currency;
-                    this.recalcTotals();
+                    this.recalcDelivery();
                     this.loading = false;
                 })
                 .catch(() => {
@@ -363,12 +360,35 @@ function checkoutModal() {
         selectAddress(id) {
             this.selectedAddressId = id;
             this.showAddressPicker = false;
+            this.recalcDelivery();
         },
 
-        selectDelivery(sellerIdx, option) {
-            this.sellers[sellerIdx].selectedDelivery = option.key;
-            this.sellers[sellerIdx].selectedDeliveryCost = option.cost;
+        recalcDelivery() {
+            const addr = this.selectedAddress;
+            this.sellers = this.sellers.map(seller => {
+                if (!addr) {
+                    return { ...seller, applicableTier: null, selectedDelivery: 'pickup', selectedDeliveryCost: 0 };
+                }
+                const tierKey = this.calcDeliveryTier(addr, seller);
+                const tier = (seller.delivery_tiers || []).find(t => t.key === tierKey) || null;
+                return {
+                    ...seller,
+                    applicableTier: tier,
+                    selectedDelivery: tier ? tier.key : 'pickup',
+                    selectedDeliveryCost: tier ? tier.cost : 0,
+                };
+            });
             this.recalcTotals();
+        },
+
+        calcDeliveryTier(address, seller) {
+            const buyerCity = (address.city || '').trim().toLowerCase();
+            const buyerCountry = (address.country || '').trim().toLowerCase();
+            const sellerCity = (seller.seller_city || '').trim().toLowerCase();
+            const sellerCountry = (seller.seller_country || '').trim().toLowerCase();
+            if (buyerCity && sellerCity && buyerCity === sellerCity) return 'same_city';
+            if (buyerCountry && sellerCountry && buyerCountry === sellerCountry) return 'domestic';
+            return 'international';
         },
 
         recalcTotals() {
