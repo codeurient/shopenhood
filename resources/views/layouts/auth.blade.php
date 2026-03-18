@@ -10,12 +10,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
+                        luxury: {
+                            black:    '#000000',
+                            surface:  '#1A1A1A',
+                            charcoal: '#37474F',
+                            gold:     '#D4AF37',
+                            light:    '#E0E0E0',
+                            white:    '#FFFFFF',
+                            text:     '#1A1A1A',
+                        },
                         primary: {
-                            50: '#f0f8ff',
+                            50:  '#f0f8ff',
                             100: '#BDDDFC',
                             200: '#a8d3fb',
                             300: '#88BDF2',
@@ -26,50 +34,41 @@
                             800: '#2e5f7d',
                             900: '#1e4159',
                         },
-                        success: {
-                            50: '#f0fdf4',
-                            100: '#CFFFDC',
-                            500: '#68BA7F',
-                            600: '#2E6F40',
-                        },
-                        danger: {
-                            500: '#CD1C18',
-                            600: '#a81614',
-                        },
-                        warning: {
-                            500: '#C05800',
-                            600: '#9a4600',
-                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'sans-serif'],
                     },
                 },
             },
         }
     </script>
 
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @stack('styles')
 </head>
-<body class="bg-gray-50 antialiased flex flex-col h-screen">
+<body class="bg-white antialiased font-sans flex flex-col h-screen">
 
     <main class="flex-1 overflow-hidden">
         {{ $slot }}
     </main>
 
-    <footer class="flex-shrink-0 border-t border-gray-200 bg-white">
-        <div class="max-w-7xl mx-auto px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p class="text-xs text-gray-400">
-                &copy; {{ date('Y') }} <span class="font-medium text-gray-500">{{ config('app.name', 'Shopenhood') }}</span>. All rights reserved.
-            </p>
+    <!-- Footer -->
+    <footer class="flex-shrink-0 border-t border-[#E0E0E0] bg-white">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-center sm:justify-end gap-2">
             <nav class="flex items-center gap-4">
-                <a href="#" class="text-xs text-gray-400 hover:text-primary-600 transition-colors">Privacy Policy</a>
-                <a href="#" class="text-xs text-gray-400 hover:text-primary-600 transition-colors">Terms of Service</a>
-                <a href="#" class="text-xs text-gray-400 hover:text-primary-600 transition-colors">Help &amp; Support</a>
-                <a href="{{ route('home') }}" class="text-xs text-gray-400 hover:text-primary-600 transition-colors">Back to Home</a>
+                <a href="#" class="text-xs text-[#37474F] hover:text-[#D4AF37] transition-colors">Privacy Policy</a>
+                <a href="#" class="text-xs text-[#37474F] hover:text-[#D4AF37] transition-colors">Terms of Service</a>
+                <a href="#" class="text-xs text-[#37474F] hover:text-[#D4AF37] transition-colors">Help &amp; Support</a>
+                <a href="{{ route('home') }}" class="text-xs text-[#37474F] hover:text-[#D4AF37] transition-colors">Back to Home</a>
             </nav>
         </div>
     </footer>
