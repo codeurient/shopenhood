@@ -1,256 +1,188 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Stock Management')
+@section('page-title', 'Stock Management')
 
 @section('content')
-<div class="py-6">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="md:flex md:items-center md:justify-between mb-6">
-            <div class="flex-1 min-w-0">
-                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                    Stock Management
-                </h2>
-            </div>
-            <div class="mt-4 flex md:mt-0 md:ml-4 gap-2">
-                <a href="{{ route('admin.stock.low-stock-alerts') }}"
-                   class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                    🔔 Low Stock Alerts
-                </a>
-                <a href="{{ route('admin.stock.history') }}"
-                   class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                    📊 Movement History
-                </a>
-                <a href="{{ route('admin.stock.export') }}"
-                   class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600">
-                    📥 Export CSV
-                </a>
-            </div>
+<div>
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Stock Management</h2>
+            <p class="text-[#37474F] text-sm mt-1">Manage product variation stock levels</p>
         </div>
-
-        <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="text-3xl">📦</div>
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Total Variations
-                                </dt>
-                                <dd class="text-2xl font-semibold text-gray-900">
-                                    {{ number_format($stats['total_variations']) }}
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="text-3xl">⚠️</div>
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Low Stock
-                                </dt>
-                                <dd class="text-2xl font-semibold text-orange-600">
-                                    {{ number_format($stats['low_stock_count']) }}
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="text-3xl">🚫</div>
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Out of Stock
-                                </dt>
-                                <dd class="text-2xl font-semibold text-red-600">
-                                    {{ number_format($stats['out_of_stock_count']) }}
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="text-3xl">💰</div>
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Stock Value
-                                </dt>
-                                <dd class="text-2xl font-semibold text-gray-900">
-                                    ${{ number_format($stats['total_stock_value'], 2) }}
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="bg-white shadow rounded-lg mb-6 p-4">
-            <form method="GET" action="{{ route('admin.stock.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
-                    <input type="text"
-                           name="search"
-                           id="search"
-                           value="{{ request('search') }}"
-                           placeholder="SKU or product name..."
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
-                </div>
-
-                <div>
-                    <label for="stock_status" class="block text-sm font-medium text-gray-700">Stock Status</label>
-                    <select name="stock_status"
-                            id="stock_status"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
-                        <option value="">All</option>
-                        <option value="in" {{ request('stock_status') == 'in' ? 'selected' : '' }}>In Stock</option>
-                        <option value="low" {{ request('stock_status') == 'low' ? 'selected' : '' }}>Low Stock</option>
-                        <option value="out" {{ request('stock_status') == 'out' ? 'selected' : '' }}>Out of Stock</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="sort_by" class="block text-sm font-medium text-gray-700">Sort By</label>
-                    <select name="sort_by"
-                            id="sort_by"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
-                        <option value="stock_quantity" {{ request('sort_by') == 'stock_quantity' ? 'selected' : '' }}>Stock Quantity</option>
-                        <option value="sku" {{ request('sort_by') == 'sku' ? 'selected' : '' }}>SKU</option>
-                        <option value="price" {{ request('sort_by') == 'price' ? 'selected' : '' }}>Price</option>
-                    </select>
-                </div>
-
-                <div class="flex items-end">
-                    <button type="submit"
-                            class="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                        Apply Filters
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Stock Table -->
-        <div class="bg-white shadow rounded-lg overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Product / SKU
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Variant
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Price
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Stock
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($variations as $variation)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">
-                                {{ $variation->listing->title }}
-                            </div>
-                            <div class="text-sm text-gray-500">
-                                SKU: {{ $variation->sku }}
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">
-                                @foreach($variation->attributes as $attr)
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 mr-1">
-                                        {{ $attr->variant->name }}: {{ $attr->variantItem->value }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            ${{ number_format($variation->price, 2) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-semibold text-gray-900">
-                                {{ $variation->stock_quantity }}
-                            </div>
-                            <div class="text-xs text-gray-500">
-                                Threshold: {{ $variation->low_stock_threshold }}
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($variation->stock_quantity <= 0)
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                    Out of Stock
-                                </span>
-                            @elseif($variation->stock_quantity <= $variation->low_stock_threshold)
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                    Low Stock
-                                </span>
-                            @else
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    In Stock
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="{{ route('admin.stock.edit', $variation) }}"
-                               class="text-primary-600 hover:text-primary-700">
-                                Adjust Stock
-                            </a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-                            No stock variations found.
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            <!-- Pagination -->
-            @if($variations->hasPages())
-            <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-                {{ $variations->links() }}
-            </div>
-            @endif
+        <div class="flex gap-2">
+            <a href="{{ route('admin.stock.low-stock-alerts') }}"
+               class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                <i class="fa-solid fa-bell text-xs"></i>
+                Low Stock Alerts
+            </a>
+            <a href="{{ route('admin.stock.history') }}"
+               class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                Movement History
+            </a>
+            <a href="{{ route('admin.stock.export') }}"
+               class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-download text-xs"></i>
+                Export CSV
+            </a>
         </div>
     </div>
+
+    <!-- Statistics -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-boxes-stacked text-[#D4AF37]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ number_format($stats['total_variations']) }}</p>
+                    <p class="text-[#37474F] text-xs">Total Variations</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ number_format($stats['low_stock_count']) }}</p>
+                    <p class="text-[#37474F] text-xs">Low Stock</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#C0392B]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-circle-xmark text-[#C0392B]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ number_format($stats['out_of_stock_count']) }}</p>
+                    <p class="text-[#37474F] text-xs">Out of Stock</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-dollar-sign text-[#D4AF37]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">${{ number_format($stats['total_stock_value'], 2) }}</p>
+                    <p class="text-[#37474F] text-xs">Stock Value</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 mb-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+        <form method="GET" action="{{ route('admin.stock.index') }}" class="flex flex-wrap gap-3 items-center">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="SKU or product name..."
+                   class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 flex-1 min-w-[200px]">
+
+            <select name="stock_status"
+                    class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                <option value="">All Status</option>
+                <option value="in" {{ request('stock_status') == 'in' ? 'selected' : '' }}>In Stock</option>
+                <option value="low" {{ request('stock_status') == 'low' ? 'selected' : '' }}>Low Stock</option>
+                <option value="out" {{ request('stock_status') == 'out' ? 'selected' : '' }}>Out of Stock</option>
+            </select>
+
+            <select name="sort_by"
+                    class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                <option value="stock_quantity" {{ request('sort_by') == 'stock_quantity' ? 'selected' : '' }}>Sort: Quantity</option>
+                <option value="sku" {{ request('sort_by') == 'sku' ? 'selected' : '' }}>Sort: SKU</option>
+                <option value="price" {{ request('sort_by') == 'price' ? 'selected' : '' }}>Sort: Price</option>
+            </select>
+
+            <button type="submit"
+                    class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-filter text-xs"></i>
+                Filter
+            </button>
+            <a href="{{ route('admin.stock.index') }}"
+               class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                <i class="fa-solid fa-xmark text-xs"></i>
+                Reset
+            </a>
+        </form>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+        @if($variations->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[#37474F] border-b border-[#000000]/20">
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Product / SKU</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Variant</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Price</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Stock</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Status</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($variations as $variation)
+                            <tr class="{{ $loop->even ? 'bg-white' : 'bg-gray-50' }} hover:bg-[#D4AF37]/5 transition-colors">
+                                <td class="px-3 py-2.5">
+                                    <p class="text-[13px] font-medium text-[#1A1A1A]">{{ $variation->listing->title }}</p>
+                                    <p class="text-[12px] text-[#37474F]">SKU: {{ $variation->sku }}</p>
+                                </td>
+                                <td class="px-3 py-2.5">
+                                    <div class="flex flex-wrap gap-1">
+                                        @foreach($variation->attributes as $attr)
+                                            <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-medium bg-gray-100 text-[#37474F]">
+                                                {{ $attr->variant->name }}: {{ $attr->variantItem->value }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </td>
+                                <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A]">${{ number_format($variation->price, 2) }}</td>
+                                <td class="px-3 py-2.5">
+                                    <p class="text-[13px] font-semibold text-[#1A1A1A]">{{ $variation->stock_quantity }}</p>
+                                    <p class="text-[12px] text-[#37474F]">Threshold: {{ $variation->low_stock_threshold }}</p>
+                                </td>
+                                <td class="px-3 py-2.5">
+                                    @if($variation->stock_quantity <= 0)
+                                        <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-[#C0392B]/10 text-[#C0392B]">Out of Stock</span>
+                                    @elseif($variation->stock_quantity <= $variation->low_stock_threshold)
+                                        <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-yellow-50 text-yellow-700">Low Stock</span>
+                                    @else
+                                        <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-[#D4AF37]/20 text-[#D4AF37]">In Stock</span>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2.5">
+                                    <a href="{{ route('admin.stock.edit', $variation) }}"
+                                       class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-medium text-[#37474F] border border-[#E0E0E0] rounded hover:bg-gray-100 transition">
+                                        <i class="fa-solid fa-sliders text-xs"></i>
+                                        Adjust
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            @if($variations->hasPages())
+                <div class="px-4 py-3 border-t border-[#E0E0E0]">
+                    {{ $variations->links() }}
+                </div>
+            @endif
+        @else
+            <div class="text-center py-12">
+                <i class="fa-solid fa-boxes-stacked text-3xl text-[#E0E0E0] mb-3 block"></i>
+                <p class="text-[#37474F] text-[13px]">No stock variations found</p>
+            </div>
+        @endif
+    </div>
+
 </div>
 @endsection

@@ -4,192 +4,209 @@
 @section('page-title', 'Coupons')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
+<div>
+
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-bold text-gray-900">Coupons</h2>
-            <p class="text-gray-600 mt-1">Manage discount coupons and promotions</p>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Coupons</h2>
+            <p class="text-[#37474F] text-sm mt-1">Manage discount coupons and promotions</p>
         </div>
-        <a href="{{ route('admin.coupons.create') }}" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
-            + Create Coupon
+        <a href="{{ route('admin.coupons.create') }}"
+           class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+            <i class="fa-solid fa-plus text-xs"></i>
+            Create Coupon
         </a>
     </div>
 
     @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded">
+        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
             {{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded">
+        <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation"></i>
             {{ session('error') }}
         </div>
     @endif
 
     <!-- Statistics -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600 text-2xl">🎟️</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ $stats['total'] }}</p>
-                    <p class="text-gray-600 text-sm">Total Coupons</p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-ticket text-[#D4AF37]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ $stats['total'] }}</p>
+                    <p class="text-[#37474F] text-xs">Total Coupons</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600 text-2xl">✓</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ $stats['active'] }}</p>
-                    <p class="text-gray-600 text-sm">Active</p>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-circle-check text-green-500"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ $stats['active'] }}</p>
+                    <p class="text-[#37474F] text-xs">Active</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-red-100 text-red-600 text-2xl">⏰</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ $stats['expired'] }}</p>
-                    <p class="text-gray-600 text-sm">Expired</p>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-clock text-[#C0392B]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ $stats['expired'] }}</p>
+                    <p class="text-[#37474F] text-xs">Expired</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-gray-100 text-gray-600 text-2xl">○</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ $stats['inactive'] }}</p>
-                    <p class="text-gray-600 text-sm">Inactive</p>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-circle-xmark text-[#37474F]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ $stats['inactive'] }}</p>
+                    <p class="text-[#37474F] text-xs">Inactive</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
-        <form method="GET" action="{{ route('admin.coupons.index') }}" class="flex gap-4 flex-wrap">
-            <div class="flex-1 min-w-[200px]">
-                <input type="text" name="search" value="{{ request('search') }}"
-                       placeholder="Search by code or description..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-            </div>
-            <div>
-                <select name="type" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                    <option value="">All Types</option>
-                    <option value="percentage" {{ request('type') === 'percentage' ? 'selected' : '' }}>Percentage</option>
-                    <option value="fixed" {{ request('type') === 'fixed' ? 'selected' : '' }}>Fixed</option>
-                </select>
-            </div>
-            <div>
-                <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                    <option value="">All Status</option>
-                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                    <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Expired</option>
-                </select>
-            </div>
-            <div>
-                <select name="applicable_to" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                    <option value="">All Scope</option>
-                    <option value="all" {{ request('applicable_to') === 'all' ? 'selected' : '' }}>All Products</option>
-                    <option value="categories" {{ request('applicable_to') === 'categories' ? 'selected' : '' }}>Categories</option>
-                    <option value="listings" {{ request('applicable_to') === 'listings' ? 'selected' : '' }}>Listings</option>
-                </select>
-            </div>
-            <button type="submit" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 mb-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+        <form method="GET" action="{{ route('admin.coupons.index') }}" class="flex flex-wrap gap-3 items-center">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by code or description..."
+                   class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 flex-1 min-w-[200px]">
+
+            <select name="type"
+                    class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                <option value="">All Types</option>
+                <option value="percentage" {{ request('type') === 'percentage' ? 'selected' : '' }}>Percentage</option>
+                <option value="fixed" {{ request('type') === 'fixed' ? 'selected' : '' }}>Fixed</option>
+            </select>
+
+            <select name="status"
+                    class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                <option value="">All Status</option>
+                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Expired</option>
+            </select>
+
+            <select name="applicable_to"
+                    class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                <option value="">All Scope</option>
+                <option value="all" {{ request('applicable_to') === 'all' ? 'selected' : '' }}>All Products</option>
+                <option value="categories" {{ request('applicable_to') === 'categories' ? 'selected' : '' }}>Categories</option>
+                <option value="listings" {{ request('applicable_to') === 'listings' ? 'selected' : '' }}>Listings</option>
+            </select>
+
+            <button type="submit"
+                    class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-filter text-xs"></i>
                 Filter
             </button>
-            <a href="{{ route('admin.coupons.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+            <a href="{{ route('admin.coupons.index') }}"
+               class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                <i class="fa-solid fa-xmark text-xs"></i>
                 Reset
             </a>
         </form>
     </div>
 
-    <!-- Coupons Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <!-- Table -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
         @if($coupons->count() > 0)
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applies To</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dates</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[#37474F] border-b border-[#000000]/20">
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Code</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Type</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Value</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Applies To</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Usage</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Dates</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Status</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody>
                         @foreach($coupons as $coupon)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <code class="bg-gray-100 px-2 py-1 rounded font-mono font-semibold text-sm">{{ $coupon->code }}</code>
+                            <tr class="{{ $loop->even ? 'bg-white' : 'bg-gray-50' }} hover:bg-[#D4AF37]/5 transition-colors">
+                                <td class="px-3 py-2.5">
+                                    <code class="bg-gray-100 px-2 py-0.5 rounded font-mono text-[12px] font-semibold text-[#1A1A1A]">{{ $coupon->code }}</code>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <span class="px-2 py-1 text-xs rounded {{ $coupon->type === 'percentage' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                <td class="px-3 py-2.5">
+                                    <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold {{ $coupon->type === 'percentage' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700' }}">
                                         {{ ucfirst($coupon->type) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                <td class="px-3 py-2.5 text-[13px] font-semibold text-[#1A1A1A]">
                                     @if($coupon->type === 'percentage')
                                         {{ rtrim(rtrim($coupon->value, '0'), '.') }}%
                                     @else
                                         ${{ number_format($coupon->value, 2) }}
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <span class="capitalize">{{ $coupon->applicable_to === 'all' ? 'All Products' : ucfirst($coupon->applicable_to) }}</span>
+                                <td class="px-3 py-2.5 text-[13px] text-[#37474F]">
+                                    {{ $coupon->applicable_to === 'all' ? 'All Products' : ucfirst($coupon->applicable_to) }}
                                     @if($coupon->restrictions_count > 0)
-                                        <span class="text-xs text-gray-400">({{ $coupon->restrictions_count }})</span>
+                                        <span class="text-[11px] text-[#E0E0E0]">({{ $coupon->restrictions_count }})</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A]">
                                     <span class="font-semibold">{{ $coupon->usage_count }}</span>
-                                    <span class="text-gray-400">/ {{ $coupon->usage_limit ?? '∞' }}</span>
+                                    <span class="text-[#37474F]">/ {{ $coupon->usage_limit ?? '∞' }}</span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <div>
-                                        @if($coupon->starts_at)
-                                            <span class="text-xs">From: {{ $coupon->starts_at->format('M d, Y') }}</span>
-                                        @endif
-                                    </div>
-                                    <div>
-                                        @if($coupon->expires_at)
-                                            <span class="text-xs {{ $coupon->expires_at->isPast() ? 'text-red-500 font-semibold' : '' }}">
-                                                To: {{ $coupon->expires_at->format('M d, Y') }}
-                                            </span>
-                                        @endif
-                                    </div>
+                                <td class="px-3 py-2.5">
+                                    @if($coupon->starts_at)
+                                        <p class="text-[12px] text-[#37474F]">From: {{ $coupon->starts_at->format('M d, Y') }}</p>
+                                    @endif
+                                    @if($coupon->expires_at)
+                                        <p class="text-[12px] {{ $coupon->expires_at->isPast() ? 'text-[#C0392B] font-semibold' : 'text-[#37474F]' }}">
+                                            To: {{ $coupon->expires_at->format('M d, Y') }}
+                                        </p>
+                                    @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-3 py-2.5">
                                     @if($coupon->expires_at && $coupon->expires_at->isPast())
-                                        <span class="px-2 py-1 text-xs rounded bg-red-100 text-red-800">Expired</span>
+                                        <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-gray-100 text-[#37474F]">Expired</span>
                                     @else
                                         <form action="{{ route('admin.coupons.toggle-status', $coupon) }}" method="POST" class="inline">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="px-2 py-1 text-xs rounded {{ $coupon->is_active ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-red-100 text-red-800 hover:bg-red-200' }}">
+                                            <button type="submit"
+                                                    class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold transition {{ $coupon->is_active ? 'bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/30' : 'bg-[#C0392B]/10 text-[#C0392B] hover:bg-[#C0392B]/20' }}">
                                                 {{ $coupon->is_active ? 'Active' : 'Inactive' }}
                                             </button>
                                         </form>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('admin.coupons.edit', $coupon) }}" class="text-primary-600 hover:text-primary-700">
-                                            Edit
+                                <td class="px-3 py-2.5">
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="{{ route('admin.coupons.edit', $coupon) }}"
+                                           class="inline-flex items-center justify-center w-[28px] h-[28px] border border-[#E0E0E0] text-[#37474F] rounded hover:bg-gray-100 transition"
+                                           title="Edit">
+                                            <i class="fa-solid fa-pen text-xs"></i>
                                         </a>
-                                        <form action="{{ route('admin.coupons.destroy', $coupon) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this coupon?')">
+                                        <form action="{{ route('admin.coupons.destroy', $coupon) }}" method="POST"
+                                              onsubmit="return confirm('Are you sure you want to delete this coupon?')" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900">
-                                                Delete
+                                            <button type="submit"
+                                                    class="inline-flex items-center justify-center w-[28px] h-[28px] bg-[#C0392B] text-white rounded hover:bg-[#a93226] transition"
+                                                    title="Delete">
+                                                <i class="fa-solid fa-trash text-xs"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -199,20 +216,20 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
-            <div class="px-6 py-4 border-t border-gray-200">
+            <div class="px-4 py-3 border-t border-[#E0E0E0]">
                 {{ $coupons->links() }}
             </div>
         @else
             <div class="text-center py-12">
-                <div class="text-6xl mb-4">🎟️</div>
-                <p class="text-gray-500 text-lg">No coupons found</p>
-                <a href="{{ route('admin.coupons.create') }}" class="text-primary-600 hover:text-primary-700 mt-2 inline-block">
+                <i class="fa-solid fa-ticket text-3xl text-[#E0E0E0] mb-3 block"></i>
+                <p class="text-[#37474F] text-[13px]">No coupons found</p>
+                <a href="{{ route('admin.coupons.create') }}"
+                   class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition mt-3">
                     Create your first coupon
                 </a>
             </div>
         @endif
     </div>
+
 </div>
 @endsection

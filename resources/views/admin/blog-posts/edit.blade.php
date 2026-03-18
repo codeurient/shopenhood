@@ -4,23 +4,41 @@
 @section('page-title', 'Blog Posts')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
-    <div class="flex items-center gap-4 mb-6">
-        <a href="{{ route('admin.blog-posts.index') }}" class="text-gray-500 hover:text-gray-700">
-            ← Back to Blog Posts
-        </a>
-        <h2 class="text-2xl font-bold text-gray-900">Edit Blog Post</h2>
+<div>
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <a href="{{ route('admin.blog-posts.index') }}"
+               class="inline-flex items-center gap-1.5 text-[12px] text-[#37474F] hover:text-[#1A1A1A] mb-2 transition">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                Back to Blog Posts
+            </a>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Edit Blog Post</h2>
+        </div>
+        <form action="{{ route('admin.blog-posts.destroy', $blogPost) }}" method="POST"
+              onsubmit="return confirm('Delete this blog post? This cannot be undone.')">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                    class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#C0392B] text-white text-[13px] font-semibold rounded hover:bg-[#a93226] transition">
+                <i class="fa-solid fa-trash text-xs"></i>
+                Delete Post
+            </button>
+        </form>
     </div>
 
     @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded">
-            ✓ {{ session('success') }}
+        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
+            {{ session('success') }}
         </div>
     @endif
 
     @if($errors->any())
-        <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded">
-            <ul class="list-disc list-inside space-y-1">
+        <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded flex items-start gap-2">
+            <i class="fa-solid fa-circle-exclamation flex-shrink-0 mt-0.5"></i>
+            <ul class="text-[13px] space-y-1">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -32,68 +50,82 @@
         @csrf
         @method('PUT')
 
-        <div class="bg-white rounded-lg shadow p-6 space-y-6">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Title <span class="text-red-500">*</span></label>
-                <input type="text" name="title" value="{{ old('title', $blogPost->title) }}" required
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden mb-5">
+            <div class="px-4 py-3 border-b border-[#E0E0E0]">
+                <h3 class="text-[14px] font-semibold text-[#1A1A1A] flex items-center gap-2">
+                    <i class="fa-solid fa-newspaper text-[#D4AF37]"></i>
+                    Post Content
+                </h3>
             </div>
+            <div class="p-5 space-y-5">
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Excerpt</label>
-                <textarea name="excerpt" rows="2"
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('excerpt', $blogPost->excerpt) }}</textarea>
-            </div>
+                <div>
+                    <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Title <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" value="{{ old('title', $blogPost->title) }}" required
+                           class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
+                </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Content <span class="text-red-500">*</span></label>
-                <textarea name="content" rows="16" required
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 font-mono text-sm">{{ old('content', $blogPost->content) }}</textarea>
-            </div>
+                <div>
+                    <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Excerpt</label>
+                    <textarea name="excerpt" rows="2"
+                              class="block p-3 w-full text-[13px] text-[#1A1A1A] rounded border border-[#E0E0E0] focus:ring-0 focus:border-[#D4AF37]">{{ old('excerpt', $blogPost->excerpt) }}</textarea>
+                </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
-                @if($blogPost->featured_image_path)
-                    <div class="mb-3">
-                        <img src="{{ Storage::url($blogPost->featured_image_path) }}"
-                             alt="Current featured image" class="h-32 w-auto rounded-lg object-cover">
-                        <p class="text-xs text-gray-500 mt-1">Current image — upload a new one to replace it</p>
+                <div>
+                    <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Content <span class="text-red-500">*</span></label>
+                    <textarea name="content" rows="16" required
+                              class="block p-3 w-full text-[13px] text-[#1A1A1A] rounded border border-[#E0E0E0] focus:ring-0 focus:border-[#D4AF37] font-mono">{{ old('content', $blogPost->content) }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Featured Image</label>
+                    @if($blogPost->featured_image_path)
+                        <div class="mb-3">
+                            <img src="{{ Storage::url($blogPost->featured_image_path) }}"
+                                 alt="Current featured image" class="h-32 w-auto rounded-[6px] object-cover border border-[#E0E0E0]">
+                            <p class="text-[12px] text-[#37474F] mt-1">Current image — upload a new one to replace it</p>
+                        </div>
+                    @endif
+                    <input type="file" name="featured_image" accept="image/*"
+                           class="block w-full text-[13px] text-[#1A1A1A] border border-[#E0E0E0] rounded cursor-pointer bg-white focus:outline-none focus:border-[#D4AF37] p-0">
+                </div>
+
+                <!-- Published Toggle -->
+                <div class="flex items-center gap-3">
+                    <input type="hidden" name="is_published" value="0">
+                    <label for="is_published" class="inline-flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="is_published" id="is_published" value="1"
+                               class="sr-only peer"
+                               {{ old('is_published', $blogPost->is_published) ? 'checked' : '' }}>
+                        <div class="relative w-11 h-6 bg-[#E0E0E0] peer-focus:outline-none rounded-full peer
+                                    peer-checked:after:translate-x-full peer-checked:after:border-white
+                                    after:content-[''] after:absolute after:top-[2px] after:start-[2px]
+                                    after:bg-white after:border-gray-300 after:border after:rounded-full
+                                    after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div>
+                    </label>
+                    <div>
+                        <p class="text-[13px] font-medium text-[#1A1A1A]">Published</p>
+                        @if($blogPost->published_at)
+                            <p class="text-[12px] text-[#37474F]">First published {{ $blogPost->published_at->format('M d, Y') }}</p>
+                        @endif
                     </div>
-                @endif
-                <input type="file" name="featured_image" accept="image/*"
-                       class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
-            </div>
+                </div>
 
-            <div class="flex items-center gap-3">
-                <input type="hidden" name="is_published" value="0">
-                <input type="checkbox" name="is_published" id="is_published" value="1"
-                       class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                       {{ old('is_published', $blogPost->is_published) ? 'checked' : '' }}>
-                <label for="is_published" class="text-sm font-medium text-gray-700">Published</label>
-                @if($blogPost->published_at)
-                    <span class="text-xs text-gray-400">(first published {{ $blogPost->published_at->format('M d, Y') }})</span>
-                @endif
             </div>
         </div>
 
-        <div class="flex justify-between items-center mt-6">
-            <div class="flex gap-3">
-                <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium">
-                    Save Changes
-                </button>
-                <a href="{{ route('admin.blog-posts.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-                    Cancel
-                </a>
-            </div>
-            <form action="{{ route('admin.blog-posts.destroy', $blogPost) }}" method="POST"
-                  onsubmit="return confirm('Delete this blog post? This cannot be undone.')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">
-                    Delete Post
-                </button>
-            </form>
+        <div class="flex justify-between">
+            <a href="{{ route('admin.blog-posts.index') }}"
+               class="inline-flex items-center justify-center h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                Cancel
+            </a>
+            <button type="submit"
+                    class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-check text-xs"></i>
+                Save Changes
+            </button>
         </div>
     </form>
+
 </div>
 @endsection

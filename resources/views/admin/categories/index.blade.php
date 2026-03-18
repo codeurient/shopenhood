@@ -5,93 +5,111 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto">
+
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-bold text-gray-900">Categories</h2>
-            <p class="text-gray-600 mt-1">Manage product categories hierarchy</p>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Categories</h2>
+            <p class="text-[#37474F] text-sm mt-1">Manage product categories hierarchy</p>
         </div>
-        <a href="{{ route('admin.categories.create') }}" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
-            ➕ Create Category
+        <a href="{{ route('admin.categories.create') }}"
+           class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+            <i class="fa-solid fa-plus"></i>
+            Create Category
         </a>
     </div>
 
     @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded">
-            ✓ {{ session('success') }}
+        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
+            {{ session('success') }}
         </div>
     @endif
 
     <!-- Statistics -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600 text-2xl">📁</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ \App\Models\Category::count() }}</p>
-                    <p class="text-gray-600 text-sm">Total Categories</p>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-folder text-[#D4AF37]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ \App\Models\Category::count() }}</p>
+                    <p class="text-[#37474F] text-xs">Total Categories</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 text-purple-600 text-2xl">🌳</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ \App\Models\Category::whereNull('parent_id')->count() }}</p>
-                    <p class="text-gray-600 text-sm">Root Categories</p>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-tree text-[#D4AF37]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ \App\Models\Category::whereNull('parent_id')->count() }}</p>
+                    <p class="text-[#37474F] text-xs">Root Categories</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600 text-2xl">✓</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ \App\Models\Category::where('is_active', true)->count() }}</p>
-                    <p class="text-gray-600 text-sm">Active</p>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-circle-check text-[#D4AF37]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ \App\Models\Category::where('is_active', true)->count() }}</p>
+                    <p class="text-[#37474F] text-xs">Active</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-orange-100 text-orange-600 text-2xl">🔧</div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900">{{ DB::table('category_variants')->distinct('category_id')->count() }}</p>
-                    <p class="text-gray-600 text-sm">With Variants</p>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-screwdriver-wrench text-[#D4AF37]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ DB::table('category_variants')->distinct('category_id')->count() }}</p>
+                    <p class="text-[#37474F] text-xs">With Variants</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Level-Based Accordions Container -->
-    <div id="accordionsContainer" class="space-y-6">
+    <div id="accordionsContainer" class="space-y-4">
         <!-- Root level accordion will be inserted here by JavaScript -->
     </div>
 </div>
 
 <!-- Variant Assignment Modal -->
-<div id="variantModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4" style="display: none">
-    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col">
-        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+<div id="variantModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" style="display: none">
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+        <div class="px-6 py-4 border-b border-[#E0E0E0] flex justify-between items-center">
             <div>
-                <h3 class="text-xl font-semibold text-gray-900">Assign Variants</h3>
-                <p id="modalCategoryName" class="text-sm text-gray-600 mt-1"></p>
+                <h3 class="text-[15px] font-semibold text-[#1A1A1A]">Assign Variants</h3>
+                <p id="modalCategoryName" class="text-[13px] text-[#37474F] mt-0.5"></p>
             </div>
-            <button onclick="closeVariantModal()" class="text-gray-400 hover:text-gray-600 text-2xl">✕</button>
+            <button onclick="closeVariantModal()"
+                    class="w-8 h-8 flex items-center justify-center rounded text-[#37474F] hover:bg-[#E0E0E0]/50 transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
-        
+
         <div id="variantModalBody" class="flex-1 overflow-y-auto p-6">
             <div class="text-center py-12">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-                <p class="text-gray-600 mt-4">Loading variants...</p>
+                <i class="fa-solid fa-spinner fa-spin text-[#D4AF37] text-3xl mb-4"></i>
+                <p class="text-[#37474F] text-[13px] mt-4">Loading variants...</p>
             </div>
         </div>
-        
-        <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
-            <button onclick="closeVariantModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+
+        <div class="px-6 py-4 border-t border-[#E0E0E0] flex justify-end gap-3">
+            <button onclick="closeVariantModal()"
+                    class="inline-flex items-center justify-center h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
                 Cancel
             </button>
-            <button onclick="saveVariants()" id="saveVariantsBtn" class="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600">
-                💾 Save Variants
+            <button onclick="saveVariants()" id="saveVariantsBtn"
+                    class="inline-flex items-center gap-1.5 justify-center h-[34px] px-4 text-[13px] font-semibold bg-[#D4AF37] text-[#000000] rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Save Variants
             </button>
         </div>
     </div>
@@ -110,15 +128,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /**
  * Load categories for a specific level
- * @param {number|null} parentId - Parent category ID (null for root)
- * @param {string} title - Accordion title
- * @param {number} level - Current level (0 = root)
  */
 function loadLevel(parentId, title, level) {
-    const url = parentId 
+    const url = parentId
         ? `/admin/categories/children/${parentId}`
         : '/admin/categories/children';
-    
+
     fetch(url, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -140,7 +155,7 @@ function loadLevel(parentId, title, level) {
 function renderAccordion(categories, title, level, parentId) {
     const accordionId = `accordion-level-${level}`;
     const existingAccordion = document.getElementById(accordionId);
-    
+
     // Remove this level and all levels below it
     if (existingAccordion) {
         let nextSibling = existingAccordion.nextElementSibling;
@@ -151,75 +166,79 @@ function renderAccordion(categories, title, level, parentId) {
         }
         existingAccordion.remove();
     }
-    
+
     // Create accordion HTML
     const accordion = document.createElement('div');
     accordion.id = accordionId;
-    accordion.className = 'bg-white rounded-lg shadow-lg overflow-hidden border-l-4 ' + getBorderColor(level);
-    
+    accordion.className = 'bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden border-l-4 ' + getBorderColor(level);
+
     let html = `
-        <div class="px-6 py-4 bg-gradient-to-r ${getGradientColor(level)} border-b border-gray-200">
+        <div class="px-6 py-4 bg-gray-50 border-b border-[#E0E0E0]">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <span class="text-2xl">${getLevelIcon(level)}</span>
+                    <div class="w-8 h-8 rounded-full bg-[#D4AF37]/10 flex items-center justify-center">
+                        ${getLevelIcon(level)}
+                    </div>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">${title}</h3>
-                        <p class="text-sm text-gray-600">Level ${level + 1} • ${categories.length} categories</p>
+                        <h3 class="text-[14px] font-semibold text-[#1A1A1A]">${title}</h3>
+                        <p class="text-xs text-[#37474F]">Level ${level + 1} &bull; ${categories.length} categories</p>
                     </div>
                 </div>
-                ${level > 0 ? `<button onclick="removeLevel(${level})" class="text-gray-500 hover:text-red-600">✕ Close Level</button>` : ''}
+                ${level > 0 ? `<button onclick="removeLevel(${level})" class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-medium text-[#37474F] border border-[#E0E0E0] rounded hover:bg-gray-100 transition"><i class="fa-solid fa-xmark text-xs"></i> Close Level</button>` : ''}
             </div>
         </div>
-        <div class="p-6">
+        <div class="p-5">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     `;
-    
+
     categories.forEach(cat => {
         html += `
-            <div class="border border-gray-200 rounded-lg p-4 hover:border-primary-400 hover:shadow-md transition ${cat.has_children ? 'cursor-pointer' : ''}"
+            <div class="border border-[#E0E0E0] rounded-[6px] p-4 hover:border-[#D4AF37] hover:shadow-md transition ${cat.has_children ? 'cursor-pointer' : ''}"
                  ${cat.has_children ? `onclick="onCategoryClick(${cat.id}, '${escapeHtml(cat.name)}', ${level})"` : ''}>
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-2">
-                        ${cat.icon ? `<span class="text-2xl">${cat.icon}</span>` : ''}
+                        ${cat.icon ? `<span class="text-xl">${cat.icon}</span>` : ''}
                         <div>
-                            <h4 class="font-semibold text-gray-900">${cat.name}</h4>
-                            <p class="text-xs text-gray-500 mt-0.5">${cat.slug}</p>
+                            <h4 class="font-semibold text-[#1A1A1A] text-[13px]">${cat.name}</h4>
+                            <p class="text-[11px] text-[#37474F] mt-0.5">${cat.slug}</p>
                         </div>
                     </div>
-                    ${cat.has_children ? '<span class="text-primary-600 text-xl">→</span>' : ''}
+                    ${cat.has_children ? '<i class="fa-solid fa-chevron-right text-[#D4AF37] text-sm"></i>' : ''}
                 </div>
-                <div class="flex flex-wrap gap-2 mb-3">
-                    ${cat.is_active 
-                        ? '<span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded">Active</span>'
-                        : '<span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded">Inactive</span>'}
-                    ${cat.variants_count > 0 
-                        ? `<span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">${cat.variants_count} variants</span>`
+                <div class="flex flex-wrap gap-1.5 mb-3">
+                    ${cat.is_active
+                        ? '<span class="text-[11px] font-semibold px-2 py-0.5 bg-green-100 text-green-700 rounded-[10px]">Active</span>'
+                        : '<span class="text-[11px] font-semibold px-2 py-0.5 bg-red-100 text-red-700 rounded-[10px]">Inactive</span>'}
+                    ${cat.variants_count > 0
+                        ? `<span class="text-[11px] font-semibold px-2 py-0.5 bg-[#D4AF37]/10 text-[#37474F] rounded-[10px]">${cat.variants_count} variants</span>`
                         : ''}
-                    ${cat.listings_count > 0 
-                        ? `<span class="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded">${cat.listings_count} listings</span>`
+                    ${cat.listings_count > 0
+                        ? `<span class="text-[11px] font-semibold px-2 py-0.5 bg-[#37474F]/10 text-[#37474F] rounded-[10px]">${cat.listings_count} listings</span>`
                         : ''}
                 </div>
-                <div class="flex gap-2" onclick="event.stopPropagation()">
+                <div class="flex gap-1.5" onclick="event.stopPropagation()">
                     <button onclick="openVariantModal(${cat.id}, '${escapeHtml(cat.name)}')"
-                            class="flex-1 px-3 py-1.5 text-sm bg-primary-500 text-white rounded hover:bg-primary-600">
-                        🔧 Variants
+                            class="flex-1 inline-flex items-center justify-center gap-1.5 h-[28px] px-3 text-[12px] font-semibold bg-[#D4AF37] text-[#000000] rounded hover:brightness-110 transition">
+                        <i class="fa-solid fa-sliders text-xs"></i> Variants
                     </button>
-                    <a href="/admin/categories/${cat.id}/edit" class="px-3 py-1.5 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600 no-underline">
-                        ✏️
+                    <a href="/admin/categories/${cat.id}/edit"
+                       class="inline-flex items-center justify-center w-[28px] h-[28px] border border-[#E0E0E0] text-[#37474F] rounded hover:bg-gray-100 transition no-underline">
+                        <i class="fa-solid fa-pen text-xs"></i>
                     </a>
-                    <button onclick="confirmDeleteCategory(${cat.id}, '${escapeHtml(cat.name)}')" class="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700">
-                        🗑️
+                    <button onclick="confirmDeleteCategory(${cat.id}, '${escapeHtml(cat.name)}')"
+                            class="inline-flex items-center justify-center w-[28px] h-[28px] bg-[#C0392B] text-white rounded hover:bg-[#a93226] transition">
+                        <i class="fa-solid fa-trash text-xs"></i>
                     </button>
                 </div>
             </div>
         `;
     });
-    
+
     html += `
             </div>
         </div>
     `;
-    
+
     accordion.innerHTML = html;
     accordionsContainer.appendChild(accordion);
 }
@@ -252,34 +271,26 @@ function removeLevel(level) {
  */
 function getBorderColor(level) {
     const colors = [
-        'border-primary-500',
-        'border-purple-500',
-        'border-pink-500',
-        'border-blue-500',
-        'border-green-500'
+        'border-[#D4AF37]',
+        'border-[#37474F]',
+        'border-[#D4AF37]',
+        'border-[#37474F]',
+        'border-[#D4AF37]'
     ];
     return colors[level % colors.length];
 }
 
 /**
- * Get gradient background based on level
- */
-function getGradientColor(level) {
-    const gradients = [
-        'from-primary-50 to-white',
-        'from-purple-50 to-white',
-        'from-pink-50 to-white',
-        'from-blue-50 to-white',
-        'from-green-50 to-white'
-    ];
-    return gradients[level % gradients.length];
-}
-
-/**
- * Get icon based on level
+ * Get Font Awesome icon based on level
  */
 function getLevelIcon(level) {
-    const icons = ['🏠', '📁', '📂', '🗂️', '📋'];
+    const icons = [
+        '<i class="fa-solid fa-house text-[#D4AF37] text-sm"></i>',
+        '<i class="fa-solid fa-folder text-[#D4AF37] text-sm"></i>',
+        '<i class="fa-solid fa-folder-open text-[#D4AF37] text-sm"></i>',
+        '<i class="fa-solid fa-layer-group text-[#D4AF37] text-sm"></i>',
+        '<i class="fa-solid fa-list text-[#D4AF37] text-sm"></i>'
+    ];
     return icons[Math.min(level, icons.length - 1)];
 }
 
@@ -293,30 +304,26 @@ function escapeHtml(text) {
 }
 
 // ============================================================================
-// VARIANT MODAL FUNCTIONS (from previous implementation)
+// VARIANT MODAL FUNCTIONS
 // ============================================================================
 
 function openVariantModal(categoryId, categoryName) {
     currentCategoryId = categoryId;
 
-    // Reset modal body to loading state BEFORE showing to prevent stale content flash
     document.getElementById('variantModalBody').innerHTML = `
         <div class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p class="text-gray-600 mt-4">Loading variants...</p>
+            <i class="fa-solid fa-spinner fa-spin text-[#D4AF37] text-3xl"></i>
+            <p class="text-[#37474F] text-[13px] mt-4">Loading variants...</p>
         </div>
     `;
 
     document.getElementById('modalCategoryName').textContent = `Category: ${categoryName}`;
 
-    // Remove both hidden class and inline style (for initial page load protection)
     const modal = document.getElementById('variantModal');
     modal.classList.remove('hidden');
     modal.style.display = '';
 
     document.body.style.overflow = 'hidden';
-
-    console.log('🔄 Loading variants for category:', categoryId, categoryName);
 
     fetch(`/admin/categories/${categoryId}/variants`, {
         headers: {
@@ -326,31 +333,22 @@ function openVariantModal(categoryId, categoryName) {
     })
     .then(r => r.json())
     .then(data => {
-        console.log('📦 Received variants data:', data);
         if (data.success) {
-            // Log each variant's settings
-            data.variants.forEach(v => {
-                if (v.is_assigned && v.settings) {
-                    console.log(`  Variant "${v.name}" (ID: ${v.id}):`, v.settings);
-                }
-            });
             renderVariants(data.variants);
         }
     })
-    .catch(err => console.error('❌ Error loading variants:', err));
+    .catch(err => console.error('Error loading variants:', err));
 }
 
 function renderVariants(variants) {
     const body = document.getElementById('variantModalBody');
 
-    console.log('🎨 Rendering variants:', variants.length);
-
     if (!variants.length) {
         body.innerHTML = `
             <div class="text-center py-12">
-                <div class="text-6xl mb-4">📦</div>
-                <p class="text-gray-600 text-lg mb-2">No variants available</p>
-                <a href="/admin/variants/create" class="text-primary-600 hover:underline">Create a variant first</a>
+                <i class="fa-solid fa-box-open text-[#E0E0E0] text-5xl mb-4"></i>
+                <p class="text-[#37474F] text-[13px] mb-2">No variants available</p>
+                <a href="/admin/variants/create" class="text-[#D4AF37] hover:underline text-[13px]">Create a variant first</a>
             </div>
         `;
         return;
@@ -360,46 +358,36 @@ function renderVariants(variants) {
     variants.forEach(v => {
         const settings = v.settings || {};
 
-        // Log checkbox states being rendered
-        console.log(`  Rendering variant "${v.name}" (ID: ${v.id}):`, {
-            is_assigned: v.is_assigned,
-            is_required: settings.is_required,
-            is_searchable: settings.is_searchable,
-            is_filterable: settings.is_filterable,
-            is_main_shown: settings.is_main_shown,
-            will_check_main_shown: settings.is_main_shown ? 'YES' : 'NO'
-        });
-
         html += `
-            <div class="border rounded-lg p-4 ${v.is_assigned ? 'bg-primary-50 border-primary-300' : 'bg-gray-50 border-gray-200'}">
+            <div class="border rounded-[6px] p-4 ${v.is_assigned ? 'bg-[#D4AF37]/5 border-[#D4AF37]/40' : 'bg-gray-50 border-[#E0E0E0]'}">
                 <div class="flex items-start gap-3">
                     <input type="checkbox" id="var_${v.id}" value="${v.id}" ${v.is_assigned ? 'checked' : ''}
                            onchange="toggleVariantSettings(this)"
-                           class="mt-1 w-5 h-5 text-primary-600 rounded focus:ring-primary-500">
+                           class="mt-1 w-4 h-4 rounded border-[#E0E0E0] accent-[#D4AF37]">
                     <div class="flex-1">
                         <label for="var_${v.id}" class="cursor-pointer">
                             <div class="flex items-center gap-2 mb-1">
-                                <span class="font-semibold text-gray-900">${v.name}</span>
-                                <span class="px-2 py-1 text-xs bg-primary-100 text-primary-700 rounded">${v.type}</span>
+                                <span class="font-semibold text-[#1A1A1A] text-[13px]">${v.name}</span>
+                                <span class="px-2 py-0.5 text-[11px] font-semibold bg-[#D4AF37]/10 text-[#37474F] rounded-[10px]">${v.type}</span>
                             </div>
-                            <p class="text-sm text-gray-600">${v.items_count} items available</p>
+                            <p class="text-[12px] text-[#37474F]">${v.items_count} items available</p>
                         </label>
-                        <div id="settings_${v.id}" class="mt-3 pl-4 border-l-2 border-primary-300 space-y-2 ${v.is_assigned ? '' : 'hidden'}">
-                            <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="req_${v.id}" ${settings.is_required ? 'checked' : ''} class="w-4 h-4 text-primary-600 rounded">
-                                <span>Required field</span>
+                        <div id="settings_${v.id}" class="mt-3 pl-4 border-l-2 border-[#D4AF37]/40 space-y-2 ${v.is_assigned ? '' : 'hidden'}">
+                            <label class="flex items-center gap-2 text-[12px] text-[#1A1A1A] cursor-pointer">
+                                <input type="checkbox" name="req_${v.id}" ${settings.is_required ? 'checked' : ''} class="w-4 h-4 rounded accent-[#D4AF37]">
+                                Required field
                             </label>
-                            <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="sea_${v.id}" ${settings.is_searchable !== false ? 'checked' : ''} class="w-4 h-4 text-primary-600 rounded">
-                                <span>Searchable</span>
+                            <label class="flex items-center gap-2 text-[12px] text-[#1A1A1A] cursor-pointer">
+                                <input type="checkbox" name="sea_${v.id}" ${settings.is_searchable !== false ? 'checked' : ''} class="w-4 h-4 rounded accent-[#D4AF37]">
+                                Searchable
                             </label>
-                            <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="fil_${v.id}" ${settings.is_filterable !== false ? 'checked' : ''} class="w-4 h-4 text-primary-600 rounded">
-                                <span>Filterable</span>
+                            <label class="flex items-center gap-2 text-[12px] text-[#1A1A1A] cursor-pointer">
+                                <input type="checkbox" name="fil_${v.id}" ${settings.is_filterable !== false ? 'checked' : ''} class="w-4 h-4 rounded accent-[#D4AF37]">
+                                Filterable
                             </label>
-                            <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="main_${v.id}" ${settings.is_main_shown ? 'checked' : ''} class="w-4 h-4 text-primary-600 rounded">
-                                <span class="font-medium text-primary-700">Main shown variant</span>
+                            <label class="flex items-center gap-2 text-[12px] text-[#1A1A1A] font-medium cursor-pointer">
+                                <input type="checkbox" name="main_${v.id}" ${settings.is_main_shown ? 'checked' : ''} class="w-4 h-4 rounded accent-[#D4AF37]">
+                                <span class="text-[#D4AF37]">Main shown variant</span>
                             </label>
                         </div>
                     </div>
@@ -409,8 +397,6 @@ function renderVariants(variants) {
     });
     html += '</div>';
     body.innerHTML = html;
-
-    console.log('✓ Variants rendered');
 }
 
 function toggleVariantSettings(checkbox) {
@@ -418,12 +404,10 @@ function toggleVariantSettings(checkbox) {
     const container = checkbox.closest('div[class*="border"]');
     if (checkbox.checked) {
         settingsDiv.classList.remove('hidden');
-        container.classList.add('bg-primary-50', 'border-primary-300');
-        container.classList.remove('bg-gray-50', 'border-gray-200');
+        container.className = container.className.replace('bg-gray-50 border-[#E0E0E0]', 'bg-[#D4AF37]/5 border-[#D4AF37]/40');
     } else {
         settingsDiv.classList.add('hidden');
-        container.classList.remove('bg-primary-50', 'border-primary-300');
-        container.classList.add('bg-gray-50', 'border-gray-200');
+        container.className = container.className.replace('bg-[#D4AF37]/5 border-[#D4AF37]/40', 'bg-gray-50 border-[#E0E0E0]');
     }
 }
 
@@ -435,38 +419,23 @@ function closeVariantModal() {
 }
 
 function saveVariants() {
-    console.log('🔄 Saving variants for category:', currentCategoryId);
-
     const checked = document.querySelectorAll('input[id^="var_"]:checked');
-    console.log('📋 Selected variants:', checked.length);
 
     const variants = Array.from(checked).map(cb => {
         const variantId = cb.value;
-        const mainShownCheckbox = document.querySelector(`input[name="main_${variantId}"]`);
-        const isMainShown = mainShownCheckbox?.checked || false;
-
-        console.log(`  Variant ${variantId}:`, {
-            is_required: document.querySelector(`input[name="req_${variantId}"]`)?.checked || false,
-            is_searchable: document.querySelector(`input[name="sea_${variantId}"]`)?.checked || true,
-            is_filterable: document.querySelector(`input[name="fil_${variantId}"]`)?.checked || true,
-            is_main_shown: isMainShown
-        });
-
         return {
             id: parseInt(variantId),
             is_required: document.querySelector(`input[name="req_${variantId}"]`)?.checked || false,
             is_searchable: document.querySelector(`input[name="sea_${variantId}"]`)?.checked || true,
             is_filterable: document.querySelector(`input[name="fil_${variantId}"]`)?.checked || true,
-            is_main_shown: isMainShown,
+            is_main_shown: document.querySelector(`input[name="main_${variantId}"]`)?.checked || false,
             sort_order: 0
         };
     });
 
-    console.log('📦 Sending data:', { variants });
-
     const btn = document.getElementById('saveVariantsBtn');
     btn.disabled = true;
-    btn.textContent = '⏳ Saving...';
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
     fetch(`/admin/categories/${currentCategoryId}/variants/sync`, {
         method: 'POST',
@@ -477,26 +446,21 @@ function saveVariants() {
         },
         body: JSON.stringify({ variants })
     })
-    .then(r => {
-        console.log('📡 Response status:', r.status);
-        return r.json();
-    })
+    .then(r => r.json())
     .then(data => {
-        console.log('📦 Response data:', data);
         if (data.success) {
-            alert('✓ ' + data.message);
+            alert(data.message);
             location.reload();
         } else {
-            alert('✗ ' + data.message);
+            alert(data.message);
         }
     })
     .catch(err => {
-        console.error('❌ Error:', err);
         alert('Network error occurred: ' + err.message);
     })
     .finally(() => {
         btn.disabled = false;
-        btn.textContent = '💾 Save Variants';
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Variants';
     });
 }
 

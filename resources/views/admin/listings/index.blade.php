@@ -4,89 +4,94 @@
 @section('page-title', 'Listings')
 
 @section('content')
-<div class="max-w-7xl mx-auto" x-data="{
+<div x-data="{
     selectedIds: [],
     get hasSelected() { return this.selectedIds.length > 0; }
 }">
+
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-bold text-gray-900">Listings</h2>
-            <p class="text-gray-600 mt-1">Manage product listings</p>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Listings</h2>
+            <p class="text-[#37474F] text-sm mt-1">Manage product listings</p>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded">
-            ✓ {{ session('success') }}
+        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
+            {{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded">
-            ✗ {{ session('error') }}
+        <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            {{ session('error') }}
         </div>
     @endif
 
     <!-- Statistics -->
-    <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
-        <div class="bg-white rounded-lg shadow p-4">
-            <p class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</p>
-            <p class="text-gray-600 text-sm">Total</p>
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-5">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <p class="text-2xl font-bold text-[#1A1A1A]">{{ $stats['total'] }}</p>
+            <p class="text-[#37474F] text-xs mt-0.5">Total</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
             <p class="text-2xl font-bold text-green-600">{{ $stats['active'] }}</p>
-            <p class="text-gray-600 text-sm">Active</p>
+            <p class="text-[#37474F] text-xs mt-0.5">Active</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
             <p class="text-2xl font-bold text-yellow-600">{{ $stats['pending'] }}</p>
-            <p class="text-gray-600 text-sm">Pending</p>
+            <p class="text-[#37474F] text-xs mt-0.5">Pending</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4">
-            <p class="text-2xl font-bold text-red-600">{{ $stats['rejected'] }}</p>
-            <p class="text-gray-600 text-sm">Rejected</p>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <p class="text-2xl font-bold text-[#C0392B]">{{ $stats['rejected'] }}</p>
+            <p class="text-[#37474F] text-xs mt-0.5">Rejected</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4">
-            <p class="text-2xl font-bold text-gray-600">{{ $stats['draft'] }}</p>
-            <p class="text-gray-600 text-sm">Drafts</p>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <p class="text-2xl font-bold text-[#37474F]">{{ $stats['draft'] }}</p>
+            <p class="text-[#37474F] text-xs mt-0.5">Drafts</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-4">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
             <p class="text-2xl font-bold text-purple-600">{{ $stats['deleted'] }}</p>
-            <p class="text-gray-600 text-sm">Deleted</p>
+            <p class="text-[#37474F] text-xs mt-0.5">Deleted</p>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 mb-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                <label class="block mb-1.5 text-[12px] font-medium text-[#1A1A1A]">Search</label>
                 <input type="text" name="search" value="{{ request('search') }}"
                        placeholder="Search listings..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                       class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">User</label>
+                <label class="block mb-1.5 text-[12px] font-medium text-[#1A1A1A]">User</label>
                 <input type="text" name="user_search" value="{{ request('user_search') }}"
                        placeholder="Name or email..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                       class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                <label class="block mb-1.5 text-[12px] font-medium text-[#1A1A1A]">Status</label>
+                <select name="status"
+                        class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
                     <option value="">All Statuses</option>
-                    <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
-                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="sold" {{ request('status') === 'sold' ? 'selected' : '' }}>Sold</option>
-                    <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Expired</option>
+                    <option value="draft"    {{ request('status') === 'draft'    ? 'selected' : '' }}>Draft</option>
+                    <option value="pending"  {{ request('status') === 'pending'  ? 'selected' : '' }}>Pending</option>
+                    <option value="active"   {{ request('status') === 'active'   ? 'selected' : '' }}>Active</option>
+                    <option value="sold"     {{ request('status') === 'sold'     ? 'selected' : '' }}>Sold</option>
+                    <option value="expired"  {{ request('status') === 'expired'  ? 'selected' : '' }}>Expired</option>
                     <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                    <option value="deleted" {{ request('status') === 'deleted' ? 'selected' : '' }}>Deleted</option>
+                    <option value="deleted"  {{ request('status') === 'deleted'  ? 'selected' : '' }}>Deleted</option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                <select name="category_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                <label class="block mb-1.5 text-[12px] font-medium text-[#1A1A1A]">Category</label>
+                <select name="category_id"
+                        class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
                     <option value="">All Categories</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -96,11 +101,15 @@
                 </select>
             </div>
             <div class="flex items-end gap-2">
-                <button type="submit" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
-                    🔍 Filter
+                <button type="submit"
+                        class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                    <i class="fa-solid fa-filter text-xs"></i>
+                    Filter
                 </button>
-                <a href="{{ route('admin.listings.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-                    ↻ Reset
+                <a href="{{ route('admin.listings.index') }}"
+                   class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                    Reset
                 </a>
             </div>
         </form>
@@ -108,11 +117,10 @@
 
     <!-- Bulk Action Bar -->
     <div x-show="hasSelected" style="display: none;"
-         class="mb-4 p-4 bg-gray-100 border border-gray-300 rounded-lg flex items-center gap-3 flex-wrap">
-        <span class="text-sm text-gray-700 font-medium" x-text="`${selectedIds.length} listing(s) selected`"></span>
+         class="mb-4 p-3 bg-[#37474F]/10 border border-[#37474F]/30 rounded-[6px] flex items-center gap-3 flex-wrap">
+        <span class="text-[13px] text-[#1A1A1A] font-medium" x-text="`${selectedIds.length} listing(s) selected`"></span>
 
         @if(request('status') === 'deleted')
-            {{-- Trashed listings: permanent delete options --}}
             <form action="{{ route('admin.listings.bulk-force-destroy') }}" method="POST">
                 @csrf
                 <template x-for="id in selectedIds" :key="id">
@@ -120,12 +128,12 @@
                 </template>
                 <button type="button"
                     @click="$dispatch('open-confirm-modal', { message: `Permanently delete ${selectedIds.length} listing(s)? This cannot be undone.`, form: $el.closest('form') })"
-                    class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium transition">
+                    class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-semibold text-white bg-[#C0392B] rounded hover:bg-[#a93226] transition">
+                    <i class="fa-solid fa-trash text-xs"></i>
                     Permanently Delete Selected
                 </button>
             </form>
         @else
-            {{-- Active listings: soft delete --}}
             <form action="{{ route('admin.listings.bulk-delete') }}" method="POST">
                 @csrf
                 <template x-for="id in selectedIds" :key="id">
@@ -133,166 +141,168 @@
                 </template>
                 <button type="button"
                     @click="$dispatch('open-confirm-modal', { message: `Delete ${selectedIds.length} listing(s)?`, form: $el.closest('form') })"
-                    class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm font-medium transition">
+                    class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-semibold text-white bg-[#C0392B] rounded hover:bg-[#a93226] transition">
+                    <i class="fa-solid fa-trash text-xs"></i>
                     Delete Selected
                 </button>
             </form>
         @endif
 
         <button type="button" @click="selectedIds = []"
-            class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm transition">
+            class="inline-flex items-center h-[28px] px-3 text-[12px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
             Clear Selection
         </button>
     </div>
 
-
     <!-- Listings Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-3">
-                        <input type="checkbox"
-                               id="select-all"
-                               @change="selectedIds = $event.target.checked ? [{{ $listings->pluck('id')->join(',') }}] : []"
-                               class="rounded border-gray-300">
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($listings as $listing)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-4">
-                        <input type="checkbox" :value="{{ $listing->id }}" x-model="selectedIds"
-                               class="rounded border-gray-300">
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center">
-                            @if($listing->primaryImage)
-                                <img src="{{ asset('storage/' . $listing->primaryImage->image_path) }}"
-                                     alt="{{ $listing->title }}"
-                                     class="w-16 h-16 rounded object-cover mr-4">
-                            @else
-                                <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center mr-4">
-                                    <span class="text-2xl">📦</span>
-                                </div>
-                            @endif
-                            <div>
-                                <div class="text-sm font-medium text-gray-900">{{ $listing->title }}</div>
-                                <div class="text-sm text-gray-500">{{ $listing->slug }}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        @if($listing->user)
-                            <div class="text-sm font-medium text-gray-900">{{ $listing->user->name }}</div>
-                            <div class="text-xs text-gray-500">{{ $listing->user->email }}</div>
-                        @else
-                            <span class="text-xs text-gray-400">—</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900">
-                        {{ $listing->category->name }}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900">
-                        {{ $listing->listingType->name }}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900">
-                        @if($listing->base_price)
-                            {{ $listing->currency }} {{ number_format($listing->base_price, 2) }}
-                        @else
-                            <span class="text-gray-400">N/A</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4">
-                        @if($listing->trashed())
-                            <span class="px-2 py-1 text-xs font-semibold rounded bg-purple-100 text-purple-700">
-                                Deleted
-                            </span>
-                            <div class="text-xs text-gray-500 mt-1">{{ $listing->deleted_at->diffForHumans() }}</div>
-                        @else
-                            @php
-                                $statusColors = [
-                                    'draft' => 'bg-gray-100 text-gray-700',
-                                    'pending' => 'bg-yellow-100 text-yellow-700',
-                                    'active' => 'bg-green-100 text-green-700',
-                                    'sold' => 'bg-blue-100 text-blue-700',
-                                    'expired' => 'bg-red-100 text-red-700',
-                                    'rejected' => 'bg-red-100 text-red-700',
-                                ];
-                            @endphp
-                            <span class="px-2 py-1 text-xs font-semibold rounded {{ $statusColors[$listing->status] ?? 'bg-gray-100 text-gray-700' }}">
-                                {{ ucfirst($listing->status) }}
-                            </span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4 text-sm">
-                        <div class="flex gap-2 flex-wrap">
-                            @if($listing->trashed())
-                                <form method="POST" action="{{ route('admin.listings.restore', $listing->id) }}" class="inline-block">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Restore</button>
-                                </form>
-                                <form action="{{ route('admin.listings.force-delete', $listing->id) }}"
-                                      method="POST"
-                                      class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button"
-                                        @click="$dispatch('open-confirm-modal', { message: 'Permanently delete this listing? This cannot be undone.', form: $el.closest('form') })"
-                                        class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
-                                        Permanently Delete
-                                    </button>
-                                </form>
-                            @else
-                                @if($listing->isPending())
-                                <form method="POST" action="{{ route('admin.listings.approval.approve', $listing) }}" class="inline-block">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Approve</button>
-                                </form>
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#37474F] border-b border-[#000000]/20">
+                        <th class="px-3 py-2.5 w-10">
+                            <input type="checkbox" id="select-all"
+                                   @change="selectedIds = $event.target.checked ? [{{ $listings->pluck('id')->join(',') }}] : []"
+                                   class="rounded border-[#E0E0E0] accent-[#D4AF37]">
+                        </th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Listing</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">User</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Category</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Type</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Price</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Status</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($listings as $listing)
+                    <tr class="{{ $loop->even ? 'bg-white' : 'bg-gray-50' }} hover:bg-[#D4AF37]/5 transition-colors">
+                        <td class="px-3 py-2.5">
+                            <input type="checkbox" :value="{{ $listing->id }}" x-model="selectedIds"
+                                   class="rounded border-[#E0E0E0] accent-[#D4AF37]">
+                        </td>
+                        <td class="px-3 py-2.5">
+                            <div class="flex items-center gap-3">
+                                @if($listing->primaryImage)
+                                    <img src="{{ asset('storage/' . $listing->primaryImage->image_path) }}"
+                                         alt="{{ $listing->title }}"
+                                         class="w-12 h-12 rounded border border-[#E0E0E0] object-cover flex-shrink-0">
+                                @else
+                                    <div class="w-12 h-12 bg-gray-100 rounded border border-[#E0E0E0] flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-box text-[#E0E0E0] text-lg"></i>
+                                    </div>
                                 @endif
-                                <a href="{{ route('admin.listings.show', $listing) }}"
-                                   class="px-3 py-1 bg-primary-500 text-white rounded hover:bg-primary-600 inline-block">
-                                    View
-                                </a>
-                                <form action="{{ route('admin.listings.destroy', $listing) }}"
-                                      method="POST"
-                                      class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button"
-                                        @click="$dispatch('open-confirm-modal', { message: 'Are you sure you want to delete this listing?', form: $el.closest('form') })"
-                                        class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
-                                        Delete
-                                    </button>
-                                </form>
+                                <div>
+                                    <div class="text-[13px] font-medium text-[#1A1A1A]">{{ $listing->title }}</div>
+                                    <div class="text-[11px] text-[#37474F]">{{ $listing->slug }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-3 py-2.5">
+                            @if($listing->user)
+                                <div class="text-[13px] font-medium text-[#1A1A1A]">{{ $listing->user->name }}</div>
+                                <div class="text-[11px] text-[#37474F]">{{ $listing->user->email }}</div>
+                            @else
+                                <span class="text-[#37474F]">—</span>
                             @endif
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="8" class="px-6 py-12 text-center">
-                        <div class="text-6xl mb-4">📦</div>
-                        <p class="text-gray-600 text-lg">No listings found</p>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                        </td>
+                        <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A]">{{ $listing->category->name }}</td>
+                        <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A]">{{ $listing->listingType->name }}</td>
+                        <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A]">
+                            @if($listing->base_price)
+                                {{ $listing->currency }} {{ number_format($listing->base_price, 2) }}
+                            @else
+                                <span class="text-[#37474F]">N/A</span>
+                            @endif
+                        </td>
+                        <td class="px-3 py-2.5">
+                            @if($listing->trashed())
+                                <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-purple-100 text-purple-700">Deleted</span>
+                                <div class="text-[11px] text-[#37474F] mt-0.5">{{ $listing->deleted_at->diffForHumans() }}</div>
+                            @else
+                                @php
+                                    $statusColors = [
+                                        'draft'    => 'bg-gray-100 text-gray-600',
+                                        'pending'  => 'bg-yellow-50 text-yellow-700',
+                                        'active'   => 'bg-[#D4AF37]/20 text-[#D4AF37]',
+                                        'sold'     => 'bg-blue-50 text-blue-700',
+                                        'expired'  => 'bg-[#C0392B]/10 text-[#C0392B]',
+                                        'rejected' => 'bg-[#C0392B]/10 text-[#C0392B]',
+                                    ];
+                                @endphp
+                                <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold {{ $statusColors[$listing->status] ?? 'bg-gray-100 text-gray-600' }}">
+                                    {{ ucfirst($listing->status) }}
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-3 py-2.5">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                @if($listing->trashed())
+                                    <form method="POST" action="{{ route('admin.listings.restore', $listing->id) }}" class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                class="inline-flex items-center gap-1 h-[28px] px-2.5 text-[12px] font-semibold text-white bg-green-600 rounded hover:bg-green-700 transition">
+                                            <i class="fa-solid fa-rotate-left text-xs"></i>
+                                            Restore
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('admin.listings.force-delete', $listing->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button"
+                                            @click="$dispatch('open-confirm-modal', { message: 'Permanently delete this listing? This cannot be undone.', form: $el.closest('form') })"
+                                            class="inline-flex items-center justify-center w-[28px] h-[28px] bg-[#C0392B] text-white rounded hover:bg-[#a93226] transition">
+                                            <i class="fa-solid fa-trash text-xs"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    @if($listing->isPending())
+                                        <form method="POST" action="{{ route('admin.listings.approval.approve', $listing) }}" class="inline">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1 h-[28px] px-2.5 text-[12px] font-semibold text-white bg-green-600 rounded hover:bg-green-700 transition">
+                                                <i class="fa-solid fa-check text-xs"></i>
+                                                Approve
+                                            </button>
+                                        </form>
+                                    @endif
+                                    <a href="{{ route('admin.listings.show', $listing) }}"
+                                       class="inline-flex items-center justify-center w-[28px] h-[28px] border border-[#E0E0E0] text-[#37474F] rounded hover:bg-gray-100 transition"
+                                       title="View">
+                                        <i class="fa-solid fa-eye text-xs"></i>
+                                    </a>
+                                    <form action="{{ route('admin.listings.destroy', $listing) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button"
+                                            @click="$dispatch('open-confirm-modal', { message: 'Are you sure you want to delete this listing?', form: $el.closest('form') })"
+                                            class="inline-flex items-center justify-center w-[28px] h-[28px] bg-[#C0392B] text-white rounded hover:bg-[#a93226] transition"
+                                            title="Delete">
+                                            <i class="fa-solid fa-trash text-xs"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="8" class="px-4 py-12 text-center">
+                            <i class="fa-solid fa-box-open text-3xl text-[#E0E0E0] mb-3 block"></i>
+                            <p class="text-[#37474F] text-[13px]">No listings found</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
         @if($listings->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200">
+            <div class="px-4 py-3 border-t border-[#E0E0E0]">
                 {{ $listings->links() }}
             </div>
         @endif
     </div>
+
 </div>
 @endsection

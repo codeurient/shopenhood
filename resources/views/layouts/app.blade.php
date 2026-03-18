@@ -6,131 +6,153 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Shopenhood') }}</title>
 
-    <!-- Tailwind CSS + Flowbite -->
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        luxury: {
+                            black:    '#000000',
+                            surface:  '#1A1A1A',
+                            charcoal: '#37474F',
+                            gold:     '#D4AF37',
+                            light:    '#E0E0E0',
+                            white:    '#FFFFFF',
+                            text:     '#1A1A1A',
+                        },
+                        primary: {
+                            50:  '#f0f8ff',
+                            100: '#BDDDFC',
+                            200: '#a8d3fb',
+                            300: '#88BDF2',
+                            400: '#6db1ef',
+                            500: '#88BDF2',
+                            600: '#5a9dd9',
+                            700: '#4682b4',
+                            800: '#2e5f7d',
+                            900: '#1e4159',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+
+    <!-- Flowbite -->
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>.sidebar-nav::-webkit-scrollbar{display:none}.sidebar-nav{scrollbar-width:none;-ms-overflow-style:none}</style>
     @stack('styles')
 </head>
-<body class="bg-gray-50 antialiased" x-data="{ sidebarOpen: false }">
+<body class="bg-[#FFFFFF] antialiased font-sans" x-data="{ sidebarOpen: false }">
     <div class="flex min-h-screen">
+
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 text-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0"
+        <aside class="fixed inset-y-0 left-0 z-50 w-[220px] bg-[#37474F] flex flex-col transform transition-transform duration-300 ease-in-out md:sticky md:top-0 md:h-screen md:translate-x-0"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                @click.away="sidebarOpen = false">
-            <!-- Logo/Brand -->
-            <div class="px-6 py-5 border-b border-gray-700">
-                <a href="{{ route('home') }}" class="text-2xl font-bold hover:text-gray-300 transition">
+
+            <!-- Logo Bar -->
+            <div class="bg-[#37474F] h-[52px] flex items-center px-3 flex-shrink-0 border-b border-[#000000]/20">
+                <a href="{{ route('home') }}" class="text-[#D4AF37] font-bold text-sm tracking-tight hover:brightness-110 transition truncate">
                     {{ config('app.name', 'Shopenhood') }}
                 </a>
             </div>
 
             <!-- Navigation -->
-            <nav class="px-4 py-6 space-y-2">
+            <nav class="px-2 py-3 space-y-0.5 flex-1 overflow-y-auto sidebar-nav">
+
                 <a href="{{ route('dashboard') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('dashboard') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                    </svg>
-                    <span class="font-medium">Dashboard</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('dashboard') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-gauge w-4 text-center flex-shrink-0"></i>
+                    Dashboard
                 </a>
 
                 <a href="{{ route('user.listings.index') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('user.listings.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                    <span class="font-medium">Simple Listings</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('user.listings.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-list w-4 text-center flex-shrink-0"></i>
+                    Simple Listings
                 </a>
 
                 @if(auth()->user()->isBusinessUser())
                 <a href="{{ route('business.listings.index') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('business.listings.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
-                    <span class="font-medium">Business Listings</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('business.listings.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-building w-4 text-center flex-shrink-0"></i>
+                    Business Listings
                 </a>
                 <a href="{{ route('business.profile') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('business.profile*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c0 1.306.835 2.417 2 2.83M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
-                    </svg>
-                    <span class="font-medium">Business Profile</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('business.profile*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-id-card w-4 text-center flex-shrink-0"></i>
+                    Business Profile
                 </a>
                 <a href="{{ route('user.coupons.index') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('user.coupons.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
-                    </svg>
-                    <span class="font-medium">My Coupons</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('user.coupons.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-ticket w-4 text-center flex-shrink-0"></i>
+                    My Coupons
                 </a>
                 @else
                 <a href="{{ route('business.listings.index') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('business.listings.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
-                    <span class="font-medium">Business User</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('business.listings.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-building w-4 text-center flex-shrink-0"></i>
+                    Business User
                 </a>
-                <span class="flex items-center px-4 py-3 rounded-lg opacity-40 cursor-not-allowed text-gray-400">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c0 1.306.835 2.417 2 2.83M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
-                    </svg>
-                    <span class="font-medium">Business Profile</span>
+                <span class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium pl-[9px] pr-3 border-l-[3px] border-transparent opacity-40 cursor-not-allowed text-[#E0E0E0]">
+                    <i class="fa-solid fa-id-card w-4 text-center flex-shrink-0"></i>
+                    Business Profile
                 </span>
                 @endif
 
                 <a href="{{ route('user.addresses.index') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('user.addresses.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    <span class="font-medium">My Addresses</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('user.addresses.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-location-dot w-4 text-center flex-shrink-0"></i>
+                    My Addresses
                 </a>
 
                 <a href="{{ route('user.purchases.index') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('user.purchases.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                    <span class="font-medium">My Orders</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('user.purchases.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-bag-shopping w-4 text-center flex-shrink-0"></i>
+                    My Orders
                 </a>
 
                 <a href="{{ route('user.sales.index') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('user.sales.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
-                    </svg>
-                    <span class="font-medium">My Sales</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('user.sales.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-chart-line w-4 text-center flex-shrink-0"></i>
+                    My Sales
                 </a>
 
                 @php $unreadCount = auth()->user()->unreadNotifications()->count(); @endphp
                 <a href="{{ route('user.notifications.index') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('user.notifications.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                    </svg>
-                    <span class="font-medium flex-1">Notifications</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('user.notifications.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-bell w-4 text-center flex-shrink-0"></i>
+                    <span class="flex-1">Notifications</span>
                     @if($unreadCount > 0)
-                        <span class="ml-2 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-bold leading-none">
+                        <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-[#C0392B] text-white text-[10px] font-bold leading-none">
                             {{ $unreadCount > 99 ? '99+' : $unreadCount }}
                         </span>
                     @endif
                 </a>
 
                 <a href="{{ route('profile.edit') }}"
-                   class="flex items-center px-4 py-3 rounded-lg transition {{ request()->routeIs('profile.*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                    <span class="font-medium">Profile</span>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('profile.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-circle-user w-4 text-center flex-shrink-0"></i>
+                    Profile
                 </a>
             </nav>
         </aside>
 
-        <!-- Overlay for mobile -->
+        <!-- Mobile Overlay -->
         <div x-show="sidebarOpen"
              x-transition:enter="transition-opacity ease-linear duration-300"
              x-transition:enter-start="opacity-0"
@@ -139,23 +161,22 @@
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
              @click="sidebarOpen = false"
-             class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+             class="fixed inset-0 bg-black/60 z-40 md:hidden"
              style="display: none;"></div>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col md:ml-0">
-            <!-- Header -->
-            <header class="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
-                <div class="flex items-center justify-between px-4 md:px-6 py-4">
-                    <!-- Mobile Menu Button -->
+        <div class="flex-1 flex flex-col md:ml-0 min-w-0">
+
+            <!-- Top Header -->
+            <header class="sticky top-0 z-30 bg-[#37474F] border-b border-[#000000]/30">
+                <div class="flex items-center justify-between px-4 md:px-5 h-[52px]">
+                    <!-- Mobile Menu Toggle -->
                     <button @click="sidebarOpen = !sidebarOpen"
-                            class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
+                            class="md:hidden p-2 rounded text-[#E0E0E0] hover:bg-[#37474F]/40 transition">
+                        <i class="fa-solid fa-bars text-base"></i>
                     </button>
 
-                    <!-- Page Title -->
+                    <!-- Page Header Slot -->
                     <div class="flex-1 md:flex-none">
                         @if(isset($header))
                             {{ $header }}
@@ -163,21 +184,22 @@
                     </div>
 
                     <!-- User Actions -->
-                    <div class="flex items-center gap-3 md:gap-4">
-                        <a href="{{ route('profile.edit') }}" class="hidden md:block text-sm font-medium text-gray-700 hover:text-gray-900 transition">{{ auth()->user()->name }}</a>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('profile.edit') }}" class="hidden md:block text-[13px] text-[#E0E0E0]/60 hover:text-[#E0E0E0] transition">{{ auth()->user()->name }}</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                    class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
-                                Logout
+                                    class="inline-flex items-center gap-1.5 h-[34px] px-3 bg-[#C0392B] text-white text-[13px] font-semibold rounded hover:bg-[#a93226] transition">
+                                <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                                <span class="hidden sm:inline">Logout</span>
                             </button>
                         </form>
                     </div>
                 </div>
             </header>
 
-            <!-- Content -->
-            <main class="flex-1 p-4 md:p-6 lg:p-8">
+            <!-- Content Area -->
+            <main class="flex-1 p-4 md:p-6">
                 <div class="max-w-7xl mx-auto">
                     {{ $slot }}
                 </div>
@@ -194,33 +216,21 @@
     (function() {
         document.addEventListener('submit', function(e) {
             const form = e.target;
-
-            // Skip if form has data-allow-resubmit attribute
             if (form.hasAttribute('data-allow-resubmit')) return;
-
-            // Check if form is already submitting
             if (form.hasAttribute('data-submitting')) {
                 e.preventDefault();
                 return;
             }
-
-            // Mark form as submitting
             form.setAttribute('data-submitting', 'true');
-
-            // Find all submit buttons in the form
             const buttons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
             buttons.forEach(function(btn) {
                 btn.disabled = true;
                 btn.classList.add('opacity-75', 'cursor-not-allowed');
-
-                // Store original text and show loading
                 if (btn.tagName === 'BUTTON') {
                     btn.setAttribute('data-original-text', btn.innerHTML);
                     btn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...';
                 }
             });
-
-            // Re-enable after timeout (in case of network issues or validation errors)
             setTimeout(function() {
                 form.removeAttribute('data-submitting');
                 buttons.forEach(function(btn) {
@@ -266,25 +276,23 @@
         role="dialog"
         aria-modal="true">
         <div class="absolute inset-0 bg-black/50" @click="cancel()"></div>
-        <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 z-10" @click.stop>
+        <div class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 z-10" @click.stop>
             <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.194-.833-2.964 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                    </svg>
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Confirm Action</h3>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400" x-text="message"></p>
+                    <h3 class="text-[15px] font-semibold text-[#1A1A1A]">Confirm Action</h3>
+                    <p class="mt-1 text-[13px] text-gray-600" x-text="message"></p>
                 </div>
             </div>
-            <div class="mt-6 flex justify-end gap-3">
+            <div class="mt-5 flex justify-end gap-3">
                 <button type="button" @click="cancel()"
-                    class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+                    class="inline-flex items-center justify-center h-[34px] px-4 text-[13px] font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition">
                     Cancel
                 </button>
                 <button type="button" @click="confirm()"
-                    class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition">
+                    class="inline-flex items-center justify-center h-[34px] px-4 text-[13px] font-semibold text-white bg-[#C0392B] rounded hover:bg-[#a93226] transition">
                     Confirm
                 </button>
             </div>

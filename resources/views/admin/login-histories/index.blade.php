@@ -4,79 +4,76 @@
 @section('page-title', 'Login Histories')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
+<div>
+
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Login Histories</h2>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">Monitor user login activity and detect suspicious behavior</p>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Login Histories</h2>
+            <p class="text-[#37474F] text-sm mt-1">Monitor user login activity and detect suspicious behavior</p>
         </div>
-        <form action="{{ route('admin.login-histories.clear-all') }}" method="POST" onsubmit="return confirm('This will permanently delete ALL login history records. This action cannot be undone. Continue?')">
+        <form action="{{ route('admin.login-histories.clear-all') }}" method="POST"
+              onsubmit="return confirm('This will permanently delete ALL login history records. This action cannot be undone. Continue?')">
             @csrf
             @method('DELETE')
-            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm">
+            <button type="submit"
+                    class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-semibold text-white bg-[#C0392B] rounded hover:bg-[#a93226] transition">
+                <i class="fa-solid fa-trash text-xs"></i>
                 Clear All History
             </button>
         </form>
     </div>
 
     @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 dark:bg-green-900 border-l-4 border-green-500 text-green-700 dark:text-green-300 rounded">
+        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
             {{ session('success') }}
         </div>
     @endif
 
     <!-- Statistics -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-2xl">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
-                    </svg>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-right-to-bracket text-[#D4AF37]"></i>
                 </div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($stats['total']) }}</p>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Total Logins</p>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ number_format($stats['total']) }}</p>
+                    <p class="text-[#37474F] text-xs">Total Logins</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 text-2xl">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-calendar-day text-green-500"></i>
                 </div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($stats['today']) }}</p>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Today</p>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ number_format($stats['today']) }}</p>
+                    <p class="text-[#37474F] text-xs">Today</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 text-2xl">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                    </svg>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-triangle-exclamation text-[#C0392B]"></i>
                 </div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($stats['suspicious']) }}</p>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Suspicious</p>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ number_format($stats['suspicious']) }}</p>
+                    <p class="text-[#37474F] text-xs">Suspicious</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-2xl">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                    </svg>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-globe text-purple-500"></i>
                 </div>
-                <div class="ml-4">
-                    <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($stats['unique_ips']) }}</p>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Unique IPs</p>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ number_format($stats['unique_ips']) }}</p>
+                    <p class="text-[#37474F] text-xs">Unique IPs</p>
                 </div>
             </div>
         </div>
@@ -84,137 +81,122 @@
 
     <!-- Suspicious IPs Warning -->
     @if($suspiciousIps->count() > 0)
-    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
-        <h3 class="text-lg font-semibold text-red-800 dark:text-red-400 mb-2">Suspicious IP Addresses</h3>
-        <div class="flex flex-wrap gap-2">
-            @foreach($suspiciousIps as $ip)
-                <span class="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 rounded-full text-sm">
-                    {{ $ip->ip_address }} ({{ $ip->count }} times)
-                </span>
-            @endforeach
+        <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 rounded">
+            <h3 class="text-[13px] font-semibold text-[#C0392B] mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-shield-exclamation"></i>
+                Suspicious IP Addresses
+            </h3>
+            <div class="flex flex-wrap gap-2">
+                @foreach($suspiciousIps as $ip)
+                    <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-red-100 text-[#C0392B]">
+                        {{ $ip->ip_address }} ({{ $ip->count }}x)
+                    </span>
+                @endforeach
+            </div>
         </div>
-    </div>
     @endif
 
     <!-- Filters -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <form method="GET" action="{{ route('admin.login-histories.index') }}" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                           placeholder="Search IP, user, browser..."
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
-                </div>
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 mb-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+        <form method="GET" action="{{ route('admin.login-histories.index') }}" class="flex flex-wrap gap-3 items-center">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search IP, user, browser..."
+                   class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 flex-1 min-w-[180px]">
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">IP Address</label>
-                    <input type="text" name="ip_address" value="{{ request('ip_address') }}"
-                           placeholder="Filter by IP..."
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
-                </div>
+            <input type="text" name="ip_address" value="{{ request('ip_address') }}" placeholder="Filter by IP..."
+                   class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 w-40 font-mono">
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Suspicious</label>
-                    <select name="is_suspicious" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
-                        <option value="">All</option>
-                        <option value="yes" {{ request('is_suspicious') === 'yes' ? 'selected' : '' }}>Suspicious Only</option>
-                        <option value="no" {{ request('is_suspicious') === 'no' ? 'selected' : '' }}>Normal Only</option>
-                    </select>
-                </div>
+            <select name="is_suspicious"
+                    class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                <option value="">All</option>
+                <option value="yes" {{ request('is_suspicious') === 'yes' ? 'selected' : '' }}>Suspicious Only</option>
+                <option value="no" {{ request('is_suspicious') === 'no' ? 'selected' : '' }}>Normal Only</option>
+            </select>
 
-                <div class="flex items-end">
-                    <button type="submit" class="w-full px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
-                        Filter
-                    </button>
-                </div>
-            </div>
+            <input type="date" name="date_from" value="{{ request('date_from') }}"
+                   class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date From</label>
-                    <input type="date" name="date_from" value="{{ request('date_from') }}"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
-                </div>
+            <input type="date" name="date_to" value="{{ request('date_to') }}"
+                   class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date To</label>
-                    <input type="date" name="date_to" value="{{ request('date_to') }}"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-500 focus:border-primary-500">
-                </div>
-
-                <div class="flex items-end">
-                    <a href="{{ route('admin.login-histories.index') }}" class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 text-center">
-                        Reset
-                    </a>
-                </div>
-            </div>
+            <button type="submit"
+                    class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-filter text-xs"></i>
+                Filter
+            </button>
+            <a href="{{ route('admin.login-histories.index') }}"
+               class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                <i class="fa-solid fa-xmark text-xs"></i>
+                Reset
+            </a>
         </form>
     </div>
 
-    <!-- Login Histories Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+    <!-- Table -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
         @if($loginHistories->count() > 0)
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">IP Address</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Device/Browser</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Platform</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Time</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[#37474F] border-b border-[#000000]/20">
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">User</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">IP Address</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Device / Browser</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Platform</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Status</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Time</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody>
                         @foreach($loginHistories as $history)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 {{ $history->is_suspicious ? 'bg-red-50 dark:bg-red-900/20' : '' }}">
-                                <td class="px-6 py-4 whitespace-nowrap">
+                            <tr class="{{ $history->is_suspicious ? 'bg-red-50' : ($loop->even ? 'bg-white' : 'bg-gray-50') }} hover:bg-[#D4AF37]/5 transition-colors">
+                                <td class="px-3 py-2.5">
                                     @if($history->user)
-                                        <div class="flex items-center">
-                                            <div class="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-300 font-semibold">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-8 h-8 rounded-full bg-[#37474F] flex items-center justify-center text-[#D4AF37] text-[11px] font-semibold flex-shrink-0">
                                                 {{ substr($history->user->name, 0, 1) }}
                                             </div>
-                                            <div class="ml-3">
-                                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $history->user->name }}</div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ $history->user->email }}</div>
+                                            <div>
+                                                <p class="text-[13px] font-medium text-[#1A1A1A]">{{ $history->user->name }}</p>
+                                                <p class="text-[12px] text-[#37474F]">{{ $history->user->email }}</p>
                                             </div>
                                         </div>
                                     @else
-                                        <span class="text-gray-400">Deleted User</span>
+                                        <span class="text-[13px] text-[#37474F]">Deleted User</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <code class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-sm rounded text-gray-800 dark:text-gray-200">{{ $history->ip_address }}</code>
+                                <td class="px-3 py-2.5">
+                                    <code class="px-2 py-0.5 bg-gray-100 text-[12px] rounded text-[#1A1A1A] font-mono">{{ $history->ip_address }}</code>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                    <div>{{ $history->device ?? 'Unknown' }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $history->browser ?? 'Unknown' }}</div>
+                                <td class="px-3 py-2.5">
+                                    <p class="text-[13px] text-[#1A1A1A]">{{ $history->device ?? 'Unknown' }}</p>
+                                    <p class="text-[12px] text-[#37474F]">{{ $history->browser ?? 'Unknown' }}</p>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A]">
                                     {{ $history->platform ?? 'Unknown' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-3 py-2.5">
                                     @if($history->is_suspicious)
-                                        <span class="px-2 py-1 text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 rounded-full">
+                                        <span class="inline-flex items-center gap-1 h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-[#C0392B]/10 text-[#C0392B]">
+                                            <i class="fa-solid fa-triangle-exclamation text-[10px]"></i>
                                             Suspicious
                                         </span>
                                     @else
-                                        <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 rounded-full">
+                                        <span class="inline-flex items-center gap-1 h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-green-50 text-green-700">
+                                            <i class="fa-solid fa-circle-check text-[10px]"></i>
                                             Normal
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                    <div>{{ $history->logged_in_at->format('M d, Y') }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $history->logged_in_at->format('h:i A') }}</div>
+                                <td class="px-3 py-2.5">
+                                    <p class="text-[13px] text-[#1A1A1A]">{{ $history->logged_in_at->format('M d, Y') }}</p>
+                                    <p class="text-[12px] text-[#37474F]">{{ $history->logged_in_at->format('h:i A') }}</p>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <td class="px-3 py-2.5">
                                     <a href="{{ route('admin.login-histories.show', $history) }}"
-                                       class="text-primary-600 dark:text-primary-300 hover:text-primary-700 dark:hover:text-primary-300">
-                                        View Details
+                                       class="inline-flex items-center justify-center w-[28px] h-[28px] border border-[#E0E0E0] text-[#37474F] rounded hover:bg-gray-100 transition"
+                                       title="View Details">
+                                        <i class="fa-solid fa-eye text-xs"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -222,24 +204,22 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination -->
-            <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="px-4 py-3 border-t border-[#E0E0E0]">
                 {{ $loginHistories->links() }}
             </div>
         @else
             <div class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                </svg>
-                <p class="text-gray-500 dark:text-gray-400 text-lg mt-4">No login histories found</p>
+                <i class="fa-solid fa-shield-halved text-3xl text-[#E0E0E0] mb-3 block"></i>
+                <p class="text-[#37474F] text-[13px]">No login histories found</p>
                 @if(request()->hasAny(['search', 'ip_address', 'is_suspicious', 'date_from', 'date_to']))
-                    <a href="{{ route('admin.login-histories.index') }}" class="text-primary-600 dark:text-primary-300 hover:text-primary-700 mt-2 inline-block">
+                    <a href="{{ route('admin.login-histories.index') }}"
+                       class="text-[13px] text-[#37474F] hover:text-[#1A1A1A] mt-2 inline-block underline">
                         Clear filters
                     </a>
                 @endif
             </div>
         @endif
     </div>
+
 </div>
 @endsection

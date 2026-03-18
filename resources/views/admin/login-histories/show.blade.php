@@ -4,47 +4,52 @@
 @section('page-title', 'Login Details')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div>
+
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Login Details</h2>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">Detailed information about this login event</p>
+            <a href="{{ route('admin.login-histories.index') }}"
+               class="inline-flex items-center gap-1.5 text-[12px] text-[#37474F] hover:text-[#1A1A1A] mb-2 transition">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                Back to Histories
+            </a>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Login Details</h2>
+            <p class="text-[#37474F] text-sm mt-1">Detailed information about this login event</p>
         </div>
-        <a href="{{ route('admin.login-histories.index') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
-            &larr; Back to Histories
-        </a>
     </div>
 
-    <!-- Main Info Card -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <div class="flex items-start justify-between">
-            <div class="flex items-center">
+    <!-- User Card -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] p-5 mb-5">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
                 @if($loginHistory->user)
-                    <div class="h-16 w-16 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-300 font-bold text-2xl">
+                    <div class="w-16 h-16 rounded-full bg-[#37474F] flex items-center justify-center text-[#D4AF37] text-2xl font-bold flex-shrink-0">
                         {{ substr($loginHistory->user->name, 0, 1) }}
                     </div>
-                    <div class="ml-4">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ $loginHistory->user->name }}</h3>
-                        <p class="text-gray-500 dark:text-gray-400">{{ $loginHistory->user->email }}</p>
+                    <div>
+                        <h3 class="text-[16px] font-semibold text-[#1A1A1A]">{{ $loginHistory->user->name }}</h3>
+                        <p class="text-[13px] text-[#37474F]">{{ $loginHistory->user->email }}</p>
                         <a href="{{ route('admin.login-histories.user', $loginHistory->user) }}"
-                           class="text-primary-600 dark:text-primary-300 text-sm hover:underline">
+                           class="text-[12px] text-[#D4AF37] hover:underline mt-0.5 inline-block">
                             View all logins for this user
                         </a>
                     </div>
                 @else
-                    <div class="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 font-bold text-2xl">?</div>
-                    <div class="ml-4">
-                        <h3 class="text-xl font-semibold text-gray-500 dark:text-gray-400">Deleted User</h3>
+                    <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-[#37474F] text-2xl font-bold flex-shrink-0">?</div>
+                    <div>
+                        <h3 class="text-[16px] font-semibold text-[#37474F]">Deleted User</h3>
                     </div>
                 @endif
             </div>
             @if($loginHistory->is_suspicious)
-                <span class="px-4 py-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 rounded-full font-medium">
+                <span class="inline-flex items-center gap-1.5 h-6 px-3 rounded-[10px] text-[12px] font-semibold bg-[#C0392B]/10 text-[#C0392B]">
+                    <i class="fa-solid fa-triangle-exclamation text-xs"></i>
                     Suspicious Login
                 </span>
             @else
-                <span class="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 rounded-full font-medium">
+                <span class="inline-flex items-center gap-1.5 h-6 px-3 rounded-[10px] text-[12px] font-semibold bg-green-50 text-green-700">
+                    <i class="fa-solid fa-circle-check text-xs"></i>
                     Normal Login
                 </span>
             @endif
@@ -52,124 +57,155 @@
     </div>
 
     <!-- Details Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+
         <!-- Connection Info -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Connection Information</h4>
-            <dl class="space-y-3">
-                <div class="flex justify-between">
-                    <dt class="text-gray-500 dark:text-gray-400">IP Address</dt>
-                    <dd class="text-gray-900 dark:text-white font-mono">{{ $loginHistory->ip_address }}</dd>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+            <div class="px-4 py-3 border-b border-[#E0E0E0]">
+                <h4 class="text-[14px] font-semibold text-[#1A1A1A] flex items-center gap-2">
+                    <i class="fa-solid fa-network-wired text-[#D4AF37]"></i>
+                    Connection Information
+                </h4>
+            </div>
+            <dl class="p-4 space-y-3">
+                <div class="flex justify-between items-center">
+                    <dt class="text-[13px] text-[#37474F]">IP Address</dt>
+                    <dd><code class="px-2 py-0.5 bg-gray-100 text-[12px] rounded text-[#1A1A1A] font-mono">{{ $loginHistory->ip_address }}</code></dd>
                 </div>
-                <div class="flex justify-between">
-                    <dt class="text-gray-500 dark:text-gray-400">Country</dt>
-                    <dd class="text-gray-900 dark:text-white">{{ $loginHistory->country ?? 'Unknown' }}</dd>
+                <div class="flex justify-between items-center">
+                    <dt class="text-[13px] text-[#37474F]">Country</dt>
+                    <dd class="text-[13px] text-[#1A1A1A]">{{ $loginHistory->country ?? 'Unknown' }}</dd>
                 </div>
-                <div class="flex justify-between">
-                    <dt class="text-gray-500 dark:text-gray-400">City</dt>
-                    <dd class="text-gray-900 dark:text-white">{{ $loginHistory->city ?? 'Unknown' }}</dd>
+                <div class="flex justify-between items-center">
+                    <dt class="text-[13px] text-[#37474F]">City</dt>
+                    <dd class="text-[13px] text-[#1A1A1A]">{{ $loginHistory->city ?? 'Unknown' }}</dd>
                 </div>
-                <div class="flex justify-between">
-                    <dt class="text-gray-500 dark:text-gray-400">Login Time</dt>
-                    <dd class="text-gray-900 dark:text-white">{{ $loginHistory->logged_in_at->format('M d, Y h:i A') }}</dd>
+                <div class="flex justify-between items-center">
+                    <dt class="text-[13px] text-[#37474F]">Login Time</dt>
+                    <dd class="text-[13px] text-[#1A1A1A]">{{ $loginHistory->logged_in_at->format('M d, Y h:i A') }}</dd>
                 </div>
             </dl>
         </div>
 
         <!-- Device Info -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Device Information</h4>
-            <dl class="space-y-3">
-                <div class="flex justify-between">
-                    <dt class="text-gray-500 dark:text-gray-400">Device</dt>
-                    <dd class="text-gray-900 dark:text-white">{{ $loginHistory->device ?? 'Unknown' }}</dd>
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+            <div class="px-4 py-3 border-b border-[#E0E0E0]">
+                <h4 class="text-[14px] font-semibold text-[#1A1A1A] flex items-center gap-2">
+                    <i class="fa-solid fa-laptop text-[#D4AF37]"></i>
+                    Device Information
+                </h4>
+            </div>
+            <dl class="p-4 space-y-3">
+                <div class="flex justify-between items-center">
+                    <dt class="text-[13px] text-[#37474F]">Device</dt>
+                    <dd class="text-[13px] text-[#1A1A1A]">{{ $loginHistory->device ?? 'Unknown' }}</dd>
                 </div>
-                <div class="flex justify-between">
-                    <dt class="text-gray-500 dark:text-gray-400">Browser</dt>
-                    <dd class="text-gray-900 dark:text-white">{{ $loginHistory->browser ?? 'Unknown' }}</dd>
+                <div class="flex justify-between items-center">
+                    <dt class="text-[13px] text-[#37474F]">Browser</dt>
+                    <dd class="text-[13px] text-[#1A1A1A]">{{ $loginHistory->browser ?? 'Unknown' }}</dd>
                 </div>
-                <div class="flex justify-between">
-                    <dt class="text-gray-500 dark:text-gray-400">Platform</dt>
-                    <dd class="text-gray-900 dark:text-white">{{ $loginHistory->platform ?? 'Unknown' }}</dd>
+                <div class="flex justify-between items-center">
+                    <dt class="text-[13px] text-[#37474F]">Platform</dt>
+                    <dd class="text-[13px] text-[#1A1A1A]">{{ $loginHistory->platform ?? 'Unknown' }}</dd>
                 </div>
             </dl>
         </div>
     </div>
 
     <!-- User Agent -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Agent</h4>
-        <code class="block p-4 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-800 dark:text-gray-200 break-all">
-            {{ $loginHistory->user_agent ?? 'Not available' }}
-        </code>
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden mb-5">
+        <div class="px-4 py-3 border-b border-[#E0E0E0]">
+            <h4 class="text-[14px] font-semibold text-[#1A1A1A] flex items-center gap-2">
+                <i class="fa-solid fa-code text-[#D4AF37]"></i>
+                User Agent
+            </h4>
+        </div>
+        <div class="p-4">
+            <code class="block p-3 bg-gray-50 rounded text-[12px] text-[#1A1A1A] break-all font-mono">
+                {{ $loginHistory->user_agent ?? 'Not available' }}
+            </code>
+        </div>
     </div>
 
     <!-- Same IP Logins -->
     @if($sameIpLogins->count() > 0)
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Other Logins from {{ $loginHistory->ip_address }}
-        </h4>
-        <div class="space-y-3">
-            @foreach($sameIpLogins as $login)
-                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div class="flex items-center">
-                        <div class="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-300 font-semibold text-sm">
-                            {{ $login->user ? substr($login->user->name, 0, 1) : '?' }}
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden mb-5">
+            <div class="px-4 py-3 border-b border-[#E0E0E0]">
+                <h4 class="text-[14px] font-semibold text-[#1A1A1A] flex items-center gap-2">
+                    <i class="fa-solid fa-share-nodes text-[#D4AF37]"></i>
+                    Other Logins from {{ $loginHistory->ip_address }}
+                </h4>
+            </div>
+            <div class="p-4 space-y-2">
+                @foreach($sameIpLogins as $login)
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-[#37474F] flex items-center justify-center text-[#D4AF37] text-[11px] font-semibold flex-shrink-0">
+                                {{ $login->user ? substr($login->user->name, 0, 1) : '?' }}
+                            </div>
+                            <div>
+                                <p class="text-[13px] font-medium text-[#1A1A1A]">{{ $login->user?->name ?? 'Deleted User' }}</p>
+                                <p class="text-[12px] text-[#37474F]">{{ $login->logged_in_at->format('M d, Y h:i A') }}</p>
+                            </div>
                         </div>
-                        <div class="ml-3">
-                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $login->user?->name ?? 'Deleted User' }}</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ $login->logged_in_at->format('M d, Y h:i A') }}</div>
-                        </div>
+                        @if($login->is_suspicious)
+                            <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-[#C0392B]/10 text-[#C0392B]">Suspicious</span>
+                        @endif
                     </div>
-                    @if($login->is_suspicious)
-                        <span class="px-2 py-1 text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 rounded">Suspicious</span>
-                    @endif
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
-    </div>
     @endif
 
     <!-- User Recent Logins -->
     @if($userRecentLogins->count() > 0)
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Recent Logins by {{ $loginHistory->user?->name ?? 'this User' }}
-        </h4>
-        <div class="space-y-3">
-            @foreach($userRecentLogins as $login)
-                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div>
-                        <code class="text-sm text-gray-800 dark:text-gray-200">{{ $login->ip_address }}</code>
-                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {{ $login->device }} / {{ $login->browser }} / {{ $login->platform }}
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden mb-5">
+            <div class="px-4 py-3 border-b border-[#E0E0E0]">
+                <h4 class="text-[14px] font-semibold text-[#1A1A1A] flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-[#D4AF37]"></i>
+                    Recent Logins by {{ $loginHistory->user?->name ?? 'this User' }}
+                </h4>
+            </div>
+            <div class="p-4 space-y-2">
+                @foreach($userRecentLogins as $login)
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div>
+                            <code class="text-[12px] text-[#1A1A1A] font-mono">{{ $login->ip_address }}</code>
+                            <p class="text-[12px] text-[#37474F] mt-0.5">{{ $login->device }} / {{ $login->browser }} / {{ $login->platform }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[13px] text-[#1A1A1A]">{{ $login->logged_in_at->format('M d, Y') }}</p>
+                            <p class="text-[12px] text-[#37474F]">{{ $login->logged_in_at->format('h:i A') }}</p>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <div class="text-sm text-gray-900 dark:text-white">{{ $login->logged_in_at->format('M d, Y') }}</div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $login->logged_in_at->format('h:i A') }}</div>
-                    </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
-    </div>
     @endif
 
     <!-- Actions -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Actions</h4>
-        <form action="{{ route('admin.login-histories.block-ip') }}" method="POST" class="flex items-center gap-4"
-              onsubmit="return confirm('Are you sure you want to flag this IP address?')">
-            @csrf
-            <input type="hidden" name="ip_address" value="{{ $loginHistory->ip_address }}">
-            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                Flag IP Address
-            </button>
-            <span class="text-sm text-gray-500 dark:text-gray-400">
-                This will log the action. Configure firewall rules separately.
-            </span>
-        </form>
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+        <div class="px-4 py-3 border-b border-[#E0E0E0]">
+            <h4 class="text-[14px] font-semibold text-[#1A1A1A] flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-[#D4AF37]"></i>
+                Actions
+            </h4>
+        </div>
+        <div class="p-4">
+            <form action="{{ route('admin.login-histories.block-ip') }}" method="POST"
+                  class="flex items-center gap-4"
+                  onsubmit="return confirm('Are you sure you want to flag this IP address?')">
+                @csrf
+                <input type="hidden" name="ip_address" value="{{ $loginHistory->ip_address }}">
+                <button type="submit"
+                        class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#C0392B] text-white text-[13px] font-semibold rounded hover:bg-[#a93226] transition">
+                    <i class="fa-solid fa-flag text-xs"></i>
+                    Flag IP Address
+                </button>
+                <span class="text-[12px] text-[#37474F]">This will log the action. Configure firewall rules separately.</span>
+            </form>
+        </div>
     </div>
+
 </div>
 @endsection

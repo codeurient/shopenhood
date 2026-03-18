@@ -50,19 +50,19 @@
     <!-- Variations Table -->
     <div class="overflow-x-auto" x-show="variations.length > 0" x-cloak>
         <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+            <thead class="bg-[#37474F]">
                 <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-[#D4AF37] uppercase">SKU</th>
                     <template x-for="variant in categoryVariants.filter(v => v.is_main_shown)" :key="variant.id">
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase" x-text="variant.name"></th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-[#D4AF37] uppercase" x-text="variant.name"></th>
                     </template>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Discount</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Images</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Default</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Active</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-[#D4AF37] uppercase">Price</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-[#D4AF37] uppercase">Discount</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-[#D4AF37] uppercase">Stock</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-[#D4AF37] uppercase">Images</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-[#D4AF37] uppercase">Default</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-[#D4AF37] uppercase">Active</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-[#D4AF37] uppercase">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">

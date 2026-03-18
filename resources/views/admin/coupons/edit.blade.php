@@ -4,17 +4,24 @@
 @section('page-title', 'Edit Coupon')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div>
+
+    <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-3xl font-bold text-gray-900">Edit Coupon: {{ $coupon->code }}</h2>
-        <a href="{{ route('admin.coupons.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-            &larr; Back to Coupons
-        </a>
+        <div>
+            <a href="{{ route('admin.coupons.index') }}"
+               class="inline-flex items-center gap-1.5 text-[12px] text-[#37474F] hover:text-[#1A1A1A] mb-2 transition">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                Back to Coupons
+            </a>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Edit Coupon: <span class="font-mono">{{ $coupon->code }}</span></h2>
+        </div>
     </div>
 
     @if($errors->any())
-        <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded">
-            <ul class="list-disc list-inside">
+        <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded flex items-start gap-2">
+            <i class="fa-solid fa-circle-exclamation flex-shrink-0 mt-0.5"></i>
+            <ul class="text-[13px] space-y-1">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -22,10 +29,10 @@
         </div>
     @endif
 
-    {{-- Usage Stats --}}
     @if($coupon->usages_count > 0)
-        <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p class="text-sm text-blue-800">
+        <div class="mb-5 p-4 bg-blue-50 border-l-4 border-blue-400 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-blue-500"></i>
+            <p class="text-[13px] text-blue-800">
                 This coupon has been used <strong>{{ $coupon->usages_count }}</strong> time(s).
             </p>
         </div>
@@ -35,179 +42,215 @@
         @csrf
         @method('PUT')
 
-        <div class="bg-white rounded-lg shadow p-6 space-y-6">
-
-            {{-- Code --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Coupon Code <span class="text-red-500">*</span>
-                </label>
-                <div class="flex gap-2">
-                    <input type="text" name="code" id="code" required
-                           value="{{ old('code', $coupon->code) }}"
-                           placeholder="e.g., SUMMER2026"
-                           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 uppercase">
-                    <button type="button" @click="generateCode()"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm">
-                        Generate
-                    </button>
-                </div>
+        <!-- Code & Type -->
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden mb-5">
+            <div class="px-4 py-3 border-b border-[#E0E0E0]">
+                <h3 class="text-[14px] font-semibold text-[#1A1A1A] flex items-center gap-2">
+                    <i class="fa-solid fa-ticket text-[#D4AF37]"></i>
+                    Coupon Details
+                </h3>
             </div>
+            <div class="p-5 space-y-5">
 
-            {{-- Type & Value --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Code -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Discount Type <span class="text-red-500">*</span>
+                    <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
+                        Coupon Code <span class="text-red-500">*</span>
                     </label>
-                    <select name="type" x-model="type" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                        <option value="percentage" {{ old('type', $coupon->type) === 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
-                        <option value="fixed" {{ old('type', $coupon->type) === 'fixed' ? 'selected' : '' }}>Fixed Amount ($)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Value <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500" x-text="type === 'percentage' ? '%' : '$'"></span>
-                        <input type="number" name="value" required step="0.01" min="0.01"
-                               :max="type === 'percentage' ? 100 : ''"
-                               value="{{ old('value', $coupon->value) }}"
-                               placeholder="0.00"
-                               class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                    <div class="flex gap-2">
+                        <input type="text" name="code" id="code" required
+                               value="{{ old('code', $coupon->code) }}"
+                               placeholder="e.g., SUMMER2026"
+                               class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] flex-1 px-3 uppercase font-mono">
+                        <button type="button" @click="generateCode()"
+                                class="inline-flex items-center gap-1.5 h-[34px] px-3 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                            <i class="fa-solid fa-shuffle text-xs"></i>
+                            Generate
+                        </button>
                     </div>
-                    <p class="text-sm text-gray-500 mt-1" x-show="type === 'percentage'">Maximum 100%</p>
                 </div>
-            </div>
 
-            {{-- Purchase & Discount Limits --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Purchase Amount</label>
-                    <input type="number" name="min_purchase_amount" step="0.01" min="0"
-                           value="{{ old('min_purchase_amount', $coupon->min_purchase_amount) }}"
-                           placeholder="No minimum"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Maximum Discount Amount</label>
-                    <input type="number" name="max_discount_amount" step="0.01" min="0"
-                           value="{{ old('max_discount_amount', $coupon->max_discount_amount) }}"
-                           placeholder="No limit"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                    <p class="text-sm text-gray-500 mt-1">Cap the discount at this amount (useful for percentage coupons)</p>
-                </div>
-            </div>
-
-            {{-- Usage Limits --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Total Usage Limit</label>
-                    <input type="number" name="usage_limit" min="1"
-                           value="{{ old('usage_limit', $coupon->usage_limit) }}"
-                           placeholder="Unlimited"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                    <p class="text-sm text-gray-500 mt-1">Currently used {{ $coupon->usage_count }} time(s)</p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Per User Limit</label>
-                    <input type="number" name="per_user_limit" min="1"
-                           value="{{ old('per_user_limit', $coupon->per_user_limit) }}"
-                           placeholder="Unlimited"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                </div>
-            </div>
-
-            {{-- Dates --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-                    <input type="datetime-local" name="starts_at"
-                           value="{{ old('starts_at', $coupon->starts_at?->format('Y-m-d\TH:i')) }}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
-                    <input type="datetime-local" name="expires_at"
-                           value="{{ old('expires_at', $coupon->expires_at?->format('Y-m-d\TH:i')) }}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                </div>
-            </div>
-
-            {{-- Applicable To --}}
-            <div class="border-t pt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Applicable To <span class="text-red-500">*</span>
-                </label>
-                <select name="applicable_to" x-model="applicableTo" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                    <option value="all" {{ old('applicable_to', $coupon->applicable_to) === 'all' ? 'selected' : '' }}>All Products</option>
-                    <option value="categories" {{ old('applicable_to', $coupon->applicable_to) === 'categories' ? 'selected' : '' }}>Specific Categories</option>
-                    <option value="listings" {{ old('applicable_to', $coupon->applicable_to) === 'listings' ? 'selected' : '' }}>Specific Listings</option>
-                </select>
-            </div>
-
-            {{-- Restrictions: Categories --}}
-            <div x-show="applicableTo === 'categories'" x-transition class="border-t pt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Select Categories</label>
-                <div class="max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-4 space-y-2">
-                    @foreach($categories as $category)
-                        <label class="flex items-center">
-                            <input type="checkbox" name="restrictions[]" value="{{ $category->id }}"
-                                   {{ in_array($category->id, old('restrictions', $existingRestrictionIds)) ? 'checked' : '' }}
-                                   class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
-                            <span class="ml-2 text-sm text-gray-700">{{ $category->name }}</span>
+                <!-- Type & Value -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
+                            Discount Type <span class="text-red-500">*</span>
                         </label>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- Restrictions: Listings --}}
-            <div x-show="applicableTo === 'listings'" x-transition class="border-t pt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Select Listings</label>
-                <div class="max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-4 space-y-2">
-                    @foreach($listings as $listing)
-                        <label class="flex items-center">
-                            <input type="checkbox" name="restrictions[]" value="{{ $listing->id }}"
-                                   {{ in_array($listing->id, old('restrictions', $existingRestrictionIds)) ? 'checked' : '' }}
-                                   class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
-                            <span class="ml-2 text-sm text-gray-700">{{ $listing->title }}</span>
+                        <select name="type" x-model="type" required
+                                class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
+                            <option value="percentage" {{ old('type', $coupon->type) === 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
+                            <option value="fixed" {{ old('type', $coupon->type) === 'fixed' ? 'selected' : '' }}>Fixed Amount ($)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
+                            Value <span class="text-red-500">*</span>
                         </label>
-                    @endforeach
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#37474F] text-[13px]" x-text="type === 'percentage' ? '%' : '$'"></span>
+                            <input type="number" name="value" required step="0.01" min="0.01"
+                                   :max="type === 'percentage' ? 100 : ''"
+                                   value="{{ old('value', $coupon->value) }}"
+                                   placeholder="0.00"
+                                   class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full pl-8 pr-3">
+                        </div>
+                        <p class="text-[12px] text-[#37474F] mt-1" x-show="type === 'percentage'">Maximum 100%</p>
+                    </div>
                 </div>
-            </div>
 
-            {{-- Description --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea name="description" rows="3"
-                          placeholder="Internal note or description for this coupon"
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('description', $coupon->description) }}</textarea>
-            </div>
+                <!-- Purchase & Discount Limits -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Minimum Purchase Amount</label>
+                        <input type="number" name="min_purchase_amount" step="0.01" min="0"
+                               value="{{ old('min_purchase_amount', $coupon->min_purchase_amount) }}"
+                               placeholder="No minimum"
+                               class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
+                    </div>
+                    <div>
+                        <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Maximum Discount Amount</label>
+                        <input type="number" name="max_discount_amount" step="0.01" min="0"
+                               value="{{ old('max_discount_amount', $coupon->max_discount_amount) }}"
+                               placeholder="No limit"
+                               class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
+                        <p class="text-[12px] text-[#37474F] mt-1">Cap the discount at this amount (useful for percentage coupons)</p>
+                    </div>
+                </div>
 
-            {{-- Active --}}
-            <div class="border-t pt-6">
-                <label class="flex items-center">
-                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', $coupon->is_active) ? 'checked' : '' }}
-                           class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
-                    <span class="ml-2 text-sm text-gray-700">Active</span>
-                </label>
-                <p class="text-sm text-gray-500 ml-6">Inactive coupons cannot be used at checkout</p>
+                <!-- Usage Limits -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Total Usage Limit</label>
+                        <input type="number" name="usage_limit" min="1"
+                               value="{{ old('usage_limit', $coupon->usage_limit) }}"
+                               placeholder="Unlimited"
+                               class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
+                        <p class="text-[12px] text-[#37474F] mt-1">Currently used {{ $coupon->usage_count }} time(s)</p>
+                    </div>
+                    <div>
+                        <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Per User Limit</label>
+                        <input type="number" name="per_user_limit" min="1"
+                               value="{{ old('per_user_limit', $coupon->per_user_limit) }}"
+                               placeholder="Unlimited"
+                               class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
+                    </div>
+                </div>
+
+                <!-- Dates -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Start Date</label>
+                        <input type="datetime-local" name="starts_at"
+                               value="{{ old('starts_at', $coupon->starts_at?->format('Y-m-d\TH:i')) }}"
+                               class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
+                    </div>
+                    <div>
+                        <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Expiry Date</label>
+                        <input type="datetime-local" name="expires_at"
+                               value="{{ old('expires_at', $coupon->expires_at?->format('Y-m-d\TH:i')) }}"
+                               class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        {{-- Action Buttons --}}
-        <div class="mt-6 flex justify-end gap-4">
-            <a href="{{ route('admin.coupons.index') }}" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+        <!-- Applicable To -->
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden mb-5">
+            <div class="px-4 py-3 border-b border-[#E0E0E0]">
+                <h3 class="text-[14px] font-semibold text-[#1A1A1A] flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-[#D4AF37]"></i>
+                    Scope & Restrictions
+                </h3>
+            </div>
+            <div class="p-5 space-y-5">
+
+                <div>
+                    <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
+                        Applicable To <span class="text-red-500">*</span>
+                    </label>
+                    <select name="applicable_to" x-model="applicableTo" required
+                            class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3">
+                        <option value="all" {{ old('applicable_to', $coupon->applicable_to) === 'all' ? 'selected' : '' }}>All Products</option>
+                        <option value="categories" {{ old('applicable_to', $coupon->applicable_to) === 'categories' ? 'selected' : '' }}>Specific Categories</option>
+                        <option value="listings" {{ old('applicable_to', $coupon->applicable_to) === 'listings' ? 'selected' : '' }}>Specific Listings</option>
+                    </select>
+                </div>
+
+                <!-- Categories -->
+                <div x-show="applicableTo === 'categories'" x-transition>
+                    <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Select Categories</label>
+                    <div class="max-h-60 overflow-y-auto border border-[#E0E0E0] rounded p-3 space-y-2">
+                        @foreach($categories as $category)
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="restrictions[]" value="{{ $category->id }}"
+                                       {{ in_array($category->id, old('restrictions', $existingRestrictionIds)) ? 'checked' : '' }}
+                                       class="w-4 h-4 rounded border-[#E0E0E0] text-[#D4AF37] focus:ring-0">
+                                <span class="text-[13px] text-[#1A1A1A]">{{ $category->name }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Listings -->
+                <div x-show="applicableTo === 'listings'" x-transition>
+                    <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Select Listings</label>
+                    <div class="max-h-60 overflow-y-auto border border-[#E0E0E0] rounded p-3 space-y-2">
+                        @foreach($listings as $listing)
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="restrictions[]" value="{{ $listing->id }}"
+                                       {{ in_array($listing->id, old('restrictions', $existingRestrictionIds)) ? 'checked' : '' }}
+                                       class="w-4 h-4 rounded border-[#E0E0E0] text-[#D4AF37] focus:ring-0">
+                                <span class="text-[13px] text-[#1A1A1A]">{{ $listing->title }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">Description</label>
+                    <textarea name="description" rows="3"
+                              placeholder="Internal note or description for this coupon"
+                              class="block p-3 w-full text-[13px] text-[#1A1A1A] rounded border border-[#E0E0E0] focus:ring-0 focus:border-[#D4AF37]">{{ old('description', $coupon->description) }}</textarea>
+                </div>
+
+                <!-- Active Toggle -->
+                <div class="flex items-center gap-3">
+                    <label for="is_active" class="inline-flex items-center gap-3 cursor-pointer">
+                        <input type="hidden" name="is_active" value="0">
+                        <input type="checkbox" name="is_active" id="is_active" value="1"
+                               {{ old('is_active', $coupon->is_active) ? 'checked' : '' }}
+                               class="sr-only peer">
+                        <div class="relative w-11 h-6 bg-[#E0E0E0] peer-focus:outline-none rounded-full peer
+                                    peer-checked:after:translate-x-full peer-checked:after:border-white
+                                    after:content-[''] after:absolute after:top-[2px] after:start-[2px]
+                                    after:bg-white after:border-gray-300 after:border after:rounded-full
+                                    after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div>
+                    </label>
+                    <div>
+                        <p class="text-[13px] font-medium text-[#1A1A1A]">Active</p>
+                        <p class="text-[12px] text-[#37474F]">Inactive coupons cannot be used at checkout</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-between">
+            <a href="{{ route('admin.coupons.index') }}"
+               class="inline-flex items-center justify-center h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
                 Cancel
             </a>
-            <button type="submit" class="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
+            <button type="submit"
+                    class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-check text-xs"></i>
                 Update Coupon
             </button>
         </div>
     </form>
+
 </div>
 
 @push('scripts')

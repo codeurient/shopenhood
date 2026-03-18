@@ -6,185 +6,180 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Panel') - {{ config('app.name') }}</title>
 
-    <!-- Tailwind CSS + Flowbite -->
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: {
-                            50: '#f0f8ff',
-                            100: '#BDDDFC',
-                            200: '#a8d3fb',
-                            300: '#88BDF2',
-                            400: '#6db1ef',
-                            500: '#88BDF2',
-                            600: '#5a9dd9',
-                            700: '#4682b4',
-                            800: '#2e5f7d',
-                            900: '#1e4159',
+                        luxury: {
+                            black:    '#000000',
+                            surface:  '#1A1A1A',
+                            charcoal: '#37474F',
+                            gold:     '#D4AF37',
+                            light:    '#E0E0E0',
+                            white:    '#FFFFFF',
+                            text:     '#1A1A1A',
                         },
+                        danger: {
+                            500: '#C0392B',
+                            600: '#a93226',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'sans-serif'],
                     },
                 },
             },
         }
     </script>
+
+    <!-- Flowbite -->
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>.sidebar-nav::-webkit-scrollbar{display:none}.sidebar-nav{scrollbar-width:none;-ms-overflow-style:none}</style>
     @stack('styles')
 </head>
-<body class="bg-gray-50 antialiased" x-data="{ sidebarOpen: false }">
+<body class="bg-[#FFFFFF] antialiased font-sans" x-data="{ sidebarOpen: false }">
     <div class="flex min-h-screen">
+
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 shadow-sm transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0"
+        <aside class="fixed inset-y-0 left-0 z-50 w-[220px] bg-[#37474F] flex flex-col transform transition-transform duration-300 ease-in-out md:sticky md:top-0 md:h-screen md:translate-x-0"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
                @click.away="sidebarOpen = false">
 
-            <!-- Brand -->
-            <div class="px-6 py-5 border-b border-gray-100">
-                <a href="{{ route('home') }}" class="text-xl font-bold text-primary-600 hover:text-primary-700 transition">
+            <!-- Logo Bar -->
+            <div class="bg-[#37474F] h-[52px] flex items-center px-3 gap-2 flex-shrink-0 border-b border-[#000000]/20">
+                <a href="{{ route('home') }}" class="text-[#D4AF37] font-bold text-sm tracking-tight hover:brightness-110 transition truncate">
                     {{ config('app.name', 'Shopenhood') }}
                 </a>
-                <p class="mt-0.5 text-xs font-medium text-gray-400 uppercase tracking-wide">Admin Panel</p>
+                <span class="text-[10px] font-semibold text-[#E0E0E0]/40 uppercase tracking-wider whitespace-nowrap">Admin</span>
             </div>
 
-            <nav class="px-3 py-4 space-y-0.5">
+            <!-- Navigation -->
+            <nav class="px-2 py-3 space-y-0.5 flex-1 overflow-y-auto sidebar-nav">
+
                 <a href="{{ route('admin.dashboard') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.dashboard') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-gauge-high w-4 text-center flex-shrink-0"></i>
                     Dashboard
                 </a>
+
                 <a href="{{ route('admin.categories.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.categories.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.categories.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-folder w-4 text-center flex-shrink-0"></i>
                     Categories
                 </a>
+
                 <a href="{{ route('admin.variants.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.variants.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.variants.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-sliders w-4 text-center flex-shrink-0"></i>
                     Variants
                 </a>
+
                 <a href="{{ route('admin.locations.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.locations.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.locations.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-location-dot w-4 text-center flex-shrink-0"></i>
                     Locations
                 </a>
+
                 <a href="{{ route('admin.listings.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.listings.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.listings.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-list w-4 text-center flex-shrink-0"></i>
                     Listings
                 </a>
+
                 <a href="{{ route('admin.listing-types.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.listing-types.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.listing-types.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-tag w-4 text-center flex-shrink-0"></i>
                     Listing Types
                 </a>
+
                 <a href="{{ route('admin.sliders.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.sliders.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    Sliders & Banners
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.sliders.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-images w-4 text-center flex-shrink-0"></i>
+                    Sliders &amp; Banners
                 </a>
+
                 <a href="{{ route('admin.users.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.users.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.users.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-users w-4 text-center flex-shrink-0"></i>
                     Users
                 </a>
+
                 <a href="{{ route('admin.business-profiles.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.business-profiles.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.business-profiles.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-building w-4 text-center flex-shrink-0"></i>
                     Business Profiles
                 </a>
+
                 <a href="{{ route('admin.stock.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.stock.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.stock.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-boxes-stacked w-4 text-center flex-shrink-0"></i>
                     Stock Management
                 </a>
+
                 <a href="{{ route('admin.coupons.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.coupons.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.coupons.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-ticket w-4 text-center flex-shrink-0"></i>
                     Coupons
                 </a>
+
                 <a href="{{ route('admin.activity-logs.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.activity-logs.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.activity-logs.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-clipboard-list w-4 text-center flex-shrink-0"></i>
                     Activity Logs
                 </a>
+
                 <a href="{{ route('admin.login-histories.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.login-histories.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.login-histories.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-lock w-4 text-center flex-shrink-0"></i>
                     Login Histories
                 </a>
+
                 <a href="{{ route('admin.blog-posts.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.blog-posts.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.blog-posts.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-pen-nib w-4 text-center flex-shrink-0"></i>
                     Blog Posts
                 </a>
+
                 <a href="{{ route('admin.pages.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.pages.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.pages.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-file-lines w-4 text-center flex-shrink-0"></i>
                     Pages
                 </a>
+
                 <a href="{{ route('admin.legal.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.legal.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.legal.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-scale-balanced w-4 text-center flex-shrink-0"></i>
                     Legal &amp; Policies
                 </a>
+
                 <a href="{{ route('admin.settings.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900' }}">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.settings.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-gear w-4 text-center flex-shrink-0"></i>
                     Settings
                 </a>
 
-                <div class="pt-2 border-t border-gray-100">
+                <div class="pt-2 mt-1 border-t border-[#E0E0E0]/10">
                     <a href="{{ route('home') }}"
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors">
-                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
+                       class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium text-[#E0E0E0]/50 hover:bg-[#000000]/20 hover:text-[#E0E0E0] transition-colors pl-[9px] pr-3 border-l-[3px] border-transparent">
+                        <i class="fa-solid fa-arrow-left w-4 text-center flex-shrink-0"></i>
                         Back to Site
                     </a>
                 </div>
             </nav>
         </aside>
 
-        <!-- Overlay for mobile -->
+        <!-- Mobile Overlay -->
         <div x-show="sidebarOpen"
              x-transition:enter="transition-opacity ease-linear duration-300"
              x-transition:enter-start="opacity-0"
@@ -193,41 +188,41 @@
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
              @click="sidebarOpen = false"
-             class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+             class="fixed inset-0 bg-black/60 z-40 md:hidden"
              style="display: none;"></div>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col md:ml-0">
-            <!-- Header -->
-            <header class="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
-                <div class="flex items-center justify-between px-4 md:px-6 py-4">
-                    <!-- Mobile Menu Button -->
+        <div class="flex-1 flex flex-col md:ml-0 min-w-0">
+
+            <!-- Top Header -->
+            <header class="sticky top-0 z-30 bg-[#37474F] border-b border-[#000000]/30">
+                <div class="flex items-center justify-between px-4 md:px-5 h-[52px]">
+                    <!-- Mobile Menu Toggle -->
                     <button @click="sidebarOpen = !sidebarOpen"
-                            class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
+                            class="md:hidden p-2 rounded text-[#E0E0E0] hover:bg-[#37474F]/40 transition">
+                        <i class="fa-solid fa-bars text-base"></i>
                     </button>
 
                     <!-- Page Title -->
-                    <h1 class="text-xl md:text-2xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h1>
+                    <h1 class="text-[clamp(1rem,2vw,1.25rem)] font-semibold text-[#E0E0E0]">@yield('page-title', 'Dashboard')</h1>
 
                     <!-- Admin Info + Logout -->
-                    <div class="flex items-center gap-3 md:gap-4">
-                        <span class="hidden md:block text-sm font-medium text-gray-700">{{ auth()->guard('admin')->user()->name }}</span>
+                    <div class="flex items-center gap-3">
+                        <span class="hidden md:block text-[13px] text-[#E0E0E0]/60">{{ auth()->guard('admin')->user()->name }}</span>
                         <form method="POST" action="{{ route('admin.logout') }}">
                             @csrf
                             <button type="submit"
-                                    class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
-                                Logout
+                                    class="inline-flex items-center gap-1.5 h-[34px] px-3 bg-[#C0392B] text-white text-[13px] font-semibold rounded hover:bg-[#a93226] transition">
+                                <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                                <span class="hidden sm:inline">Logout</span>
                             </button>
                         </form>
                     </div>
                 </div>
             </header>
 
-            <!-- Content -->
-            <main class="flex-1 p-4 md:p-6 lg:p-8">
+            <!-- Content Area -->
+            <main class="flex-1 p-4 md:p-6">
                 <div class="max-w-7xl mx-auto">
                     @yield('content')
                 </div>
@@ -301,26 +296,24 @@
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
         role="dialog"
         aria-modal="true">
-        <div class="absolute inset-0 bg-black/50" @click="cancel()"></div>
-        <div class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 z-10" @click.stop>
+        <div class="absolute inset-0 bg-black/70" @click="cancel()"></div>
+        <div class="relative bg-[#1A1A1A] border border-[#37474F] rounded-[6px] shadow-xl max-w-md w-full p-6 z-10" @click.stop>
             <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.194-.833-2.964 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                    </svg>
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#C0392B]/20 flex items-center justify-center">
+                    <i class="fa-solid fa-triangle-exclamation text-[#E74C3C]"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Confirm Action</h3>
-                    <p class="mt-1 text-sm text-gray-600" x-text="message"></p>
+                    <h3 class="text-[15px] font-semibold text-[#E0E0E0]">Confirm Action</h3>
+                    <p class="mt-1 text-[13px] text-[#E0E0E0]/60" x-text="message"></p>
                 </div>
             </div>
-            <div class="mt-6 flex justify-end gap-3">
+            <div class="mt-5 flex justify-end gap-3">
                 <button type="button" @click="cancel()"
-                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                    class="inline-flex items-center justify-center h-[34px] px-4 text-[13px] font-semibold text-[#E0E0E0] bg-transparent border border-[#37474F] rounded hover:bg-[#37474F]/30 transition">
                     Cancel
                 </button>
                 <button type="button" @click="confirm()"
-                    class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition">
+                    class="inline-flex items-center justify-center h-[34px] px-4 text-[13px] font-semibold text-white bg-[#C0392B] rounded hover:bg-[#a93226] transition">
                     Confirm
                 </button>
             </div>

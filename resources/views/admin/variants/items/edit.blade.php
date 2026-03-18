@@ -1,191 +1,178 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Edit Item: ' . $variantItem->value)
+@section('page-title', 'Edit Variant Item')
 
 @section('content')
-<div class="container-fluid">
-    <div class="page-header">
+<div>
+
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-6">
         <div>
-            <h1>Edit Item in "{{ $variant->name }}"</h1>
-            <p style="color: #666; margin-top: 0.5rem;">Type: <strong>{{ ucfirst($variant->type) }}</strong></p>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Edit Item in "{{ $variant->name }}"</h2>
+            <p class="text-[#37474F] text-sm mt-1">Type: <span class="font-medium">{{ ucfirst($variant->type) }}</span></p>
         </div>
-        <a href="{{ route('admin.variants.items.index', $variant) }}" class="btn-back">← Back to Items</a>
+        <a href="{{ route('admin.variants.items.index', $variant) }}"
+           class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+            <i class="fa-solid fa-arrow-left text-xs"></i>
+            Back to Items
+        </a>
     </div>
 
+    <!-- Error Alert -->
     @if($errors->any())
-        <div class="alert alert-danger">
-            <ul style="margin: 0; padding-left: 1.5rem;">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded flex items-start gap-3">
+            <i class="fa-solid fa-circle-exclamation text-red-500 mt-0.5 flex-shrink-0"></i>
+            <div>
+                <h3 class="text-[13px] font-semibold text-red-800">There were errors with your submission</h3>
+                <ul class="mt-1 text-[13px] text-red-700 list-disc list-inside space-y-0.5">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
     @endif
 
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ route('admin.variants.items.update', [$variant, $variantItem]) }}" method="POST" enctype="multipart/form-data" id="itemForm">
-                @csrf
-                @method('PUT')
+    <!-- Form Card -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+        <form action="{{ route('admin.variants.items.update', [$variant, $variantItem]) }}" method="POST" enctype="multipart/form-data" id="itemForm">
+            @csrf
+            @method('PUT')
 
-                <div class="form-group">
-                    <label for="value">Item Value <span class="required">*</span></label>
-                    <input
-                        type="text"
-                        name="value"
-                        id="value"
-                        class="form-control @error('value') is-invalid @enderror"
-                        value="{{ old('value', $variantItem->value) }}"
-                        required
-                        autofocus
-                        placeholder="e.g., Small, Red, 64GB"
-                    >
-                    <small class="form-text">The actual value stored in the database</small>
+            <div class="p-6 space-y-5">
+
+                <!-- Item Value -->
+                <div>
+                    <label for="value" class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
+                        Item Value <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="value" id="value"
+                           value="{{ old('value', $variantItem->value) }}"
+                           class="h-[34px] border text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3 @error('value') border-red-500 @else border-[#E0E0E0] @enderror"
+                           placeholder="e.g., Small, Red, 64GB"
+                           required autofocus>
+                    <p class="mt-1 text-[12px] text-[#37474F]">The actual value stored in the database</p>
                     @error('value')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <p class="mt-1 text-[12px] text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="display_value">Display Value</label>
-                    <input
-                        type="text"
-                        name="display_value"
-                        id="display_value"
-                        class="form-control @error('display_value') is-invalid @enderror"
-                        value="{{ old('display_value', $variantItem->display_value) }}"
-                        placeholder="Optional formatted display text"
-                    >
-                    <small class="form-text">Human-friendly label (e.g., "Extra Large" instead of "XL")</small>
+                <!-- Display Value -->
+                <div>
+                    <label for="display_value" class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
+                        Display Value
+                    </label>
+                    <input type="text" name="display_value" id="display_value"
+                           value="{{ old('display_value', $variantItem->display_value) }}"
+                           class="h-[34px] border text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3 @error('display_value') border-red-500 @else border-[#E0E0E0] @enderror"
+                           placeholder="Optional formatted display text">
+                    <p class="mt-1 text-[12px] text-[#37474F]">Human-friendly label (e.g., "Extra Large" instead of "XL")</p>
                     @error('display_value')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <p class="mt-1 text-[12px] text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
+                <!-- Visual Options (select, radio, checkbox only) -->
                 @if(in_array($variant->type, ['select', 'radio', 'checkbox']))
-                    <div class="visual-options-section">
-                        <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: #333;">Visual Options (Optional)</h3>
+                    <div class="bg-gray-50 border border-[#E0E0E0] rounded-[6px] p-4">
+                        <h3 class="text-[14px] font-semibold text-[#1A1A1A] mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-palette text-[#D4AF37]"></i>
+                            Visual Options <span class="text-[12px] font-normal text-[#37474F]">(Optional)</span>
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="color_code">Color Code</label>
-                                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <input
-                                        type="color"
-                                        name="color_code"
-                                        id="color_code"
-                                        value="{{ old('color_code', $variantItem->color_code ?? '#000000') }}"
-                                        style="width: 60px; height: 40px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;"
-                                    >
-                                    <input
-                                        type="text"
-                                        id="color_code_text"
-                                        class="form-control @error('color_code') is-invalid @enderror"
-                                        value="{{ old('color_code', $variantItem->color_code) }}"
-                                        placeholder="#000000"
-                                        readonly
-                                    >
+                            <!-- Color Code -->
+                            <div>
+                                <label for="color_code" class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
+                                    Color Code
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <input type="color" name="color_code" id="color_code"
+                                           value="{{ old('color_code', $variantItem->color_code ?? '#000000') }}"
+                                           class="w-[34px] h-[34px] border border-[#E0E0E0] rounded cursor-pointer p-0.5">
+                                    <input type="text" id="color_code_text"
+                                           value="{{ old('color_code', $variantItem->color_code) }}"
+                                           class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] flex-1 px-3 @error('color_code') border-red-500 @enderror"
+                                           placeholder="#000000" readonly>
                                 </div>
-                                <small class="form-text">Useful for color variants (e.g., Red, Blue)</small>
+                                <p class="mt-1 text-[12px] text-[#37474F]">Useful for color variants (e.g., Red, Blue)</p>
                                 @error('color_code')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <p class="mt-1 text-[12px] text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <div class="form-group col-md-6">
-                                <label for="image">Item Image</label>
+                            <!-- Image Upload -->
+                            <div>
+                                <label for="image" class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
+                                    Item Image
+                                </label>
                                 @if($variantItem->image)
-                                    <div style="margin-bottom: 0.5rem;">
+                                    <div class="mb-2 flex items-center gap-3">
                                         <img src="{{ asset('storage/' . $variantItem->image) }}" alt="{{ $variantItem->value }}"
-                                             style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 2px solid #ddd;">
-                                        <small style="display: block; color: #666; margin-top: 0.25rem;">Current image</small>
+                                             class="w-12 h-12 object-cover rounded border border-[#E0E0E0]">
+                                        <span class="text-[12px] text-[#37474F]">Current image</span>
                                     </div>
                                 @endif
-                                <input
-                                    type="file"
-                                    name="image"
-                                    id="image"
-                                    class="form-control @error('image') is-invalid @enderror"
-                                    accept="image/*"
-                                >
-                                <small class="form-text">Small icon/swatch (max 1MB, JPEG/PNG/WebP). Leave empty to keep current.</small>
+                                <input type="file" name="image" id="image" accept="image/*"
+                                       class="block w-full text-[13px] text-[#1A1A1A] border border-[#E0E0E0] rounded cursor-pointer bg-white focus:outline-none focus:border-[#D4AF37] @error('image') border-red-500 @enderror p-0">
+                                <p class="mt-1 text-[12px] text-[#37474F]">Max 1MB, JPEG/PNG/WebP. Leave empty to keep current.</p>
                                 @error('image')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <p class="mt-1 text-[12px] text-red-600">{{ $message }}</p>
                                 @enderror
-                                <div id="imagePreview" style="margin-top: 0.5rem;"></div>
+                                <div id="imagePreview" class="mt-2"></div>
                             </div>
                         </div>
                     </div>
                 @endif
 
-                <div class="form-group">
-                    <label for="sort_order">Sort Order</label>
-                    <input
-                        type="number"
-                        name="sort_order"
-                        id="sort_order"
-                        class="form-control @error('sort_order') is-invalid @enderror"
-                        value="{{ old('sort_order', $variantItem->sort_order) }}"
-                        min="0"
-                    >
-                    <small class="form-text">Display order (lower numbers appear first)</small>
+                <!-- Sort Order -->
+                <div>
+                    <label for="sort_order" class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
+                        Sort Order
+                    </label>
+                    <input type="number" name="sort_order" id="sort_order"
+                           value="{{ old('sort_order', $variantItem->sort_order) }}" min="0"
+                           class="h-[34px] border text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3 @error('sort_order') border-red-500 @else border-[#E0E0E0] @enderror">
+                    <p class="mt-1 text-[12px] text-[#37474F]">Display order (lower numbers appear first)</p>
                     @error('sort_order')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <p class="mt-1 text-[12px] text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <div class="form-check">
-                        <input
-                            type="checkbox"
-                            name="is_active"
-                            id="is_active"
-                            class="form-check-input"
-                            value="1"
-                            {{ old('is_active', $variantItem->is_active) ? 'checked' : '' }}
-                        >
-                        <label for="is_active" class="form-check-label">Active</label>
-                    </div>
+                <!-- Status -->
+                <div>
+                    <label for="is_active" class="inline-flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="is_active" id="is_active" value="1"
+                               {{ old('is_active', $variantItem->is_active) ? 'checked' : '' }}
+                               class="sr-only peer">
+                        <div class="relative w-11 h-6 bg-[#E0E0E0] peer-focus:outline-none rounded-full peer
+                                    peer-checked:after:translate-x-full peer-checked:after:border-white
+                                    after:content-[''] after:absolute after:top-[2px] after:start-[2px]
+                                    after:bg-white after:border-gray-300 after:border after:rounded-full
+                                    after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div>
+                        <span class="text-[13px] font-medium text-[#1A1A1A]">Active</span>
+                    </label>
                 </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Update Item</button>
-                    <a href="{{ route('admin.variants.items.index', $variant) }}" class="btn btn-secondary">Cancel</a>
-                    <button type="button" class="btn btn-danger" onclick="confirmDelete()" style="margin-left: auto;">Delete Item</button>
-                </div>
-            </form>
+            </div>
 
-            <form id="deleteForm" action="{{ route('admin.variants.items.destroy', [$variant, $variantItem]) }}" method="POST" style="display: none;">
-                @csrf
-                @method('DELETE')
-            </form>
-        </div>
+            <!-- Form Actions -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-[#E0E0E0] flex justify-end gap-3">
+                <a href="{{ route('admin.variants.items.index', $variant) }}"
+                   class="inline-flex items-center justify-center h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-semibold text-[#000000] bg-[#D4AF37] rounded hover:brightness-110 transition">
+                    <i class="fa-solid fa-check text-xs"></i>
+                    Update Item
+                </button>
+            </div>
+        </form>
     </div>
-</div>
 
-<style>
-.required { color: #dc3545; }
-.form-group { margin-bottom: 1.5rem; }
-.form-control { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #ced4da; border-radius: 4px; }
-.form-control:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
-.is-invalid { border-color: #dc3545; }
-.invalid-feedback { color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem; display: block; }
-.form-text { display: block; margin-top: 0.25rem; font-size: 0.875rem; color: #6c757d; }
-.form-row { display: flex; gap: 1rem; }
-.col-md-6 { flex: 1; }
-.form-check { display: flex; align-items: center; }
-.form-check-input { margin-right: 0.5rem; }
-.form-actions { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #dee2e6; display: flex; gap: 1rem; }
-.btn { padding: 0.6rem 1.5rem; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
-.btn-primary { background: #667eea; color: white; }
-.btn-secondary { background: #6c757d; color: white; }
-.btn-danger { background: #dc3545; color: white; }
-.card-body { padding: 2rem; }
-.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
-.btn-back { padding: 0.5rem 1rem; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; display: inline-block; }
-.alert-danger { background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; border: 1px solid #f5c6cb; }
-.visual-options-section { background: #f8f9fa; padding: 1.5rem; border-radius: 6px; margin-bottom: 1.5rem; }
-</style>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -194,14 +181,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.getElementById('image');
     const imagePreview = document.getElementById('imagePreview');
 
-    // Sync color picker with text input
     if (colorPicker && colorText) {
         colorPicker.addEventListener('input', function() {
             colorText.value = this.value;
         });
     }
 
-    // Image preview
     if (imageInput && imagePreview) {
         imageInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -212,13 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     imagePreview.innerHTML = '';
                     return;
                 }
-
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    imagePreview.innerHTML = `
-                        <img src="${e.target.result}"
-                             style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 2px solid #ddd;">
-                    `;
+                    imagePreview.innerHTML = `<img src="${e.target.result}" class="w-16 h-16 object-cover rounded border border-[#E0E0E0]">`;
                 };
                 reader.readAsDataURL(file);
             } else {
@@ -227,11 +208,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
-function confirmDelete() {
-    if (confirm('Are you sure you want to delete this variant item?')) {
-        document.getElementById('deleteForm').submit();
-    }
-}
 </script>
 @endsection

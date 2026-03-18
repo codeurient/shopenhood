@@ -5,151 +5,193 @@
 
 @section('content')
 <div>
-    {{-- Stats --}}
-    <div class="grid grid-cols-1 gap-4 mb-6">
-        <div class="bg-white rounded-lg shadow p-4">
-            <div class="text-sm text-gray-500">Total Business Profiles</div>
-            <div class="text-2xl font-bold text-gray-800">{{ $stats['total'] }}</div>
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Business Profiles</h2>
+            <p class="text-[#37474F] text-sm mt-1">Manage registered business accounts</p>
+        </div>
+    </div>
+
+    <!-- Stat -->
+    <div class="grid grid-cols-1 gap-4 mb-5">
+        <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-briefcase text-[#D4AF37]"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#1A1A1A]">{{ $stats['total'] }}</p>
+                    <p class="text-[#37474F] text-xs">Total Business Profiles</p>
+                </div>
+            </div>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="mb-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded-lg">
+        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
             {{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div class="mb-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg">
+        <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation"></i>
             {{ session('error') }}
         </div>
     @endif
 
     @if(session('info'))
-        <div class="mb-4 p-4 bg-blue-100 border border-blue-300 text-blue-800 rounded-lg">
+        <div class="mb-5 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-info"></i>
             {{ session('info') }}
         </div>
     @endif
 
-    {{-- Filters --}}
-    <div class="bg-white rounded-lg shadow p-4 mb-6">
-        <form method="GET" action="{{ route('admin.business-profiles.index') }}" class="flex gap-4 items-end flex-wrap">
-            <div class="flex-1 min-w-[200px]">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Business name..."
-                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Industry</label>
-                <select name="industry" class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                    <option value="">All Industries</option>
-                    @foreach($industries as $industry)
-                        <option value="{{ $industry }}" {{ request('industry') === $industry ? 'selected' : '' }}>{{ ucfirst($industry) }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
-                <select name="country" class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                    <option value="">All Countries</option>
-                    @foreach($countries as $country)
-                        <option value="{{ $country->id }}" {{ request('country') == $country->id ? 'selected' : '' }}>{{ $country->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Filter</button>
-            <a href="{{ route('admin.business-profiles.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Reset</a>
+    <!-- Filters -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 mb-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+        <form method="GET" action="{{ route('admin.business-profiles.index') }}" class="flex flex-wrap gap-3 items-center">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by business name..."
+                   class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 flex-1 min-w-[200px]">
+
+            <select name="industry"
+                    class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                <option value="">All Industries</option>
+                @foreach($industries as $industry)
+                    <option value="{{ $industry }}" {{ request('industry') === $industry ? 'selected' : '' }}>{{ ucfirst($industry) }}</option>
+                @endforeach
+            </select>
+
+            <select name="country"
+                    class="h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                <option value="">All Countries</option>
+                @foreach($countries as $country)
+                    <option value="{{ $country->id }}" {{ request('country') == $country->id ? 'selected' : '' }}>{{ $country->name }}</option>
+                @endforeach
+            </select>
+
+            <button type="submit"
+                    class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-filter text-xs"></i>
+                Filter
+            </button>
+            <a href="{{ route('admin.business-profiles.index') }}"
+               class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                <i class="fa-solid fa-xmark text-xs"></i>
+                Reset
+            </a>
         </form>
     </div>
 
-    {{-- Profiles Table --}}
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full text-sm text-left">
-            <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
-                <tr>
-                    <th class="px-4 py-3">Business</th>
-                    <th class="px-4 py-3">Owner</th>
-                    <th class="px-4 py-3">Industry</th>
-                    <th class="px-4 py-3">Location</th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3">Created</th>
-                    <th class="px-4 py-3 text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($profiles as $profile)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-3">
-                        <div class="flex items-center gap-3">
-                            @if($profile->logo)
-                                <img src="{{ asset('storage/' . $profile->logo) }}" alt="{{ $profile->business_name }}" class="w-10 h-10 rounded-full object-cover">
-                            @else
-                                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                                    <span class="text-gray-500 text-sm font-medium">{{ substr($profile->business_name, 0, 2) }}</span>
-                                </div>
-                            @endif
-                            <div>
-                                <div class="font-medium text-gray-900">{{ $profile->business_name }}</div>
-                                @if($profile->legal_name && $profile->legal_name !== $profile->business_name)
-                                    <div class="text-gray-500 text-xs">{{ $profile->legal_name }}</div>
-                                @endif
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-4 py-3">
-                        <div class="text-gray-900">{{ $profile->user->name }}</div>
-                        <div class="text-gray-500 text-xs">{{ $profile->user->email }}</div>
-                    </td>
-                    <td class="px-4 py-3">
-                        @if($profile->industry)
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                {{ ucfirst($profile->industry) }}
-                            </span>
-                        @else
-                            <span class="text-gray-400">-</span>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3 text-sm text-gray-500">
-                        @if($profile->city || $profile->country)
-                            {{ $profile->city }}{{ $profile->city && $profile->country ? ', ' : '' }}{{ $profile->country?->name }}
-                        @else
-                            <span class="text-gray-400">-</span>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3">
-                        @if($profile->isApproved())
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                Verified
-                            </span>
-                        @else
-                            <span class="text-xs text-gray-400">Pending</span>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3 text-xs text-gray-500">{{ $profile->created_at->format('M d, Y') }}</td>
-                    <td class="px-4 py-3 text-right">
-                        <div class="flex justify-end gap-2">
-                            <a href="{{ route('admin.business-profiles.show', $profile) }}" class="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700">View</a>
-                            <a href="{{ route('admin.business-profiles.edit', $profile) }}" class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">Edit</a>
-                            <form method="POST" action="{{ route('admin.business-profiles.destroy', $profile) }}" onsubmit="return confirm('Are you sure you want to delete this business profile?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">No business profiles found.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <!-- Table -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+        @if($profiles->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[#37474F] border-b border-[#000000]/20">
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Business</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Owner</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Industry</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Location</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Status</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Created</th>
+                            <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($profiles as $profile)
+                            <tr class="{{ $loop->even ? 'bg-white' : 'bg-gray-50' }} hover:bg-[#D4AF37]/5 transition-colors">
+                                <td class="px-3 py-2.5">
+                                    <div class="flex items-center gap-2.5">
+                                        @if($profile->logo)
+                                            <img src="{{ asset('storage/' . $profile->logo) }}" alt="{{ $profile->business_name }}"
+                                                 class="w-8 h-8 rounded-full object-cover border border-[#E0E0E0] flex-shrink-0">
+                                        @else
+                                            <div class="w-8 h-8 rounded-full bg-[#37474F] flex items-center justify-center flex-shrink-0">
+                                                <span class="text-[#D4AF37] text-[11px] font-semibold">{{ substr($profile->business_name, 0, 2) }}</span>
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <p class="text-[13px] font-medium text-[#1A1A1A]">{{ $profile->business_name }}</p>
+                                            @if($profile->legal_name && $profile->legal_name !== $profile->business_name)
+                                                <p class="text-[12px] text-[#37474F]">{{ $profile->legal_name }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-3 py-2.5">
+                                    <p class="text-[13px] text-[#1A1A1A]">{{ $profile->user->name }}</p>
+                                    <p class="text-[12px] text-[#37474F]">{{ $profile->user->email }}</p>
+                                </td>
+                                <td class="px-3 py-2.5">
+                                    @if($profile->industry)
+                                        <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-[#37474F]/10 text-[#37474F]">
+                                            {{ ucfirst($profile->industry) }}
+                                        </span>
+                                    @else
+                                        <span class="text-[#E0E0E0]">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2.5 text-[13px] text-[#37474F]">
+                                    @if($profile->city || $profile->country)
+                                        {{ $profile->city }}{{ $profile->city && $profile->country ? ', ' : '' }}{{ $profile->country?->name }}
+                                    @else
+                                        <span class="text-[#E0E0E0]">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2.5">
+                                    @if($profile->isApproved())
+                                        <span class="inline-flex items-center gap-1 h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-[#D4AF37]/20 text-[#D4AF37]">
+                                            <i class="fa-solid fa-circle-check text-[10px]"></i> Verified
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-gray-100 text-gray-500">Pending</span>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2.5 text-[12px] text-[#37474F]">{{ $profile->created_at->format('M d, Y') }}</td>
+                                <td class="px-3 py-2.5">
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="{{ route('admin.business-profiles.show', $profile) }}"
+                                           class="inline-flex items-center justify-center w-[28px] h-[28px] border border-[#E0E0E0] text-[#37474F] rounded hover:bg-gray-100 transition"
+                                           title="View">
+                                            <i class="fa-solid fa-eye text-xs"></i>
+                                        </a>
+                                        <a href="{{ route('admin.business-profiles.edit', $profile) }}"
+                                           class="inline-flex items-center justify-center w-[28px] h-[28px] border border-[#E0E0E0] text-[#37474F] rounded hover:bg-gray-100 transition"
+                                           title="Edit">
+                                            <i class="fa-solid fa-pen text-xs"></i>
+                                        </a>
+                                        <form method="POST" action="{{ route('admin.business-profiles.destroy', $profile) }}"
+                                              onsubmit="return confirm('Are you sure you want to delete this business profile?')" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="inline-flex items-center justify-center w-[28px] h-[28px] bg-[#C0392B] text-white rounded hover:bg-[#a93226] transition"
+                                                    title="Delete">
+                                                <i class="fa-solid fa-trash text-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="px-4 py-3 border-t border-[#E0E0E0]">
+                {{ $profiles->links() }}
+            </div>
+        @else
+            <div class="text-center py-12">
+                <i class="fa-solid fa-briefcase text-3xl text-[#E0E0E0] mb-3 block"></i>
+                <p class="text-[#37474F] text-[13px]">No business profiles found</p>
+            </div>
+        @endif
     </div>
 
-    <div class="mt-4">
-        {{ $profiles->links() }}
-    </div>
 </div>
 @endsection

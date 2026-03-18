@@ -10,7 +10,7 @@
 | `primary` | `#000000` | Canvas background, deepest layer |
 | `secondary` | `#37474F` | Sidebar, nav headers, subtle borders |
 | `accent` | `#D4AF37` | Active states, CTAs, KPI highlights, focus rings |
-| `background` | `#FFFFFF` | Page background (frontend), modal overlays |
+| `background` | `#FFFFFF` | Page background (frontend-backend), modal overlays |
 | `neutral` | `#E0E0E0` | Body text on dark, dividers, input borders |
 | `text` | `#1A1A1A` | Body text on light backgrounds |
 
@@ -98,7 +98,7 @@ All spacing must be a multiple of 4px.
 | Property | Value |
 |---|---|
 | Row height | `40px` |
-| Header bg | `#000000` |
+| Header bg | `#37474F` |
 | Header text | `#D4AF37` · `12px` · `600` · uppercase |
 | Row bg (even) | `#1A1A1A` |
 | Row bg (odd) | `#0D0D0D` |

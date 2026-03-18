@@ -4,55 +4,61 @@
 @section('page-title', 'Pages')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div>
+
+    <!-- Header -->
     <div class="mb-6">
-        <h2 class="text-3xl font-bold text-gray-900">Pages</h2>
-        <p class="text-gray-600 mt-1">Manage static content pages displayed on the site</p>
+        <h2 class="text-2xl font-bold text-[#1A1A1A]">Pages</h2>
+        <p class="text-[#37474F] text-sm mt-1">Manage static content pages displayed on the site</p>
     </div>
 
     @if(session('success'))
-        <div class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded">
-            ✓ {{ session('success') }}
+        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
+            {{ session('success') }}
         </div>
     @endif
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Page</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @foreach($pages as $page)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4">
-                            <div class="font-medium text-gray-900">{{ $page->title }}</div>
-                            <div class="text-xs text-gray-400">{{ $page->key }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($page->is_published)
-                                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Published</span>
-                            @else
-                                <span class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">Hidden</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $page->updated_at->format('M d, Y') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="{{ route('admin.pages.edit', $page) }}"
-                               class="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                                Edit Content
-                            </a>
-                        </td>
+    <!-- Table -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#37474F] border-b border-[#000000]/20">
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Page</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Status</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Last Updated</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Actions</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach($pages as $page)
+                        <tr class="{{ $loop->even ? 'bg-white' : 'bg-gray-50' }} hover:bg-[#D4AF37]/5 transition-colors">
+                            <td class="px-3 py-2.5">
+                                <p class="text-[13px] font-medium text-[#1A1A1A]">{{ $page->title }}</p>
+                                <p class="text-[12px] text-[#37474F]">{{ $page->key }}</p>
+                            </td>
+                            <td class="px-3 py-2.5">
+                                @if($page->is_published)
+                                    <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-[#D4AF37]/20 text-[#D4AF37]">Published</span>
+                                @else
+                                    <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-gray-100 text-[#37474F]">Hidden</span>
+                                @endif
+                            </td>
+                            <td class="px-3 py-2.5 text-[12px] text-[#37474F]">{{ $page->updated_at->format('M d, Y') }}</td>
+                            <td class="px-3 py-2.5">
+                                <a href="{{ route('admin.pages.edit', $page) }}"
+                                   class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-medium text-[#37474F] border border-[#E0E0E0] rounded hover:bg-gray-100 transition">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                    Edit Content
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
+
 </div>
 @endsection

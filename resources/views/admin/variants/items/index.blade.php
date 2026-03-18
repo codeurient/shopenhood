@@ -1,44 +1,53 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Manage Variant Items: ' . $variant->name)
+@section('page-title', 'Variant Items')
 
 @section('content')
-<div class="container-fluid">
-    <div class="page-header">
+<div>
+
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-6">
         <div>
-            <h1>{{ $variant->name }} Items</h1>
-            <p style="color: #666; margin-top: 0.5rem;">
-                Type: <strong>{{ ucfirst($variant->type) }}</strong> | 
-                Status: <strong>{{ $variant->is_active ? 'Active' : 'Inactive' }}</strong>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">{{ $variant->name }} Items</h2>
+            <p class="text-[#37474F] text-sm mt-1">
+                Type: <span class="font-medium">{{ ucfirst($variant->type) }}</span>
+                &middot;
+                Status: <span class="font-medium">{{ $variant->is_active ? 'Active' : 'Inactive' }}</span>
             </p>
         </div>
-        <div style="display: flex; gap: 1rem;">
-            <a href="{{ route('admin.variants.items.create', $variant) }}" class="btn-success">➕ Add New Item</a>
-            <a href="{{ route('admin.variants.index') }}" class="btn-back">← Back to Variants</a>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.variants.items.create', $variant) }}"
+               class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-plus"></i>
+                Add New Item
+            </a>
+            <a href="{{ route('admin.variants.index') }}"
+               class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-medium text-[#37474F] bg-white border border-[#E0E0E0] rounded hover:bg-gray-50 transition">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                Back to Variants
+            </a>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
+            {{ session('success') }}
+        </div>
     @endif
 
-    <div class="card">
+    <!-- Table -->
+    <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
         <div id="itemsTableContainer">
             @include('admin.variants.items.partials.table', ['items' => $items, 'variant' => $variant])
         </div>
     </div>
 
-    <div class="pagination-container">
+    <!-- Pagination -->
+    <div class="mt-4">
         {{ $items->links() }}
     </div>
-</div>
 
-<style>
-.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
-.btn-success { padding: 0.6rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; display: inline-block; }
-.btn-back { padding: 0.6rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; display: inline-block; }
-.alert-success { background: #d4edda; color: #155724; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; border: 1px solid #c3e6cb; }
-.card { background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
-.pagination-container { margin-top: 1.5rem; }
-</style>
+</div>
 @endsection
