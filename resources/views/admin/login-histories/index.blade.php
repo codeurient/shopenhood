@@ -11,6 +11,13 @@
             <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Login Histories</h2>
             <p class="text-gray-600 dark:text-gray-400 mt-1">Monitor user login activity and detect suspicious behavior</p>
         </div>
+        <form action="{{ route('admin.login-histories.clear-all') }}" method="POST" onsubmit="return confirm('This will permanently delete ALL login history records. This action cannot be undone. Continue?')">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm">
+                Clear All History
+            </button>
+        </form>
     </div>
 
     @if(session('success'))

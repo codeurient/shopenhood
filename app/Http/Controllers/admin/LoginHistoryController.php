@@ -106,6 +106,21 @@ class LoginHistoryController extends Controller
         return view('admin.login-histories.user', compact('user', 'loginHistories', 'stats'));
     }
 
+    public function clearAll()
+    {
+        $deletedCount = LoginHistory::count();
+
+        LoginHistory::truncate();
+
+        activity()
+            ->causedBy(auth()->guard('admin')->user())
+            ->log("Cleared all login histories ({$deletedCount} records)");
+
+        return redirect()
+            ->route('admin.login-histories.index')
+            ->with('success', "Successfully cleared all {$deletedCount} login history records.");
+    }
+
     public function blockIp(Request $request)
     {
         $request->validate(['ip_address' => 'required|ip']);

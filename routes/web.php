@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Business\ListingController as BusinessListingController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ListingReviewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\SearchSuggestionController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\User\AddressController as UserAddressController;
@@ -93,6 +95,13 @@ Route::get('/variations/{variation}', [ListingController::class, 'getVariation']
 Route::get('/legal', [LegalCenterController::class, 'index'])->name('legal.index');
 Route::get('/legal/{policy:slug}', [LegalCenterController::class, 'show'])->name('legal.show');
 
+// ── Blog (public) ─────────────────────────────────────────────────────────────
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{blogPost:slug}', [BlogController::class, 'show'])->name('blog.show');
+
+// ── Static Pages (public) ─────────────────────────────────────────────────────
+Route::get('/pages/{page:key}', [PublicPageController::class, 'show'])->name('pages.show');
+
 // Listing Reviews (auth required, rate limited)
 Route::middleware(['auth', 'throttle:10,1'])->group(function () {
     Route::post('/listings/{listing}/reviews', [ListingReviewController::class, 'store'])->name('listings.reviews.store');
@@ -149,7 +158,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('notifications')->name('user.notifications.')->group(function () {
         Route::get('/', [UserNotificationsController::class, 'index'])->name('index');
         Route::post('/read-all', [UserNotificationsController::class, 'markAllRead'])->name('read-all');
+        Route::delete('/delete-all', [UserNotificationsController::class, 'destroyAll'])->name('delete-all');
         Route::post('/{id}/read', [UserNotificationsController::class, 'markRead'])->name('read');
+        Route::delete('/{id}', [UserNotificationsController::class, 'destroy'])->name('destroy');
     });
 
     // User Address Management

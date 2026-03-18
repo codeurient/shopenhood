@@ -145,10 +145,10 @@
                         <div>
                             <h4 class="text-xs font-semibold text-white uppercase tracking-wider mb-3">Support</h4>
                             <ul class="space-y-2">
-                                <li><a href="#" class="text-xs hover:text-white transition-colors">Help Center</a></li>
-                                <li><a href="#" class="text-xs hover:text-white transition-colors">Contact Us</a></li>
-                                <li><a href="#" class="text-xs hover:text-white transition-colors">Privacy Policy</a></li>
-                                <li><a href="#" class="text-xs hover:text-white transition-colors">Terms of Service</a></li>
+                                <li><a href="{{ route('pages.show', 'help') }}" class="text-xs hover:text-white transition-colors">Help Center</a></li>
+                                <li><a href="{{ route('pages.show', 'contact') }}" class="text-xs hover:text-white transition-colors">Contact Us</a></li>
+                                <li><a href="{{ route('pages.show', 'privacy-policy') }}" class="text-xs hover:text-white transition-colors">Privacy Policy</a></li>
+                                <li><a href="{{ route('legal.index') }}" class="text-xs hover:text-white transition-colors">Terms of Service</a></li>
                             </ul>
                         </div>
 

@@ -241,4 +241,68 @@ theme: {
 
 ---
 
+## Button Consistency Rules
+
+All buttons across the application must follow a unified design system. Inconsistent implementations (e.g., using plain `<a>` tags without defined width/height) are not allowed, as they create visual clutter and layout issues.
+
+### Requirements
+
+* All buttons must use a consistent component structure (shared Blade component, reusable class, or UI component).
+* `<a>`, `<button>`, or any clickable element styled as a button must follow the same base styles.
+* Every button must have:
+
+  * Defined padding (e.g., `px-4 py-2`)
+  * Consistent height
+  * Proper alignment (`inline-flex items-center justify-center`)
+  * Spacing between icon and text (`gap-2`)
+  * Border radius (e.g., `rounded-xl`)
+* Buttons must NOT break layout or stack incorrectly due to missing styles.
+* Avoid raw, unstyled `<a>` elements acting as buttons.
+
+### Standard Example
+
+```html
+<a href="#" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-primary text-white gap-2">
+    <i class="fa-solid fa-plus"></i>
+    Add Item
+</a>
+```
+
+---
+
+## Icon Standardization Rules
+
+Emoji usage (e.g., 🌳, 📁, 🔧) is not allowed in the UI. All such icons must be replaced with a consistent icon system.
+
+### Requirements
+
+* Replace ALL emojis with icons from a unified library (recommended: Font Awesome).
+* Perform a full scan of the project and remove all emoji-based UI elements.
+* Use meaningful icons that match the context (action, content, status).
+* Ensure icons are used consistently across all pages.
+
+### Font Awesome Integration
+
+Add the CDN to the main layout:
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+```
+
+### Example Replacements
+
+* 🌳 → `<i class="fa-solid fa-tree"></i>`
+* 📁 → `<i class="fa-solid fa-folder"></i>`
+* 🔧 → `<i class="fa-solid fa-screwdriver-wrench"></i>`
+
+### Icon Usage Standard
+
+```html
+<i class="fa-solid fa-folder text-lg"></i>
+```
+
+
+
 *Use this file as the single source of truth when prompting Claude.ai to generate or refine any UI component — always reference the token names above instead of raw hex values.*

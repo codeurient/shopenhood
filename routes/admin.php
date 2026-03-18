@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\BusinessProfileController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CategoryVariantController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Admin\ListingVariantController;
 use App\Http\Controllers\Admin\LocationCityController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\LoginHistoryController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductVariationController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingController;
@@ -364,6 +366,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/', [ActivityLogController::class, 'index'])->name('index');
             Route::get('{activity}', [ActivityLogController::class, 'show'])->name('show');
             Route::delete('clear-old', [ActivityLogController::class, 'clearOld'])->name('clear-old');
+            Route::delete('clear-all', [ActivityLogController::class, 'clearAll'])->name('clear-all');
         });
 
         // ====================================================================
@@ -374,6 +377,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('{loginHistory}', [LoginHistoryController::class, 'show'])->name('show');
             Route::get('user/{user}', [LoginHistoryController::class, 'userHistory'])->name('user');
             Route::post('block-ip', [LoginHistoryController::class, 'blockIp'])->name('block-ip');
+            Route::delete('clear-all', [LoginHistoryController::class, 'clearAll'])->name('clear-all');
         });
 
         // ====================================================================
@@ -388,6 +392,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('{policy}', [LegalController::class, 'update'])->name('update');
             Route::delete('{policy}', [LegalController::class, 'destroy'])->name('destroy');
             Route::patch('{policy}/toggle-status', [LegalController::class, 'toggleStatus'])->name('toggle-status');
+        });
+
+        // ====================================================================
+        // BLOG POSTS
+        // ====================================================================
+        Route::prefix('blog-posts')->name('blog-posts.')->group(function () {
+            Route::get('/', [BlogPostController::class, 'index'])->name('index');
+            Route::get('create', [BlogPostController::class, 'create'])->name('create');
+            Route::post('/', [BlogPostController::class, 'store'])->name('store');
+            Route::get('{blogPost}/edit', [BlogPostController::class, 'edit'])->name('edit');
+            Route::put('{blogPost}', [BlogPostController::class, 'update'])->name('update');
+            Route::delete('{blogPost}', [BlogPostController::class, 'destroy'])->name('destroy');
+        });
+
+        // ====================================================================
+        // PAGES (About, Privacy Policy, Payment Services, etc.)
+        // ====================================================================
+        Route::prefix('pages')->name('pages.')->group(function () {
+            Route::get('/', [PageController::class, 'index'])->name('index');
+            Route::get('{page}/edit', [PageController::class, 'edit'])->name('edit');
+            Route::put('{page}', [PageController::class, 'update'])->name('update');
         });
 
         // ====================================================================

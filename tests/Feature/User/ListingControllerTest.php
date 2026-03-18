@@ -131,14 +131,13 @@ test('user can toggle listing visibility', function () {
     expect($listing->is_visible)->toBeFalse();
 });
 
-test('user can soft delete own listing', function () {
+test('user can permanently delete own listing', function () {
     $listing = Listing::factory()->create(['user_id' => $this->user->id]);
 
     $response = $this->delete(route('user.listings.destroy', $listing));
 
     $response->assertRedirect(route('user.listings.index'));
-    expect(Listing::find($listing->id))->toBeNull();
-    expect(Listing::withTrashed()->find($listing->id))->not->toBeNull();
+    expect(Listing::withTrashed()->find($listing->id))->toBeNull();
 });
 
 test('user can reshare a trashed listing', function () {
@@ -541,6 +540,33 @@ test('index page only shows normal mode listings', function () {
     $response->assertDontSee('Business Listing Hidden');
 });
 
+test('user destroy permanently deletes listing and cleans up all image variants', function () {
+    Storage::fake('public');
+
+    $listing = Listing::factory()->create(['user_id' => $this->user->id]);
+    $listing->images()->create([
+        'image_path' => 'listings/main.jpg',
+        'thumbnail_path' => 'listings/main-thumb.jpg',
+        'medium_path' => 'listings/main-medium.jpg',
+        'original_filename' => 'main.jpg',
+        'file_size' => 1000,
+        'mime_type' => 'image/jpeg',
+        'sort_order' => 0,
+        'is_primary' => true,
+    ]);
+    Storage::disk('public')->put('listings/main.jpg', 'fake');
+    Storage::disk('public')->put('listings/main-thumb.jpg', 'fake');
+    Storage::disk('public')->put('listings/main-medium.jpg', 'fake');
+
+    $response = $this->delete(route('user.listings.destroy', $listing));
+
+    $response->assertRedirect(route('user.listings.index'));
+    expect(Listing::withTrashed()->find($listing->id))->toBeNull();
+    Storage::disk('public')->assertMissing('listings/main.jpg');
+    Storage::disk('public')->assertMissing('listings/main-thumb.jpg');
+    Storage::disk('public')->assertMissing('listings/main-medium.jpg');
+});
+
 test('normal user can force delete own trashed listing and files are cleaned up', function () {
     Storage::fake('public');
 
@@ -566,7 +592,7 @@ test('normal user can force delete own trashed listing and files are cleaned up'
     Storage::disk('public')->assertMissing($imagePath);
 });
 
-test('user can bulk soft-delete selected active listings', function () {
+test('user can bulk permanently delete selected active listings', function () {
     $listing1 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);
     $listing2 = Listing::factory()->create(['user_id' => $this->user->id, 'listing_mode' => 'normal']);
 
@@ -575,7 +601,7 @@ test('user can bulk soft-delete selected active listings', function () {
     $response->assertRedirect(route('user.listings.index'));
     $response->assertSessionHas('success');
 
-    $this->assertSoftDeleted('listings', ['id' => $listing1->id]);
+    $this->assertDatabaseMissing('listings', ['id' => $listing1->id]);
     $this->assertDatabaseHas('listings', ['id' => $listing2->id, 'deleted_at' => null]);
 });
 

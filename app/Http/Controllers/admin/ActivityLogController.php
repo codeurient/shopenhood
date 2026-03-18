@@ -123,4 +123,22 @@ class ActivityLogController extends Controller
             ->route('admin.activity-logs.index')
             ->with('success', "Successfully deleted {$deletedCount} old activity logs.");
     }
+
+    /**
+     * Clear all activity logs permanently.
+     */
+    public function clearAll()
+    {
+        $deletedCount = Activity::count();
+
+        Activity::truncate();
+
+        activity()
+            ->causedBy(auth()->guard('admin')->user())
+            ->log("Cleared all activity logs ({$deletedCount} records)");
+
+        return redirect()
+            ->route('admin.activity-logs.index')
+            ->with('success', "Successfully cleared all {$deletedCount} activity logs.");
+    }
 }

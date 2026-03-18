@@ -3,13 +3,25 @@
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Notifications</h2>
             @if($notifications->isNotEmpty())
-                <form method="POST" action="{{ route('user.notifications.read-all') }}">
-                    @csrf
-                    <button type="submit"
-                            class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-sm font-medium transition">
-                        Mark all as read
-                    </button>
-                </form>
+                <div class="flex items-center gap-2">
+                    <form method="POST" action="{{ route('user.notifications.read-all') }}">
+                        @csrf
+                        <button type="submit"
+                                class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-sm font-medium transition">
+                            Mark all as read
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('user.notifications.delete-all') }}"
+                          x-data
+                          @submit.prevent="$dispatch('open-confirm-modal', { message: 'Delete all notifications? This cannot be undone.', form: $el })">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                                class="px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-lg text-sm font-medium transition">
+                            Delete all
+                        </button>
+                    </form>
+                </div>
             @endif
         </div>
     </x-slot>
@@ -102,12 +114,24 @@
                             </p>
                         </div>
 
-                        {{-- Unread indicator --}}
-                        @if($isUnread)
-                            <div class="flex-shrink-0 pt-1">
+                        {{-- Actions --}}
+                        <div class="flex-shrink-0 flex items-center gap-2 pt-0.5">
+                            @if($isUnread)
                                 <span class="block w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                            </div>
-                        @endif
+                            @endif
+                            <form method="POST" action="{{ route('user.notifications.destroy', $notification->id) }}"
+                                  x-data
+                                  @submit.prevent="$dispatch('open-confirm-modal', { message: 'Delete this notification?', form: $el })">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" title="Delete notification"
+                                        class="text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 transition p-1 rounded">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
                 @empty

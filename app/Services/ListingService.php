@@ -124,6 +124,7 @@ class ListingService
             ->get();
 
         foreach ($listings as $listing) {
+            $this->deleteListingFiles($listing);
             $listing->forceDelete();
         }
 
@@ -196,29 +197,33 @@ class ListingService
 
     public function softDeleteListing(User $user, Listing $listing): void
     {
-        $listing->delete();
+        $this->forceDeleteListing($user, $listing);
     }
 
     /**
-     * Force delete a listing and all its associated files. Only for already-trashed listings.
+     * Permanently delete a listing and all its associated storage files.
      */
     public function forceDeleteListing(User $user, Listing $listing): void
     {
-        if ($listing->trashed()) {
-            // Nullify FK references in orders and order_items to allow permanent deletion
-            \App\Models\Order::where('listing_id', $listing->id)->update(['listing_id' => null]);
-            \Illuminate\Support\Facades\DB::table('order_items')->where('listing_id', $listing->id)->update(['listing_id' => null]);
+        // Nullify FK references in orders and order_items to allow permanent deletion
+        \App\Models\Order::where('listing_id', $listing->id)->update(['listing_id' => null]);
+        \Illuminate\Support\Facades\DB::table('order_items')->where('listing_id', $listing->id)->update(['listing_id' => null]);
 
-            // Delete listing image files (model events fire, cleaning up storage)
-            $listing->images->each->delete();
+        $this->deleteListingFiles($listing);
 
-            // Delete variation image files via model events
-            $listing->variations()->with('images')->get()->each(function ($variation): void {
-                $variation->images->each->delete();
-            });
+        $listing->forceDelete();
+    }
 
-            $listing->forceDelete();
-        }
+    /**
+     * Delete all storage files associated with a listing (images and variation images).
+     */
+    private function deleteListingFiles(Listing $listing): void
+    {
+        $listing->images->each->delete();
+
+        $listing->variations()->with('images')->get()->each(function ($variation): void {
+            $variation->images->each->delete();
+        });
     }
 
     // ============================================

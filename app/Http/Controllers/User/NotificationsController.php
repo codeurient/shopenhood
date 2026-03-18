@@ -34,4 +34,18 @@ class NotificationsController extends Controller
 
         return back()->with('success', 'All notifications marked as read.');
     }
+
+    public function destroy(Request $request, string $id): RedirectResponse
+    {
+        $request->user()->notifications()->where('id', $id)->delete();
+
+        return back()->with('success', 'Notification deleted.');
+    }
+
+    public function destroyAll(Request $request): RedirectResponse
+    {
+        $request->user()->notifications()->delete();
+
+        return back()->with('success', 'All notifications deleted.');
+    }
 }

@@ -342,7 +342,7 @@ class ListingController extends Controller
 
         return redirect()
             ->route('user.listings.index')
-            ->with('success', 'Listing deleted. You can reshare it within the retention period.');
+            ->with('success', 'Listing permanently deleted.');
     }
 
     public function forceDestroy(int $listing_id)

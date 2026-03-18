@@ -11,13 +11,22 @@
             <h2 class="text-3xl font-bold text-gray-900">Activity Logs</h2>
             <p class="text-gray-600 mt-1">Monitor all admin actions and system activities</p>
         </div>
-        <form action="{{ route('admin.activity-logs.clear-old') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete old activity logs? This action cannot be undone.')">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                🗑️ Clear Old Logs
-            </button>
-        </form>
+        <div class="flex gap-3">
+            <form action="{{ route('admin.activity-logs.clear-old') }}" method="POST" onsubmit="return confirm('Delete logs older than the configured retention period? This cannot be undone.')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition text-sm">
+                    Clear Old Logs
+                </button>
+            </form>
+            <form action="{{ route('admin.activity-logs.clear-all') }}" method="POST" onsubmit="return confirm('This will permanently delete ALL activity logs. This action cannot be undone. Continue?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm">
+                    Clear All Logs
+                </button>
+            </form>
+        </div>
     </div>
 
     @if(session('success'))

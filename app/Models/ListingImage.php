@@ -15,7 +15,11 @@ class ListingImage extends Model
         parent::boot();
 
         static::deleting(function (ListingImage $image): void {
-            Storage::disk('public')->delete($image->image_path);
+            Storage::disk('public')->delete(array_values(array_filter([
+                $image->image_path,
+                $image->thumbnail_path,
+                $image->medium_path,
+            ])));
         });
     }
 

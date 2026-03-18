@@ -868,18 +868,19 @@ class ListingController extends Controller
             return back()->with('error', 'No listings selected.');
         }
 
+        $admin = auth()->guard('admin')->user();
         $listings = Listing::whereIn('id', $ids)->get();
         $count = $listings->count();
 
-        $listings->each->delete();
+        $listings->each(fn ($listing) => $this->listingService->forceDeleteListing($admin, $listing));
 
         activity()
-            ->causedBy(auth()->guard('admin')->user())
-            ->log("Bulk deleted {$count} listing(s)");
+            ->causedBy($admin)
+            ->log("Bulk permanently deleted {$count} listing(s)");
 
         return redirect()
             ->route('admin.listings.index')
-            ->with('success', "{$count} listing(s) deleted.");
+            ->with('success', "{$count} listing(s) permanently deleted.");
     }
 
     /**
@@ -935,28 +936,19 @@ class ListingController extends Controller
     public function destroy(Listing $listing)
     {
         try {
-            DB::beginTransaction();
-
-            // Store listing title for message
             $title = $listing->title;
 
-            // Delete the listing (soft delete)
-            $listing->delete();
-
-            DB::commit();
+            $this->listingService->forceDeleteListing(auth()->guard('admin')->user(), $listing);
 
             activity()
-                ->performedOn($listing)
                 ->causedBy(auth()->guard('admin')->user())
-                ->log('Listing deleted');
+                ->log("Listing \"{$title}\" permanently deleted");
 
             return redirect()
                 ->route('admin.listings.index')
-                ->with('success', "Listing \"{$title}\" has been deleted successfully");
+                ->with('success', "Listing \"{$title}\" has been permanently deleted");
 
         } catch (\Exception $e) {
-            DB::rollBack();
-
             Log::error('Listing deletion failed', [
                 'listing_id' => $listing->id,
                 'error' => $e->getMessage(),
