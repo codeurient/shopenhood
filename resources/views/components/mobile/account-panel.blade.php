@@ -87,7 +87,7 @@
     @endphp
 
     @php
-        $panelPages = \App\Models\Page::where('is_published', true)->orderBy('title')->get();
+        $panelPages = \App\Models\Page::where('is_published', true)->orderBy('sort_order')->orderBy('id')->get();
         $currentPageKey = request()->route('page')?->key ?? null;
     @endphp
 
@@ -135,6 +135,14 @@
     </nav>
 
     {{-- Language + Contact + Social footer (sticky to bottom) --}}
+    @php
+        $contactPhone   = \App\Models\Setting::getValue('contact.phone', '');
+        $contactEmail   = \App\Models\Setting::getValue('contact.email', '');
+        $socialFacebook = \App\Models\Setting::getValue('social.facebook', '');
+        $socialInstagram= \App\Models\Setting::getValue('social.instagram', '');
+        $socialTwitter  = \App\Models\Setting::getValue('social.twitter', '');
+    @endphp
+
     <div class="mt-auto px-3 py-3 border-t border-[#E0E0E0] space-y-3">
 
         {{-- Language --}}
@@ -144,30 +152,44 @@
         </div>
 
         {{-- Contact --}}
+        @if($contactPhone || $contactEmail)
         <div class="space-y-1.5">
             <p class="text-[10px] font-semibold text-[#37474F] uppercase tracking-wider">Contact Us</p>
-            <a href="tel:+012526-19-19" class="flex items-center gap-2 text-[13px] text-[#37474F] hover:text-[#D4AF37] transition-colors">
+            @if($contactPhone)
+            <a href="tel:{{ $contactPhone }}" class="flex items-center gap-2 text-[13px] text-[#37474F] hover:text-[#D4AF37] transition-colors">
                 <i class="fa-solid fa-phone w-3.5 flex-shrink-0 text-[#37474F]"></i>
-                (012) 526-19-19
+                {{ $contactPhone }}
             </a>
-            <a href="mailto:info@shopenhood.com" class="flex items-center gap-2 text-[13px] text-[#37474F] hover:text-[#D4AF37] transition-colors">
+            @endif
+            @if($contactEmail)
+            <a href="mailto:{{ $contactEmail }}" class="flex items-center gap-2 text-[13px] text-[#37474F] hover:text-[#D4AF37] transition-colors">
                 <i class="fa-solid fa-envelope w-3.5 flex-shrink-0 text-[#37474F]"></i>
-                info@shopenhood.com
+                {{ $contactEmail }}
             </a>
+            @endif
         </div>
+        @endif
 
         {{-- Social Media --}}
+        @if($socialFacebook || $socialInstagram || $socialTwitter)
         <div class="flex items-center gap-3">
-            <a href="#" class="w-7 h-7 rounded border border-[#E0E0E0] hover:border-[#D4AF37] flex items-center justify-center transition-colors">
+            @if($socialFacebook)
+            <a href="{{ $socialFacebook }}" target="_blank" class="w-7 h-7 rounded border border-[#E0E0E0] hover:border-[#D4AF37] flex items-center justify-center transition-colors">
                 <i class="fa-brands fa-facebook-f text-[#37474F] text-xs"></i>
             </a>
-            <a href="#" class="w-7 h-7 rounded border border-[#E0E0E0] hover:border-[#D4AF37] flex items-center justify-center transition-colors">
+            @endif
+            @if($socialInstagram)
+            <a href="{{ $socialInstagram }}" target="_blank" class="w-7 h-7 rounded border border-[#E0E0E0] hover:border-[#D4AF37] flex items-center justify-center transition-colors">
                 <i class="fa-brands fa-instagram text-[#37474F] text-xs"></i>
             </a>
-            <a href="#" class="w-7 h-7 rounded border border-[#E0E0E0] hover:border-[#D4AF37] flex items-center justify-center transition-colors">
+            @endif
+            @if($socialTwitter)
+            <a href="{{ $socialTwitter }}" target="_blank" class="w-7 h-7 rounded border border-[#E0E0E0] hover:border-[#D4AF37] flex items-center justify-center transition-colors">
                 <i class="fa-brands fa-x-twitter text-[#37474F] text-xs"></i>
             </a>
+            @endif
         </div>
+        @endif
 
     </div>
 

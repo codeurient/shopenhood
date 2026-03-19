@@ -32,15 +32,19 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-[#37474F] border-b border-[#000000]/20">
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider w-8"></th>
                         <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Page</th>
                         <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Visibility</th>
                         <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Last Updated</th>
                         <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="pages-sortable">
                     @foreach($pages as $page)
-                        <tr class="{{ $loop->even ? 'bg-white' : 'bg-gray-50' }} hover:bg-[#D4AF37]/5 transition-colors">
+                        <tr data-id="{{ $page->id }}" class="bg-white hover:bg-[#D4AF37]/5 transition-colors border-b border-[#E0E0E0] last:border-0">
+                            <td class="px-3 py-2.5">
+                                <i class="fa-solid fa-grip-vertical text-[#E0E0E0] hover:text-[#37474F] cursor-grab active:cursor-grabbing transition-colors"></i>
+                            </td>
                             <td class="px-3 py-2.5">
                                 <p class="text-[13px] font-medium text-[#1A1A1A]">{{ $page->title }}</p>
                                 <p class="text-[12px] text-[#37474F] font-mono">/pages/{{ $page->key }}</p>
@@ -86,7 +90,31 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script>
+// Drag-and-drop reorder
+const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '';
+
+Sortable.create(document.getElementById('pages-sortable'), {
+    animation: 150,
+    handle: '.fa-grip-vertical',
+    ghostClass: 'bg-[#D4AF37]/10',
+    onEnd() {
+        const order = [...document.querySelectorAll('#pages-sortable tr[data-id]')]
+            .map(tr => tr.dataset.id);
+
+        fetch('{{ route('admin.pages.reorder') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+            },
+            body: JSON.stringify({ order }),
+        });
+    },
+});
+
 function toggleVisibility(pageId, btn) {
     const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '';
     fetch(`{{ route('admin.pages.toggle-visibility', ':id') }}`.replace(':id', pageId), {

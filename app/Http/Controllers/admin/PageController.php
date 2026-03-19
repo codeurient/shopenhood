@@ -12,10 +12,20 @@ class PageController extends Controller
 {
     public function index(): View
     {
-        $keyOrder = array_keys(Page::PAGES);
-        $pages = Page::all()->sortBy(fn ($page) => array_search($page->key, $keyOrder))->values();
+        $pages = Page::orderBy('sort_order')->orderBy('id')->get();
 
         return view('admin.pages.index', compact('pages'));
+    }
+
+    public function reorder(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->validate(['order' => ['required', 'array'], 'order.*' => ['integer']]);
+
+        foreach ($request->order as $position => $id) {
+            Page::where('id', $id)->update(['sort_order' => $position + 1]);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     public function destroy(Page $page): RedirectResponse

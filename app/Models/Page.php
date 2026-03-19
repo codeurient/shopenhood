@@ -15,6 +15,7 @@ class Page extends Model
         'content',
         'meta_description',
         'is_published',
+        'sort_order',
     ];
 
     protected $casts = [

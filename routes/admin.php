@@ -436,6 +436,7 @@ Route::prefix(config('admin.path'))->name('admin.')->middleware('admin.ip')->gro
             Route::get('/', [PageController::class, 'index'])->name('index');
             Route::get('create', [PageController::class, 'create'])->name('create');
             Route::post('/', [PageController::class, 'store'])->name('store');
+            Route::post('reorder', [PageController::class, 'reorder'])->name('reorder');
             Route::get('{page}/edit', [PageController::class, 'edit'])->name('edit');
             Route::put('{page}', [PageController::class, 'update'])->name('update');
             Route::delete('{page}', [PageController::class, 'destroy'])->name('destroy');

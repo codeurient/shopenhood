@@ -55,7 +55,14 @@
                             </div>
                         </template>
                         <template x-if="!selectedAddress">
-                            <p class="text-sm text-red-500">No address selected. Please add a delivery address first.</p>
+                            <div class="flex items-center justify-between gap-3 p-3 bg-red-50 border border-red-200 rounded">
+                                <p class="text-sm text-red-600">No address selected. Please add a delivery address first.</p>
+                                <a href="{{ route('user.addresses.create') }}"
+                                   class="inline-flex items-center gap-1.5 flex-shrink-0 h-[28px] px-3 text-[12px] font-semibold text-[#000000] bg-[#D4AF37] rounded hover:brightness-110 transition">
+                                    <i class="fa-solid fa-plus text-xs"></i>
+                                    Add Address
+                                </a>
+                            </div>
                         </template>
                     </div>
 

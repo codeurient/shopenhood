@@ -1,180 +1,194 @@
 <x-guest-layout>
-    <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('user.purchases.index') }}" class="text-gray-400 hover:text-gray-600 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-            </a>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Order {{ $purchase->purchase_number }}
-            </h2>
-        </div>
-    </x-slot>
+    <x-slot name="title">Order {{ $purchase->purchase_number }} — {{ config('app.name') }}</x-slot>
 
-    <div class="py-6">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 space-y-5">
+    @php
+        $statusBadge = [
+            'pending'    => 'bg-[#37474F] text-[#E0E0E0]',
+            'processing' => 'bg-blue-100 text-blue-700',
+            'completed'  => 'bg-[#D4AF37]/20 text-[#D4AF37]',
+            'cancelled'  => 'bg-[#C0392B]/20 text-[#E74C3C]',
+        ];
+        $orderStatusBadge = [
+            'pending'    => 'bg-[#37474F] text-[#E0E0E0]',
+            'processing' => 'bg-blue-100 text-blue-700',
+            'shipped'    => 'bg-indigo-100 text-indigo-700',
+            'delivered'  => 'bg-teal-100 text-teal-700',
+            'completed'  => 'bg-[#D4AF37]/20 text-[#D4AF37]',
+            'cancelled'  => 'bg-[#C0392B]/20 text-[#E74C3C]',
+        ];
+    @endphp
 
-            {{-- Status & Summary --}}
-            @php
-                $statusColors = [
-                    'pending'    => 'bg-yellow-100 text-yellow-800',
-                    'processing' => 'bg-blue-100 text-blue-800',
-                    'completed'  => 'bg-green-100 text-green-800',
-                    'cancelled'  => 'bg-red-100 text-red-800',
-                ];
-                $statusColor = $statusColors[$purchase->status] ?? 'bg-gray-100 text-gray-700';
-            @endphp
-
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-400 font-mono">{{ $purchase->purchase_number }}</p>
-                        <p class="text-sm text-gray-500 mt-0.5">{{ $purchase->created_at->format('F d, Y · H:i') }}</p>
-                    </div>
-                    <span class="px-3 py-1 rounded-full text-sm font-semibold {{ $statusColor }}">
-                        {{ ucfirst($purchase->status) }}
-                    </span>
+    {{-- Hero Header --}}
+    <div class="bg-[#000000] py-12 px-4">
+        <div class="max-w-3xl mx-auto">
+            <nav class="flex items-center gap-2 text-xs text-[#37474F] mb-4">
+                <a href="{{ route('user.purchases.index') }}" class="hover:text-[#D4AF37] transition-colors">My Orders</a>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                <span class="text-[#E0E0E0]">{{ $purchase->purchase_number }}</span>
+            </nav>
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <h1 class="font-bold text-[#FFFFFF] font-['Inter','Segoe_UI',sans-serif]"
+                        style="font-size: clamp(1.25rem, 2.5vw, 2rem);">
+                        Order Details
+                    </h1>
+                    <p class="text-[#E0E0E0] text-sm mt-1 font-mono">{{ $purchase->purchase_number }}</p>
                 </div>
+                <span class="inline-flex items-center h-5 px-3 rounded-[10px] text-[11px] font-semibold {{ $statusBadge[$purchase->status] ?? 'bg-[#37474F] text-[#E0E0E0]' }}">
+                    {{ ucfirst($purchase->status) }}
+                </span>
             </div>
+            <p class="text-[#37474F] text-xs mt-3">{{ $purchase->created_at->format('F d, Y · H:i') }}</p>
+        </div>
+    </div>
+
+    {{-- Content --}}
+    <div class="bg-[#FFFFFF] min-h-screen py-10 px-4">
+        <div class="max-w-3xl mx-auto flex flex-col gap-5">
 
             {{-- Delivery Address --}}
             @if($purchase->address_snapshot)
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Delivery Address</h3>
-                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    {{ $purchase->address_snapshot['recipient_name'] ?? '' }}
-                </p>
-                @if(!empty($purchase->address_snapshot['phone']))
-                    <p class="text-sm text-gray-500 mt-0.5">{{ $purchase->address_snapshot['phone'] }}</p>
-                @endif
-                @if(!empty($purchase->address_snapshot['full_address']))
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ $purchase->address_snapshot['full_address'] }}</p>
-                @endif
+            <div class="bg-[#FFFFFF] rounded-[8px] border border-[#E0E0E0] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+                <div class="px-5 py-3 border-b border-[#E0E0E0] flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-[#D4AF37] text-sm"></i>
+                    <h3 class="text-[13px] font-semibold text-[#1A1A1A] uppercase tracking-wider">Delivery Address</h3>
+                </div>
+                <div class="px-5 py-4">
+                    <p class="text-[13px] font-semibold text-[#1A1A1A]">{{ $purchase->address_snapshot['recipient_name'] ?? '' }}</p>
+                    @if(!empty($purchase->address_snapshot['phone']))
+                        <p class="text-[13px] text-[#37474F] mt-0.5">{{ $purchase->address_snapshot['phone'] }}</p>
+                    @endif
+                    @if(!empty($purchase->address_snapshot['full_address']))
+                        <p class="text-[13px] text-[#37474F] mt-1">{{ $purchase->address_snapshot['full_address'] }}</p>
+                    @endif
+                </div>
             </div>
             @endif
 
             {{-- Payment Method --}}
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Payment Method</h3>
-                <p class="text-sm text-gray-900 dark:text-gray-100">
-                    {{ $purchase->payment_method === 'cash_on_delivery' ? 'Cash on Delivery' : ucfirst($purchase->payment_method) }}
-                </p>
+            <div class="bg-[#FFFFFF] rounded-[8px] border border-[#E0E0E0] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+                <div class="px-5 py-3 border-b border-[#E0E0E0] flex items-center gap-2">
+                    <i class="fa-solid fa-credit-card text-[#D4AF37] text-sm"></i>
+                    <h3 class="text-[13px] font-semibold text-[#1A1A1A] uppercase tracking-wider">Payment Method</h3>
+                </div>
+                <div class="px-5 py-4">
+                    <p class="text-[13px] text-[#1A1A1A]">
+                        {{ $purchase->payment_method === 'cash_on_delivery' ? 'Cash on Delivery' : ucfirst($purchase->payment_method) }}
+                    </p>
+                </div>
             </div>
 
             {{-- Orders grouped by seller --}}
             @foreach($ordersBySeller as $sellerId => $sellerOrders)
                 @php $firstOrder = $sellerOrders->first(); @endphp
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
-                    <div class="px-5 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                            Seller: {{ $firstOrder->listing?->user?->name ?? 'Unknown Seller' }}
+                <div class="bg-[#FFFFFF] rounded-[8px] border border-[#E0E0E0] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
+                    <div class="px-5 py-3 border-b border-[#E0E0E0] bg-[#F9F9F9] flex items-center gap-2">
+                        <i class="fa-solid fa-store text-[#D4AF37] text-sm"></i>
+                        <p class="text-[13px] font-semibold text-[#1A1A1A]">
+                            {{ $firstOrder->listing?->user?->name ?? 'Unknown Seller' }}
                         </p>
                     </div>
 
-                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                    <div class="divide-y divide-[#E0E0E0]">
                         @foreach($sellerOrders as $order)
                             @php
                                 $img = $order->listing?->primaryImage ?? $order->listing?->firstImage;
-                                $orderStatusColors = [
-                                    'pending'    => 'bg-yellow-100 text-yellow-700',
-                                    'processing' => 'bg-blue-100 text-blue-700',
-                                    'shipped'    => 'bg-indigo-100 text-indigo-700',
-                                    'delivered'  => 'bg-teal-100 text-teal-700',
-                                    'completed'  => 'bg-green-100 text-green-700',
-                                    'cancelled'  => 'bg-red-100 text-red-700',
-                                ];
-                                $orderStatusColor = $orderStatusColors[$order->status] ?? 'bg-gray-100 text-gray-700';
                             @endphp
-                            <div class="flex items-start gap-3 px-5 py-4" x-data="{ cancelOpen: false }">
+                            <div class="flex items-start gap-4 px-5 py-4" x-data="{ cancelOpen: false }">
+
+                                {{-- Image --}}
                                 @if($img)
                                     <img src="{{ asset('storage/'.$img->image_path) }}"
                                          alt="{{ $order->listing?->title }}"
-                                         class="w-14 h-14 rounded-lg object-cover border border-gray-100 flex-shrink-0">
+                                         class="w-14 h-14 rounded-[6px] object-cover border border-[#E0E0E0] flex-shrink-0">
                                 @else
-                                    <div class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-lg flex-shrink-0 flex items-center justify-center">
-                                        <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/>
-                                        </svg>
+                                    <div class="w-14 h-14 bg-[#F5F5F5] rounded-[6px] flex-shrink-0 flex items-center justify-center border border-[#E0E0E0]">
+                                        <i class="fa-solid fa-image text-[#E0E0E0] text-lg"></i>
                                     </div>
                                 @endif
+
+                                {{-- Details --}}
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 leading-snug">
+                                    <p class="text-[13px] font-semibold text-[#1A1A1A] leading-snug">
                                         {{ $order->listing?->title ?? 'Deleted listing' }}
                                     </p>
                                     @if($order->variation)
-                                        <p class="text-xs text-gray-400 mt-0.5">
+                                        <p class="text-[12px] text-[#37474F] mt-0.5">
                                             {{ collect($order->variation->variant_combination)->values()->implode(' / ') }}
                                         </p>
                                     @endif
-                                    <div class="flex items-center gap-3 mt-1">
-                                        <p class="text-xs text-gray-500">Qty: {{ $order->quantity }}</p>
-                                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $orderStatusColor }}">
+                                    <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                                        <span class="text-[12px] text-[#37474F]">Qty: {{ $order->quantity }}</span>
+                                        <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold {{ $orderStatusBadge[$order->status] ?? 'bg-[#37474F] text-[#E0E0E0]' }}">
                                             {{ ucfirst($order->status) }}
                                         </span>
                                     </div>
                                     @if($order->delivery_option_name)
-                                        <p class="text-xs text-gray-400 mt-1">
-                                            Delivery: {{ $order->delivery_option_name }}
+                                        <p class="text-[12px] text-[#37474F] mt-1">
+                                            <i class="fa-solid fa-truck text-xs mr-1"></i>
+                                            {{ $order->delivery_option_name }}
                                             @if($order->shipping_cost > 0)
                                                 — {{ number_format($order->shipping_cost, 2) }} {{ $order->currency }}
                                                 @if($order->delivery_cost_paid_by === 'buyer')
                                                     <span class="text-orange-500">(pay seller directly)</span>
                                                 @endif
                                             @else
-                                                <span class="text-green-600">FREE</span>
+                                                <span class="text-[#D4AF37] font-semibold">FREE</span>
                                             @endif
                                         </p>
                                     @endif
                                     @if($order->tracking_number)
-                                        <p class="text-xs text-indigo-600 dark:text-indigo-400 mt-1 font-medium">
-                                            Tracking: {{ $order->tracking_number }}
+                                        <p class="text-[12px] text-[#37474F] mt-1">
+                                            <i class="fa-solid fa-barcode text-xs mr-1"></i>
+                                            Tracking: <span class="font-mono font-semibold text-[#1A1A1A]">{{ $order->tracking_number }}</span>
                                         </p>
                                     @endif
                                     @if($order->isCancelled() && $order->cancellation_reason)
-                                        <p class="text-xs text-red-500 mt-1">
+                                        <p class="text-[12px] text-[#E74C3C] mt-1">
                                             Reason: {{ $order->cancellation_reason }}
                                         </p>
                                     @endif
                                     @if($order->canBeCancelled())
                                         <button @click="cancelOpen = true" type="button"
-                                                class="mt-2 text-xs text-red-500 hover:text-red-700 underline underline-offset-2 transition">
+                                                class="mt-2 text-[12px] text-[#C0392B] hover:text-[#E74C3C] underline underline-offset-2 transition">
                                             Cancel this order
                                         </button>
                                     @endif
                                 </div>
+
+                                {{-- Price --}}
                                 <div class="text-right flex-shrink-0">
-                                    <p class="text-sm font-bold text-gray-900 dark:text-gray-100">
+                                    <p class="text-[13px] font-bold text-[#1A1A1A]">
                                         {{ number_format($order->subtotal, 2) }} {{ $order->currency }}
                                     </p>
-                                    <p class="text-xs text-gray-400">
+                                    <p class="text-[12px] text-[#37474F]">
                                         {{ number_format($order->unit_price, 2) }} × {{ $order->quantity }}
                                     </p>
                                 </div>
 
-                                {{-- Cancel Order Modal --}}
+                                {{-- Cancel Modal --}}
                                 <template x-teleport="body">
                                     <div x-show="cancelOpen" x-cloak
                                          class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
                                          @click.self="cancelOpen = false">
-                                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm p-6">
-                                            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">Cancel Order</h3>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                                Cancel <span class="font-mono font-semibold">{{ $order->order_number }}</span>?
+                                        <div class="bg-[#FFFFFF] rounded-[8px] border border-[#E0E0E0] shadow-xl w-full max-w-sm p-6">
+                                            <h3 class="text-[14px] font-semibold text-[#1A1A1A] mb-1">Cancel Order</h3>
+                                            <p class="text-[13px] text-[#37474F] mb-4">
+                                                Cancel <span class="font-mono font-semibold text-[#1A1A1A]">{{ $order->order_number }}</span>?
                                                 This cannot be undone.
                                             </p>
                                             <form method="POST" action="{{ route('user.orders.cancel', $order) }}">
                                                 @csrf
                                                 <textarea name="reason" rows="3"
                                                           placeholder="Reason for cancellation (optional)"
-                                                          class="w-full text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-red-400 resize-none"></textarea>
+                                                          class="w-full text-[13px] border border-[#E0E0E0] rounded px-3 py-2 text-[#1A1A1A] focus:border-[#D4AF37] focus:outline-none resize-none"></textarea>
                                                 <div class="flex gap-3 mt-4">
                                                     <button type="submit"
-                                                            class="flex-1 py-2 text-sm font-semibold bg-red-500 hover:bg-red-600 text-white rounded-lg transition">
+                                                            class="flex-1 h-[34px] text-[13px] font-semibold bg-[#C0392B] hover:bg-[#a93226] text-white rounded transition">
                                                         Yes, Cancel
                                                     </button>
                                                     <button type="button" @click="cancelOpen = false"
-                                                            class="flex-1 py-2 text-sm font-semibold border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                                            class="flex-1 h-[34px] text-[13px] font-semibold border border-[#E0E0E0] text-[#37474F] rounded hover:bg-gray-50 transition">
                                                         Keep Order
                                                     </button>
                                                 </div>
@@ -189,25 +203,35 @@
             @endforeach
 
             {{-- Cost Breakdown --}}
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 space-y-2">
-                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+            <div class="bg-[#FFFFFF] rounded-[8px] border border-[#E0E0E0] shadow-[0_1px_4px_rgba(0,0,0,0.08)] px-5 py-4 flex flex-col gap-2">
+                <div class="flex justify-between text-[13px] text-[#37474F]">
                     <span>Subtotal</span>
                     <span>{{ number_format($purchase->subtotal, 2) }} {{ $purchase->currency }}</span>
                 </div>
-                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                <div class="flex justify-between text-[13px] text-[#37474F]">
                     <span>Delivery</span>
                     @if($purchase->shipping_cost > 0)
                         <span>{{ number_format($purchase->shipping_cost, 2) }} {{ $purchase->currency }}</span>
                     @else
-                        <span class="text-green-600 font-medium">FREE</span>
+                        <span class="text-[#D4AF37] font-semibold">FREE</span>
                     @endif
                 </div>
-                <div class="flex justify-between text-sm font-bold text-gray-900 dark:text-gray-100 pt-2 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex justify-between text-[14px] font-bold text-[#1A1A1A] pt-3 border-t border-[#E0E0E0]">
                     <span>Total</span>
                     <span>{{ number_format($purchase->total_amount, 2) }} {{ $purchase->currency }}</span>
                 </div>
             </div>
 
+            {{-- Back link --}}
+            <div>
+                <a href="{{ route('user.purchases.index') }}"
+                   class="inline-flex items-center justify-center gap-2 h-[34px] px-[14px] rounded-[4px] border border-[#D4AF37] text-[#D4AF37] text-[13px] font-semibold hover:bg-[#D4AF37]/10 transition-colors">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    Back to My Orders
+                </a>
+            </div>
+
         </div>
     </div>
+
 </x-guest-layout>

@@ -119,13 +119,32 @@
             </form>
         </div>
 
-        <!-- Right: Favorites (auth) + Cart + Account -->
+        <!-- Right: Notifications + Favorites (auth) + Cart + Account -->
         <div class="flex items-center gap-1 flex-shrink-0 ml-auto">
 
             @auth
+            {{-- Notifications --}}
+            @php $unreadCount = auth()->user()->unreadNotifications()->count(); @endphp
+            <a href="{{ route('user.notifications.index') }}"
+               class="relative flex items-center justify-center w-9 h-9 rounded hover:bg-white/10 transition-colors">
+                <i class="fa-regular fa-bell text-[#E0E0E0] text-lg"></i>
+                @if($unreadCount > 0)
+                <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 px-0.5 text-[10px] font-bold text-[#000000] bg-[#D4AF37] rounded-full">
+                    {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                </span>
+                @endif
+            </a>
+
+            {{-- Favorites --}}
+            @php $favCount = auth()->user()->favoriteListings()->count(); @endphp
             <a href="{{ route('user.favorites.index') }}"
                class="relative flex items-center justify-center w-9 h-9 rounded hover:bg-white/10 transition-colors">
                 <i class="fa-regular fa-heart text-[#E0E0E0] text-lg"></i>
+                @if($favCount > 0)
+                <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 px-0.5 text-[10px] font-bold text-[#000000] bg-[#D4AF37] rounded-full">
+                    {{ $favCount > 9 ? '9+' : $favCount }}
+                </span>
+                @endif
             </a>
             @endauth
 
@@ -136,8 +155,8 @@
                 <i class="fa-solid fa-cart-shopping text-[#E0E0E0] text-lg"></i>
                 <span x-show="count > 0" x-cloak
                       style="display:none;"
-                      class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-[#000000] bg-[#D4AF37] rounded-full"
-                      x-text="count"></span>
+                      class="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 px-0.5 text-[10px] font-bold text-[#000000] bg-[#D4AF37] rounded-full"
+                      x-text="count > 9 ? '9+' : count"></span>
             </button>
 
             <!-- Account Panel Button -->
