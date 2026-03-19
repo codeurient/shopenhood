@@ -52,9 +52,8 @@
     <div class="flex min-h-screen">
 
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 z-50 w-[220px] bg-[#37474F] flex flex-col transform transition-transform duration-300 ease-in-out md:sticky md:top-0 md:h-screen md:translate-x-0"
-               :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-               @click.away="sidebarOpen = false">
+        <aside class="fixed inset-y-0 left-0 z-50 w-[220px] bg-[#37474F] flex flex-col transform transition-transform duration-300 ease-in-out -translate-x-full md:sticky md:top-0 md:h-screen md:translate-x-0"
+               :class="sidebarOpen ? '!translate-x-0' : '-translate-x-full'">
 
             <!-- Logo Bar -->
             <div class="bg-[#37474F] h-[52px] flex items-center px-3 gap-2 flex-shrink-0 border-b border-[#000000]/20">
