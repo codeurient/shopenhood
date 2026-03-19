@@ -28,24 +28,6 @@
         </form>
     </div>
 
-    @if(session('success'))
-        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded flex items-start gap-2">
-            <i class="fa-solid fa-circle-exclamation flex-shrink-0 mt-0.5"></i>
-            <ul class="text-[13px] space-y-1">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <form action="{{ route('admin.blog-posts.update', $blogPost) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')

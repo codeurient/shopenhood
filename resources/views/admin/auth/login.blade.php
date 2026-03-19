@@ -246,32 +246,6 @@
 
             <div class="divider"></div>
 
-            {{-- Alerts --}}
-            @if(session('error'))
-                <div class="alert alert-danger">
-                    <i class="fa-solid fa-circle-exclamation flex-shrink-0 mt-0.5"></i>
-                    <span>{{ session('error') }}</span>
-                </div>
-            @endif
-
-            @if(session('success'))
-                <div class="alert alert-success">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span>{{ session('success') }}</span>
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    <i class="fa-solid fa-circle-exclamation" style="flex-shrink:0;margin-top:1px;"></i>
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             {{-- Form --}}
             <form method="POST" action="{{ route('admin.login.submit') }}">
                 @csrf

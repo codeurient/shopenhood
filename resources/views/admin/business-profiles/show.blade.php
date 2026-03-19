@@ -60,13 +60,6 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-
     <!-- Confident Seller Review Panel -->
     @if($businessProfile->confident_seller_status)
     <div x-data="{ rejectOpen: false }" class="mb-5 rounded-[6px] border-2 p-5

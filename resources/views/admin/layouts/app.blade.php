@@ -341,6 +341,93 @@
         </div>
     </div>
 
+    <!-- Global Luxury Toast -->
+    @php
+        $toastSession = session('success') ? ['msg' => session('success'), 'type' => 'success']
+            : (session('error')   ? ['msg' => session('error'),   'type' => 'error']
+            : (session('warning') ? ['msg' => session('warning'), 'type' => 'warning']
+            : (session('info')    ? ['msg' => session('info'),    'type' => 'info']
+            : null)));
+    @endphp
+
+    <div id="luxury-toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none" style="min-width:320px;max-width:420px;"></div>
+
+    <script>
+    (function() {
+        var configs = {
+            success: { icon: 'fa-circle-check',      accent: '#D4AF37', bg: 'rgba(212,175,55,0.12)',  border: '#D4AF37' },
+            error:   { icon: 'fa-circle-xmark',      accent: '#E74C3C', bg: 'rgba(192,57,43,0.15)',   border: '#C0392B' },
+            warning: { icon: 'fa-triangle-exclamation', accent: '#F39C12', bg: 'rgba(243,156,18,0.12)', border: '#F39C12' },
+            info:    { icon: 'fa-circle-info',        accent: '#5DADE2', bg: 'rgba(93,173,226,0.12)',  border: '#5DADE2' },
+        };
+
+        window.showToast = function(message, type) {
+            type = type || 'success';
+            var c = configs[type] || configs.info;
+            var container = document.getElementById('luxury-toast-container');
+
+            var toast = document.createElement('div');
+            toast.style.cssText = [
+                'background:#1A1A1A',
+                'border:1px solid ' + c.border,
+                'border-left:3px solid ' + c.accent,
+                'border-radius:6px',
+                'padding:14px 16px',
+                'display:flex',
+                'align-items:flex-start',
+                'gap:12px',
+                'pointer-events:auto',
+                'opacity:0',
+                'transform:translateX(30px)',
+                'transition:opacity 0.3s ease,transform 0.3s ease',
+                'position:relative',
+                'overflow:hidden',
+                'box-shadow:0 4px 20px rgba(0,0,0,0.5)',
+            ].join(';');
+
+            toast.innerHTML =
+                '<div style="flex-shrink:0;width:32px;height:32px;border-radius:50%;background:' + c.bg + ';display:flex;align-items:center;justify-content:center;">' +
+                    '<i class="fa-solid ' + c.icon + '" style="color:' + c.accent + ';font-size:14px;"></i>' +
+                '</div>' +
+                '<div style="flex:1;min-width:0;">' +
+                    '<p style="margin:0;font-size:13px;font-weight:600;color:#E0E0E0;line-height:1.4;">' + message + '</p>' +
+                '</div>' +
+                '<button onclick="this.closest(\'[data-toast]\').remove()" style="flex-shrink:0;background:none;border:none;cursor:pointer;padding:0;color:#E0E0E0;opacity:0.5;font-size:14px;line-height:1;" title="Dismiss">' +
+                    '<i class="fa-solid fa-xmark"></i>' +
+                '</button>' +
+                '<div class="toast-bar" style="position:absolute;bottom:0;left:0;height:2px;background:' + c.accent + ';width:100%;transform-origin:left;transition:width 4s linear;"></div>';
+
+            toast.setAttribute('data-toast', '1');
+            container.appendChild(toast);
+
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translateX(0)';
+                    var bar = toast.querySelector('.toast-bar');
+                    if (bar) { bar.style.width = '0%'; }
+                });
+            });
+
+            var timer = setTimeout(function() { dismissToast(toast); }, 4000);
+            toast.addEventListener('mouseenter', function() { clearTimeout(timer); });
+            toast.addEventListener('mouseleave', function() { timer = setTimeout(function() { dismissToast(toast); }, 1500); });
+        };
+
+        function dismissToast(toast) {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(30px)';
+            setTimeout(function() { if (toast.parentNode) { toast.parentNode.removeChild(toast); } }, 300);
+        }
+
+        @if($toastSession)
+        document.addEventListener('DOMContentLoaded', function() {
+            window.showToast(@json($toastSession['msg']), @json($toastSession['type']));
+        });
+        @endif
+    })();
+    </script>
+
     <script>
     window.luxuryConfirm = function(message, title) {
         return new Promise(function(resolve) {

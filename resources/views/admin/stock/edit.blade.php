@@ -30,20 +30,6 @@
                 </div>
 
                 <div class="p-5">
-                    @if(session('success'))
-                        <div class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 rounded flex items-center gap-2">
-                            <i class="fa-solid fa-circle-check text-green-600"></i>
-                            <p class="text-[13px] text-green-700">{{ session('success') }}</p>
-                        </div>
-                    @endif
-
-                    @if(session('error'))
-                        <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded flex items-center gap-2">
-                            <i class="fa-solid fa-circle-exclamation text-[#C0392B]"></i>
-                            <p class="text-[13px] text-red-700">{{ session('error') }}</p>
-                        </div>
-                    @endif
-
                     <form method="POST" action="{{ route('admin.stock.adjust', $variation) }}">
                         @csrf
 

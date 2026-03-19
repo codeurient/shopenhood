@@ -19,20 +19,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="mb-6 p-4 bg-[#C0392B]/10 border-l-4 border-[#C0392B] text-[#C0392B] rounded flex items-center gap-2">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            {{ session('error') }}
-        </div>
-    @endif
-
     <!-- Statistics -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">

@@ -30,13 +30,6 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-
     <!-- Table -->
     <div class="bg-white border border-[#E0E0E0] rounded-[6px] shadow-[0_1px_4px_rgba(0,0,0,0.08)] overflow-hidden">
         <div id="itemsTableContainer">

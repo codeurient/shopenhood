@@ -19,13 +19,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-
     <!-- Filters -->
     <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-4 mb-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
         <form method="GET" action="{{ route('admin.blog-posts.index') }}" class="flex flex-wrap gap-3 items-center">

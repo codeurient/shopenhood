@@ -12,13 +12,6 @@
         <p class="text-[#37474F] text-sm mt-1">Configure platform-wide settings</p>
     </div>
 
-    @if(session('success'))
-        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-
     <form action="{{ route('admin.settings.update') }}" method="POST">
         @csrf
         @method('PUT')

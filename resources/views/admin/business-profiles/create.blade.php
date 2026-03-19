@@ -9,12 +9,6 @@
         <a href="{{ route('admin.users.edit', $user) }}" class="text-blue-600 hover:underline">&larr; Back to User</a>
     </div>
 
-    @if(session('error'))
-        <div class="mb-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg">
-            {{ session('error') }}
-        </div>
-    @endif
-
     {{-- User Info --}}
     <div class="bg-white rounded-lg shadow p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">Creating Profile For</h2>

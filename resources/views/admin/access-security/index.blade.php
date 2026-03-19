@@ -12,26 +12,6 @@
         <p class="text-[#37474F] text-sm mt-1">Manage the secret URL path used to access this admin panel</p>
     </div>
 
-    {{-- ── Flash ─────────────────────────────────────────────────────── --}}
-    @if(session('success'))
-        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-start gap-2 text-[13px]">
-            <i class="fa-solid fa-circle-check flex-shrink-0 mt-0.5"></i>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded text-[13px]">
-            <div class="flex items-center gap-2 mb-1">
-                <i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
-                <strong>Please fix the following errors:</strong>
-            </div>
-            <ul class="ml-6 list-disc space-y-0.5">
-                @foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach
-            </ul>
-        </div>
-    @endif
-
     {{-- ── Override Warning ─────────────────────────────────────────── --}}
     @if($isOverriddenByEnv)
         <div class="mb-5 flex items-start gap-3 p-4 bg-amber-50 border border-amber-300 rounded text-[13px] text-amber-800">

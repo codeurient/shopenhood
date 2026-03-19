@@ -19,19 +19,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded flex items-center gap-2">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            {{ session('error') }}
-        </div>
-    @endif
-
     <!-- Statistics -->
     @php
         $totalCount = \App\Models\Policy::count();
