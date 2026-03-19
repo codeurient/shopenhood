@@ -1,37 +1,42 @@
 <x-guest-layout>
     <x-slot name="title">Browse Listings — {{ config('app.name') }}</x-slot>
 
+    <!-- Listing Type Tabs -->
+    <x-mobile.listing-type-tabs :listingTypes="$listingTypes" :currentType="request('type')" />
+
+    <!-- Search Bar (mobile only) -->
+    <div class="md:hidden">
+        <x-mobile.search-bar />
+    </div>
+
     <!-- Category Scroll -->
     <x-mobile.category-scroll :categories="$categories" />
 
     <!-- Filter Bar -->
     <div class="bg-white border-b border-[#E0E0E0]">
-        <div class="max-w-[1250px] mx-auto px-4 md:px-6 py-2 flex items-center justify-between gap-2">
-            <!-- Active Filter Chips -->
-            <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-1">
+        <div class="max-w-[1250px] mx-auto px-4 md:px-6 py-2 flex items-center gap-2">
+            @php
+                $activeFilters = array_filter([
+                    'search'    => request('search'),
+                    'category'  => request('category'),
+                    'type'      => request('type'),
+                    'condition' => request('condition'),
+                    'country'   => request('country'),
+                    'city'      => request('city'),
+                    'min_price' => request('min_price'),
+                    'max_price' => request('max_price'),
+                ]);
+                $hasVariants = count(request('variant', [])) > 0;
+            @endphp
 
-                @php
-                    $activeFilters = array_filter([
-                        'search'    => request('search'),
-                        'category'  => request('category'),
-                        'type'      => request('type'),
-                        'condition' => request('condition'),
-                        'country'   => request('country'),
-                        'city'      => request('city'),
-                        'min_price' => request('min_price'),
-                        'max_price' => request('max_price'),
-                    ]);
-                    $hasVariants = count(request('variant', [])) > 0;
-                @endphp
-
-                @if(count($activeFilters) > 0 || $hasVariants)
-                    <!-- Clear all -->
-                    <a href="{{ route('listings.index') }}"
-                       class="flex items-center gap-1 px-2.5 h-[24px] border border-[#E0E0E0] text-[#37474F] rounded text-[11px] font-medium flex-shrink-0 hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors">
-                        <i class="fa-solid fa-xmark text-[9px]"></i>
-                        Clear all
-                    </a>
-                @endif
+            @if(count($activeFilters) > 0 || $hasVariants)
+            <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-1 min-w-0">
+                <!-- Clear all -->
+                <a href="{{ route('listings.index') }}"
+                   class="flex items-center gap-1 px-2.5 h-[24px] border border-[#E0E0E0] text-[#37474F] rounded text-[11px] font-medium flex-shrink-0 hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors">
+                    <i class="fa-solid fa-xmark text-[9px]"></i>
+                    Clear all
+                </a>
 
                 @if(request('search'))
                     <a href="{{ route('listings.index', request()->except('search', 'page')) }}"
@@ -54,9 +59,7 @@
                 @endif
 
                 @if(request('category'))
-                    @php
-                        $activeCat = \App\Models\Category::where('slug', request('category'))->first();
-                    @endphp
+                    @php $activeCat = \App\Models\Category::where('slug', request('category'))->first(); @endphp
                     @if($activeCat)
                         <a href="{{ route('listings.index', request()->except('category', 'page')) }}"
                            class="flex items-center gap-1 px-2.5 h-[24px] bg-[#D4AF37]/10 border border-[#D4AF37] text-[#1A1A1A] rounded text-[11px] font-medium flex-shrink-0 hover:bg-[#D4AF37]/20 transition-colors">
@@ -113,36 +116,9 @@
                         <i class="fa-solid fa-xmark text-[9px] text-[#37474F]"></i>
                     </a>
                 @endif
-
-                @if(count($activeFilters) === 0 && !$hasVariants)
-                    <button type="button"
-                            onclick="toggleFilterPanel()"
-                            class="flex items-center gap-1.5 text-[12px] text-[#37474F] hover:text-[#D4AF37] transition-colors">
-                        <i class="fa-solid fa-filter text-[11px]"></i>
-                        Add filters
-                    </button>
-                @endif
             </div>
+            @endif
 
-            <!-- Sort Dropdown -->
-            <form method="GET" action="{{ route('listings.index') }}" class="flex-shrink-0">
-                @foreach(request()->except('sort', 'page') as $key => $value)
-                    @if(is_array($value))
-                        @foreach($value as $subKey => $subVal)
-                            <input type="hidden" name="{{ $key }}[{{ $subKey }}]" value="{{ $subVal }}">
-                        @endforeach
-                    @else
-                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                    @endif
-                @endforeach
-                <select name="sort"
-                        onchange="this.form.submit()"
-                        class="text-[12px] border border-[#E0E0E0] bg-white rounded py-1.5 px-2 md:px-3 text-[#37474F] focus:outline-none focus:ring-0 focus:border-[#D4AF37] cursor-pointer transition-colors">
-                    <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Newest</option>
-                    <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Price: Low–High</option>
-                    <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Price: High–Low</option>
-                </select>
-            </form>
         </div>
     </div>
 

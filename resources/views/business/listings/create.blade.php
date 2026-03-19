@@ -1,26 +1,35 @@
 <x-app-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="bg-[#FFFFFF] min-h-screen py-8">
+        <div class="w-full">
 
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Create Business Listing</h2>
-                <a href="{{ route('business.listings.index') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 text-sm">
-                    &larr; Back to Business Listings
+            {{-- Page header --}}
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <p class="text-[11px] font-semibold text-[#D4AF37] uppercase tracking-[0.15em] mb-1">Business Panel</p>
+                    <h1 class="font-bold text-[#1A1A1A]" style="font-size:clamp(1.1rem,2vw,1.35rem);">Create Business Listing</h1>
+                </div>
+                <a href="{{ route('business.listings.index') }}"
+                   class="inline-flex items-center gap-2 h-[34px] px-4 border border-[#E0E0E0] text-[#37474F] text-[13px] font-medium rounded hover:border-[#D4AF37] hover:text-[#D4AF37] transition">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    Back
                 </a>
             </div>
 
+            {{-- Errors --}}
             @if($errors->any())
-                <div class="mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 rounded-lg">
-                    <ul class="list-disc list-inside">
+                <div class="mb-5 p-4 border-l-4 border-red-500 bg-red-50 rounded-r-[4px]">
+                    <ul class="space-y-1">
                         @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
+                            <li class="text-xs text-red-600 flex items-start gap-1.5">
+                                <i class="fa-solid fa-circle-exclamation mt-0.5 flex-shrink-0"></i>{{ $error }}
+                            </li>
                         @endforeach
                     </ul>
                 </div>
             @endif
 
             @if(session('error'))
-                <div class="mb-4 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-300 rounded-lg">
+                <div class="mb-5 p-4 border-l-4 border-red-500 bg-red-50 rounded-r-[4px] text-xs text-red-600">
                     {{ session('error') }}
                 </div>
             @endif
@@ -28,260 +37,299 @@
             <form action="{{ route('business.listings.store') }}" method="POST" enctype="multipart/form-data" id="listingForm">
                 @csrf
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {{-- Left Column --}}
-                    <div class="lg:col-span-2 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+                    {{-- ── Left / Main Column ── --}}
+                    <div class="lg:col-span-2 space-y-5">
 
                         {{-- Basic Information --}}
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Basic Information</h3>
-
+                        <div class="bg-[#FFFFFF] border border-[#E0E0E0] rounded-[8px] p-5" style="box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                            <h2 class="text-[13px] font-semibold text-[#1A1A1A] mb-4 pb-3 border-b border-[#E0E0E0]">
+                                <i class="fa-solid fa-circle-info text-[#D4AF37] mr-2"></i>Basic Information
+                            </h2>
                             <div class="space-y-4">
+
                                 {{-- Listing Type --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">
                                         Listing Type <span class="text-red-500">*</span>
                                     </label>
                                     <select name="listing_type_id" id="listing_type_id" required
-                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                                        <option value="">Select Type</option>
+                                            class="w-full h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                                        <option value="">Select type…</option>
                                         @foreach($listingTypes as $type)
                                             <option value="{{ $type->id }}" {{ old('listing_type_id') == $type->id ? 'selected' : '' }}>
-                                                {{ $type->icon }} {{ $type->name }}
+                                                {{ $type->name }}
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('listing_type_id')
+                                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
-                                {{-- Category (Hierarchical) --}}
+                                {{-- Category --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">
                                         Category <span class="text-red-500">*</span>
                                     </label>
-                                    <div id="categorySelectsContainer">
+                                    <div id="categorySelectsContainer" class="space-y-2">
                                         <select id="category_level_0" required
-                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 category-select"
+                                                class="w-full h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 category-select"
                                                 data-level="0">
-                                            <option value="">Select Category</option>
+                                            <option value="">Select category…</option>
                                         </select>
                                     </div>
                                     <input type="hidden" name="category_id" id="category_id_hidden" required>
                                     @error('category_id')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 {{-- Title --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">
                                         Title <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" name="title" id="title" required maxlength="255"
                                            value="{{ old('title') }}"
-                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                           placeholder="Product title…"
+                                           class="w-full h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
                                     @error('title')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 {{-- Short Description --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Short Description</label>
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">
+                                        Short Description
+                                    </label>
                                     <textarea name="short_description" rows="2" maxlength="500"
-                                              placeholder="Brief summary for preview (optional)"
-                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('short_description') }}</textarea>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Short summary shown in listings (max 500 characters)</p>
+                                              placeholder="Brief summary shown in listing cards (optional, max 500 characters)…"
+                                              class="w-full border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 py-2 resize-none placeholder-[#37474F]">{{ old('short_description') }}</textarea>
                                 </div>
 
                                 {{-- Full Description --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">
                                         Full Description <span class="text-red-500">*</span>
                                     </label>
                                     <textarea name="description" rows="6" required
-                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('description') }}</textarea>
+                                              placeholder="Detailed product description…"
+                                              class="w-full border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 py-2 resize-none placeholder-[#37474F]">{{ old('description') }}</textarea>
                                     @error('description')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Pricing --}}
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Pricing</h3>
+                        {{-- Pricing & Options --}}
+                        <div class="bg-[#FFFFFF] border border-[#E0E0E0] rounded-[8px] p-5" style="box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                            <h2 class="text-[13px] font-semibold text-[#1A1A1A] mb-4 pb-3 border-b border-[#E0E0E0]">
+                                <i class="fa-solid fa-tag text-[#D4AF37] mr-2"></i>Pricing &amp; Options
+                            </h2>
+                            <div class="space-y-5">
 
-                            <div class="space-y-4">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Currency</label>
-                                        <select name="currency"
-                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                                            <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
-                                            <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR</option>
-                                            <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP</option>
-                                        </select>
-                                    </div>
+                                {{-- Currency --}}
+                                <div class="max-w-[160px]">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">Currency</label>
+                                    <select name="currency"
+                                            class="w-full h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                                        <option value="USD" {{ old('currency', 'USD') === 'USD' ? 'selected' : '' }}>USD</option>
+                                        <option value="EUR" {{ old('currency') === 'EUR' ? 'selected' : '' }}>EUR</option>
+                                        <option value="GBP" {{ old('currency') === 'GBP' ? 'selected' : '' }}>GBP</option>
+                                    </select>
                                 </div>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Prices are set per variation in the product variations section below.</p>
+                                <p class="text-[11px] text-[#37474F]">Prices are set per variation in the product variations section below.</p>
 
                                 {{-- Product Condition --}}
-                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Product Condition <span class="text-red-500">*</span></label>
-                                    <div class="flex gap-6">
-                                        <label class="flex items-center">
-                                            <input type="radio" name="condition" value="new"
-                                                   {{ old('condition', 'new') === 'new' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">New</span>
-                                        </label>
-                                        <label class="flex items-center">
-                                            <input type="radio" name="condition" value="used"
-                                                   {{ old('condition') === 'used' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Second-hand</span>
-                                        </label>
+                                <div class="border-t border-[#E0E0E0] pt-4">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-2">
+                                        Product Condition <span class="text-red-500">*</span>
+                                    </label>
+                                    <div x-data="{ condition: '{{ old('condition', 'new') }}' }" class="space-y-3">
+                                        <div class="flex gap-6">
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="condition" value="new"
+                                                       x-model="condition"
+                                                       {{ old('condition', 'new') === 'new' ? 'checked' : '' }}
+                                                       class="w-4 h-4 accent-[#D4AF37]">
+                                                <span class="text-[13px] text-[#37474F]">New</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="condition" value="used"
+                                                       x-model="condition"
+                                                       {{ old('condition') === 'used' ? 'checked' : '' }}
+                                                       class="w-4 h-4 accent-[#D4AF37]">
+                                                <span class="text-[13px] text-[#37474F]">Second-hand</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="condition" value="refurbished"
+                                                       x-model="condition"
+                                                       {{ old('condition') === 'refurbished' ? 'checked' : '' }}
+                                                       class="w-4 h-4 accent-[#D4AF37]">
+                                                <span class="text-[13px] text-[#37474F]">Refurbished</span>
+                                            </label>
+                                        </div>
+                                        <div x-show="condition === 'refurbished'" x-cloak>
+                                            <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1">
+                                                Refurbished Details <span class="text-red-500">*</span>
+                                            </label>
+                                            <textarea name="refurbished_description" rows="3"
+                                                      placeholder="Describe which parts were modified or replaced and what changes were made…"
+                                                      class="w-full border border-[#E0E0E0] rounded focus:border-[#D4AF37] focus:ring-0 text-[13px] text-[#1A1A1A] placeholder-[#37474F] px-3 py-2 resize-none">{{ old('refurbished_description') }}</textarea>
+                                            @error('refurbished_description')
+                                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
 
-                                {{-- Product Availability --}}
-                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Product Availability <span class="text-red-500">*</span></label>
+                                {{-- Availability --}}
+                                <div class="border-t border-[#E0E0E0] pt-4">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-2">
+                                        Product Availability <span class="text-red-500">*</span>
+                                    </label>
                                     <div class="flex gap-6">
-                                        <label class="flex items-center">
+                                        <label class="flex items-center gap-2 cursor-pointer">
                                             <input type="radio" name="availability_type" value="in_stock"
                                                    {{ old('availability_type', 'in_stock') === 'in_stock' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">In Stock</span>
+                                                   class="w-4 h-4 accent-[#D4AF37]">
+                                            <span class="text-[13px] text-[#37474F]">In Stock</span>
                                         </label>
-                                        <label class="flex items-center">
+                                        <label class="flex items-center gap-2 cursor-pointer">
                                             <input type="radio" name="availability_type" value="available_by_order"
                                                    {{ old('availability_type') === 'available_by_order' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Available by Order</span>
+                                                   class="w-4 h-4 accent-[#D4AF37]">
+                                            <span class="text-[13px] text-[#37474F]">Available by Order</span>
                                         </label>
                                     </div>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Select "Available by Order" if the item is not currently in stock but can be supplied upon request.</p>
+                                    <p class="mt-1.5 text-[11px] text-[#37474F]">Select "Available by Order" if the item is not currently in stock but can be supplied upon request.</p>
                                 </div>
 
                                 {{-- Store Type --}}
-                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Store Type</label>
+                                <div class="border-t border-[#E0E0E0] pt-4">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-2">Store Type</label>
                                     <div class="flex gap-6">
-                                        <label class="flex items-center">
+                                        <label class="flex items-center gap-2 cursor-pointer">
                                             <input type="radio" name="has_store" value="0"
                                                    {{ old('has_store', '0') === '0' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">No Store</span>
+                                                   class="w-4 h-4 accent-[#D4AF37]">
+                                            <span class="text-[13px] text-[#37474F]">Online only</span>
                                         </label>
-                                        <label class="flex items-center">
+                                        <label class="flex items-center gap-2 cursor-pointer">
                                             <input type="radio" name="has_store" value="1"
                                                    {{ old('has_store') === '1' ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Store</span>
+                                                   class="w-4 h-4 accent-[#D4AF37]">
+                                            <span class="text-[13px] text-[#37474F]">Physical store</span>
                                         </label>
                                     </div>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Select "Store" if this product is sold from a physical store location.</p>
+                                    <p class="mt-1.5 text-[11px] text-[#37474F]">Select "Physical store" if this product is sold from a physical store location.</p>
                                 </div>
 
-                                {{-- Delivery Options --}}
-                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                    <div class="flex items-center mb-3">
+                                {{-- Delivery --}}
+                                <div class="border-t border-[#E0E0E0] pt-4">
+                                    <label class="flex items-center gap-2 cursor-pointer mb-3">
                                         <input type="checkbox" id="has_delivery" name="has_delivery" value="1"
                                                {{ old('has_delivery') ? 'checked' : '' }}
-                                               class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                        <label for="has_delivery" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Delivery Available</label>
-                                    </div>
+                                               class="w-4 h-4 accent-[#D4AF37] rounded">
+                                        <span class="text-[13px] font-semibold text-[#1A1A1A]">Delivery Available</span>
+                                    </label>
                                     <div id="deliveryFields" class="{{ old('has_delivery') ? '' : 'hidden' }} space-y-3">
                                         {{-- Same City --}}
-                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                                            <label class="flex items-center mb-3">
+                                        <div class="border border-[#E0E0E0] rounded-[6px] p-3">
+                                            <label class="flex items-center gap-2 cursor-pointer mb-3">
                                                 <input type="checkbox" name="has_same_city_delivery" value="1"
                                                        {{ old('has_same_city_delivery') ? 'checked' : '' }}
-                                                       class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                                <span class="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Same City</span>
+                                                       class="w-4 h-4 accent-[#D4AF37] rounded">
+                                                <span class="text-[13px] font-semibold text-[#1A1A1A]">Same City</span>
                                             </label>
                                             <div class="grid grid-cols-2 gap-3">
                                                 <div>
-                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Price</label>
+                                                    <label class="block text-[11px] text-[#37474F] mb-1">Price</label>
                                                     <input type="number" name="same_city_delivery_price" step="0.01" min="0"
                                                            value="{{ old('same_city_delivery_price') }}" placeholder="0.00"
-                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                           class="w-full h-[34px] border border-[#E0E0E0] text-[13px] text-[#1A1A1A] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
                                                 </div>
                                                 <div>
-                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Days</label>
+                                                    <label class="block text-[11px] text-[#37474F] mb-1">Days</label>
                                                     <input type="number" name="same_city_delivery_days" min="1" max="365"
                                                            value="{{ old('same_city_delivery_days') }}" placeholder="e.g. 1"
-                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                           class="w-full h-[34px] border border-[#E0E0E0] text-[13px] text-[#1A1A1A] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- Same Country --}}
-                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                                            <label class="flex items-center mb-3">
+                                        {{-- Domestic --}}
+                                        <div class="border border-[#E0E0E0] rounded-[6px] p-3">
+                                            <label class="flex items-center gap-2 cursor-pointer mb-3">
                                                 <input type="checkbox" name="has_domestic_delivery" value="1"
                                                        {{ old('has_domestic_delivery') ? 'checked' : '' }}
-                                                       class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                                <span class="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Same Country (Different City)</span>
+                                                       class="w-4 h-4 accent-[#D4AF37] rounded">
+                                                <span class="text-[13px] font-semibold text-[#1A1A1A]">Same Country (Different City)</span>
                                             </label>
                                             <div class="grid grid-cols-2 gap-3">
                                                 <div>
-                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Price</label>
+                                                    <label class="block text-[11px] text-[#37474F] mb-1">Price</label>
                                                     <input type="number" name="domestic_delivery_price" step="0.01" min="0"
                                                            value="{{ old('domestic_delivery_price') }}" placeholder="0.00"
-                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                           class="w-full h-[34px] border border-[#E0E0E0] text-[13px] text-[#1A1A1A] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
                                                 </div>
                                                 <div>
-                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Days</label>
+                                                    <label class="block text-[11px] text-[#37474F] mb-1">Days</label>
                                                     <input type="number" name="domestic_delivery_days" min="1" max="365"
                                                            value="{{ old('domestic_delivery_days') }}" placeholder="e.g. 3"
-                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                           class="w-full h-[34px] border border-[#E0E0E0] text-[13px] text-[#1A1A1A] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
                                                 </div>
                                             </div>
                                         </div>
                                         {{-- International --}}
-                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                                            <label class="flex items-center mb-3">
+                                        <div class="border border-[#E0E0E0] rounded-[6px] p-3">
+                                            <label class="flex items-center gap-2 cursor-pointer mb-3">
                                                 <input type="checkbox" name="has_international_delivery" value="1"
                                                        {{ old('has_international_delivery') ? 'checked' : '' }}
-                                                       class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500">
-                                                <span class="ml-2 text-sm font-semibold text-gray-700 dark:text-gray-300">International</span>
+                                                       class="w-4 h-4 accent-[#D4AF37] rounded">
+                                                <span class="text-[13px] font-semibold text-[#1A1A1A]">International</span>
                                             </label>
                                             <div class="grid grid-cols-2 gap-3">
                                                 <div>
-                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Price</label>
+                                                    <label class="block text-[11px] text-[#37474F] mb-1">Price</label>
                                                     <input type="number" name="international_delivery_price" step="0.01" min="0"
                                                            value="{{ old('international_delivery_price') }}" placeholder="0.00"
-                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                           class="w-full h-[34px] border border-[#E0E0E0] text-[13px] text-[#1A1A1A] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
                                                 </div>
                                                 <div>
-                                                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Days</label>
+                                                    <label class="block text-[11px] text-[#37474F] mb-1">Days</label>
                                                     <input type="number" name="international_delivery_days" min="1" max="365"
                                                            value="{{ old('international_delivery_days') }}" placeholder="e.g. 14"
-                                                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                                           class="w-full h-[34px] border border-[#E0E0E0] text-[13px] text-[#1A1A1A] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 
                         {{-- Location --}}
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Location</h3>
+                        <div class="bg-[#FFFFFF] border border-[#E0E0E0] rounded-[8px] p-5" style="box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                            <h2 class="text-[13px] font-semibold text-[#1A1A1A] mb-4 pb-3 border-b border-[#E0E0E0]">
+                                <i class="fa-solid fa-location-dot text-[#D4AF37] mr-2"></i>Location
+                            </h2>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country</label>
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">Country</label>
                                     <select id="country_select"
-                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                                        <option value="">Select Country</option>
+                                            class="w-full h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                                        <option value="">Select country…</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City</label>
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">City</label>
                                     <select name="location_id" id="city_select" disabled
-                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                            class="w-full h-[34px] border border-[#E0E0E0] text-[#37474F] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 disabled:opacity-50">
                                         <option value="">Select country first</option>
                                     </select>
                                 </div>
@@ -289,76 +337,81 @@
                         </div>
 
                         {{-- Store Information --}}
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Store Information</h3>
+                        <div class="bg-[#FFFFFF] border border-[#E0E0E0] rounded-[8px] p-5" style="box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                            <h2 class="text-[13px] font-semibold text-[#1A1A1A] mb-4 pb-3 border-b border-[#E0E0E0]">
+                                <i class="fa-solid fa-store text-[#D4AF37] mr-2"></i>Store Information
+                            </h2>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Store Name</label>
+                                <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">Store Name</label>
                                 <input type="text" name="store_name" value="{{ old('store_name') }}" maxlength="255"
                                        placeholder="Enter your store name"
-                                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Displayed as "Shared from [Store Name]"</p>
+                                       class="w-full h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
+                                <p class="mt-1.5 text-[11px] text-[#37474F]">Displayed as "Shared from [Store Name]"</p>
                             </div>
                         </div>
 
-                        {{-- SEO Settings --}}
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                            <div class="flex items-center justify-between mb-4">
+                        {{-- SEO --}}
+                        <div class="bg-[#FFFFFF] border border-[#E0E0E0] rounded-[8px] p-5" style="box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                            <div class="flex items-start justify-between mb-4 pb-3 border-b border-[#E0E0E0]">
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Search Engine Optimization (SEO)</h3>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Optimize how your product appears in search engines</p>
+                                    <h2 class="text-[13px] font-semibold text-[#1A1A1A]">
+                                        <i class="fa-solid fa-magnifying-glass text-[#D4AF37] mr-2"></i>Search Engine Optimisation
+                                    </h2>
+                                    <p class="text-[11px] text-[#37474F] mt-0.5">Optimise how your product appears in search engines</p>
                                 </div>
-                                <span class="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded">Pro Feature</span>
+                                <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-[#D4AF37]/20 text-[#D4AF37]">Pro</span>
                             </div>
 
                             {{-- Why SEO matters --}}
-                            <div class="mb-5 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                                <p class="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1">Why does SEO matter for your listing?</p>
-                                <p class="text-sm text-blue-700 dark:text-blue-300">When someone searches Google for your product, the <strong>Meta Title</strong> appears as the clickable blue headline and the <strong>Meta Description</strong> appears as the short text snippet below it. Well-written, keyword-rich fields increase your listing's visibility and click-through rate — bringing more potential buyers directly to your page without paid advertising.</p>
+                            <div class="mb-5 p-3 border-l-[3px] border-[#D4AF37] bg-[#FAFAF8] rounded-r-[4px]">
+                                <p class="text-[12px] font-semibold text-[#1A1A1A] mb-1">Why does SEO matter for your listing?</p>
+                                <p class="text-[12px] text-[#37474F] leading-relaxed">The <strong>Meta Title</strong> appears as the clickable headline on Google, and the <strong>Meta Description</strong> appears as the short text below it. Well-written, keyword-rich fields increase visibility and click-through rate — bringing buyers directly to your page without paid advertising.</p>
                             </div>
 
-                            {{-- Search result preview mock --}}
-                            <div class="mb-5 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                                <div class="px-3 py-2 bg-gray-100 dark:bg-gray-700 text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide">How your listing looks in search results</div>
-                                <div class="p-4 bg-white dark:bg-gray-900">
-                                    <p class="text-blue-600 dark:text-blue-400 text-base font-medium">Your Meta Title appears here as the clickable headline</p>
-                                    <p class="text-green-700 dark:text-green-500 text-xs mt-0.5">https://{{ parse_url(config('app.url'), PHP_URL_HOST) }}/listing/your-product-slug</p>
-                                    <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Your Meta Description appears here — a short summary that convinces the user to click through to your listing.</p>
+                            {{-- Search result preview --}}
+                            <div class="mb-5 border border-[#E0E0E0] rounded-[6px] overflow-hidden">
+                                <div class="px-3 py-2 bg-[#F5F5F5] text-[11px] text-[#37474F] font-semibold uppercase tracking-wider">
+                                    Search result preview
+                                </div>
+                                <div class="p-4 bg-white">
+                                    <p class="text-blue-600 text-[14px] font-medium">Your Meta Title appears here as the clickable headline</p>
+                                    <p class="text-green-700 text-[11px] mt-0.5">https://{{ parse_url(config('app.url'), PHP_URL_HOST) }}/listing/your-product-slug</p>
+                                    <p class="text-[#37474F] text-[13px] mt-1">Your Meta Description appears here — a short summary that convinces the user to click through.</p>
                                 </div>
                             </div>
 
-                            <div class="space-y-5">
+                            <div class="space-y-4">
                                 <div x-data="{ charCount: {{ strlen(old('meta_title', '')) }} }">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1">
                                         Meta Title
-                                        <span class="ml-2 text-xs font-normal" :class="charCount > 60 ? 'text-red-500' : 'text-gray-400'">
+                                        <span class="ml-1 normal-case font-normal" :class="charCount > 60 ? 'text-red-500' : 'text-[#37474F]'">
                                             (<span x-text="charCount"></span>/60)
                                         </span>
                                     </label>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Aim for 50–60 characters. Place your most important keyword near the start. Example: <em>"Premium Cotton T-Shirts Wholesale | YourBrand"</em></p>
+                                    <p class="text-[11px] text-[#37474F] mb-1.5">Aim for 50–60 characters. E.g. <em>"Premium Cotton T-Shirts Wholesale | YourBrand"</em></p>
                                     <input type="text" name="meta_title" maxlength="60"
                                            value="{{ old('meta_title') }}"
                                            x-on:input="charCount = $event.target.value.length"
                                            placeholder="e.g., Premium Cotton T-Shirts Wholesale | Your Brand"
-                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                                           class="w-full h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3">
                                     @error('meta_title')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                     @enderror
                                 </div>
-
                                 <div x-data="{ charCount: {{ strlen(old('meta_description', '')) }} }">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1">
                                         Meta Description
-                                        <span class="ml-2 text-xs font-normal" :class="charCount > 160 ? 'text-red-500' : (charCount > 120 ? 'text-yellow-500' : 'text-gray-400')">
+                                        <span class="ml-1 normal-case font-normal" :class="charCount > 160 ? 'text-red-500' : (charCount > 120 ? 'text-yellow-500' : 'text-[#37474F]')">
                                             (<span x-text="charCount"></span>/160)
                                         </span>
                                     </label>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Use 120–160 characters. Highlight a key benefit or call-to-action. Example: <em>"Shop bulk cotton t-shirts. MOQ 10 pcs. Fast shipping. Free sample on orders over $200."</em></p>
+                                    <p class="text-[11px] text-[#37474F] mb-1.5">120–160 characters. E.g. <em>"Shop bulk cotton t-shirts. MOQ 10 pcs. Fast shipping."</em></p>
                                     <textarea name="meta_description" rows="3" maxlength="160"
                                               x-on:input="charCount = $event.target.value.length"
                                               placeholder="e.g., Shop bulk cotton t-shirts. MOQ 10 pcs. Fast shipping. Free sample on orders over $200."
-                                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">{{ old('meta_description') }}</textarea>
+                                              class="w-full border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 py-2 resize-none placeholder-[#37474F]">{{ old('meta_description') }}</textarea>
                                     @error('meta_description')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -366,25 +419,29 @@
 
                     </div>
 
-                    {{-- Right Column: Non-main-shown variant attributes --}}
-                    <div class="space-y-6">
-                        <div id="nonMainShownVariantsContainer" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4"></div>
+                    {{-- ── Right Column: Variant Attributes ── --}}
+                    <div class="space-y-5">
+                        <div id="nonMainShownVariantsContainer"
+                             class="hidden bg-[#FFFFFF] border border-[#E0E0E0] rounded-[8px] p-5 space-y-4"
+                             style="box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                        </div>
                     </div>
                 </div>
 
                 {{-- Product Variations --}}
-                <div class="mt-6">
+                <div class="mt-5">
                     @include('user.listings.partials.variation-manager', ['mode' => 'create'])
                 </div>
 
-                {{-- Footer --}}
-                <div class="mt-6 flex justify-end gap-4">
+                {{-- Footer actions --}}
+                <div class="mt-6 flex justify-end gap-3">
                     <a href="{{ route('business.listings.index') }}"
-                       class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                       class="inline-flex items-center justify-center h-[40px] px-6 border border-[#E0E0E0] text-[#37474F] text-[13px] font-medium rounded hover:border-[#D4AF37] hover:text-[#D4AF37] transition">
                         Cancel
                     </a>
                     <button type="submit"
-                            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                            class="inline-flex items-center justify-center gap-2 h-[40px] px-6 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
                         Submit Listing
                     </button>
                 </div>
@@ -446,7 +503,6 @@
 
             removeSelectsAfterLevel(level);
 
-            // Clear stale deeper-level data
             Object.keys(categoryLevelsData).forEach(l => {
                 if (parseInt(l) > level) { delete categoryLevelsData[l]; }
             });
@@ -462,7 +518,6 @@
                 categoryLevelsData[level] = { id: categoryId, name: categoryName };
                 loadCategoriesForLevel(level + 1, categoryId);
 
-                // Load variants for the full chain from root to current level
                 const chainIds = [];
                 for (let l = 0; l <= level; l++) {
                     if (categoryLevelsData[l]) { chainIds.push(categoryLevelsData[l].id); }
@@ -476,7 +531,6 @@
                 categoryHiddenInput.value = '';
                 delete categoryLevelsData[level];
 
-                // Reload variants for remaining parent categories
                 const chainIds = [];
                 for (let l = 0; l < level; l++) {
                     if (categoryLevelsData[l]) { chainIds.push(categoryLevelsData[l].id); }
@@ -486,7 +540,7 @@
         }
     });
 
-    const selectClass = 'w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 category-select';
+    const selectClass = 'w-full h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3 category-select';
 
     function loadCategoriesForLevel(level, parentId) {
         if (pendingCategoryFetches[level]) { pendingCategoryFetches[level].abort(); }
@@ -502,7 +556,7 @@
                     if (existing) { existing.remove(); }
                     const sel = document.createElement('select');
                     sel.id = 'category_level_' + level;
-                    sel.className = selectClass + (level > 0 ? ' mt-3' : '');
+                    sel.className = selectClass;
                     sel.dataset.level = level;
                     sel.innerHTML = '<option value="">Select ' + (level === 0 ? 'Category' : 'Subcategory') + '</option>';
                     data.categories.forEach(cat => {
@@ -552,12 +606,12 @@
         const nonMain = variants.filter(v => !v.is_main_shown);
         if (nonMain.length === 0) { container.classList.add('hidden'); return; }
         container.classList.remove('hidden');
-        container.innerHTML = '<h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Product Attributes</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Additional characteristics specific to this product.</p>';
-        const inputClass = 'w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500';
+        container.innerHTML = '<h3 class="text-[13px] font-semibold text-[#1A1A1A] mb-1">Product Attributes</h3><p class="text-[11px] text-[#37474F] mb-3">Additional characteristics specific to this product.</p>';
+        const inputClass = 'w-full h-[34px] border border-[#E0E0E0] text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] px-3';
         nonMain.forEach(variant => {
             const savedItemId = savedValues ? savedValues[variant.id] : null;
             const div = document.createElement('div');
-            let html = `<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${variant.name}</label>`;
+            let html = `<label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">${variant.name}</label>`;
             if (variant.items && variant.items.length > 0) {
                 html += `<select name="variant_attributes[${variant.id}]" class="${inputClass}"><option value="">Select ${variant.name}</option>`;
                 variant.items.forEach(item => {
@@ -573,16 +627,11 @@
         });
     }
 
-    // Delivery toggle
     const hasDeliveryCheckbox = document.getElementById('has_delivery');
     const deliveryFields = document.getElementById('deliveryFields');
     if (hasDeliveryCheckbox) {
         hasDeliveryCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                deliveryFields.classList.remove('hidden');
-            } else {
-                deliveryFields.classList.add('hidden');
-            }
+            deliveryFields.classList.toggle('hidden', !this.checked);
         });
     }
     </script>

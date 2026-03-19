@@ -98,6 +98,23 @@ class BlogPostController extends Controller
             ->with('success', 'Blog post updated successfully.');
     }
 
+    public function toggleVisibility(BlogPost $blogPost): RedirectResponse
+    {
+        $isPublished = ! $blogPost->is_published;
+
+        $blogPost->update([
+            'is_published' => $isPublished,
+            'published_at' => $isPublished ? ($blogPost->published_at ?? now()) : null,
+        ]);
+
+        activity()
+            ->performedOn($blogPost)
+            ->causedBy(auth()->guard('admin')->user())
+            ->log('Blog post '.($isPublished ? 'published' : 'hidden').': '.$blogPost->title);
+
+        return back()->with('success', '"'.$blogPost->title.'" is now '.($isPublished ? 'visible' : 'hidden').'.');
+    }
+
     public function destroy(BlogPost $blogPost): RedirectResponse
     {
         $title = $blogPost->title;

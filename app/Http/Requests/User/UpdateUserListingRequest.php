@@ -29,7 +29,8 @@ class UpdateUserListingRequest extends FormRequest
             'description' => 'required|string',
             'short_description' => 'nullable|string|max:500',
             'currency' => 'nullable|string|max:3',
-            'condition' => 'required|in:new,used',
+            'condition' => 'required|in:new,used,refurbished',
+            'refurbished_description' => 'required_if:condition,refurbished|nullable|string|max:2000',
             'location_id' => 'nullable|exists:locations,id',
 
             // Images

@@ -278,19 +278,41 @@
                                 <span x-text="listingType === 'buy' ? 'Preferred Condition' : 'Item Condition'"></span>
                                 <span class="text-red-500">*</span>
                             </label>
-                            <div class="flex gap-5">
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="condition" value="new"
-                                           {{ old('condition','new') === 'new' ? 'checked' : '' }}
-                                           class="w-4 h-4 accent-[#D4AF37]">
-                                    <span class="text-[13px] text-[#1A1A1A]">New</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="condition" value="used"
-                                           {{ old('condition') === 'used' ? 'checked' : '' }}
-                                           class="w-4 h-4 accent-[#D4AF37]">
-                                    <span class="text-[13px] text-[#1A1A1A]">Second-hand</span>
-                                </label>
+                            <div x-data="{ condition: '{{ old('condition', 'new') }}' }" class="space-y-3">
+                                <div class="flex gap-5">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="condition" value="new"
+                                               x-model="condition"
+                                               {{ old('condition','new') === 'new' ? 'checked' : '' }}
+                                               class="w-4 h-4 accent-[#D4AF37]">
+                                        <span class="text-[13px] text-[#1A1A1A]">New</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="condition" value="used"
+                                               x-model="condition"
+                                               {{ old('condition') === 'used' ? 'checked' : '' }}
+                                               class="w-4 h-4 accent-[#D4AF37]">
+                                        <span class="text-[13px] text-[#1A1A1A]">Second-hand</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="condition" value="refurbished"
+                                               x-model="condition"
+                                               {{ old('condition') === 'refurbished' ? 'checked' : '' }}
+                                               class="w-4 h-4 accent-[#D4AF37]">
+                                        <span class="text-[13px] text-[#1A1A1A]">Refurbished</span>
+                                    </label>
+                                </div>
+                                <div x-show="condition === 'refurbished'" x-cloak>
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1">
+                                        Refurbished Details <span class="text-red-500">*</span>
+                                    </label>
+                                    <textarea name="refurbished_description" rows="3"
+                                              placeholder="Describe which parts were modified or replaced and what changes were made..."
+                                              class="w-full border border-[#E0E0E0] rounded focus:border-[#D4AF37] focus:ring-0 text-[13px] text-[#1A1A1A] placeholder-[#37474F] px-3 py-2 resize-none">{{ old('refurbished_description') }}</textarea>
+                                    @error('refurbished_description')
+                                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
 

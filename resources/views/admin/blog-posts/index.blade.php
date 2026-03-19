@@ -93,6 +93,15 @@
                                            title="Edit">
                                             <i class="fa-solid fa-pen text-xs"></i>
                                         </a>
+                                        <form action="{{ route('admin.blog-posts.toggle-visibility', $post) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit"
+                                                    class="inline-flex items-center justify-center w-[28px] h-[28px] border rounded transition {{ $post->is_published ? 'border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10' : 'border-[#E0E0E0] text-[#37474F] hover:bg-gray-100' }}"
+                                                    title="{{ $post->is_published ? 'Hide post' : 'Show post' }}">
+                                                <i class="fa-solid {{ $post->is_published ? 'fa-eye' : 'fa-eye-slash' }} text-xs"></i>
+                                            </button>
+                                        </form>
                                         <form action="{{ route('admin.blog-posts.destroy', $post) }}" method="POST"
                                               onsubmit="return confirm('Delete this blog post? This cannot be undone.')" class="inline">
                                             @csrf

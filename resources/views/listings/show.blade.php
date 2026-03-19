@@ -947,6 +947,16 @@
                 </div>
                 @endif
 
+                {{-- Refurbished Description --}}
+                @if($listing->condition === 'refurbished' && $listing->refurbished_description)
+                <div class="py-3 border-b border-[#E0E0E0]">
+                    <span class="text-xs font-semibold text-[#37474F] uppercase tracking-wide block mb-2">Refurbished Details</span>
+                    <div class="border-l-[3px] border-[#D4AF37] pl-3 bg-[#FAFAF8] py-2 rounded-r-[4px]">
+                        <p class="text-sm text-[#1A1A1A] leading-relaxed whitespace-pre-line">{{ $listing->refurbished_description }}</p>
+                    </div>
+                </div>
+                @endif
+
                 {{-- Listing Type --}}
                 @if($listing->listingType)
                 <div class="py-2.5 border-b border-[#E0E0E0]">

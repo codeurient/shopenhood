@@ -32,6 +32,7 @@ class Listing extends Model
         'is_featured',
         'is_negotiable',
         'condition',
+        'refurbished_description',
         'is_wholesale',
         'wholesale_min_order_qty',
         'wholesale_qty_increment',

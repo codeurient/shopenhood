@@ -426,6 +426,7 @@ Route::prefix(config('admin.path'))->name('admin.')->middleware('admin.ip')->gro
             Route::get('{blogPost}/edit', [BlogPostController::class, 'edit'])->name('edit');
             Route::put('{blogPost}', [BlogPostController::class, 'update'])->name('update');
             Route::delete('{blogPost}', [BlogPostController::class, 'destroy'])->name('destroy');
+            Route::patch('{blogPost}/toggle-visibility', [BlogPostController::class, 'toggleVisibility'])->name('toggle-visibility');
         });
 
         // ====================================================================

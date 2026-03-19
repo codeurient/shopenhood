@@ -32,7 +32,7 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="-translate-x-full"
-         class="fixed inset-y-0 left-0 z-[60] w-[320px] max-w-[85vw] bg-white flex flex-col shadow-xl"
+         class="fixed inset-y-0 left-0 z-[60] w-full sm:w-[320px] sm:max-w-[85vw] bg-white flex flex-col shadow-xl"
          @click.stop>
 
         {{-- Header --}}
@@ -64,6 +64,23 @@
 
         {{-- Scrollable body --}}
         <div class="flex-1 overflow-y-auto scrollbar-hide divide-y divide-[#E0E0E0]">
+
+                {{-- ── 0. SORT BY ── --}}
+            <div class="px-4 py-4">
+                <p class="text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-3">Sort By</p>
+                <div class="flex flex-wrap gap-2">
+                    @foreach(['newest' => 'Newest', 'price_asc' => 'Price: Low–High', 'price_desc' => 'Price: High–Low'] as $val => $label)
+                        <button type="button"
+                                @click="sort = '{{ $val }}'"
+                                :class="sort === '{{ $val }}'
+                                    ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#D4AF37]'
+                                    : 'border-[#E0E0E0] text-[#37474F] hover:border-[#D4AF37]/50'"
+                                class="px-3 h-[28px] border rounded text-[12px] font-medium transition-colors">
+                            {{ $label }}
+                        </button>
+                    @endforeach
+                </div>
+            </div>
 
             {{-- ── 1. LOCATION ── --}}
             <div class="px-4 py-4">
@@ -436,6 +453,7 @@ function filterPanelData(topCategories, listingTypes, activeCatPath, countries) 
         listingTypes: listingTypes,
 
         // ── Filter values (pre-populated from current URL) ───────────────
+        sort: @js(request('sort', 'newest')),
         typeId: {{ request('type') ? (int) request('type') : 'null' }},
         categorySlug: @js(request('category', '')),
         condition: @js(request('condition', '')),
@@ -629,6 +647,7 @@ function filterPanelData(topCategories, listingTypes, activeCatPath, countries) 
         // ── Apply / Reset ─────────────────────────────────────────────────
         apply() {
             const url = new URL('{{ route('listings.index') }}', window.location.origin);
+            if (this.sort && this.sort !== 'newest') url.searchParams.set('sort', this.sort);
             if (this.typeId) url.searchParams.set('type', this.typeId);
             if (this.categorySlug) url.searchParams.set('category', this.categorySlug);
             if (this.condition) url.searchParams.set('condition', this.condition);
@@ -643,6 +662,7 @@ function filterPanelData(topCategories, listingTypes, activeCatPath, countries) 
         },
 
         reset() {
+            this.sort = 'newest';
             this.typeId = null;
             this.typeOpen = false;
             this.typeSearch = '';
@@ -688,6 +708,7 @@ function filterPanelData(topCategories, listingTypes, activeCatPath, countries) 
         // ── Active filter count ───────────────────────────────────────────
         get activeCount() {
             let n = 0;
+            if (this.sort && this.sort !== 'newest') n++;
             if (this.typeId) n++;
             if (this.categorySlug) n++;
             if (this.condition) n++;

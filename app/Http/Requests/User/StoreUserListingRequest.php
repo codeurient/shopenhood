@@ -29,7 +29,8 @@ class StoreUserListingRequest extends FormRequest
             'description' => 'required|string',
             'short_description' => 'nullable|string|max:500',
             'currency' => 'nullable|string|max:3',
-            'condition' => 'required|in:new,used',
+            'condition' => 'required|in:new,used,refurbished',
+            'refurbished_description' => 'required_if:condition,refurbished|nullable|string|max:2000',
             'location_id' => 'nullable|exists:locations,id',
 
             // Images
@@ -92,7 +93,8 @@ class StoreUserListingRequest extends FormRequest
             'category_id.required' => 'Please select a category.',
             'listing_type_id.required' => 'Please select a listing type.',
             'condition.required' => 'Please select the item condition.',
-            'condition.in' => 'Item condition must be either new or second-hand.',
+            'condition.in' => 'Item condition must be new, second-hand, or refurbished.',
+            'refurbished_description.required_if' => 'Please describe what was modified or replaced.',
             'base_price.required' => 'Please provide a price for your listing.',
             'base_price.min' => 'Price must be greater than 0.',
             'barter_exchange_for.required' => 'Please describe what you want in exchange.',

@@ -28,7 +28,7 @@
         @auth
             <a href="{{ route('user.listings.create') }}"
                class="flex flex-col items-center justify-center flex-1 h-full -mt-6 gap-1">
-                <div class="flex items-center justify-center w-14 h-14 bg-[#D4AF37] rounded-full shadow-lg hover:brightness-110 transition">
+                <div class="flex items-center justify-center w-14 h-14 bg-[#D4AF37] rounded shadow-lg hover:brightness-110 transition">
                     <i class="fa-solid fa-plus text-xl text-[#000000]"></i>
                 </div>
                 <span class="text-[10px] font-semibold uppercase tracking-wide text-[#D4AF37]">Add</span>
@@ -36,7 +36,7 @@
         @else
             <a href="{{ route('login') }}"
                class="flex flex-col items-center justify-center flex-1 h-full -mt-6 gap-1">
-                <div class="flex items-center justify-center w-14 h-14 bg-[#D4AF37] rounded-full shadow-lg hover:brightness-110 transition">
+                <div class="flex items-center justify-center w-14 h-14 bg-[#D4AF37] rounded shadow-lg hover:brightness-110 transition">
                     <i class="fa-solid fa-plus text-xl text-[#000000]"></i>
                 </div>
                 <span class="text-[10px] font-semibold uppercase tracking-wide text-[#D4AF37]">Add</span>
