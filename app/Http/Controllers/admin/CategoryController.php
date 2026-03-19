@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Listing;
 use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -197,6 +198,18 @@ class CategoryController extends Controller
     {
         $categoryName = $category->name;
 
+        // Collect this category + all descendant IDs
+        $allIds = $this->collectDescendantIds($category);
+
+        // Block if any listings (including trashed) reference these categories
+        $listingCount = Listing::withTrashed()->whereIn('category_id', $allIds)->count();
+
+        if ($listingCount > 0) {
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('error', "Cannot delete \"{$categoryName}\": {$listingCount} listing(s) are assigned to this category or its sub-categories. Reassign or delete those listings first.");
+        }
+
         activity()
             ->performedOn($category)
             ->causedBy(auth()->guard('admin')->user())
@@ -208,6 +221,22 @@ class CategoryController extends Controller
         return redirect()
             ->route('admin.categories.index')
             ->with('success', "Category \"{$categoryName}\" deleted successfully");
+    }
+
+    /**
+     * Recursively collect the IDs of a category and all its descendants.
+     *
+     * @return int[]
+     */
+    private function collectDescendantIds(Category $category): array
+    {
+        $ids = [$category->id];
+
+        foreach ($category->children as $child) {
+            $ids = array_merge($ids, $this->collectDescendantIds($child));
+        }
+
+        return $ids;
     }
 
     /**

@@ -13,21 +13,21 @@
             <p class="text-[#37474F] text-sm mt-1">Monitor all admin actions and system activities</p>
         </div>
         <div class="flex gap-2">
-            <form action="{{ route('admin.activity-logs.clear-old') }}" method="POST"
-                  onsubmit="return confirm('Delete logs older than the configured retention period? This cannot be undone.')">
+            <form action="{{ route('admin.activity-logs.clear-old') }}" method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="submit"
+                <button type="button"
+                        @click="$dispatch('open-confirm-modal', { message: 'Delete logs older than the configured retention period? This cannot be undone.', form: $el.closest('form') })"
                         class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-semibold text-white bg-yellow-600 rounded hover:bg-yellow-700 transition">
                     <i class="fa-solid fa-clock-rotate-left text-xs"></i>
                     Clear Old Logs
                 </button>
             </form>
-            <form action="{{ route('admin.activity-logs.clear-all') }}" method="POST"
-                  onsubmit="return confirm('This will permanently delete ALL activity logs. This action cannot be undone. Continue?')">
+            <form action="{{ route('admin.activity-logs.clear-all') }}" method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="submit"
+                <button type="button"
+                        @click="$dispatch('open-confirm-modal', { message: 'This will permanently delete ALL activity logs. This action cannot be undone.', form: $el.closest('form') })"
                         class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-semibold text-white bg-[#C0392B] rounded hover:bg-[#a93226] transition">
                     <i class="fa-solid fa-trash text-xs"></i>
                     Clear All Logs

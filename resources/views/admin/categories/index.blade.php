@@ -26,6 +26,13 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="mb-6 p-4 bg-[#C0392B]/10 border-l-4 border-[#C0392B] text-[#C0392B] rounded flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Statistics -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white border border-[#E0E0E0] rounded-[6px] p-5 shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
@@ -466,11 +473,14 @@ function saveVariants() {
     });
 }
 
-function confirmDeleteCategory(categoryId, categoryName) {
-    if (confirm(`Are you sure you want to delete "${categoryName}"? This will also delete all child categories and remove variant assignments.`)) {
+const categoryBaseUrl = '{{ route('admin.categories.index') }}';
+
+async function confirmDeleteCategory(categoryId, categoryName) {
+    const ok = await window.luxuryConfirm(`Are you sure you want to delete "${categoryName}"? This will also delete all child categories and remove variant assignments.`, 'Delete Category');
+    if (ok) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = `/admin/categories/${categoryId}`;
+        form.action = `${categoryBaseUrl}/${categoryId}`;
         form.innerHTML = `
             <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
             <input type="hidden" name="_method" value="DELETE">

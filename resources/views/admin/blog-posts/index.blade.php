@@ -102,11 +102,11 @@
                                                 <i class="fa-solid {{ $post->is_published ? 'fa-eye' : 'fa-eye-slash' }} text-xs"></i>
                                             </button>
                                         </form>
-                                        <form action="{{ route('admin.blog-posts.destroy', $post) }}" method="POST"
-                                              onsubmit="return confirm('Delete this blog post? This cannot be undone.')" class="inline">
+                                        <form action="{{ route('admin.blog-posts.destroy', $post) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
+                                            <button type="button"
+                                                    @click="$dispatch('open-confirm-modal', { message: 'Delete this blog post? This cannot be undone.', form: $el.closest('form') })"
                                                     class="inline-flex items-center justify-center w-[28px] h-[28px] bg-[#C0392B] text-white rounded hover:bg-[#a93226] transition"
                                                     title="Delete">
                                                 <i class="fa-solid fa-trash text-xs"></i>

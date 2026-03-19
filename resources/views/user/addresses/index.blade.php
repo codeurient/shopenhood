@@ -103,11 +103,11 @@
                 </form>
                 @endif
 
-                <form action="{{ route('user.addresses.destroy', $address) }}" method="POST" class="inline ml-auto"
-                      onsubmit="return confirm('Delete this address?');">
+                <form action="{{ route('user.addresses.destroy', $address) }}" method="POST" class="inline ml-auto">
                     @csrf
                     @method('DELETE')
-                    <button type="submit"
+                    <button type="button"
+                            @click="$dispatch('open-confirm-modal', { message: 'Delete this address?', form: $el.closest('form') })"
                             class="inline-flex items-center gap-1 h-[28px] px-2.5 border border-red-200 text-red-600 text-[12px] font-semibold rounded hover:bg-red-50 transition">
                         <i class="fa-solid fa-trash text-[10px]"></i>
                     </button>

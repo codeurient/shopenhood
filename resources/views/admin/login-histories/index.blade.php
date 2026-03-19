@@ -12,11 +12,11 @@
             <h2 class="text-2xl font-bold text-[#1A1A1A]">Login Histories</h2>
             <p class="text-[#37474F] text-sm mt-1">Monitor user login activity and detect suspicious behavior</p>
         </div>
-        <form action="{{ route('admin.login-histories.clear-all') }}" method="POST"
-              onsubmit="return confirm('This will permanently delete ALL login history records. This action cannot be undone. Continue?')">
+        <form action="{{ route('admin.login-histories.clear-all') }}" method="POST">
             @csrf
             @method('DELETE')
-            <button type="submit"
+            <button type="button"
+                    @click="$dispatch('open-confirm-modal', { message: 'This will permanently delete ALL login history records. This action cannot be undone.', form: $el.closest('form') })"
                     class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-semibold text-white bg-[#C0392B] rounded hover:bg-[#a93226] transition">
                 <i class="fa-solid fa-trash text-xs"></i>
                 Clear All History

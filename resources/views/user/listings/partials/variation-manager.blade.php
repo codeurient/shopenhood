@@ -676,11 +676,10 @@ function variationManager() {
             this.selectedVariants = merged.filter(v => v.is_required);
         },
 
-        confirmRegenerateVariations() {
+        async confirmRegenerateVariations() {
             if (this.variations.length > 0) {
-                if (!confirm('WARNING: This will REPLACE all existing variations!\n\nAre you sure you want to regenerate all combinations? This action cannot be undone.\n\nExisting variations: ' + this.variations.length)) {
-                    return;
-                }
+                const ok = await window.luxuryConfirm('This will REPLACE all existing variations. Existing variations: ' + this.variations.length + '. This action cannot be undone.', 'Regenerate Variations');
+                if (!ok) { return; }
             }
             this.generateAllVariations();
         },
@@ -852,10 +851,9 @@ function variationManager() {
             this.variations.push(newVariation);
         },
 
-        removeVariation(index) {
-            if (!confirm('Are you sure you want to remove this variation?')) {
-                return;
-            }
+        async removeVariation(index) {
+            const ok = await window.luxuryConfirm('Are you sure you want to remove this variation?', 'Remove Variation');
+            if (!ok) { return; }
 
             this.variations.splice(index, 1);
 
@@ -992,10 +990,9 @@ function variationManager() {
             this.modalValue = '';
         },
 
-        clearAllVariations() {
-            if (!confirm('Are you sure you want to clear all variations?')) {
-                return;
-            }
+        async clearAllVariations() {
+            const ok = await window.luxuryConfirm('Are you sure you want to clear all variations?', 'Clear Variations');
+            if (!ok) { return; }
 
             this.variations = [];
             this.defaultVariationIndex = null;

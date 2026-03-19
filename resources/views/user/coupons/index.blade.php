@@ -155,11 +155,12 @@
                                                 {{ $coupon->is_active ? 'Disable' : 'Enable' }}
                                             </button>
                                         </form>
-                                        <form action="{{ route('user.coupons.destroy', $coupon) }}" method="POST" class="inline"
-                                              onsubmit="return confirm('Are you sure you want to delete this coupon?');">
+                                        <form action="{{ route('user.coupons.destroy', $coupon) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
+                                            <button type="button"
+                                                    @click="$dispatch('open-confirm-modal', { message: 'Are you sure you want to delete this coupon?', form: $el.closest('form') })"
+                                                    class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs transition">
                                                 Delete
                                             </button>
                                         </form>

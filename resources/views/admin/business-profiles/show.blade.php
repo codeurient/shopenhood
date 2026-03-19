@@ -47,11 +47,11 @@
                 <i class="fa-solid fa-pen text-xs"></i>
                 Edit Profile
             </a>
-            <form action="{{ route('admin.business-profiles.destroy', $businessProfile) }}" method="POST" class="inline"
-                  onsubmit="return confirm('Are you sure you want to delete this business profile?');">
+            <form action="{{ route('admin.business-profiles.destroy', $businessProfile) }}" method="POST" class="inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit"
+                <button type="button"
+                        @click="$dispatch('open-confirm-modal', { message: 'Are you sure you want to delete this business profile?', form: $el.closest('form') })"
                         class="inline-flex items-center gap-2 h-[34px] px-4 text-[13px] font-semibold text-white bg-[#C0392B] rounded hover:bg-[#a93226] transition">
                     <i class="fa-solid fa-trash text-xs"></i>
                     Delete

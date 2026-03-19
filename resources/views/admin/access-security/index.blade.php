@@ -123,10 +123,10 @@
                     You will be redirected automatically, but <strong>bookmark the new URL</strong> before closing your browser.
                 </span>
             </div>
-            <form action="{{ route('admin.access-security.generate') }}" method="POST"
-                  onsubmit="return confirm('Generate a new random path? You will be redirected to the new URL. The current path will stop working immediately.')">
+            <form action="{{ route('admin.access-security.generate') }}" method="POST">
                 @csrf
-                <button type="submit"
+                <button type="button"
+                        @click="$dispatch('open-confirm-modal', { message: 'Generate a new random path? You will be redirected to the new URL immediately.', form: $el.closest('form') })"
                         class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
                     <i class="fa-solid fa-shuffle text-xs"></i>
                     Generate &amp; Activate New Path
@@ -149,8 +149,7 @@
                 hyphens (<code class="bg-[#F5F5F5] px-1 rounded">-</code>),
                 underscores (<code class="bg-[#F5F5F5] px-1 rounded">_</code>).
             </p>
-            <form action="{{ route('admin.access-security.update') }}" method="POST"
-                  onsubmit="return confirm('Change the admin path? You will be redirected to the new URL immediately.')">
+            <form action="{{ route('admin.access-security.update') }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="flex items-start gap-3">
@@ -164,7 +163,8 @@
                             <p class="mt-1 text-[12px] text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                    <button type="submit"
+                    <button type="button"
+                            @click="$dispatch('open-confirm-modal', { message: 'Change the admin path? You will be redirected to the new URL immediately.', form: $el.closest('form') })"
                             class="inline-flex items-center gap-2 h-[34px] px-4 border border-[#D4AF37] text-[#D4AF37] text-[13px] font-semibold rounded hover:bg-[#D4AF37] hover:text-[#000000] transition flex-shrink-0">
                         <i class="fa-solid fa-floppy-disk text-xs"></i>
                         Save Path
@@ -190,11 +190,11 @@
                 <code class="bg-[#F5F5F5] px-1 rounded">.env</code> file
                 (currently: <strong class="text-[#1A1A1A] font-mono">{{ env('ADMIN_PATH', 'admin') }}</strong>).
             </p>
-            <form action="{{ route('admin.access-security.reset') }}" method="POST"
-                  onsubmit="return confirm('Reset to .env path value? The database-managed path will be removed.')">
+            <form action="{{ route('admin.access-security.reset') }}" method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="submit"
+                <button type="button"
+                        @click="$dispatch('open-confirm-modal', { message: 'Reset to .env path value? The database-managed path will be removed.', form: $el.closest('form') })"
                         class="inline-flex items-center gap-2 h-[34px] px-4 border border-[#E0E0E0] text-[#37474F] text-[13px] font-semibold rounded hover:border-red-400 hover:text-red-600 transition">
                     <i class="fa-solid fa-rotate-left text-xs"></i>
                     Reset to .env

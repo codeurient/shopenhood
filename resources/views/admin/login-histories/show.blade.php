@@ -192,12 +192,11 @@
             </h4>
         </div>
         <div class="p-4">
-            <form action="{{ route('admin.login-histories.block-ip') }}" method="POST"
-                  class="flex items-center gap-4"
-                  onsubmit="return confirm('Are you sure you want to flag this IP address?')">
+            <form action="{{ route('admin.login-histories.block-ip') }}" method="POST" class="flex items-center gap-4">
                 @csrf
                 <input type="hidden" name="ip_address" value="{{ $loginHistory->ip_address }}">
-                <button type="submit"
+                <button type="button"
+                        @click="$dispatch('open-confirm-modal', { message: 'Are you sure you want to flag this IP address?', form: $el.closest('form') })"
                         class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#C0392B] text-white text-[13px] font-semibold rounded hover:bg-[#a93226] transition">
                     <i class="fa-solid fa-flag text-xs"></i>
                     Flag IP Address

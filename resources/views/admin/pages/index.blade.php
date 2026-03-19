@@ -69,11 +69,11 @@
                                         <i class="fa-solid fa-pen text-xs"></i>
                                         Edit
                                     </a>
-                                    <form action="{{ route('admin.pages.destroy', $page) }}" method="POST"
-                                          onsubmit="return confirm('Delete page \'{{ addslashes($page->title) }}\'? This cannot be undone.')">
+                                    <form action="{{ route('admin.pages.destroy', $page) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
+                                        <button type="button"
+                                                @click="$dispatch('open-confirm-modal', { message: 'Delete page \'{{ addslashes($page->title) }}\'? This cannot be undone.', form: $el.closest('form') })"
                                                 class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-medium text-[#C0392B] border border-[#C0392B]/30 rounded hover:bg-red-50 transition">
                                             <i class="fa-solid fa-trash text-xs"></i>
                                             Delete

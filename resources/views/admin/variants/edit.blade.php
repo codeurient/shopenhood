@@ -211,8 +211,9 @@
 </style>
 
 <script>
-function confirmDelete() {
-    if (confirm('Are you sure you want to delete this variant? This will also delete all its items and remove it from any category assignments.')) {
+async function confirmDelete() {
+    const ok = await window.luxuryConfirm('Are you sure you want to delete this variant? This will also delete all its items and remove it from any category assignments.', 'Delete Variant');
+    if (ok) {
         document.getElementById('deleteForm').submit();
     }
 }

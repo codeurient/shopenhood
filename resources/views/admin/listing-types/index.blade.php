@@ -161,11 +161,11 @@
                                             <i class="fa-solid fa-pen text-xs"></i>
                                         </a>
                                         @if($type->listings_count === 0)
-                                            <form action="{{ route('admin.listing-types.destroy', $type) }}" method="POST"
-                                                  onsubmit="return confirm('Are you sure you want to delete this listing type?')" class="inline">
+                                            <form action="{{ route('admin.listing-types.destroy', $type) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
+                                                <button type="button"
+                                                        @click="$dispatch('open-confirm-modal', { message: 'Are you sure you want to delete this listing type?', form: $el.closest('form') })"
                                                         class="inline-flex items-center justify-center w-[28px] h-[28px] bg-[#C0392B] text-white rounded hover:bg-[#a93226] transition"
                                                         title="Delete">
                                                     <i class="fa-solid fa-trash text-xs"></i>

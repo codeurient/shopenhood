@@ -16,11 +16,11 @@
             </a>
             <h2 class="text-2xl font-bold text-[#1A1A1A]">Edit Blog Post</h2>
         </div>
-        <form action="{{ route('admin.blog-posts.destroy', $blogPost) }}" method="POST"
-              onsubmit="return confirm('Delete this blog post? This cannot be undone.')">
+        <form action="{{ route('admin.blog-posts.destroy', $blogPost) }}" method="POST">
             @csrf
             @method('DELETE')
-            <button type="submit"
+            <button type="button"
+                    @click="$dispatch('open-confirm-modal', { message: 'Delete this blog post? This cannot be undone.', form: $el.closest('form') })"
                     class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#C0392B] text-white text-[13px] font-semibold rounded hover:bg-[#a93226] transition">
                 <i class="fa-solid fa-trash text-xs"></i>
                 Delete Post

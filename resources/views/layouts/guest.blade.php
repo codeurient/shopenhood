@@ -328,22 +328,31 @@
     <div x-data="{
             show: false,
             message: '',
+            confirmTitle: 'Confirm Action',
             pendingForm: null,
-            open(message, form) {
-                this.message = message;
-                this.pendingForm = form;
+            pendingResolve: null,
+            open(msg, form, title, resolve) {
+                this.message = msg;
+                this.confirmTitle = title || 'Confirm Action';
+                this.pendingForm = form || null;
+                this.pendingResolve = resolve || null;
                 this.show = true;
             },
             confirm() {
                 this.show = false;
                 if (this.pendingForm) { this.pendingForm.submit(); }
+                if (this.pendingResolve) { this.pendingResolve(true); }
+                this.pendingForm = null;
+                this.pendingResolve = null;
             },
             cancel() {
                 this.show = false;
+                if (this.pendingResolve) { this.pendingResolve(false); }
                 this.pendingForm = null;
+                this.pendingResolve = null;
             }
         }"
-        @open-confirm-modal.window="open($event.detail.message, $event.detail.form)"
+        @open-confirm-modal.window="open($event.detail.message, $event.detail.form, $event.detail.title, $event.detail.resolve)"
         x-show="show"
         x-cloak
         style="display: none;"
@@ -357,7 +366,7 @@
                     <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
                 </div>
                 <div>
-                    <h3 class="text-[15px] font-semibold text-[#1A1A1A]">Confirm Action</h3>
+                    <h3 class="text-[15px] font-semibold text-[#1A1A1A]" x-text="confirmTitle"></h3>
                     <p class="mt-1 text-[13px] text-gray-600" x-text="message"></p>
                 </div>
             </div>
@@ -373,6 +382,16 @@
             </div>
         </div>
     </div>
+
+    <script>
+    window.luxuryConfirm = function(message, title) {
+        return new Promise(function(resolve) {
+            window.dispatchEvent(new CustomEvent('open-confirm-modal', {
+                detail: { message: message, title: title || 'Confirm Action', form: null, resolve: resolve }
+            }));
+        });
+    };
+    </script>
 
 </body>
 </html>

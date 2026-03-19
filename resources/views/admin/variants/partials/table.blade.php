@@ -71,11 +71,11 @@
                        title="Edit Variant">
                         <i class="fa-solid fa-pen text-xs"></i>
                     </a>
-                    <form action="{{ route('admin.variants.destroy', $variant) }}" method="POST" class="inline"
-                          onsubmit="return confirm('Are you sure you want to delete this variant?')">
+                    <form action="{{ route('admin.variants.destroy', $variant) }}" method="POST" class="inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit"
+                        <button type="button"
+                                @click="$dispatch('open-confirm-modal', { message: 'Are you sure you want to delete this variant?', form: $el.closest('form') })"
                                 class="inline-flex items-center justify-center w-[28px] h-[28px] bg-[#C0392B] text-white rounded hover:bg-[#a93226] transition"
                                 title="Delete Variant">
                             <i class="fa-solid fa-trash text-xs"></i>
