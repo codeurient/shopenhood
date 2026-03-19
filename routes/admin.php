@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AccessSecurityController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\BlogPostController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Admin\LoginHistoryController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductVariationController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\SeoController as AdminSeoController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\StockManagementController;
@@ -34,14 +36,16 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix(config('admin.path'))->name('admin.')->middleware('admin.ip')->group(function () {
 
     // ========================================================================
     // AUTH ROUTES (Guest Only)
     // ========================================================================
     Route::middleware('guest:admin')->group(function () {
         Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-        Route::post('login', [LoginController::class, 'login'])->name('login.submit');
+        Route::post('login', [LoginController::class, 'login'])
+            ->middleware('throttle:admin.login')
+            ->name('login.submit');
     });
 
     // ========================================================================
@@ -357,6 +361,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [SettingController::class, 'index'])->name('index');
             Route::put('/', [SettingController::class, 'update'])->name('update');
+        });
+
+        // ====================================================================
+        // ACCESS SECURITY (Admin Path Management)
+        // ====================================================================
+        Route::prefix('access-security')->name('access-security.')->group(function () {
+            Route::get('/', [AccessSecurityController::class, 'index'])->name('index');
+            Route::put('/', [AccessSecurityController::class, 'update'])->name('update');
+            Route::post('/generate', [AccessSecurityController::class, 'generate'])->name('generate');
+            Route::delete('/reset', [AccessSecurityController::class, 'reset'])->name('reset');
+        });
+
+        // ====================================================================
+        // SEO / AEO / GEO SETTINGS
+        // ====================================================================
+        Route::prefix('seo')->name('seo.')->group(function () {
+            Route::get('/', [AdminSeoController::class, 'index'])->name('index');
+            Route::put('/', [AdminSeoController::class, 'update'])->name('update');
         });
 
         // ====================================================================

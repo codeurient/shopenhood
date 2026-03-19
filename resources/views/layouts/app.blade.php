@@ -53,10 +53,13 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <style>.sidebar-nav::-webkit-scrollbar{display:none}.sidebar-nav{scrollbar-width:none;-ms-overflow-style:none}</style>
+    <style>
+        html { scrollbar-gutter: stable; }
+        .sidebar-nav::-webkit-scrollbar{display:none}.sidebar-nav{scrollbar-width:none;-ms-overflow-style:none}
+    </style>
     @stack('styles')
 </head>
-<body class="bg-[#FFFFFF] antialiased font-sans" x-data="{ sidebarOpen: false }">
+<body class="bg-[#FFFFFF] antialiased font-sans" x-data="{ sidebarOpen: false }" :class="sidebarOpen ? 'overflow-hidden' : ''">
     <div class="flex min-h-screen">
 
         <!-- Sidebar -->

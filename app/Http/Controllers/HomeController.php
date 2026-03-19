@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Listing;
 use App\Models\ListingType;
 use App\Models\Slider;
+use App\Services\ListingCardStatsService;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -40,6 +41,13 @@ class HomeController extends Controller
             ->latest()
             ->limit(8)
             ->get();
+
+        // Pre-warm sold-count cache for all listing cards in 2 bulk queries
+        $allListings = $featuredListings->concat($latestListings);
+        app(ListingCardStatsService::class)->warm(
+            $allListings->pluck('id'),
+            $allListings->pluck('user_id')->filter(),
+        );
 
         $categories = Category::whereNull('parent_id')
             ->where('is_active', true)

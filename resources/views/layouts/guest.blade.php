@@ -4,12 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? config('app.name', 'Shopenhood') }}</title>
 
-    <!-- SEO Meta Tags -->
-    @if(isset($metaDescription))
-    <meta name="description" content="{{ $metaDescription }}">
+    @php
+        use App\Models\Setting;
+        $seoTitle       = $title       ?? Setting::getValue('seo.default_meta_title', config('app.name', 'Shopenhood'));
+        $seoDescription = $metaDescription ?? Setting::getValue('seo.default_meta_description', '');
+        $seoImage       = $ogImage ?? null;
+        $seoUrl         = url()->current();
+        $orgName        = Setting::getValue('seo.organization_name', config('app.name'));
+    @endphp
+
+    <title>{{ $seoTitle }}</title>
+
+    {{-- ── Core Meta ────────────────────────────────────────────────── --}}
+    @if($seoDescription)
+    <meta name="description" content="{{ $seoDescription }}">
     @endif
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ $seoUrl }}">
+
+    {{-- ── Open Graph (Facebook / LinkedIn / WhatsApp) ─────────────── --}}
+    <meta property="og:type"        content="{{ $ogType ?? 'website' }}">
+    <meta property="og:url"         content="{{ $seoUrl }}">
+    <meta property="og:title"       content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:site_name"   content="{{ $orgName }}">
+    @if($seoImage)
+    <meta property="og:image"       content="{{ $seoImage }}">
+    <meta property="og:image:alt"   content="{{ $seoTitle }}">
+    @endif
+
+    {{-- ── Twitter / X Card ────────────────────────────────────────── --}}
+    <meta name="twitter:card"        content="{{ $seoImage ? 'summary_large_image' : 'summary' }}">
+    <meta name="twitter:title"       content="{{ $seoTitle }}">
+    <meta name="twitter:description" content="{{ $seoDescription }}">
+    @if($seoImage)
+    <meta name="twitter:image"       content="{{ $seoImage }}">
+    @endif
+
+    {{-- ── Per-page extra meta (OG overrides, etc.) ───────────────── --}}
+    @stack('meta')
+
+    {{-- ── Search Engine Verification ────────────────────────────── --}}
+    @if(Setting::getValue('seo.google_verification'))
+    <meta name="google-site-verification" content="{{ Setting::getValue('seo.google_verification') }}">
+    @endif
+    @if(Setting::getValue('seo.bing_verification'))
+    <meta name="msvalidate.01" content="{{ Setting::getValue('seo.bing_verification') }}">
+    @endif
+
+    {{-- ── OpenSearch ──────────────────────────────────────────────── --}}
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="{{ $orgName }}" href="{{ route('opensearch') }}">
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,6 +128,49 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @stack('styles')
+
+    {{-- ── Global Organization + WebSite JSON-LD ─────────────────── --}}
+    @php
+        $socialProfiles = Setting::getValue('seo.organization_social_profiles', '');
+        $sameAs = [];
+        if ($socialProfiles) {
+            $decoded = json_decode($socialProfiles, true);
+            if (is_array($decoded)) { $sameAs = $decoded; }
+        }
+        $orgLogo = Setting::getValue('seo.organization_logo', '');
+        $globalSchema = [
+            '@context' => 'https://schema.org',
+            '@graph'   => [
+                [
+                    '@type'       => 'Organization',
+                    '@id'         => url('/') . '#organization',
+                    'name'        => $orgName,
+                    'url'         => url('/'),
+                    'description' => Setting::getValue('seo.organization_description', ''),
+                    'logo'        => $orgLogo ? ['@type' => 'ImageObject', 'url' => $orgLogo] : null,
+                    'sameAs'      => $sameAs ?: null,
+                ],
+                [
+                    '@type'            => 'WebSite',
+                    '@id'              => url('/') . '#website',
+                    'name'             => $orgName,
+                    'url'              => url('/'),
+                    'publisher'        => ['@id' => url('/') . '#organization'],
+                    'potentialAction'  => [
+                        '@type'       => 'SearchAction',
+                        'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => url('/listings') . '?q={search_term_string}'],
+                        'query-input' => 'required name=search_term_string',
+                    ],
+                ],
+            ],
+        ];
+        // Remove null values
+        $globalSchema['@graph'][0] = array_filter($globalSchema['@graph'][0]);
+    @endphp
+    <script type="application/ld+json">{!! json_encode($globalSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+
+    {{-- ── Per-page structured data ────────────────────────────────── --}}
+    @stack('schema')
 </head>
 <body class="bg-white antialiased font-sans">
     <!-- Mobile-First Layout -->

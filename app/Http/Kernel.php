@@ -50,6 +50,7 @@ class Kernel extends HttpKernel
         // Custom Admin Middleware
         'guest.admin' => \App\Http\Middleware\RedirectIfAdminAuthenticated::class,
         'auth.admin' => \App\Http\Middleware\AdminAuthenticate::class,
+        'admin.ip' => \App\Http\Middleware\AdminIpAllowlist::class,
         'role' => \App\Http\Middleware\CheckUserRole::class,
         'log.activity' => \App\Http\Middleware\LogActivity::class,
 

@@ -18,6 +18,12 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
+        RateLimiter::for('admin.login', function (Request $request) {
+            return Limit::perMinute(config('admin.login_rate_limit', 5))
+                ->by($request->ip())
+                ->response(fn () => response('Too many login attempts. Please wait before trying again.', 429));
+        });
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')

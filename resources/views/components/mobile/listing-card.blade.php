@@ -40,37 +40,18 @@
         }
     }
 
-    // Favorite state: load auth user's favorite IDs once per request (static cache)
-    $isFavorited = false;
-    if (auth()->check()) {
-        static $authFavoriteIds = null;
-        if ($authFavoriteIds === null) {
-            $authFavoriteIds = auth()->user()->favoriteListings()->pluck('listings.id')->all();
-        }
-        $isFavorited = in_array($listing->id, $authFavoriteIds);
-    }
+    // Singleton service — pre-warmed by the controller; provides 0-query lookups per card
+    $cardStats = app(\App\Services\ListingCardStatsService::class);
+
+    // Favorite state — 1 query total per request (loaded lazily on first card render)
+    $isFavorited = in_array($listing->id, $cardStats->getFavoriteIds());
 
     // Verified badge: seller has an admin-approved business profile
     $isOwnerVerified = $listing->user?->businessProfile?->isApproved() ?? false;
 
-    // Per-listing sold count (static cache to avoid N+1 across card renders)
-    static $listingTotals = [];
-    if (! array_key_exists($listing->id, $listingTotals)) {
-        $listingTotals[$listing->id] = (int) \App\Models\Order::where('listing_id', $listing->id)
-            ->whereNotIn('status', ['cancelled'])
-            ->sum('quantity');
-    }
-    $listingTotalSold = $listingTotals[$listing->id];
-
-    // Seller total sold (static cache to avoid N+1 per seller across card renders)
-    static $sellerTotals = [];
-    $sellerId = $listing->user_id;
-    if ($listing->user && ! array_key_exists($sellerId, $sellerTotals)) {
-        $sellerTotals[$sellerId] = (int) \App\Models\Order::where('seller_id', $sellerId)
-            ->whereNotIn('status', ['cancelled'])
-            ->sum('quantity');
-    }
-    $sellerTotalSold = $sellerTotals[$sellerId] ?? 0;
+    // Per-listing and per-seller sold counts — resolved from the pre-warmed singleton
+    $listingTotalSold = $cardStats->getListingTotal($listing->id);
+    $sellerTotalSold  = $cardStats->getSellerTotal($listing->user_id ?? 0);
 
     // Seller status badge
     $sellerBadge = null;

@@ -395,13 +395,19 @@ class Listing extends Model
             return null;
         }
 
-        // Try to find the country code from the locations table
-        $location = Location::where('type', 'country')
-            ->where('name', $this->country)
-            ->first();
+        // Static cache: one DB lookup per unique country name per request
+        static $resolved = [];
 
-        if ($location && $location->code) {
-            return $location->code;
+        if (! array_key_exists($this->country, $resolved)) {
+            $location = Location::where('type', 'country')
+                ->where('name', $this->country)
+                ->first();
+
+            $resolved[$this->country] = $location?->code ?? null;
+        }
+
+        if ($resolved[$this->country]) {
+            return $resolved[$this->country];
         }
 
         // Fallback: manual mapping for common countries

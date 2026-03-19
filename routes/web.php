@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\SearchSuggestionController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\User\AddressController as UserAddressController;
 use App\Http\Controllers\User\BusinessProfileController as UserBusinessProfileController;
 use App\Http\Controllers\User\CheckoutController;
@@ -36,6 +37,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// ── SEO / AEO / GEO ─────────────────────────────────────────────────────
+Route::get('/sitemap.xml', [SeoController::class, 'sitemapIndex'])->name('sitemap');
+Route::get('/sitemap-listings.xml', [SeoController::class, 'sitemapListings'])->name('sitemap.listings');
+Route::get('/sitemap-categories.xml', [SeoController::class, 'sitemapCategories'])->name('sitemap.categories');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots.txt');
+Route::get('/llms.txt', [SeoController::class, 'llmsTxt'])->name('llms.txt');
+Route::get('/opensearch.xml', [SeoController::class, 'opensearch'])->name('opensearch');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 

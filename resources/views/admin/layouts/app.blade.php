@@ -169,6 +169,18 @@
                     Settings
                 </a>
 
+                <a href="{{ route('admin.seo.index') }}"
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.seo.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-magnifying-glass-chart w-4 text-center flex-shrink-0"></i>
+                    SEO / GEO / AEO
+                </a>
+
+                <a href="{{ route('admin.access-security.index') }}"
+                   class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium transition-colors pl-[9px] pr-3 border-l-[3px] {{ request()->routeIs('admin.access-security.*') ? 'bg-[#000000]/30 text-[#D4AF37] border-[#D4AF37]' : 'text-[#E0E0E0] hover:bg-[#000000]/20 border-transparent' }}">
+                    <i class="fa-solid fa-shield-halved w-4 text-center flex-shrink-0"></i>
+                    Access Security
+                </a>
+
                 <div class="pt-2 mt-1 border-t border-[#E0E0E0]/10">
                     <a href="{{ route('home') }}"
                        class="flex items-center gap-2.5 h-9 rounded text-[13px] font-medium text-[#E0E0E0]/50 hover:bg-[#000000]/20 hover:text-[#E0E0E0] transition-colors pl-[9px] pr-3 border-l-[3px] border-transparent">

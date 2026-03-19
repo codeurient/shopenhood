@@ -11,6 +11,58 @@
         $seller = $listing->user;
     @endphp
 
+    {{-- ── Product + BreadcrumbList JSON-LD (SEO / AEO) ──────────── --}}
+    @push('schema')
+    @php
+        $schemaImages = $listing->images->isNotEmpty()
+            ? $listing->images->map(fn($img) => $img->url)->filter()->values()->toArray()
+            : [];
+
+        $breadcrumbItems = [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
+        ];
+        $pos = 2;
+        if ($listing->category) {
+            $breadcrumbItems[] = [
+                '@type'    => 'ListItem',
+                'position' => $pos++,
+                'name'     => $listing->category->name,
+                'item'     => url('/categories/' . $listing->category->slug),
+            ];
+        }
+        $breadcrumbItems[] = [
+            '@type'    => 'ListItem',
+            'position' => $pos,
+            'name'     => $listing->title,
+            'item'     => url('/listings/' . $listing->slug),
+        ];
+
+        $productSchema = array_filter([
+            '@context'    => 'https://schema.org/',
+            '@type'       => 'Product',
+            'name'        => $listing->title,
+            'description' => mb_substr(strip_tags($listing->meta_description ?? $listing->description ?? ''), 0, 500),
+            'url'         => url('/listings/' . $listing->slug),
+            'image'       => $schemaImages ?: null,
+            'brand'       => ['@type' => 'Brand', 'name' => $seller?->name ?? config('app.name')],
+            'offers'      => [
+                '@type'         => 'Offer',
+                'price'         => (string) ($displayPrice ?? '0'),
+                'priceCurrency' => $currency,
+                'availability'  => ($listing->availability_type ?? 'in_stock') === 'in_stock'
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/PreOrder',
+                'seller'        => ['@type' => 'Person', 'name' => $seller?->name ?? ''],
+            ],
+            'breadcrumb'  => [
+                '@type'           => 'BreadcrumbList',
+                'itemListElement' => $breadcrumbItems,
+            ],
+        ]);
+    @endphp
+    <script type="application/ld+json">{!! json_encode($productSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    @endpush
+
     @push('scripts')
     <script>
         function showFavoriteBtn(listingId, initialFavorited) {
