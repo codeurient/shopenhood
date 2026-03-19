@@ -17,11 +17,17 @@ class ListingTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Test Type ' . fake()->unique()->numberBetween(1, 9999),
-            'slug' => 'test-type-' . fake()->unique()->numberBetween(1, 9999),
+            'name' => 'Test Type '.fake()->unique()->numberBetween(1, 9999),
+            'slug' => 'test-type-'.fake()->unique()->numberBetween(1, 9999),
             'description' => fake()->sentence(),
             'requires_price' => false,
-            'icon' => fake()->randomElement(['💰', '🛒', '🎁', '🔄', '🔨']),
+            'icon' => fake()->randomElement([
+                '<i class="fa-solid fa-tag"></i>',
+                '<i class="fa-solid fa-cart-shopping"></i>',
+                '<i class="fa-solid fa-gift"></i>',
+                '<i class="fa-solid fa-arrows-rotate"></i>',
+                '<i class="fa-solid fa-gavel"></i>',
+            ]),
             'is_active' => true,
             'sort_order' => fake()->numberBetween(1, 10),
         ];

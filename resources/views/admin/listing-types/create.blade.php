@@ -87,11 +87,18 @@
                     <label for="icon" class="block mb-1.5 text-[13px] font-medium text-[#1A1A1A]">
                         Icon <span class="text-[12px] font-normal text-[#37474F]">(Font Awesome HTML)</span>
                     </label>
-                    <input type="text" name="icon" id="icon"
-                           value="{{ old('icon') }}"
-                           placeholder="e.g., <i class=&quot;fa-solid fa-tag&quot;></i>"
-                           class="h-[34px] border text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3 @error('icon') border-red-500 @else border-[#E0E0E0] @enderror">
-                    <p class="mt-1 text-[12px] text-[#37474F]">Optional Font Awesome icon HTML to display with the listing type</p>
+                    <div class="flex items-center gap-2">
+                        <input type="text" name="icon" id="icon"
+                               value="{{ old('icon') }}"
+                               placeholder="e.g., <i class=&quot;fa-solid fa-tag&quot;></i>"
+                               oninput="document.getElementById('icon-preview').innerHTML = this.value || '<i class=\'fa-solid fa-tag\'></i>'"
+                               class="h-[34px] border text-[#1A1A1A] text-[13px] rounded focus:ring-0 focus:border-[#D4AF37] block w-full px-3 @error('icon') border-red-500 @else border-[#E0E0E0] @enderror">
+                        <div id="icon-preview"
+                             class="flex-shrink-0 w-[34px] h-[34px] flex items-center justify-center border border-[#E0E0E0] rounded bg-[#37474F] text-[#D4AF37] text-lg">
+                            {!! old('icon') ?: '<i class="fa-solid fa-tag"></i>' !!}
+                        </div>
+                    </div>
+                    <p class="mt-1 text-[12px] text-[#37474F]">Font Awesome icon HTML — preview updates live as you type</p>
                     @error('icon')
                         <p class="mt-1 text-[12px] text-red-600">{{ $message }}</p>
                     @enderror
