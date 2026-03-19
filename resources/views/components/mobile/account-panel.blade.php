@@ -43,83 +43,14 @@
             </button>
         </div>
 
-        {{-- Account Navigation --}}
-        <nav class="px-2 py-2 space-y-0.5">
-            <p class="px-3 pt-1 pb-1 text-[10px] font-semibold text-[#37474F] uppercase tracking-wider">My Account</p>
-
+        {{-- Dashboard CTA --}}
+        <div class="px-3 py-3">
             <a href="{{ route('dashboard') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('dashboard') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                <i class="fa-solid fa-house w-4 flex-shrink-0 text-[#37474F]"></i>
-                Dashboard
+               class="flex items-center justify-center gap-2 w-full h-[38px] bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                <i class="fa-solid fa-gauge text-xs"></i>
+                Go to Dashboard
             </a>
-
-            <a href="{{ route('user.listings.index') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('user.listings.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                <i class="fa-solid fa-layer-group w-4 flex-shrink-0 text-[#37474F]"></i>
-                My Listings
-            </a>
-
-            @if(auth()->user()->isBusinessUser())
-                <a href="{{ route('business.listings.index') }}"
-                   class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('business.listings.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                    <i class="fa-solid fa-building w-4 flex-shrink-0 text-[#37474F]"></i>
-                    Business Listings
-                </a>
-                <a href="{{ route('business.profile') }}"
-                   class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('business.profile*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                    <i class="fa-solid fa-id-card w-4 flex-shrink-0 text-[#37474F]"></i>
-                    Business Profile
-                </a>
-                <a href="{{ route('user.coupons.index') }}"
-                   class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('user.coupons.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                    <i class="fa-solid fa-ticket w-4 flex-shrink-0 text-[#37474F]"></i>
-                    My Coupons
-                </a>
-                <a href="{{ route('business.stock.index') }}"
-                   class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('business.stock.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                    <i class="fa-solid fa-boxes-stacked w-4 flex-shrink-0 text-[#37474F]"></i>
-                    Stock Management
-                </a>
-            @endif
-
-            <div class="my-1 border-t border-[#E0E0E0]"></div>
-
-            <a href="{{ route('user.addresses.index') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('user.addresses.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                <i class="fa-solid fa-location-dot w-4 flex-shrink-0 text-[#37474F]"></i>
-                My Addresses
-            </a>
-
-            <a href="{{ route('user.purchases.index') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('user.purchases.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                <i class="fa-solid fa-bag-shopping w-4 flex-shrink-0 text-[#37474F]"></i>
-                My Orders
-            </a>
-
-            <a href="{{ route('user.sales.index') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('user.sales.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                <i class="fa-solid fa-chart-line w-4 flex-shrink-0 text-[#37474F]"></i>
-                My Sales
-            </a>
-
-            @php $unreadCount = auth()->user()->unreadNotifications()->count(); @endphp
-            <a href="{{ route('user.notifications.index') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('user.notifications.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                <i class="fa-solid fa-bell w-4 flex-shrink-0 text-[#37474F]"></i>
-                <span class="flex-1">Notifications</span>
-                @if($unreadCount > 0)
-                    <span class="inline-flex items-center justify-center min-w-[1.125rem] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
-                        {{ $unreadCount > 99 ? '99+' : $unreadCount }}
-                    </span>
-                @endif
-            </a>
-
-            <a href="{{ route('profile.edit') }}"
-               class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('profile.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-                <i class="fa-solid fa-circle-user w-4 flex-shrink-0 text-[#37474F]"></i>
-                Profile Settings
-            </a>
-        </nav>
+        </div>
 
         <div class="mx-2 border-t border-[#E0E0E0]"></div>
     @else

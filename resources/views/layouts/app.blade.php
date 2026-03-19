@@ -185,6 +185,11 @@
 
                     <!-- User Actions -->
                     <div class="flex items-center gap-3">
+                        <a href="{{ route('home') }}"
+                           class="inline-flex items-center gap-1.5 h-[34px] px-3 border border-[#D4AF37] text-[#D4AF37] text-[13px] font-semibold rounded hover:bg-[#D4AF37]/10 transition">
+                            <i class="fa-solid fa-store text-xs"></i>
+                            <span class="hidden sm:inline">Store</span>
+                        </a>
                         <a href="{{ route('profile.edit') }}" class="hidden md:block text-[13px] text-[#E0E0E0]/60 hover:text-[#E0E0E0] transition">{{ auth()->user()->name }}</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
