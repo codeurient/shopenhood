@@ -20,7 +20,7 @@
        x-transition:leave="transition ease-in duration-200 transform"
        x-transition:leave-start="translate-x-0"
        x-transition:leave-end="-translate-x-full"
-       class="fixed inset-y-0 left-0 z-[61] w-72 bg-white shadow-xl overflow-y-auto flex flex-col"
+       class="fixed inset-y-0 left-0 z-[61] w-72 bg-white shadow-xl overflow-y-auto scrollbar-hide flex flex-col"
        role="dialog"
        aria-modal="true"
        aria-label="Menu"
@@ -268,3 +268,8 @@
     @endauth
 
 </aside>
+
+<style>
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>

@@ -4,6 +4,7 @@ namespace App\View\Components\Mobile;
 
 use App\Models\Category;
 use App\Models\ListingType;
+use App\Models\Location;
 use Illuminate\View\Component;
 
 class FilterPanel extends Component
@@ -12,6 +13,8 @@ class FilterPanel extends Component
 
     public $topCategories;
 
+    public $countries;
+
     public array $activeCategoryPath = [];
 
     public function __construct()
@@ -19,6 +22,11 @@ class FilterPanel extends Component
         $this->listingTypes = ListingType::where('is_active', true)
             ->orderBy('sort_order')
             ->get();
+
+        $this->countries = Location::where('type', 'country')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'code']);
 
         $this->topCategories = Category::whereNull('parent_id')
             ->where('is_active', true)

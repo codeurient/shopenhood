@@ -2,6 +2,11 @@
     <!-- Listing Type Tabs -->
     <x-mobile.listing-type-tabs :listingTypes="$listingTypes" currentType="sell" />
 
+    <!-- Search Bar (mobile only — below listing type tabs) -->
+    <div class="md:hidden">
+        <x-mobile.search-bar />
+    </div>
+
     <!-- Category Horizontal Scroll -->
     <x-mobile.category-scroll :categories="$categories" />
 

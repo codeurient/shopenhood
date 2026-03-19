@@ -1,7 +1,8 @@
 <div x-data="filterPanelData(
     {{ Illuminate\Support\Js::from($topCategories->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'slug' => $c->slug, 'has_children' => $c->children_count > 0])->values()) }},
     {{ Illuminate\Support\Js::from($listingTypes->map(fn($t) => ['id' => $t->id, 'name' => $t->name])->values()) }},
-    {{ Illuminate\Support\Js::from($activeCategoryPath) }}
+    {{ Illuminate\Support\Js::from($activeCategoryPath) }},
+    {{ Illuminate\Support\Js::from($countries->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'code' => $c->code])->values()) }}
 )"
      x-init="init()"
      @toggle-filter-panel.window="open = !open; document.body.style.overflow = open ? 'hidden' : ''"
@@ -62,7 +63,7 @@
         </div>
 
         {{-- Scrollable body --}}
-        <div class="flex-1 overflow-y-auto divide-y divide-[#E0E0E0]">
+        <div class="flex-1 overflow-y-auto scrollbar-hide divide-y divide-[#E0E0E0]">
 
             {{-- ── 1. LOCATION ── --}}
             <div class="px-4 py-4">
@@ -91,19 +92,19 @@
                                        placeholder="Search country..."
                                        class="w-full h-[30px] px-2 text-[12px] border border-[#E0E0E0] rounded focus:outline-none focus:border-[#D4AF37] transition-colors">
                             </div>
-                            <div class="max-h-44 overflow-y-auto">
+                            <div class="max-h-44 overflow-y-auto scrollbar-hide">
                                 <button type="button"
-                                        @click="country = ''; countryOpen = false; countrySearch = ''"
-                                        :class="!country ? 'text-[#D4AF37] bg-[#D4AF37]/5' : 'text-[#37474F] hover:bg-[#D4AF37]/5'"
+                                        @click="country = ''; selectedCountryId = null; cities = []; city = ''; countryOpen = false; countrySearch = ''"
+                                        :class="!selectedCountryId ? 'text-[#D4AF37] bg-[#D4AF37]/5' : 'text-[#37474F] hover:bg-[#D4AF37]/5'"
                                         class="w-full px-3 py-2 text-left text-[12px] transition-colors">
                                     Any country
                                 </button>
-                                <template x-for="c in filteredCountries" :key="c">
+                                <template x-for="c in filteredCountries" :key="c.id">
                                     <button type="button"
-                                            @click="country = c; countryOpen = false; countrySearch = ''"
-                                            :class="country === c ? 'bg-[#D4AF37]/10 text-[#D4AF37]' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5'"
+                                            @click="country = c.name; selectedCountryId = c.id; countryOpen = false; countrySearch = ''; fetchCities(c.id)"
+                                            :class="selectedCountryId === c.id ? 'bg-[#D4AF37]/10 text-[#D4AF37]' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5'"
                                             class="w-full px-3 py-2 text-left text-[12px] transition-colors"
-                                            x-text="c">
+                                            x-text="c.name">
                                     </button>
                                 </template>
                                 <div x-show="filteredCountries.length === 0"
@@ -114,14 +115,63 @@
                         </div>
                     </div>
 
-                    {{-- City text input --}}
-                    <div class="relative">
-                        <i class="fa-solid fa-location-dot absolute left-3 top-1/2 -translate-y-1/2 text-[#37474F] text-xs pointer-events-none"></i>
-                        <input type="text"
-                               x-model="city"
-                               placeholder="City"
-                               class="w-full h-[34px] pl-8 pr-3 text-[13px] border border-[#E0E0E0] rounded focus:outline-none focus:ring-0 focus:border-[#D4AF37] placeholder-[#37474F] text-[#1A1A1A] transition-colors">
+                    {{-- City searchable select (only after country selected) --}}
+                    <div x-show="selectedCountryId" style="display:none;">
+                        <div class="relative" @click.outside="cityOpen = false">
+                            <button type="button"
+                                    @click="cityOpen = !cityOpen"
+                                    :disabled="citiesLoading"
+                                    class="w-full flex items-center justify-between h-[34px] px-3 text-[13px] border border-[#E0E0E0] rounded hover:border-[#D4AF37] focus:outline-none transition-colors text-left bg-white disabled:opacity-60">
+                                <span x-show="citiesLoading" class="text-[#37474F]">
+                                    <i class="fa-solid fa-spinner animate-spin text-xs mr-1"></i> Loading cities...
+                                </span>
+                                <span x-show="!citiesLoading"
+                                      :class="city ? 'text-[#1A1A1A]' : 'text-[#37474F]'"
+                                      x-text="city || 'Select city...'"></span>
+                                <i x-show="!citiesLoading"
+                                   class="fa-solid fa-chevron-down text-[10px] text-[#37474F] transition-transform"
+                                   :class="cityOpen ? 'rotate-180' : ''"></i>
+                            </button>
+                            <div x-show="cityOpen && !citiesLoading"
+                                 style="display:none;"
+                                 class="absolute left-0 right-0 top-full mt-1 bg-white border border-[#E0E0E0] rounded shadow-xl z-[70] overflow-hidden">
+                                <div class="p-2 border-b border-[#E0E0E0]">
+                                    <input type="text"
+                                           x-model="citySearch"
+                                           x-ref="cityInput"
+                                           x-effect="if (cityOpen) $nextTick(() => $refs.cityInput?.focus())"
+                                           @keydown.escape.stop="cityOpen = false"
+                                           placeholder="Search city..."
+                                           class="w-full h-[30px] px-2 text-[12px] border border-[#E0E0E0] rounded focus:outline-none focus:border-[#D4AF37] transition-colors">
+                                </div>
+                                <div class="max-h-44 overflow-y-auto scrollbar-hide">
+                                    <button type="button"
+                                            @click="city = ''; cityOpen = false; citySearch = ''"
+                                            :class="!city ? 'text-[#D4AF37] bg-[#D4AF37]/5' : 'text-[#37474F] hover:bg-[#D4AF37]/5'"
+                                            class="w-full px-3 py-2 text-left text-[12px] transition-colors">
+                                        Any city
+                                    </button>
+                                    <template x-for="c in filteredCities" :key="c.id">
+                                        <button type="button"
+                                                @click="city = c.name; cityOpen = false; citySearch = ''"
+                                                :class="city === c.name ? 'bg-[#D4AF37]/10 text-[#D4AF37]' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5'"
+                                                class="w-full px-3 py-2 text-left text-[12px] transition-colors"
+                                                x-text="c.name">
+                                        </button>
+                                    </template>
+                                    <div x-show="cities.length === 0 && !citiesLoading"
+                                         class="px-3 py-3 text-[12px] text-[#37474F] text-center">
+                                        No cities found
+                                    </div>
+                                    <div x-show="filteredCities.length === 0 && cities.length > 0"
+                                         class="px-3 py-3 text-[12px] text-[#37474F] text-center">
+                                        No match
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <p x-show="!selectedCountryId" class="text-[12px] text-[#37474F] italic pl-1">Select a country to filter by city</p>
                 </div>
             </div>
 
@@ -149,7 +199,7 @@
                                    placeholder="Search type..."
                                    class="w-full h-[30px] px-2 text-[12px] border border-[#E0E0E0] rounded focus:outline-none focus:border-[#D4AF37] transition-colors">
                         </div>
-                        <div class="max-h-44 overflow-y-auto">
+                        <div class="max-h-44 overflow-y-auto scrollbar-hide">
                             <button type="button"
                                     @click="typeId = null; typeOpen = false; typeSearch = ''"
                                     :class="!typeId ? 'text-[#D4AF37] bg-[#D4AF37]/5' : 'text-[#37474F] hover:bg-[#D4AF37]/5'"
@@ -202,7 +252,7 @@
                 </div>
 
                 {{-- Level 1: top-level categories --}}
-                <div x-show="catLevel === 0" class="space-y-0.5 max-h-52 overflow-y-auto">
+                <div x-show="catLevel === 0" class="space-y-0.5 max-h-52 overflow-y-auto scrollbar-hide">
                     <template x-for="cat in topCategories" :key="cat.id">
                         <button type="button"
                                 @click="selectCat(cat, 1)"
@@ -221,7 +271,7 @@
                         <i class="fa-solid fa-chevron-left text-[9px]"></i>
                         All categories
                     </button>
-                    <div class="max-h-52 overflow-y-auto space-y-0.5">
+                    <div class="max-h-52 overflow-y-auto scrollbar-hide space-y-0.5">
                         <template x-for="cat in level2Cats" :key="cat.id">
                             <button type="button"
                                     @click="selectCat(cat, 2)"
@@ -251,7 +301,7 @@
                         <i class="fa-solid fa-chevron-left text-[9px]"></i>
                         <span x-text="breadcrumb[0]?.name ?? 'Back'"></span>
                     </button>
-                    <div class="max-h-52 overflow-y-auto space-y-0.5">
+                    <div class="max-h-52 overflow-y-auto scrollbar-hide space-y-0.5">
                         <template x-for="cat in level3Cats" :key="cat.id">
                             <button type="button"
                                     @click="selectCat(cat, 3)"
@@ -376,7 +426,7 @@
 </div>
 
 <script>
-function filterPanelData(topCategories, listingTypes, activeCatPath) {
+function filterPanelData(topCategories, listingTypes, activeCatPath, countries) {
     return {
         // ── Panel state ──────────────────────────────────────────────────
         open: false,
@@ -397,11 +447,16 @@ function filterPanelData(topCategories, listingTypes, activeCatPath) {
         // ── Searchable select state ───────────────────────────────────────
         countryOpen: false,
         countrySearch: '',
+        selectedCountryId: null,
+        cities: [],
+        citiesLoading: false,
+        cityOpen: false,
+        citySearch: '',
         typeOpen: false,
         typeSearch: '',
 
-        // ── Country list ─────────────────────────────────────────────────
-        countries: ['Afghanistan','Albania','Algeria','Andorra','Angola','Argentina','Armenia','Australia','Austria','Azerbaijan','Bahrain','Bangladesh','Belarus','Belgium','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Bulgaria','Cambodia','Cameroon','Canada','Chile','China','Colombia','Croatia','Cuba','Cyprus','Czech Republic','Denmark','Dominican Republic','Ecuador','Egypt','Estonia','Ethiopia','Finland','France','Georgia','Germany','Ghana','Greece','Guatemala','Honduras','Hungary','Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kuwait','Latvia','Lebanon','Libya','Lithuania','Luxembourg','Malaysia','Malta','Mexico','Moldova','Morocco','Myanmar','Nepal','Netherlands','New Zealand','Nigeria','Norway','Oman','Pakistan','Palestine','Panama','Paraguay','Peru','Philippines','Poland','Portugal','Qatar','Romania','Russia','Saudi Arabia','Senegal','Serbia','Singapore','Slovakia','Slovenia','Somalia','South Africa','South Korea','Spain','Sri Lanka','Sudan','Sweden','Switzerland','Syria','Taiwan','Tanzania','Thailand','Tunisia','Turkey','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe'],
+        // ── Location data (from DB via PHP component) ────────────────────
+        countries: countries,
 
         // ── Category navigation state ────────────────────────────────────
         breadcrumb: [],   // [{id, name, slug, has_children}]
@@ -421,6 +476,15 @@ function filterPanelData(topCategories, listingTypes, activeCatPath) {
                 await this.restorePath(activeCatPath);
             }
 
+            // Restore country selection from URL param
+            if (this.country) {
+                const found = this.countries.find(c => c.name === this.country);
+                if (found) {
+                    this.selectedCountryId = found.id;
+                    await this.fetchCities(found.id);
+                }
+            }
+
             // Allow pages to override context (e.g. listing show page)
             const ctx = window.filterPanelContext || {};
             if (ctx.categoryId && !this.categorySlug) {
@@ -429,6 +493,24 @@ function filterPanelData(topCategories, listingTypes, activeCatPath) {
             if (ctx.typeId && !this.typeId) {
                 this.typeId = ctx.typeId;
             }
+        },
+
+        // ── Fetch cities for selected country ─────────────────────────────
+        async fetchCities(countryId) {
+            this.cities = [];
+            this.city = '';
+            this.cityOpen = false;
+            this.citySearch = '';
+            if (!countryId) { return; }
+            this.citiesLoading = true;
+            try {
+                const res = await fetch(`/api/locations/${countryId}/cities`);
+                const data = await res.json();
+                this.cities = data.cities || [];
+            } catch (e) {
+                this.cities = [];
+            }
+            this.citiesLoading = false;
         },
 
         // ── Category helpers ─────────────────────────────────────────────
@@ -566,9 +648,13 @@ function filterPanelData(topCategories, listingTypes, activeCatPath) {
             this.typeSearch = '';
             this.condition = '';
             this.country = '';
+            this.selectedCountryId = null;
             this.countryOpen = false;
             this.countrySearch = '';
+            this.cities = [];
             this.city = '';
+            this.cityOpen = false;
+            this.citySearch = '';
             this.minPrice = '';
             this.maxPrice = '';
             this.clearCategory();
@@ -578,7 +664,13 @@ function filterPanelData(topCategories, listingTypes, activeCatPath) {
         get filteredCountries() {
             const s = this.countrySearch.toLowerCase().trim();
             if (!s) { return this.countries; }
-            return this.countries.filter(c => c.toLowerCase().includes(s));
+            return this.countries.filter(c => c.name.toLowerCase().includes(s));
+        },
+
+        get filteredCities() {
+            const s = this.citySearch.toLowerCase().trim();
+            if (!s) { return this.cities; }
+            return this.cities.filter(c => c.name.toLowerCase().includes(s));
         },
 
         get filteredTypes() {
@@ -609,3 +701,8 @@ function filterPanelData(topCategories, listingTypes, activeCatPath) {
     };
 }
 </script>
+
+<style>
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
