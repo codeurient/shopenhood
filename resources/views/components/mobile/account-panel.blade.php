@@ -20,7 +20,7 @@
        x-transition:leave="transition ease-in duration-200 transform"
        x-transition:leave-start="translate-x-0"
        x-transition:leave-end="-translate-x-full"
-       class="fixed inset-y-0 left-0 z-[61] w-72 bg-white shadow-xl overflow-y-auto scrollbar-hide flex flex-col"
+       class="fixed inset-y-0 left-0 z-[61] w-72 bg-white shadow-xl flex flex-col overflow-hidden"
        role="dialog"
        aria-modal="true"
        aria-label="Menu"
@@ -86,26 +86,27 @@
             ->get(['title', 'slug']);
     @endphp
 
-    <nav class="px-2 py-2 space-y-0.5">
-        <p class="px-3 pt-1 pb-1 text-[10px] font-semibold text-[#37474F] uppercase tracking-wider">Explore</p>
+    @php
+        $panelPages = \App\Models\Page::where('is_published', true)->orderBy('title')->get();
+        $currentPageKey = request()->route('page')?->key ?? null;
+    @endphp
 
-        <a href="#"
+    <nav class="px-2 py-2 space-y-0.5 flex-1 overflow-y-auto scrollbar-hide">
+        <p class="px-3 pt-1 pb-2 text-[10px] font-semibold text-[#37474F] uppercase tracking-wider">Explore</p>
+
+        <a href="{{ route('home') }}"
            class="flex items-center gap-3 px-3 py-2 rounded text-[13px] text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37] transition-colors">
             <i class="fa-solid fa-store w-4 flex-shrink-0 text-[#37474F]"></i>
             Stores
         </a>
 
-        <a href="{{ route('pages.show', 'help') }}"
-           class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('pages.show') && request()->route('page')?->key === 'help' ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-            <i class="fa-solid fa-circle-question w-4 flex-shrink-0 text-[#37474F]"></i>
-            Help
+        @foreach($panelPages as $panelPage)
+        <a href="{{ route('pages.show', $panelPage->key) }}"
+           class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ $currentPageKey === $panelPage->key ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
+            <i class="fa-solid fa-file-lines w-4 flex-shrink-0 text-[#37474F]"></i>
+            {{ $panelPage->title }}
         </a>
-
-        <a href="{{ route('pages.show', 'about') }}"
-           class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('pages.show') && request()->route('page')?->key === 'about' ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-            <i class="fa-solid fa-circle-info w-4 flex-shrink-0 text-[#37474F]"></i>
-            About
-        </a>
+        @endforeach
 
         <a href="{{ route('legal.index') }}"
            class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('legal.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
@@ -113,24 +114,10 @@
             Legal Center
         </a>
 
-        @foreach($panelLegalLinks as $legalPolicy)
-        <a href="{{ route('legal.show', $legalPolicy) }}"
-           class="flex items-center gap-3 px-3 py-2 rounded text-[13px] text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37] transition-colors pl-10">
-            <span class="w-1 h-1 rounded-full bg-[#37474F] flex-shrink-0 -ml-4"></span>
-            {{ $legalPolicy->title }}
-        </a>
-        @endforeach
-
         <a href="{{ route('blog.index') }}"
            class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('blog.*') ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
             <i class="fa-solid fa-newspaper w-4 flex-shrink-0 text-[#37474F]"></i>
             Blog
-        </a>
-
-        <a href="{{ route('pages.show', 'advertising-services') }}"
-           class="flex items-center gap-3 px-3 py-2 rounded text-[13px] transition-colors {{ request()->routeIs('pages.show') && request()->route('page')?->key === 'advertising-services' ? 'bg-[#D4AF37]/10 text-[#D4AF37] font-semibold' : 'text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37]' }}">
-            <i class="fa-solid fa-bullhorn w-4 flex-shrink-0 text-[#37474F]"></i>
-            Advertise
         </a>
 
         @auth

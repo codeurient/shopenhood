@@ -434,8 +434,12 @@ Route::prefix(config('admin.path'))->name('admin.')->middleware('admin.ip')->gro
         // ====================================================================
         Route::prefix('pages')->name('pages.')->group(function () {
             Route::get('/', [PageController::class, 'index'])->name('index');
+            Route::get('create', [PageController::class, 'create'])->name('create');
+            Route::post('/', [PageController::class, 'store'])->name('store');
             Route::get('{page}/edit', [PageController::class, 'edit'])->name('edit');
             Route::put('{page}', [PageController::class, 'update'])->name('update');
+            Route::delete('{page}', [PageController::class, 'destroy'])->name('destroy');
+            Route::patch('{page}/toggle-visibility', [PageController::class, 'toggleVisibility'])->name('toggle-visibility');
         });
 
         // ====================================================================

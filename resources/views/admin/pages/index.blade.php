@@ -7,9 +7,16 @@
 <div>
 
     <!-- Header -->
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold text-[#1A1A1A]">Pages</h2>
-        <p class="text-[#37474F] text-sm mt-1">Manage static content pages displayed on the site</p>
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-[#1A1A1A]">Pages</h2>
+            <p class="text-[#37474F] text-sm mt-1">Manage static content pages displayed on the site</p>
+        </div>
+        <a href="{{ route('admin.pages.create') }}"
+           class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+            <i class="fa-solid fa-plus text-xs"></i>
+            Create Page
+        </a>
     </div>
 
     @if(session('success'))
@@ -26,7 +33,7 @@
                 <thead>
                     <tr class="bg-[#37474F] border-b border-[#000000]/20">
                         <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Page</th>
-                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Status</th>
+                        <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Visibility</th>
                         <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Last Updated</th>
                         <th class="px-3 py-2.5 text-[12px] font-semibold text-[#D4AF37] uppercase tracking-wider">Actions</th>
                     </tr>
@@ -36,22 +43,39 @@
                         <tr class="{{ $loop->even ? 'bg-white' : 'bg-gray-50' }} hover:bg-[#D4AF37]/5 transition-colors">
                             <td class="px-3 py-2.5">
                                 <p class="text-[13px] font-medium text-[#1A1A1A]">{{ $page->title }}</p>
-                                <p class="text-[12px] text-[#37474F]">{{ $page->key }}</p>
+                                <p class="text-[12px] text-[#37474F] font-mono">/pages/{{ $page->key }}</p>
                             </td>
                             <td class="px-3 py-2.5">
-                                @if($page->is_published)
-                                    <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-[#D4AF37]/20 text-[#D4AF37]">Published</span>
-                                @else
-                                    <span class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold bg-gray-100 text-[#37474F]">Hidden</span>
-                                @endif
+                                <button type="button"
+                                        onclick="toggleVisibility({{ $page->id }}, this)"
+                                        class="inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold transition {{ $page->is_published ? 'bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/30' : 'bg-gray-100 text-[#37474F] hover:bg-gray-200' }}">
+                                    {{ $page->is_published ? 'Published' : 'Hidden' }}
+                                </button>
                             </td>
                             <td class="px-3 py-2.5 text-[12px] text-[#37474F]">{{ $page->updated_at->format('M d, Y') }}</td>
                             <td class="px-3 py-2.5">
-                                <a href="{{ route('admin.pages.edit', $page) }}"
-                                   class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-medium text-[#37474F] border border-[#E0E0E0] rounded hover:bg-gray-100 transition">
-                                    <i class="fa-solid fa-pen text-xs"></i>
-                                    Edit Content
-                                </a>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('pages.show', $page->key) }}" target="_blank"
+                                       class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-medium text-[#37474F] border border-[#E0E0E0] rounded hover:bg-gray-100 transition">
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                                        View
+                                    </a>
+                                    <a href="{{ route('admin.pages.edit', $page) }}"
+                                       class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-medium text-[#37474F] border border-[#E0E0E0] rounded hover:bg-gray-100 transition">
+                                        <i class="fa-solid fa-pen text-xs"></i>
+                                        Edit
+                                    </a>
+                                    <form action="{{ route('admin.pages.destroy', $page) }}" method="POST"
+                                          onsubmit="return confirm('Delete page \'{{ addslashes($page->title) }}\'? This cannot be undone.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-medium text-[#C0392B] border border-[#C0392B]/30 rounded hover:bg-red-50 transition">
+                                            <i class="fa-solid fa-trash text-xs"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -61,4 +85,21 @@
     </div>
 
 </div>
+
+<script>
+function toggleVisibility(pageId, btn) {
+    const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '';
+    fetch(`{{ route('admin.pages.toggle-visibility', ':id') }}`.replace(':id', pageId), {
+        method: 'PATCH',
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+    })
+    .then(r => r.json())
+    .then(data => {
+        const published = data.is_published;
+        btn.textContent = published ? 'Published' : 'Hidden';
+        btn.className = 'inline-flex items-center h-5 px-2 rounded-[10px] text-[11px] font-semibold transition ' +
+            (published ? 'bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/30' : 'bg-gray-100 text-[#37474F] hover:bg-gray-200');
+    });
+}
+</script>
 @endsection

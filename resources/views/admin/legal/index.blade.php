@@ -238,7 +238,7 @@
 <script>
 function toggleStatus(policyId, btn) {
     const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '';
-    fetch(`/admin/legal/${policyId}/toggle-status`, {
+    fetch(`{{ route('admin.legal.toggle-status', ':id') }}`.replace(':id', policyId), {
         method: 'PATCH',
         headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
     })
