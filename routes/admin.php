@@ -248,6 +248,7 @@ Route::prefix(config('admin.path'))->name('admin.')->middleware('admin.ip')->gro
             // Bulk Actions
             Route::post('bulk-delete', [ListingController::class, 'bulkDelete'])->name('bulk-delete');
             Route::post('bulk-force-destroy', [ListingController::class, 'bulkForceDestroy'])->name('bulk-force-destroy');
+            Route::post('bulk-restore', [ListingController::class, 'bulkRestore'])->name('bulk-restore');
             Route::post('bulk-approve', [ListingController::class, 'bulkApprove'])->name('bulk-approve');
             Route::post('bulk-reject', [ListingController::class, 'bulkReject'])->name('bulk-reject');
             Route::post('bulk-activate', [ListingController::class, 'bulkActivate'])->name('bulk-activate');

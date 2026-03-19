@@ -197,7 +197,7 @@ class ListingService
 
     public function softDeleteListing(User $user, Listing $listing): void
     {
-        $this->forceDeleteListing($user, $listing);
+        $listing->delete();
     }
 
     /**

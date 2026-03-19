@@ -911,6 +911,29 @@ class ListingController extends Controller
     }
 
     /**
+     * Bulk restore soft-deleted listings.
+     */
+    public function bulkRestore(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return back()->with('error', 'No listings selected.');
+        }
+
+        $admin = auth()->guard('admin')->user();
+        $count = Listing::onlyTrashed()->whereIn('id', $ids)->restore();
+
+        activity()
+            ->causedBy($admin)
+            ->log("Bulk restored {$count} listing(s)");
+
+        return redirect()
+            ->route('admin.listings.index', ['status' => 'deleted'])
+            ->with('success', "{$count} listing(s) restored successfully.");
+    }
+
+    /**
      * Restore a soft-deleted listing
      */
     public function restore(int $listing_id)

@@ -121,6 +121,17 @@
         <span class="text-[13px] text-[#1A1A1A] font-medium" x-text="`${selectedIds.length} listing(s) selected`"></span>
 
         @if(request('status') === 'deleted')
+            <form action="{{ route('admin.listings.bulk-restore') }}" method="POST">
+                @csrf
+                <template x-for="id in selectedIds" :key="id">
+                    <input type="hidden" name="ids[]" :value="id">
+                </template>
+                <button type="submit"
+                    class="inline-flex items-center gap-1.5 h-[28px] px-3 text-[12px] font-semibold text-white bg-green-600 rounded hover:bg-green-700 transition">
+                    <i class="fa-solid fa-rotate-left text-xs"></i>
+                    Restore Selected
+                </button>
+            </form>
             <form action="{{ route('admin.listings.bulk-force-destroy') }}" method="POST">
                 @csrf
                 <template x-for="id in selectedIds" :key="id">
@@ -181,33 +192,33 @@
                             <input type="checkbox" :value="{{ $listing->id }}" x-model="selectedIds"
                                    class="rounded border-[#E0E0E0] accent-[#D4AF37]">
                         </td>
-                        <td class="px-3 py-2.5">
-                            <div class="flex items-center gap-3">
+                        <td class="px-3 py-2.5 max-w-[220px]">
+                            <div class="flex items-center gap-2">
                                 @if($listing->primaryImage)
                                     <img src="{{ asset('storage/' . $listing->primaryImage->image_path) }}"
                                          alt="{{ $listing->title }}"
-                                         class="w-12 h-12 rounded border border-[#E0E0E0] object-cover flex-shrink-0">
+                                         class="w-9 h-9 rounded border border-[#E0E0E0] object-cover flex-shrink-0">
                                 @else
-                                    <div class="w-12 h-12 bg-gray-100 rounded border border-[#E0E0E0] flex items-center justify-center flex-shrink-0">
-                                        <i class="fa-solid fa-box text-[#E0E0E0] text-lg"></i>
+                                    <div class="w-9 h-9 bg-gray-100 rounded border border-[#E0E0E0] flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-box text-[#E0E0E0] text-sm"></i>
                                     </div>
                                 @endif
-                                <div>
-                                    <div class="text-[13px] font-medium text-[#1A1A1A]">{{ $listing->title }}</div>
-                                    <div class="text-[11px] text-[#37474F]">{{ $listing->slug }}</div>
+                                <div class="min-w-0">
+                                    <div class="text-[13px] font-medium text-[#1A1A1A] truncate" title="{{ $listing->title }}">{{ $listing->title }}</div>
+                                    <div class="text-[11px] text-[#37474F] truncate">{{ $listing->slug }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-3 py-2.5">
+                        <td class="px-3 py-2.5 max-w-[160px]">
                             @if($listing->user)
-                                <div class="text-[13px] font-medium text-[#1A1A1A]">{{ $listing->user->name }}</div>
-                                <div class="text-[11px] text-[#37474F]">{{ $listing->user->email }}</div>
+                                <div class="text-[13px] font-medium text-[#1A1A1A] truncate" title="{{ $listing->user->name }}">{{ $listing->user->name }}</div>
+                                <div class="text-[11px] text-[#37474F] truncate">{{ $listing->user->email }}</div>
                             @else
                                 <span class="text-[#37474F]">—</span>
                             @endif
                         </td>
-                        <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A]">{{ $listing->category->name }}</td>
-                        <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A]">{{ $listing->listingType->name }}</td>
+                        <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A] max-w-[120px] truncate">{{ $listing->category->name }}</td>
+                        <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A] max-w-[100px] truncate">{{ $listing->listingType->name }}</td>
                         <td class="px-3 py-2.5 text-[13px] text-[#1A1A1A]">
                             @if($listing->base_price)
                                 {{ $listing->currency }} {{ number_format($listing->base_price, 2) }}

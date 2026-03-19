@@ -177,14 +177,14 @@
         <!-- Price -->
         <div class="flex items-center gap-1">
             @if($cardDiscountPrice)
-                <span class="font-bold text-primary-600" style="font-size: 15px;">
+                <span class="font-bold text-primary-600" style="font-size: 11px;">
                     ${{ number_format($cardDiscountPrice, 2) }}
                 </span>
-                <span class="text-gray-500 line-through" style="font-size: 11px;">
+                <span class="text-gray-500 line-through" style="font-size: 10px;">
                     ${{ number_format($cardPrice, 2) }}
                 </span>
             @elseif($cardPrice)
-                <span class="font-bold text-gray-900" style="font-size: 15px;">
+                <span class="font-bold text-gray-900" style="font-size: 11px;">
                     ${{ number_format($cardPrice, 2) }}
                 </span>
             @else
