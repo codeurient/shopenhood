@@ -4,330 +4,345 @@
 @endphp
 
 <!-- Product Variations Manager -->
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6" x-data="variationManager()" x-init="init()">
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Product Variations</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Manage different variants (colors, sizes, etc.) with individual pricing and stock</p>
-            @if($hasExistingVariations)
-                <p class="text-xs text-amber-600 dark:text-amber-400 mt-2">
-                    <strong>Edit Mode:</strong> You are editing existing variations. Use "Regenerate" carefully as it will replace all current variations.
-                </p>
-            @endif
+<div class="bg-white border border-[#E0E0E0] rounded-lg shadow-sm overflow-hidden" x-data="variationManager()" x-init="init()">
+
+    {{-- Card Header --}}
+    <div class="flex items-center justify-between px-5 py-3 bg-[#37474F]">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-[#D4AF37] text-sm"></i>
+            <h3 class="text-[13px] font-semibold text-white">Product Variations</h3>
+            <p class="text-[11px] text-white/60 hidden sm:block">— manage variants with individual pricing and stock</p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex items-center gap-2">
             @if($isEditMode)
                 <button type="button" @click="confirmRegenerateVariations()"
-                        class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition"
+                        class="inline-flex items-center gap-1.5 h-[30px] px-3 bg-[#D4AF37] text-[#000000] text-[12px] font-semibold rounded hover:brightness-110 transition disabled:opacity-40"
                         :disabled="categoryVariants.length === 0">
-                    Regenerate All Combinations
+                    <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+                    Regenerate All
                 </button>
             @else
                 <button type="button" @click="generateAllVariations()"
-                        class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition"
+                        class="inline-flex items-center gap-1.5 h-[30px] px-3 bg-[#D4AF37] text-[#000000] text-[12px] font-semibold rounded hover:brightness-110 transition disabled:opacity-40"
                         :disabled="categoryVariants.length === 0">
-                    Generate All Combinations
+                    <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
+                    Generate All
                 </button>
             @endif
             <button type="button" @click="addManualVariation()"
-                    class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition">
-                Add Manual Variation
+                    class="inline-flex items-center gap-1.5 h-[30px] px-3 border border-white/30 text-white text-[12px] font-semibold rounded hover:bg-white/10 transition">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                Add Manual
             </button>
         </div>
     </div>
 
-    <!-- Variant Selection Info -->
-    <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 rounded" x-show="categoryVariants.length > 0" x-cloak>
-        <p class="text-sm text-blue-700 dark:text-blue-300">
-            <strong>Available Variants for this category:</strong>
-            <span x-text="categoryVariants.map(v => v.name).join(', ')"></span>
-        </p>
-        <p class="text-xs text-blue-600 dark:text-blue-400 mt-1" x-show="categoryVariants.length > 0">
-            Select variants below to generate all possible combinations automatically.
-        </p>
-    </div>
+    <div class="p-5">
 
-    <!-- Variations Table -->
-    <div class="overflow-x-auto" x-show="variations.length > 0" x-cloak>
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead class="bg-gray-50 dark:bg-gray-700">
-                <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">SKU</th>
-                    <template x-for="variant in categoryVariants.filter(v => v.is_main_shown)" :key="variant.id">
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase" x-text="variant.name"></th>
-                    </template>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Price</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Discount</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Wholesale</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Stock</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Images</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Default</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Active</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                <template x-for="(variation, index) in variations" :key="index">
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <!-- SKU -->
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <input type="text"
-                                   :name="`variations[${index}][sku]`"
-                                   x-model="variation.sku"
-                                   @input="updateSKU(index)"
-                                   placeholder="Auto-generate"
-                                   class="w-32 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
-                        </td>
+        {{-- Edit mode warning --}}
+        @if($hasExistingVariations)
+            <div class="mb-4 flex items-start gap-3 px-4 py-3 bg-yellow-50 border border-yellow-200 rounded text-[12px] text-yellow-700">
+                <i class="fa-solid fa-triangle-exclamation flex-shrink-0 mt-0.5"></i>
+                <span><strong>Edit Mode:</strong> You are editing existing variations. Use "Regenerate" carefully as it will replace all current variations.</span>
+            </div>
+        @endif
 
-                        <!-- Variant Values -->
-                        <template x-for="variant in categoryVariants.filter(v => v.is_main_shown)" :key="variant.id">
-
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <select :name="`variations[${index}][attributes][${variant.id}]`"
-                                        x-model="variation.attributes[variant.id]"
-                                        @change="updateVariationDisplay(index)"
-                                        class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
-                                    <option value="">Select</option>
-                                    <template x-for="item in variant.items" :key="item.id">
-                                        <option :value="item.id" x-text="item.display_value || item.value"></option>
-                                    </template>
-                                </select>
-                            </td>
-                        </template>
-
-                        <!-- Price -->
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <input type="number"
-                                   :name="`variations[${index}][price]`"
-                                   x-model="variation.price"
-                                   step="0.01"
-                                   placeholder="0.00"
-                                   required
-                                   class="w-24 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
-                        </td>
-
-                        <!-- Discount -->
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <button type="button"
-                                    @click="openDiscountModal(index)"
-                                    :class="variation.discount_price ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-600' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600'"
-                                    class="px-2 py-1 text-xs border rounded transition whitespace-nowrap">
-                                <span x-text="variation.discount_price ? 'Discounted ✓' : 'Set Discount'"></span>
-                            </button>
-                            <input type="hidden" :name="`variations[${index}][discount_price]`" :value="variation.discount_price || ''">
-                            <input type="hidden" :name="`variations[${index}][discount_start_date]`" :value="variation.discount_start_date || ''">
-                            <input type="hidden" :name="`variations[${index}][discount_end_date]`" :value="variation.discount_end_date || ''">
-                        </td>
-
-                        <!-- Wholesale -->
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <button type="button"
-                                    @click="openWholesaleModal(index)"
-                                    :class="variation.is_wholesale ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-600' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600'"
-                                    class="px-2 py-1 text-xs border rounded transition">
-                                <span x-text="variation.is_wholesale ? 'Wholesale ✓' : 'Wholesale'"></span>
-                            </button>
-                            <input type="hidden" :name="`variations[${index}][is_wholesale]`" :value="variation.is_wholesale ? 1 : 0">
-                            <input type="hidden" :name="`variations[${index}][wholesale_min_order_qty]`" :value="variation.wholesale_min_order_qty || ''">
-                            <input type="hidden" :name="`variations[${index}][wholesale_qty_increment]`" :value="variation.wholesale_qty_increment || 1">
-                            <input type="hidden" :name="`variations[${index}][wholesale_sample_available]`" :value="variation.wholesale_sample_available ? 1 : 0">
-                            <input type="hidden" :name="`variations[${index}][wholesale_sample_price]`" :value="variation.wholesale_sample_price || ''">
-                            <input type="hidden" :name="`variations[${index}][wholesale_terms]`" :value="variation.wholesale_terms || ''">
-                        </td>
-
-                        <!-- Stock -->
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <input type="number"
-                                   :name="`variations[${index}][stock_quantity]`"
-                                   x-model="variation.stock_quantity"
-                                   placeholder="0"
-                                   class="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
-                        </td>
-
-                        <!-- Images -->
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <div class="flex items-center gap-2">
-                                <button type="button"
-                                        @click="openImageModal(index)"
-                                        class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 rounded transition flex items-center gap-1">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span x-text="imageCount(index) > 0 ? imageCount(index) + ' image(s)' : 'Upload'"></span>
-                                </button>
-                                <!-- Hidden delete inputs for existing images marked for removal -->
-                                <template x-for="imgId in variation.deleted_image_ids" :key="imgId">
-                                    <input type="hidden" name="delete_variation_image_ids[]" :value="imgId">
-                                </template>
-                                <input type="file"
-                                       :id="`variation_images_${index}`"
-                                       :name="`variations[${index}][images][]`"
-                                       @change="handleImageUpload($event, index)"
-                                       multiple
-                                       accept="image/*"
-                                       class="hidden">
-                            </div>
-                        </td>
-
-                        <!-- Default -->
-                        <td class="px-4 py-3 whitespace-nowrap text-center">
-                            <input type="radio"
-                                   name="default_variation"
-                                   :value="index"
-                                   x-model="defaultVariationIndex"
-                                   @change="setDefaultVariation(index)"
-                                   class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                            <input type="hidden"
-                                   :name="`variations[${index}][is_default]`"
-                                   :value="defaultVariationIndex === index ? 1 : 0">
-                        </td>
-
-                        <!-- Active -->
-                        <td class="px-4 py-3 whitespace-nowrap text-center">
-                            <input type="checkbox"
-                                   :name="`variations[${index}][is_active]`"
-                                   x-model="variation.is_active"
-                                   value="1"
-                                   class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
-                        </td>
-
-                        <!-- Actions -->
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <button type="button"
-                                    @click="removeVariation(index)"
-                                    class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm">
-                                Delete
-                            </button>
-
-                            <!-- Hidden fields for existing variations and stock management -->
-                            <input type="hidden" :name="`variations[${index}][id]`" x-model="variation.id">
-                            <input type="hidden" :name="`variations[${index}][manage_stock]`" :value="variation.manage_stock ? 1 : 0">
-                            <input type="hidden" :name="`variations[${index}][allow_backorder]`" :value="variation.allow_backorder ? 1 : 0">
-                            <input type="hidden" :name="`variations[${index}][low_stock_threshold]`" :value="variation.low_stock_threshold || 10">
-                        </td>
-                    </tr>
-                </template>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Empty State -->
-    <div class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-lg" x-show="variations.length === 0" x-cloak>
-        <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-        <p class="text-gray-500 dark:text-gray-400 text-lg mb-4">No variations created yet</p>
-        <p class="text-sm text-gray-400 dark:text-gray-500 mb-6">
-            Select a category with variants to automatically generate combinations,<br>
-            or manually add individual variations
-        </p>
-    </div>
-
-    <!-- Bulk Actions -->
-    <div class="mt-6 flex gap-4" x-show="variations.length > 0" x-cloak>
-        <button type="button"
-                @click="bulkSetPrice()"
-                class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition">
-            Set Price for All
-        </button>
-        <button type="button"
-                @click="bulkSetStock()"
-                class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition">
-            Set Stock for All
-        </button>
-        <button type="button"
-                @click="clearAllVariations()"
-                class="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-900/50 transition">
-            Clear All
-        </button>
-        <div class="flex-1"></div>
-        <div class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-            Total Variations: <strong class="ml-2" x-text="variations.length"></strong>
+        {{-- Variant info banner --}}
+        <div class="mb-4 flex items-start gap-3 px-4 py-3 bg-blue-50 border border-blue-200 rounded text-[12px] text-blue-700"
+             x-show="categoryVariants.length > 0" x-cloak>
+            <i class="fa-solid fa-circle-info flex-shrink-0 mt-0.5"></i>
+            <div>
+                <strong>Available Variants:</strong>
+                <span x-text="categoryVariants.map(v => v.name).join(', ')"></span>
+                <p class="mt-0.5">Select variants below to generate all possible combinations automatically.</p>
+            </div>
         </div>
+
+        {{-- Variations Table --}}
+        <div class="overflow-x-auto border border-[#E0E0E0] rounded" x-show="variations.length > 0" x-cloak>
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-[#37474F]">
+                        <th class="px-3 py-2 text-left text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">SKU</th>
+                        <template x-for="variant in categoryVariants.filter(v => v.is_main_shown)" :key="variant.id">
+                            <th class="px-3 py-2 text-left text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap" x-text="variant.name"></th>
+                        </template>
+                        <th class="px-3 py-2 text-left text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Price</th>
+                        <th class="px-3 py-2 text-left text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Discount</th>
+                        <th class="px-3 py-2 text-left text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Wholesale</th>
+                        <th class="px-3 py-2 text-left text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Stock</th>
+                        <th class="px-3 py-2 text-left text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Images</th>
+                        <th class="px-3 py-2 text-center text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Default</th>
+                        <th class="px-3 py-2 text-center text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Active</th>
+                        <th class="px-3 py-2 text-left text-[11px] font-semibold text-[#D4AF37] uppercase tracking-wider whitespace-nowrap">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#E0E0E0]">
+                    <template x-for="(variation, index) in variations" :key="index">
+                        <tr class="hover:bg-[#F5F5F5] transition">
+                            <!-- SKU -->
+                            <td class="px-3 py-2.5 whitespace-nowrap">
+                                <input type="text"
+                                       :name="`variations[${index}][sku]`"
+                                       x-model="variation.sku"
+                                       @input="updateSKU(index)"
+                                       placeholder="Auto"
+                                       class="w-28 h-[30px] px-2 bg-white border border-[#E0E0E0] rounded text-[12px] text-[#1A1A1A] placeholder-[#37474F]/40 focus:border-[#D4AF37] focus:outline-none transition">
+                            </td>
+
+                            <!-- Variant Values -->
+                            <template x-for="variant in categoryVariants.filter(v => v.is_main_shown)" :key="variant.id">
+                                <td class="px-3 py-2.5 whitespace-nowrap">
+                                    <select :name="`variations[${index}][attributes][${variant.id}]`"
+                                            x-model="variation.attributes[variant.id]"
+                                            @change="updateVariationDisplay(index)"
+                                            class="h-[30px] px-2 bg-white border border-[#E0E0E0] rounded text-[12px] text-[#1A1A1A] focus:border-[#D4AF37] focus:outline-none transition">
+                                        <option value="">Select</option>
+                                        <template x-for="item in variant.items" :key="item.id">
+                                            <option :value="item.id" x-text="item.display_value || item.value"></option>
+                                        </template>
+                                    </select>
+                                </td>
+                            </template>
+
+                            <!-- Price -->
+                            <td class="px-3 py-2.5 whitespace-nowrap">
+                                <input type="number"
+                                       :name="`variations[${index}][price]`"
+                                       x-model="variation.price"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       required
+                                       class="w-24 h-[30px] px-2 bg-white border border-[#E0E0E0] rounded text-[12px] text-[#1A1A1A] placeholder-[#37474F]/40 focus:border-[#D4AF37] focus:outline-none transition">
+                            </td>
+
+                            <!-- Discount -->
+                            <td class="px-3 py-2.5 whitespace-nowrap">
+                                <button type="button"
+                                        @click="openDiscountModal(index)"
+                                        :class="variation.discount_price
+                                            ? 'bg-green-50 text-green-700 border-green-300'
+                                            : 'bg-white text-[#37474F] border-[#E0E0E0] hover:border-[#D4AF37]'"
+                                        class="inline-flex items-center gap-1 h-[26px] px-2 text-[11px] font-semibold border rounded transition whitespace-nowrap">
+                                    <i class="fa-solid fa-tag text-[9px]"></i>
+                                    <span x-text="variation.discount_price ? 'Set ✓' : 'Discount'"></span>
+                                </button>
+                                <input type="hidden" :name="`variations[${index}][discount_price]`" :value="variation.discount_price || ''">
+                                <input type="hidden" :name="`variations[${index}][discount_start_date]`" :value="variation.discount_start_date || ''">
+                                <input type="hidden" :name="`variations[${index}][discount_end_date]`" :value="variation.discount_end_date || ''">
+                            </td>
+
+                            <!-- Wholesale -->
+                            <td class="px-3 py-2.5 whitespace-nowrap">
+                                <button type="button"
+                                        @click="openWholesaleModal(index)"
+                                        :class="variation.is_wholesale
+                                            ? 'bg-blue-50 text-blue-700 border-blue-300'
+                                            : 'bg-white text-[#37474F] border-[#E0E0E0] hover:border-[#D4AF37]'"
+                                        class="inline-flex items-center gap-1 h-[26px] px-2 text-[11px] font-semibold border rounded transition">
+                                    <i class="fa-solid fa-boxes-stacked text-[9px]"></i>
+                                    <span x-text="variation.is_wholesale ? 'Set ✓' : 'Wholesale'"></span>
+                                </button>
+                                <input type="hidden" :name="`variations[${index}][is_wholesale]`" :value="variation.is_wholesale ? 1 : 0">
+                                <input type="hidden" :name="`variations[${index}][wholesale_min_order_qty]`" :value="variation.wholesale_min_order_qty || ''">
+                                <input type="hidden" :name="`variations[${index}][wholesale_qty_increment]`" :value="variation.wholesale_qty_increment || 1">
+                                <input type="hidden" :name="`variations[${index}][wholesale_sample_available]`" :value="variation.wholesale_sample_available ? 1 : 0">
+                                <input type="hidden" :name="`variations[${index}][wholesale_sample_price]`" :value="variation.wholesale_sample_price || ''">
+                                <input type="hidden" :name="`variations[${index}][wholesale_terms]`" :value="variation.wholesale_terms || ''">
+                            </td>
+
+                            <!-- Stock -->
+                            <td class="px-3 py-2.5 whitespace-nowrap">
+                                <input type="number"
+                                       :name="`variations[${index}][stock_quantity]`"
+                                       x-model="variation.stock_quantity"
+                                       placeholder="0"
+                                       class="w-20 h-[30px] px-2 bg-white border border-[#E0E0E0] rounded text-[12px] text-[#1A1A1A] placeholder-[#37474F]/40 focus:border-[#D4AF37] focus:outline-none transition">
+                            </td>
+
+                            <!-- Images -->
+                            <td class="px-3 py-2.5 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+                                    <button type="button"
+                                            @click="openImageModal(index)"
+                                            class="inline-flex items-center gap-1 h-[26px] px-2 text-[11px] font-semibold border border-[#E0E0E0] rounded hover:border-[#D4AF37] text-[#37474F] transition">
+                                        <i class="fa-solid fa-image text-[9px]"></i>
+                                        <span x-text="imageCount(index) > 0 ? imageCount(index) + ' img' : 'Upload'"></span>
+                                    </button>
+                                    <!-- Hidden delete inputs for existing images marked for removal -->
+                                    <template x-for="imgId in variation.deleted_image_ids" :key="imgId">
+                                        <input type="hidden" name="delete_variation_image_ids[]" :value="imgId">
+                                    </template>
+                                    <input type="file"
+                                           :id="`variation_images_${index}`"
+                                           :name="`variations[${index}][images][]`"
+                                           @change="handleImageUpload($event, index)"
+                                           multiple
+                                           accept="image/*"
+                                           class="hidden">
+                                </div>
+                            </td>
+
+                            <!-- Default -->
+                            <td class="px-3 py-2.5 whitespace-nowrap text-center">
+                                <input type="radio"
+                                       name="default_variation"
+                                       :value="index"
+                                       x-model="defaultVariationIndex"
+                                       @change="setDefaultVariation(index)"
+                                       class="w-4 h-4 accent-[#D4AF37]">
+                                <input type="hidden"
+                                       :name="`variations[${index}][is_default]`"
+                                       :value="defaultVariationIndex === index ? 1 : 0">
+                            </td>
+
+                            <!-- Active -->
+                            <td class="px-3 py-2.5 whitespace-nowrap text-center">
+                                <input type="checkbox"
+                                       :name="`variations[${index}][is_active]`"
+                                       x-model="variation.is_active"
+                                       value="1"
+                                       class="w-4 h-4 rounded accent-[#D4AF37]">
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="px-3 py-2.5 whitespace-nowrap">
+                                <button type="button"
+                                        @click="removeVariation(index)"
+                                        class="inline-flex items-center justify-center w-7 h-7 rounded text-[#E0E0E0] hover:text-red-500 hover:bg-red-50 transition">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
+
+                                <!-- Hidden fields for existing variations and stock management -->
+                                <input type="hidden" :name="`variations[${index}][id]`" x-model="variation.id">
+                                <input type="hidden" :name="`variations[${index}][manage_stock]`" :value="variation.manage_stock ? 1 : 0">
+                                <input type="hidden" :name="`variations[${index}][allow_backorder]`" :value="variation.allow_backorder ? 1 : 0">
+                                <input type="hidden" :name="`variations[${index}][low_stock_threshold]`" :value="variation.low_stock_threshold || 10">
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        {{-- Empty State --}}
+        <div class="py-12 text-center" x-show="variations.length === 0" x-cloak>
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-[#F5F5F5] flex items-center justify-center">
+                <i class="fa-solid fa-layer-group text-[#37474F] text-lg"></i>
+            </div>
+            <p class="text-[14px] font-semibold text-[#1A1A1A] mb-1">No variations yet</p>
+            <p class="text-[13px] text-[#37474F]">Select a category with variants to generate combinations,<br>or add individual variations manually.</p>
+        </div>
+
+        {{-- Bulk Actions --}}
+        <div class="mt-4 flex items-center gap-2 flex-wrap" x-show="variations.length > 0" x-cloak>
+            <button type="button"
+                    @click="bulkSetPrice()"
+                    class="inline-flex items-center gap-1.5 h-[30px] px-3 border border-[#E0E0E0] text-[#37474F] text-[12px] font-semibold rounded hover:bg-[#F5F5F5] transition">
+                <i class="fa-solid fa-dollar-sign text-[10px]"></i>
+                Set Price for All
+            </button>
+            <button type="button"
+                    @click="bulkSetStock()"
+                    class="inline-flex items-center gap-1.5 h-[30px] px-3 border border-[#E0E0E0] text-[#37474F] text-[12px] font-semibold rounded hover:bg-[#F5F5F5] transition">
+                <i class="fa-solid fa-cubes text-[10px]"></i>
+                Set Stock for All
+            </button>
+            <button type="button"
+                    @click="clearAllVariations()"
+                    class="inline-flex items-center gap-1.5 h-[30px] px-3 border border-red-200 text-red-600 text-[12px] font-semibold rounded hover:bg-red-50 transition">
+                <i class="fa-solid fa-trash text-[10px]"></i>
+                Clear All
+            </button>
+            <div class="flex-1"></div>
+            <span class="text-[12px] text-[#37474F]">
+                Total: <strong class="text-[#1A1A1A]" x-text="variations.length"></strong> variation(s)
+            </span>
+        </div>
+
     </div>
 
     <!-- Hidden field for variation count -->
     <input type="hidden" name="variation_count" :value="variations.length">
 
-    <!-- Image Manager Modal -->
+    <!-- ── Image Manager Modal ──────────────────────────────────────────── -->
     <div x-show="showImageModal"
          x-cloak
          class="fixed inset-0 z-50 overflow-y-auto"
          style="display: none;">
-        <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeImageModal()"></div>
+        <div class="fixed inset-0 bg-black/50" @click="closeImageModal()"></div>
         <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg p-6" @click.stop>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Variation Images</h3>
+            <div class="relative bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden" @click.stop>
+                <div class="flex items-center justify-between px-5 py-3 bg-[#37474F]">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-images text-[#D4AF37] text-sm"></i>
+                        <h3 class="text-[13px] font-semibold text-white">Variation Images</h3>
+                    </div>
                     <button type="button" @click="closeImageModal()"
-                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
+                            class="text-white/60 hover:text-white transition">
+                        <i class="fa-solid fa-xmark text-sm"></i>
                     </button>
                 </div>
-
-                <template x-if="imageModalIndex !== null">
-                    <div>
-                        <!-- Existing server images -->
-                        <template x-if="variations[imageModalIndex].existing_images && variations[imageModalIndex].existing_images.length > 0">
-                            <div class="mb-4">
-                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Saved Images</p>
-                                <div class="flex flex-wrap gap-2">
-                                    <template x-for="img in variations[imageModalIndex].existing_images" :key="img.id">
-                                        <div class="relative w-20 h-20 rounded overflow-hidden border dark:border-gray-600"
-                                             :class="variations[imageModalIndex].deleted_image_ids.includes(img.id) ? 'opacity-30' : ''">
-                                            <img :src="img.url" class="w-full h-full object-cover">
-                                            <button type="button"
-                                                    @click="toggleExistingImageDeletion(imageModalIndex, img.id)"
-                                                    class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
-                                                    :class="variations[imageModalIndex].deleted_image_ids.includes(img.id)
-                                                        ? 'bg-green-500 text-white'
-                                                        : 'bg-red-500 text-white'">
-                                                <span x-text="variations[imageModalIndex].deleted_image_ids.includes(img.id) ? '↩' : '×'"></span>
-                                            </button>
-                                        </div>
-                                    </template>
+                <div class="p-5">
+                    <template x-if="imageModalIndex !== null">
+                        <div>
+                            <!-- Existing server images -->
+                            <template x-if="variations[imageModalIndex].existing_images && variations[imageModalIndex].existing_images.length > 0">
+                                <div class="mb-4">
+                                    <p class="text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-2">Saved Images</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <template x-for="img in variations[imageModalIndex].existing_images" :key="img.id">
+                                            <div class="relative w-20 h-20 rounded overflow-hidden border border-[#E0E0E0]"
+                                                 :class="variations[imageModalIndex].deleted_image_ids.includes(img.id) ? 'opacity-30' : ''">
+                                                <img :src="img.url" class="w-full h-full object-cover">
+                                                <button type="button"
+                                                        @click="toggleExistingImageDeletion(imageModalIndex, img.id)"
+                                                        class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                                                        :class="variations[imageModalIndex].deleted_image_ids.includes(img.id) ? 'bg-green-500' : 'bg-red-500'">
+                                                    <span x-text="variations[imageModalIndex].deleted_image_ids.includes(img.id) ? '↩' : '×'"></span>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
+                            </template>
 
-                        <!-- Newly selected files -->
-                        <template x-if="variations[imageModalIndex].images && variations[imageModalIndex].images.length > 0">
-                            <div class="mb-4">
-                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">New Uploads</p>
-                                <div class="flex flex-wrap gap-2">
-                                    <template x-for="(file, fi) in variations[imageModalIndex].images" :key="fi">
-                                        <div class="relative w-20 h-20 rounded overflow-hidden border dark:border-gray-600">
-                                            <img :src="previewUrl(file)" class="w-full h-full object-cover">
-                                            <button type="button"
-                                                    @click="removeNewFile(imageModalIndex, fi)"
-                                                    class="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                                                ×
-                                            </button>
-                                        </div>
-                                    </template>
+                            <!-- Newly selected files -->
+                            <template x-if="variations[imageModalIndex].images && variations[imageModalIndex].images.length > 0">
+                                <div class="mb-4">
+                                    <p class="text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-2">New Uploads</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <template x-for="(file, fi) in variations[imageModalIndex].images" :key="fi">
+                                            <div class="relative w-20 h-20 rounded overflow-hidden border border-[#E0E0E0]">
+                                                <img :src="previewUrl(file)" class="w-full h-full object-cover">
+                                                <button type="button"
+                                                        @click="removeNewFile(imageModalIndex, fi)"
+                                                        class="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                                                    ×
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
+                            </template>
 
-                        <!-- Empty state -->
-                        <template x-if="imageCount(imageModalIndex) === 0">
-                            <p class="text-sm text-gray-400 dark:text-gray-500 text-center py-4">No images added yet.</p>
-                        </template>
+                            <!-- Empty state -->
+                            <template x-if="imageCount(imageModalIndex) === 0">
+                                <p class="text-[12px] text-[#37474F] text-center py-4">No images added yet.</p>
+                            </template>
 
-                        <!-- Add images button -->
-                        <label :for="`variation_images_${imageModalIndex}`"
-                               class="mt-2 flex items-center justify-center gap-2 w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-primary-400 transition text-sm text-gray-500 dark:text-gray-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Add images
-                        </label>
-                    </div>
-                </template>
-
-                <div class="mt-4 flex justify-end">
+                            <!-- Add images button -->
+                            <label :for="`variation_images_${imageModalIndex}`"
+                                   class="mt-2 flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-[#E0E0E0] rounded cursor-pointer hover:border-[#D4AF37] transition text-[12px] text-[#37474F]">
+                                <i class="fa-solid fa-plus text-[10px]"></i>
+                                Add images
+                            </label>
+                        </div>
+                    </template>
+                </div>
+                <div class="px-5 py-3 border-t border-[#E0E0E0] flex justify-end">
                     <button type="button" @click="closeImageModal()"
-                            class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition text-sm">
+                            class="inline-flex items-center h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
                         Done
                     </button>
                 </div>
@@ -335,188 +350,197 @@
         </div>
     </div>
 
-    <!-- Discount Modal -->
+    <!-- ── Discount Modal ──────────────────────────────────────────────── -->
     <div x-show="showDiscountModal"
          x-cloak
          class="fixed inset-0 z-50 overflow-y-auto"
          style="display: none;">
-        <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeDiscountModal()"></div>
+        <div class="fixed inset-0 bg-black/50" @click="closeDiscountModal()"></div>
         <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6" @click.stop>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Set Discount</h3>
+            <div class="relative bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden" @click.stop>
+                <div class="flex items-center justify-between px-5 py-3 bg-[#37474F]">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-tag text-[#D4AF37] text-sm"></i>
+                        <h3 class="text-[13px] font-semibold text-white">Set Discount</h3>
+                    </div>
                     <button type="button" @click="closeDiscountModal()"
-                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
+                            class="text-white/60 hover:text-white transition">
+                        <i class="fa-solid fa-xmark text-sm"></i>
                     </button>
                 </div>
-                <template x-if="discountModalIndex !== null">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Discount Price</label>
-                            <input type="number"
-                                   x-model="variations[discountModalIndex].discount_price"
-                                   step="0.01" min="0"
-                                   placeholder="Enter discounted price"
-                                   class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
+                <div class="p-5">
+                    <template x-if="discountModalIndex !== null">
+                        <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
-                                <input type="date"
-                                       x-model="variations[discountModalIndex].discount_start_date"
-                                       class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                                <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">Discount Price</label>
+                                <input type="number"
+                                       x-model="variations[discountModalIndex].discount_price"
+                                       step="0.01" min="0"
+                                       placeholder="Enter discounted price"
+                                       class="w-full h-[34px] px-3 bg-white border border-[#E0E0E0] rounded text-[13px] text-[#1A1A1A] placeholder-[#37474F]/50 focus:border-[#D4AF37] focus:outline-none transition">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
-                                <input type="date"
-                                       x-model="variations[discountModalIndex].discount_end_date"
-                                       class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">Start Date</label>
+                                    <input type="date"
+                                           x-model="variations[discountModalIndex].discount_start_date"
+                                           class="w-full h-[34px] px-3 bg-white border border-[#E0E0E0] rounded text-[13px] text-[#1A1A1A] focus:border-[#D4AF37] focus:outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">End Date</label>
+                                    <input type="date"
+                                           x-model="variations[discountModalIndex].discount_end_date"
+                                           class="w-full h-[34px] px-3 bg-white border border-[#E0E0E0] rounded text-[13px] text-[#1A1A1A] focus:border-[#D4AF37] focus:outline-none transition">
+                                </div>
                             </div>
                         </div>
-                        <div class="flex gap-3 justify-between pt-2">
-                            <button type="button"
-                                    @click="clearDiscount(discountModalIndex)"
-                                    class="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition text-sm">
-                                Clear Discount
-                            </button>
-                            <button type="button"
-                                    @click="closeDiscountModal()"
-                                    class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition text-sm">
-                                Done
-                            </button>
-                        </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
+                <div class="px-5 py-3 border-t border-[#E0E0E0] flex items-center justify-between">
+                    <button type="button"
+                            @click="clearDiscount(discountModalIndex)"
+                            class="inline-flex items-center gap-1.5 h-[34px] px-4 border border-red-200 text-red-600 text-[13px] font-semibold rounded hover:bg-red-50 transition">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                        Clear
+                    </button>
+                    <button type="button"
+                            @click="closeDiscountModal()"
+                            class="inline-flex items-center h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                        Done
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Wholesale Modal -->
+    <!-- ── Wholesale Modal ─────────────────────────────────────────────── -->
     <div x-show="showWholesaleModal"
          x-cloak
          class="fixed inset-0 z-50 overflow-y-auto"
          style="display: none;">
-        <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeWholesaleModal()"></div>
+        <div class="fixed inset-0 bg-black/50" @click="closeWholesaleModal()"></div>
         <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6" @click.stop>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Wholesale Settings</h3>
+            <div class="relative bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden" @click.stop>
+                <div class="flex items-center justify-between px-5 py-3 bg-[#37474F]">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-stacked text-[#D4AF37] text-sm"></i>
+                        <h3 class="text-[13px] font-semibold text-white">Wholesale Settings</h3>
+                    </div>
                     <button type="button" @click="closeWholesaleModal()"
-                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
+                            class="text-white/60 hover:text-white transition">
+                        <i class="fa-solid fa-xmark text-sm"></i>
                     </button>
                 </div>
-                <template x-if="wholesaleModalIndex !== null">
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox"
-                                   x-model="variations[wholesaleModalIndex].is_wholesale"
-                                   :id="`wholesale_toggle_${wholesaleModalIndex}`"
-                                   class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
-                            <label :for="`wholesale_toggle_${wholesaleModalIndex}`"
-                                   class="text-sm font-medium text-gray-700 dark:text-gray-300">Enable wholesale for this variant</label>
+                <div class="p-5">
+                    <template x-if="wholesaleModalIndex !== null">
+                        <div class="space-y-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox"
+                                       x-model="variations[wholesaleModalIndex].is_wholesale"
+                                       :id="`wholesale_toggle_${wholesaleModalIndex}`"
+                                       class="w-4 h-4 rounded accent-[#D4AF37]">
+                                <span class="text-[13px] font-semibold text-[#1A1A1A]">Enable wholesale for this variant</span>
+                            </label>
+                            <template x-if="variations[wholesaleModalIndex].is_wholesale">
+                                <div class="space-y-4 pt-3 border-t border-[#E0E0E0]">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">Min Order Qty</label>
+                                            <input type="number"
+                                                   id="wholesale_min_order_qty"
+                                                   x-model="variations[wholesaleModalIndex].wholesale_min_order_qty"
+                                                   min="1" placeholder="e.g. 10"
+                                                   class="w-full h-[34px] px-3 bg-white border border-[#E0E0E0] rounded text-[13px] text-[#1A1A1A] placeholder-[#37474F]/50 focus:border-[#D4AF37] focus:outline-none transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">Qty Increment</label>
+                                            <input type="number"
+                                                   id="wholesale_qty_increment"
+                                                   x-model="variations[wholesaleModalIndex].wholesale_qty_increment"
+                                                   min="1" placeholder="e.g. 5"
+                                                   class="w-full h-[34px] px-3 bg-white border border-[#E0E0E0] rounded text-[13px] text-[#1A1A1A] placeholder-[#37474F]/50 focus:border-[#D4AF37] focus:outline-none transition">
+                                        </div>
+                                    </div>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox"
+                                               x-model="variations[wholesaleModalIndex].wholesale_sample_available"
+                                               :id="`sample_toggle_${wholesaleModalIndex}`"
+                                               class="w-4 h-4 rounded accent-[#D4AF37]">
+                                        <span class="text-[13px] text-[#1A1A1A]">Samples available</span>
+                                    </label>
+                                    <template x-if="variations[wholesaleModalIndex].wholesale_sample_available">
+                                        <div>
+                                            <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">Sample Price</label>
+                                            <input type="number"
+                                                   id="wholesale_sample_price"
+                                                   x-model="variations[wholesaleModalIndex].wholesale_sample_price"
+                                                   step="0.01" min="0" placeholder="0.00"
+                                                   class="w-full h-[34px] px-3 bg-white border border-[#E0E0E0] rounded text-[13px] text-[#1A1A1A] placeholder-[#37474F]/50 focus:border-[#D4AF37] focus:outline-none transition">
+                                        </div>
+                                    </template>
+                                    <div>
+                                        <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5">Wholesale Terms</label>
+                                        <textarea id="wholesale_terms"
+                                                  x-model="variations[wholesaleModalIndex].wholesale_terms"
+                                                  rows="3"
+                                                  placeholder="Describe wholesale terms, requirements, or conditions..."
+                                                  class="w-full px-3 py-2 bg-white border border-[#E0E0E0] rounded text-[13px] text-[#1A1A1A] placeholder-[#37474F]/50 focus:border-[#D4AF37] focus:outline-none transition resize-none"></textarea>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
-                        <template x-if="variations[wholesaleModalIndex].is_wholesale">
-                            <div class="space-y-4 pt-2 border-t border-gray-200 dark:border-gray-600">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Order Qty</label>
-                                        <input type="number"
-                                               id="wholesale_min_order_qty"
-                                               x-model="variations[wholesaleModalIndex].wholesale_min_order_qty"
-                                               min="1" placeholder="e.g. 10"
-                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Qty Increment</label>
-                                        <input type="number"
-                                               id="wholesale_qty_increment"
-                                               x-model="variations[wholesaleModalIndex].wholesale_qty_increment"
-                                               min="1" placeholder="e.g. 5"
-                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <input type="checkbox"
-                                           x-model="variations[wholesaleModalIndex].wholesale_sample_available"
-                                           :id="`sample_toggle_${wholesaleModalIndex}`"
-                                           class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
-                                    <label :for="`sample_toggle_${wholesaleModalIndex}`"
-                                           class="text-sm font-medium text-gray-700 dark:text-gray-300">Samples available</label>
-                                </div>
-                                <template x-if="variations[wholesaleModalIndex].wholesale_sample_available">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sample Price</label>
-                                        <input type="number"
-                                               id="wholesale_sample_price"
-                                               x-model="variations[wholesaleModalIndex].wholesale_sample_price"
-                                               step="0.01" min="0" placeholder="0.00"
-                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500">
-                                    </div>
-                                </template>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Wholesale Terms</label>
-                                    <textarea id="wholesale_terms"
-                                              x-model="variations[wholesaleModalIndex].wholesale_terms"
-                                              rows="3"
-                                              placeholder="Describe wholesale terms, requirements, or conditions..."
-                                              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"></textarea>
-                                </div>
-                            </div>
-                        </template>
-                        <div class="flex justify-end pt-2">
-                            <button type="button"
-                                    @click="closeWholesaleModal()"
-                                    class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition text-sm">
-                                Done
-                            </button>
-                        </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
+                <div class="px-5 py-3 border-t border-[#E0E0E0] flex justify-end">
+                    <button type="button"
+                            @click="closeWholesaleModal()"
+                            class="inline-flex items-center h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+                        Done
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Bulk Action Modal -->
+    <!-- ── Bulk Action Modal ───────────────────────────────────────────── -->
     <div x-show="showModal"
          x-cloak
          class="fixed inset-0 z-50 overflow-y-auto"
          style="display: none;">
-        <!-- Background overlay -->
-        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        <div class="fixed inset-0 bg-black/50 transition-opacity"
              @click="showModal = false"></div>
-
-        <!-- Modal content -->
         <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6"
+            <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full overflow-hidden"
                  @click.stop>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4" x-text="modalTitle"></h3>
-
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" x-text="modalLabel"></label>
+                <div class="flex items-center justify-between px-5 py-3 bg-[#37474F]">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-[#D4AF37] text-sm"></i>
+                        <h3 class="text-[13px] font-semibold text-white" x-text="modalTitle"></h3>
+                    </div>
+                    <button type="button" @click="showModal = false"
+                            class="text-white/60 hover:text-white transition">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
+                <div class="p-5">
+                    <label class="block text-[11px] font-semibold text-[#37474F] uppercase tracking-wider mb-1.5" x-text="modalLabel"></label>
                     <input type="number"
                            x-model="modalValue"
                            x-ref="modalInput"
                            step="0.01"
                            min="0"
-                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                           class="w-full h-[34px] px-3 bg-white border border-[#E0E0E0] rounded text-[13px] text-[#1A1A1A] focus:border-[#D4AF37] focus:outline-none transition"
                            @keydown.enter="confirmModal()">
                 </div>
-
-                <div class="flex gap-3 justify-end">
+                <div class="px-5 py-3 border-t border-[#E0E0E0] flex gap-3 justify-end">
                     <button type="button"
                             @click="showModal = false"
-                            class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition">
+                            class="inline-flex items-center h-[34px] px-4 border border-[#E0E0E0] text-[#37474F] text-[13px] font-semibold rounded hover:bg-[#F5F5F5] transition">
                         Cancel
                     </button>
                     <button type="button"
                             @click="confirmModal()"
-                            class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition">
+                            class="inline-flex items-center h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
                         Apply
                     </button>
                 </div>

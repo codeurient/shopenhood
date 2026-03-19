@@ -1,93 +1,113 @@
-<x-guest-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">My Orders</h2>
-    </x-slot>
+<x-app-layout>
 
-    <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-
-            @if($purchases->isEmpty())
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-12 text-center">
-                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                    <p class="text-gray-500 dark:text-gray-400 text-lg font-medium">No orders yet</p>
-                    <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Your confirmed orders will appear here.</p>
-                    <a href="{{ route('home') }}"
-                       class="mt-4 inline-block px-5 py-2.5 bg-primary-600 text-white rounded-lg text-sm font-semibold hover:bg-primary-700 transition">
-                        Start Shopping
-                    </a>
-                </div>
-            @else
-                <div class="space-y-4">
-                    @foreach($purchases as $purchase)
-                        @php
-                            $statusColors = [
-                                'pending'    => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300',
-                                'processing' => 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
-                                'completed'  => 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300',
-                                'cancelled'  => 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
-                            ];
-                            $statusColor = $statusColors[$purchase->status] ?? 'bg-gray-100 text-gray-700';
-                        @endphp
-                        <a href="{{ route('user.purchases.show', $purchase) }}"
-                           class="block bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md transition p-5">
-                            <div class="flex items-start justify-between gap-4">
-                                <div>
-                                    <p class="text-xs text-gray-400 dark:text-gray-500 font-mono">{{ $purchase->purchase_number }}</p>
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mt-0.5">
-                                        {{ $purchase->orders->count() }} {{ Str::plural('item', $purchase->orders->count()) }}
-                                        from {{ $purchase->orders->pluck('seller_id')->unique()->count() }} {{ Str::plural('seller', $purchase->orders->pluck('seller_id')->unique()->count()) }}
-                                    </p>
-                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                                        {{ $purchase->created_at->format('M d, Y · H:i') }}
-                                    </p>
-                                </div>
-                                <div class="flex flex-col items-end gap-2">
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusColor }}">
-                                        {{ ucfirst($purchase->status) }}
-                                    </span>
-                                    <span class="text-base font-bold text-gray-900 dark:text-gray-100">
-                                        {{ number_format($purchase->total_amount, 2) }} {{ $purchase->currency }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {{-- Item thumbnails --}}
-                            @if($purchase->orders->isNotEmpty())
-                                <div class="flex gap-2 mt-3">
-                                    @foreach($purchase->orders->take(4) as $order)
-                                        @php
-                                            $img = $order->listing?->primaryImage ?? $order->listing?->firstImage;
-                                        @endphp
-                                        @if($img)
-                                            <img src="{{ asset('storage/'.$img->image_path) }}"
-                                                 alt="{{ $order->listing?->title }}"
-                                                 class="w-12 h-12 rounded-lg object-cover border border-gray-100">
-                                        @else
-                                            <div class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                                                <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/>
-                                                </svg>
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                    @if($purchase->orders->count() > 4)
-                                        <div class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-semibold text-gray-500">
-                                            +{{ $purchase->orders->count() - 4 }}
-                                        </div>
-                                    @endif
-                                </div>
-                            @endif
-                        </a>
-                    @endforeach
-                </div>
-
-                <div class="mt-6">
-                    {{ $purchases->links() }}
-                </div>
-            @endif
-
+    {{-- ── Page Header ─────────────────────────────────────────────────── --}}
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-xl font-bold text-[#1A1A1A]">My Orders</h1>
+            <p class="text-xs text-[#37474F] mt-0.5">Your purchase history</p>
         </div>
     </div>
-</x-guest-layout>
+
+    @if($purchases->isEmpty())
+    {{-- ── Empty State ──────────────────────────────────────────────────── --}}
+    <div class="bg-white border border-[#E0E0E0] rounded-lg shadow-sm py-16 text-center">
+        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-[#F5F5F5] flex items-center justify-center">
+            <i class="fa-solid fa-bag-shopping text-[#37474F] text-xl"></i>
+        </div>
+        <p class="text-[14px] font-semibold text-[#1A1A1A] mb-1">No orders yet</p>
+        <p class="text-[13px] text-[#37474F] mb-4">Your confirmed purchases will appear here.</p>
+        <a href="{{ route('home') }}"
+           class="inline-flex items-center gap-2 h-[34px] px-4 bg-[#D4AF37] text-[#000000] text-[13px] font-semibold rounded hover:brightness-110 transition">
+            <i class="fa-solid fa-store text-xs"></i>
+            Start Shopping
+        </a>
+    </div>
+
+    @else
+    {{-- ── Orders List ──────────────────────────────────────────────────── --}}
+    <div class="space-y-3">
+        @foreach($purchases as $purchase)
+        @php
+            $badge = match($purchase->status) {
+                'pending'    => 'bg-yellow-100 text-yellow-700',
+                'processing' => 'bg-blue-100 text-blue-700',
+                'completed'  => 'bg-green-100 text-green-700',
+                'cancelled'  => 'bg-red-100 text-red-600',
+                default      => 'bg-[#E0E0E0] text-[#37474F]',
+            };
+            $statusIcon = match($purchase->status) {
+                'pending'    => 'fa-clock',
+                'processing' => 'fa-rotate',
+                'completed'  => 'fa-circle-check',
+                'cancelled'  => 'fa-circle-xmark',
+                default      => 'fa-circle',
+            };
+        @endphp
+        <a href="{{ route('user.purchases.show', $purchase) }}"
+           class="block bg-white border border-[#E0E0E0] rounded-lg shadow-sm hover:border-[#D4AF37]/50 hover:shadow-md transition-all p-5">
+
+            <div class="flex items-start justify-between gap-4">
+                {{-- Left: order info --}}
+                <div class="min-w-0">
+                    <p class="text-[11px] font-mono text-[#37474F] mb-0.5">{{ $purchase->purchase_number }}</p>
+                    <p class="text-[13px] font-semibold text-[#1A1A1A]">
+                        {{ $purchase->orders->count() }} {{ Str::plural('item', $purchase->orders->count()) }}
+                        <span class="text-[#37474F] font-normal">from</span>
+                        {{ $purchase->orders->pluck('seller_id')->unique()->count() }} {{ Str::plural('seller', $purchase->orders->pluck('seller_id')->unique()->count()) }}
+                    </p>
+                    <p class="text-[11px] text-[#37474F] mt-0.5">
+                        <i class="fa-regular fa-calendar text-[10px] mr-1"></i>
+                        {{ $purchase->created_at->format('M d, Y · H:i') }}
+                    </p>
+                </div>
+
+                {{-- Right: status + amount --}}
+                <div class="flex flex-col items-end gap-2 flex-shrink-0">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold {{ $badge }}">
+                        <i class="fa-solid {{ $statusIcon }} text-[10px]"></i>
+                        {{ ucfirst($purchase->status) }}
+                    </span>
+                    <span class="text-[15px] font-bold text-[#1A1A1A]">
+                        {{ number_format($purchase->total_amount, 2) }}
+                        <span class="text-[12px] font-normal text-[#37474F]">{{ $purchase->currency }}</span>
+                    </span>
+                </div>
+            </div>
+
+            {{-- Item thumbnails --}}
+            @if($purchase->orders->isNotEmpty())
+            <div class="flex items-center gap-2 mt-3 pt-3 border-t border-[#E0E0E0]">
+                @foreach($purchase->orders->take(5) as $order)
+                @php $img = $order->listing?->primaryImage ?? $order->listing?->firstImage; @endphp
+                @if($img)
+                    <img src="{{ asset('storage/'.$img->image_path) }}"
+                         alt="{{ $order->listing?->title }}"
+                         class="w-10 h-10 rounded object-cover border border-[#E0E0E0] flex-shrink-0">
+                @else
+                    <div class="w-10 h-10 rounded bg-[#F5F5F5] border border-[#E0E0E0] flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-image text-[#37474F] text-xs"></i>
+                    </div>
+                @endif
+                @endforeach
+                @if($purchase->orders->count() > 5)
+                <div class="w-10 h-10 rounded bg-[#F5F5F5] border border-[#E0E0E0] flex items-center justify-center flex-shrink-0">
+                    <span class="text-[11px] font-semibold text-[#37474F]">+{{ $purchase->orders->count() - 5 }}</span>
+                </div>
+                @endif
+                <i class="fa-solid fa-chevron-right text-[#E0E0E0] text-xs ml-auto"></i>
+            </div>
+            @endif
+        </a>
+        @endforeach
+    </div>
+
+    {{-- Pagination --}}
+    @if($purchases->hasPages())
+    <div class="mt-6">
+        {{ $purchases->links() }}
+    </div>
+    @endif
+
+    @endif
+
+</x-app-layout>
