@@ -344,22 +344,18 @@
                 this.updateDisplay();
             }
          }"
-         class="bg-gray-50 pb-20 md:pb-0">
+         class="bg-white pb-20 md:pb-0">
 
         {{-- Breadcrumb --}}
         <div class="max-w-[1250px] mx-auto px-4 md:px-6 py-3">
-            <nav class="flex items-center gap-1.5 text-sm text-gray-500 flex-wrap">
-                <a href="{{ route('home') }}" class="hover:text-primary-600 transition-colors">Home</a>
+            <nav class="flex items-center gap-1.5 text-sm text-[#37474F] flex-wrap">
+                <a href="{{ route('home') }}" class="hover:text-[#D4AF37] transition-colors">Home</a>
                 @if($listing->category)
-                    <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                    <a href="{{ route('listings.index', ['category' => $listing->category->slug]) }}" class="hover:text-primary-600 transition-colors truncate max-w-[120px]">{{ $listing->category->name }}</a>
+                    <i class="fa-solid fa-chevron-right text-[#37474F] text-xs flex-shrink-0"></i>
+                    <a href="{{ route('listings.index', ['category' => $listing->category->slug]) }}" class="hover:text-[#D4AF37] transition-colors truncate max-w-[120px]">{{ $listing->category->name }}</a>
                 @endif
-                <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-gray-800 font-medium truncate max-w-[180px] md:max-w-xs">{{ $listing->title }}</span>
+                <i class="fa-solid fa-chevron-right text-[#37474F] text-xs flex-shrink-0"></i>
+                <span class="text-[#1A1A1A] font-medium truncate max-w-[180px] md:max-w-xs">{{ $listing->title }}</span>
             </nav>
         </div>
 
@@ -368,7 +364,7 @@
         <div class="md:grid md:grid-cols-[1fr_380px] md:gap-6 md:items-start">
 
         {{-- LEFT COLUMN: Sticky image gallery --}}
-        <div class="md:sticky md:top-[68px] md:self-start md:rounded-2xl md:overflow-hidden md:shadow-sm">
+        <div class="md:sticky md:top-[68px] md:self-start md:rounded md:overflow-hidden md:shadow-sm">
 
         {{-- ================================================================ --}}
         {{-- IMAGE GALLERY                                                     --}}
@@ -393,23 +389,19 @@
                 </template>
             </div>
             <div x-show="displayImages.length === 0"
-                 class="w-full h-full flex items-center justify-center bg-gray-100">
-                <svg class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
+                 class="w-full h-full flex items-center justify-center bg-[#E0E0E0]">
+                <i class="fa-regular fa-image text-[#37474F]" style="font-size:5rem;"></i>
             </div>
 
             {{-- Top-right actions --}}
             <div class="absolute top-4 right-4 z-20 flex flex-col gap-2">
-                <button class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-                    </svg>
+                <button class="flex items-center justify-center w-9 h-9 bg-black/40 rounded backdrop-blur-sm">
+                    <i class="fa-solid fa-share-nodes text-white text-lg"></i>
                 </button>
                 <button x-data="showFavoriteBtn({{ $listing->id }}, {{ $isFavorited ? 'true' : 'false' }})"
                         @click.stop="toggle()"
                         :title="favorited ? 'Remove from favorites' : 'Add to favorites'"
-                        class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm">
+                        class="flex items-center justify-center w-9 h-9 bg-black/40 rounded backdrop-blur-sm">
                     <svg class="w-5 h-5 transition-colors"
                          :fill="favorited ? '#ef4444' : 'none'"
                          :stroke="favorited ? '#ef4444' : 'white'"
@@ -418,7 +410,7 @@
                     </svg>
                 </button>
                 @if($listing->is_wholesale)
-                <div class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm pointer-events-none" title="Wholesale">
+                <div class="flex items-center justify-center w-9 h-9 bg-black/40 rounded backdrop-blur-sm pointer-events-none" title="Wholesale">
                     <i class="fa-brands fa-shirtsinbulk text-white" style="font-size: 16px;"></i>
                 </div>
                 @endif
@@ -427,7 +419,7 @@
                         @click.stop="add()"
                         :disabled="adding || (displayStock && displayStock.qty === 0)"
                         :title="(displayStock && displayStock.qty === 0) ? 'Out of stock' : (added ? 'Added!' : 'Add to cart')"
-                        class="flex items-center justify-center w-9 h-9 bg-black/30 rounded-full backdrop-blur-sm disabled:opacity-60 transition">
+                        class="flex items-center justify-center w-9 h-9 bg-black/40 rounded backdrop-blur-sm disabled:opacity-60 transition">
                     <template x-if="!added">
                         <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l2 12h10l2-8H6M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/>
@@ -444,7 +436,7 @@
 
             {{-- Image counter --}}
             <div x-show="totalImages > 1"
-                 class="absolute bottom-3 right-3 z-10 bg-black/50 rounded-full px-2.5 py-0.5 pointer-events-none">
+                 class="absolute bottom-3 right-3 z-10 bg-black/50 rounded px-2.5 py-0.5 pointer-events-none">
                 <span class="text-white text-xs" x-text="(currentImage + 1) + '/' + totalImages"></span>
             </div>
 
@@ -467,22 +459,18 @@
         {{-- ================================================================ --}}
         {{-- PRODUCT INFO                                                      --}}
         {{-- ================================================================ --}}
-        <div class="bg-white mt-2 px-4 py-3 md:mt-0 md:rounded-t-xl">
+        <div class="bg-white mt-2 px-4 py-3 md:mt-0 md:rounded-t">
 
             {{-- Title row --}}
             <div class="flex items-start justify-between gap-2">
                 <div class="flex-1">
-                    <h1 class="text-sm font-semibold text-gray-900 leading-snug"
+                    <h1 class="text-sm font-semibold text-[#1A1A1A] leading-snug"
                         :class="titleExpanded ? '' : 'line-clamp-2'">
                         {{ $listing->title }}
                     </h1>
                 </div>
                 <button @click="titleExpanded = !titleExpanded" class="flex-shrink-0 mt-0.5">
-                    <svg class="w-5 h-5 text-gray-500 transition-transform"
-                         :class="titleExpanded ? 'rotate-180' : ''"
-                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
+                    <i class="fa-solid fa-chevron-down text-[#37474F] text-lg transition-transform" :class="titleExpanded ? 'rotate-180' : ''"></i>
                 </button>
             </div>
 
@@ -501,15 +489,15 @@
                     : ($seller?->avatar ? asset('storage/' . $seller->avatar) : null);
             @endphp
             <div class="flex items-center gap-2 mt-1.5">
-                <span class="text-xs text-gray-500">{{ number_format($listingTotalSold) }}+ sold</span>
-                <span class="text-gray-300 text-xs">|</span>
-                <a href="{{ route('sellers.show', $seller) }}" class="flex items-center gap-1 hover:text-primary-600 transition-colors">
+                <span class="text-xs text-[#37474F]">{{ number_format($listingTotalSold) }}+ sold</span>
+                <span class="text-[#E0E0E0] text-xs">|</span>
+                <a href="{{ route('sellers.show', $seller) }}" class="flex items-center gap-1 hover:text-[#D4AF37] transition-colors">
                     @if($sellerLogoForInfo)
                         <img src="{{ $sellerLogoForInfo }}" alt="Seller" class="w-3 h-3 rounded-full object-cover">
                     @else
-                        <div class="w-3 h-3 rounded-full bg-gray-700"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#37474F]"></div>
                     @endif
-                    <span class="text-xs text-gray-500">Seller</span>
+                    <span class="text-xs text-[#37474F]">Seller</span>
                     @if($sellerDisplayBadge)
                         <svg class="w-3 h-3 {{ $sellerDisplayBadge['color'] }}" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
@@ -534,8 +522,8 @@
                     </svg>
                     @endfor
                 </div>
-                <span class="text-xs font-semibold text-gray-700">{{ $listingAvgRating }}</span>
-                <span class="text-xs text-gray-400">({{ $listingReviewCount }})</span>
+                <span class="text-xs font-semibold text-[#1A1A1A]">{{ $listingAvgRating }}</span>
+                <span class="text-xs text-[#37474F]">({{ $listingReviewCount }})</span>
             </div>
             @endif
 
@@ -543,18 +531,18 @@
             <div class="flex items-baseline gap-2 mt-2">
                 <template x-if="displayPrice && displayPrice.has_discount">
                     <div class="flex items-baseline gap-2">
-                        <span class="text-gray-400 text-sm line-through"
+                        <span class="text-[#37474F] text-sm line-through"
                               x-text="formatPrice(displayPrice.base_price) + ' ' + currency"></span>
-                        <span class="text-xl font-bold text-gray-900"
+                        <span class="text-xl font-bold text-[#1A1A1A]"
                               x-text="formatPrice(displayPrice.current_price) + ' ' + currency"></span>
                     </div>
                 </template>
                 <template x-if="displayPrice && !displayPrice.has_discount">
-                    <span class="text-xl font-bold text-gray-900"
+                    <span class="text-xl font-bold text-[#1A1A1A]"
                           x-text="formatPrice(displayPrice.current_price) + ' ' + currency"></span>
                 </template>
                 <template x-if="!displayPrice">
-                    <span class="text-base font-medium text-gray-600">Contact for price</span>
+                    <span class="text-base font-medium text-[#37474F]">Contact for price</span>
                 </template>
             </div>
 
@@ -594,13 +582,13 @@
                            :disabled="couponApplied"
                            @keydown.enter.prevent="applyCoupon()"
                            placeholder="Enter coupon code"
-                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500 uppercase placeholder:normal-case"
+                           class="w-full border border-[#E0E0E0] rounded px-3 py-2 text-sm focus:outline-none focus:ring-0 focus:border-[#D4AF37] disabled:bg-gray-50 disabled:text-[#37474F] uppercase placeholder:normal-case"
                            autocomplete="off">
                 </div>
                 <template x-if="!couponApplied">
                     <button @click="applyCoupon()"
                             :disabled="!couponCode.trim() || couponLoading"
-                            class="flex-shrink-0 px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                            class="flex-shrink-0 px-4 py-2 bg-[#D4AF37] hover:brightness-110 disabled:opacity-50 text-[#000000] text-sm font-semibold rounded transition-colors flex items-center gap-1.5">
                         <svg x-show="couponLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -610,7 +598,7 @@
                 </template>
                 <template x-if="couponApplied">
                     <button @click="removeCoupon()"
-                            class="flex-shrink-0 px-4 py-2 border border-gray-300 hover:border-gray-400 text-gray-600 text-sm font-semibold rounded-lg transition-colors">
+                            class="flex-shrink-0 px-4 py-2 border border-[#E0E0E0] hover:border-[#D4AF37] text-[#37474F] text-sm font-semibold rounded transition-colors">
                         Remove
                     </button>
                 </template>
@@ -618,19 +606,19 @@
 
             {{-- Success --}}
             <div x-show="couponApplied && couponSuccess" x-cloak class="mt-2 flex items-center justify-between">
-                <span class="text-xs text-success-600 font-medium flex items-center gap-1">
+                <span class="text-xs text-green-600 font-medium flex items-center gap-1">
                     <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
                     <span x-text="couponSuccess"></span>
                 </span>
-                <span class="text-xs font-semibold text-success-600"
+                <span class="text-xs font-semibold text-green-600"
                       x-text="'−' + formatPrice(couponDiscountAmount) + ' ' + currency"></span>
             </div>
 
             {{-- Error --}}
             <div x-show="couponError" x-cloak class="mt-2">
-                <p class="text-xs text-danger-500 flex items-center gap-1">
+                <p class="text-xs text-red-500 flex items-center gap-1">
                     <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                     </svg>
@@ -649,17 +637,17 @@
             @if($listing->base_price)
             <div>
                 <div class="flex items-center gap-1.5 mb-2.5">
-                    <span class="text-sm text-gray-500">Base Product:</span>
-                    <span class="text-sm font-semibold text-gray-900"
+                    <span class="text-sm text-[#37474F]">Base Product:</span>
+                    <span class="text-sm font-semibold text-[#1A1A1A]"
                           x-show="Object.keys(selectedVariantItemIds).length === 0">Base</span>
                 </div>
                 <button type="button"
                         @click="selectBaseProduct()"
                         :class="{
-                            'border-green-500 text-green-700 bg-green-50 font-semibold': Object.keys(selectedVariantItemIds).length === 0,
-                            'border-gray-300 text-gray-700 bg-white': Object.keys(selectedVariantItemIds).length > 0
+                            'border-[#D4AF37] text-[#1A1A1A] bg-[#D4AF37]/10 font-semibold': Object.keys(selectedVariantItemIds).length === 0,
+                            'border-[#E0E0E0] text-[#1A1A1A] bg-white': Object.keys(selectedVariantItemIds).length > 0
                         }"
-                        class="px-3 py-1.5 rounded-lg border text-sm transition-colors">
+                        class="px-3 py-1.5 rounded border text-sm transition-colors">
                     Base
                 </button>
             </div>
@@ -669,8 +657,8 @@
             <div>
                 {{-- Label row: "Color: Silver" --}}
                 <div class="flex items-center gap-1.5 mb-2.5">
-                    <span class="text-sm text-gray-500">{{ $variant['name'] }}:</span>
-                    <span class="text-sm font-semibold text-gray-900"
+                    <span class="text-sm text-[#37474F]">{{ $variant['name'] }}:</span>
+                    <span class="text-sm font-semibold text-[#1A1A1A]"
                           x-text="selectedVariants[{{ $variant['id'] }}] ?? ''"></span>
                 </div>
 
@@ -681,8 +669,8 @@
                     <button type="button"
                             @click="isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }}) && selectVariant({{ $variant['id'] }}, {{ $item['id'] }})"
                             :class="{
-                                'ring-2 ring-green-500 ring-offset-2': selectedVariantItemIds[{{ $variant['id'] }}] === {{ $item['id'] }},
-                                'ring-1 ring-gray-300': selectedVariantItemIds[{{ $variant['id'] }}] !== {{ $item['id'] }},
+                                'ring-2 ring-[#D4AF37] ring-offset-2': selectedVariantItemIds[{{ $variant['id'] }}] === {{ $item['id'] }},
+                                'ring-1 ring-[#E0E0E0]': selectedVariantItemIds[{{ $variant['id'] }}] !== {{ $item['id'] }},
                                 'opacity-40 cursor-not-allowed': !isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }})
                             }"
                             class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 transition-all duration-150"
@@ -692,8 +680,8 @@
                         @elseif($item['color_code'])
                             <div class="w-full h-full" style="background-color: {{ $item['color_code'] }};"></div>
                         @else
-                            <div class="w-full h-full bg-gray-300 flex items-center justify-center">
-                                <span class="text-[10px] font-semibold text-gray-600 uppercase">{{ substr($item['value'], 0, 2) }}</span>
+                            <div class="w-full h-full bg-[#E0E0E0] flex items-center justify-center">
+                                <span class="text-[10px] font-semibold text-[#37474F] uppercase">{{ substr($item['value'], 0, 2) }}</span>
                             </div>
                         @endif
                     </button>
@@ -707,11 +695,11 @@
                     <button type="button"
                             @click="isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }}) && selectVariant({{ $variant['id'] }}, {{ $item['id'] }})"
                             :class="{
-                                'border-green-500 text-green-700 bg-green-50 font-semibold': selectedVariantItemIds[{{ $variant['id'] }}] === {{ $item['id'] }},
-                                'border-gray-300 text-gray-700 bg-white': selectedVariantItemIds[{{ $variant['id'] }}] !== {{ $item['id'] }},
+                                'border-[#D4AF37] text-[#1A1A1A] bg-[#D4AF37]/10 font-semibold': selectedVariantItemIds[{{ $variant['id'] }}] === {{ $item['id'] }},
+                                'border-[#E0E0E0] text-[#1A1A1A] bg-white': selectedVariantItemIds[{{ $variant['id'] }}] !== {{ $item['id'] }},
                                 'opacity-40 cursor-not-allowed line-through': !isVariantItemAvailable({{ $variant['id'] }}, {{ $item['id'] }})
                             }"
-                            class="px-3 py-1.5 rounded-lg border text-sm transition-colors">
+                            class="px-3 py-1.5 rounded border text-sm transition-colors">
                         {{ $item['value'] }}
                     </button>
                     @endforeach
@@ -729,7 +717,7 @@
         <div x-show="displayPrice" class="bg-white mt-2 px-4 py-3">
             {{-- Wholesale min order info --}}
             <div x-show="displayWholesale" x-cloak class="mb-2 flex items-center gap-2">
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-lg text-xs font-semibold text-amber-700">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded text-xs font-semibold text-[#1A1A1A]">
                     <i class="fa-brands fa-shirtsinbulk" style="font-size: 12px;"></i>
                     Wholesale &mdash; Min order: <span x-text="displayWholesale ? displayWholesale.min_order_qty + ' units' : ''"></span>
                     <template x-if="displayWholesale && displayWholesale.qty_increment > 1">
@@ -740,24 +728,24 @@
 
             {{-- Qty +/- control --}}
             <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-600 font-medium">Qty:</span>
-                <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                <span class="text-sm text-[#37474F] font-medium">Qty:</span>
+                <div class="flex items-center border border-[#E0E0E0] rounded overflow-hidden">
                     <button type="button"
                             @click="decreaseQty()"
                             :disabled="quantity <= minQty()"
-                            class="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 transition-colors text-lg font-semibold">
+                            class="w-9 h-9 flex items-center justify-center text-[#37474F] hover:bg-gray-50 disabled:opacity-40 transition-colors text-lg font-semibold">
                         −
                     </button>
-                    <span class="min-w-[3rem] text-center text-sm font-semibold text-gray-900 px-2" x-text="quantity"></span>
+                    <span class="min-w-[3rem] text-center text-sm font-semibold text-[#1A1A1A] px-2" x-text="quantity"></span>
                     <button type="button"
                             @click="increaseQty()"
                             :disabled="displayStock && displayStock.qty > 0 && quantity >= displayStock.qty"
-                            class="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 transition-colors text-lg font-semibold">
+                            class="w-9 h-9 flex items-center justify-center text-[#37474F] hover:bg-gray-50 disabled:opacity-40 transition-colors text-lg font-semibold">
                         +
                     </button>
                 </div>
                 <template x-if="displayStock && displayStock.qty > 0">
-                    <span class="text-xs text-gray-400" x-text="displayStock.qty + ' available'"></span>
+                    <span class="text-xs text-[#37474F]" x-text="displayStock.qty + ' available'"></span>
                 </template>
             </div>
         </div>
@@ -771,20 +759,20 @@
             {{-- Sample available --}}
             <template x-if="displayWholesale && displayWholesale.sample_available">
                 <div class="flex items-start gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-8 h-8 rounded-full bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-4 h-4 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.155-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <p class="text-sm font-semibold text-gray-900">Samples Available</p>
+                        <p class="text-sm font-semibold text-[#1A1A1A]">Samples Available</p>
                         <template x-if="displayWholesale.sample_price">
-                            <p class="text-sm text-gray-600 mt-0.5">
-                                Sample price: <span class="font-semibold text-gray-900" x-text="formatPrice(displayWholesale.sample_price) + ' ' + currency"></span>
+                            <p class="text-sm text-[#37474F] mt-0.5">
+                                Sample price: <span class="font-semibold text-[#1A1A1A]" x-text="formatPrice(displayWholesale.sample_price) + ' ' + currency"></span>
                             </p>
                         </template>
                         <template x-if="!displayWholesale.sample_price">
-                            <p class="text-xs text-gray-500 mt-0.5">Contact seller for sample pricing</p>
+                            <p class="text-xs text-[#37474F] mt-0.5">Contact seller for sample pricing</p>
                         </template>
                     </div>
                 </div>
@@ -793,14 +781,14 @@
             {{-- Wholesale terms --}}
             <template x-if="displayWholesale && displayWholesale.terms">
                 <div class="flex items-start gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-8 h-8 rounded-full bg-[#E0E0E0] flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-4 h-4 text-[#37474F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <p class="text-sm font-semibold text-gray-900 mb-1">Wholesale Terms</p>
-                        <p class="text-sm text-gray-600 leading-relaxed" x-text="displayWholesale.terms"></p>
+                        <p class="text-sm font-semibold text-[#1A1A1A] mb-1">Wholesale Terms</p>
+                        <p class="text-sm text-[#37474F] leading-relaxed" x-text="displayWholesale.terms"></p>
                     </div>
                 </div>
             </template>
@@ -821,7 +809,7 @@
 
             {{-- Number --}}
             <div class="flex-1 min-w-0">
-                <p class="text-xs text-gray-500 mb-0.5">Contact seller via WhatsApp</p>
+                <p class="text-xs text-[#37474F] mb-0.5">Contact seller via WhatsApp</p>
                 @auth
                     <span class="text-sm font-semibold text-green-700">{{ $seller->whatsapp_number }}</span>
                 @else
@@ -830,8 +818,8 @@
                         $waMasked = $waVisible . str_repeat('•', max(0, strlen($seller->whatsapp_number) - 5));
                     @endphp
                     <div class="flex items-center gap-2">
-                        <span class="text-sm font-semibold text-gray-700 tracking-wider">{{ $waMasked }}</span>
-                        <a href="{{ route('login') }}" class="text-xs text-blue-600 hover:underline font-medium whitespace-nowrap">Login to view</a>
+                        <span class="text-sm font-semibold text-[#1A1A1A] tracking-wider">{{ $waMasked }}</span>
+                        <a href="{{ route('login') }}" class="text-xs text-[#D4AF37] hover:underline font-medium whitespace-nowrap">Login to view</a>
                     </div>
                 @endauth
             </div>
@@ -841,7 +829,7 @@
             <a href="https://wa.me/{{ preg_replace('/\D/', '', $seller->whatsapp_number) }}"
                target="_blank"
                rel="noopener noreferrer"
-               class="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-lg transition-colors">
+               class="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded transition-colors">
                 Chat
             </a>
             @endauth
@@ -855,76 +843,76 @@
         {{-- ================================================================ --}}
         {{-- DESCRIPTION & CHARACTERISTICS                                     --}}
         {{-- ================================================================ --}}
-        <div class="bg-white mt-2 px-4 py-4 md:mt-4 md:rounded-xl">
+        <div class="bg-white mt-2 px-4 py-4 md:mt-4 md:rounded">
 
             {{-- Description --}}
-            <h2 class="text-base font-bold text-gray-900">Description</h2>
+            <h2 class="text-base font-bold text-[#1A1A1A]">Description</h2>
 
             @if($listing->short_description)
-            <p class="text-sm font-semibold text-gray-800 mt-2">{{ $listing->short_description }}</p>
+            <p class="text-sm font-semibold text-[#1A1A1A] mt-2">{{ $listing->short_description }}</p>
             @endif
 
             @if($listing->description)
             <div class="mt-1.5">
-                <p class="text-sm text-gray-600 leading-relaxed"
+                <p class="text-sm text-[#37474F] leading-relaxed"
                    :class="descExpanded ? '' : 'line-clamp-4'">
                     {{ $listing->description }}
                 </p>
                 <button @click="descExpanded = !descExpanded"
-                        class="text-sm font-medium text-green-600 mt-1"
+                        class="text-sm font-medium text-[#D4AF37] mt-1"
                         x-text="descExpanded ? 'Show less' : 'Read more ...'">
                 </button>
             </div>
             @endif
 
             {{-- Divider --}}
-            <div class="border-t border-gray-100 my-4"></div>
+            <div class="border-t border-[#E0E0E0] my-4"></div>
 
             {{-- Characteristics --}}
-            <h2 class="text-base font-bold text-gray-900">Characteristics</h2>
+            <h2 class="text-base font-bold text-[#1A1A1A]">Characteristics</h2>
 
             <div class="mt-3 space-y-0">
 
                 {{-- Category --}}
                 @if($listing->category)
-                <div class="py-2.5 border-b border-gray-100">
-                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Category</span>
+                <div class="py-2.5 border-b border-[#E0E0E0]">
+                    <span class="text-xs font-semibold text-[#37474F] uppercase tracking-wide block mb-1">Category</span>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Category</span>
-                        <span class="text-sm text-green-600 font-medium">{{ $listing->category->name }}</span>
+                        <span class="text-sm text-[#37474F]">Category</span>
+                        <span class="text-sm text-[#D4AF37] font-medium">{{ $listing->category->name }}</span>
                     </div>
                 </div>
                 @endif
 
                 {{-- Condition --}}
                 @if($listing->condition)
-                <div class="py-2.5 border-b border-gray-100">
-                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Condition</span>
+                <div class="py-2.5 border-b border-[#E0E0E0]">
+                    <span class="text-xs font-semibold text-[#37474F] uppercase tracking-wide block mb-1">Condition</span>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Condition</span>
-                        <span class="text-sm text-green-600 font-medium">{{ ucfirst(str_replace('_', ' ', $listing->condition)) }}</span>
+                        <span class="text-sm text-[#37474F]">Condition</span>
+                        <span class="text-sm text-[#D4AF37] font-medium">{{ ucfirst(str_replace('_', ' ', $listing->condition)) }}</span>
                     </div>
                 </div>
                 @endif
 
                 {{-- Listing Type --}}
                 @if($listing->listingType)
-                <div class="py-2.5 border-b border-gray-100">
-                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Listing Type</span>
+                <div class="py-2.5 border-b border-[#E0E0E0]">
+                    <span class="text-xs font-semibold text-[#37474F] uppercase tracking-wide block mb-1">Listing Type</span>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Type</span>
-                        <span class="text-sm text-green-600 font-medium">{{ $listing->listingType->name }}</span>
+                        <span class="text-sm text-[#37474F]">Type</span>
+                        <span class="text-sm text-[#D4AF37] font-medium">{{ $listing->listingType->name }}</span>
                     </div>
                 </div>
                 @endif
 
                 {{-- Location --}}
                 @if($listing->country || $listing->city)
-                <div class="py-2.5 border-b border-gray-100">
-                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Location</span>
+                <div class="py-2.5 border-b border-[#E0E0E0]">
+                    <span class="text-xs font-semibold text-[#37474F] uppercase tracking-wide block mb-1">Location</span>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Location</span>
-                        <span class="text-sm text-green-600 font-medium">
+                        <span class="text-sm text-[#37474F]">Location</span>
+                        <span class="text-sm text-[#D4AF37] font-medium">
                             {{ implode(', ', array_filter([$listing->city, $listing->country])) }}
                         </span>
                     </div>
@@ -933,11 +921,11 @@
 
                 {{-- Store name --}}
                 @if($listing->store_name)
-                <div class="py-2.5 border-b border-gray-100">
-                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">Store</span>
+                <div class="py-2.5 border-b border-[#E0E0E0]">
+                    <span class="text-xs font-semibold text-[#37474F] uppercase tracking-wide block mb-1">Store</span>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Store name</span>
-                        <span class="text-sm text-green-600 font-medium">{{ $listing->store_name }}</span>
+                        <span class="text-sm text-[#37474F]">Store name</span>
+                        <span class="text-sm text-[#D4AF37] font-medium">{{ $listing->store_name }}</span>
                     </div>
                 </div>
                 @endif
@@ -945,10 +933,10 @@
                 {{-- Variant Attributes (non-main-shown, business listings) --}}
                 @if(!empty($variantAttributeLabels))
                     @foreach($variantAttributeLabels as $label => $value)
-                    <div class="py-2.5 border-b border-gray-100">
+                    <div class="py-2.5 border-b border-[#E0E0E0]">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">{{ $label }}</span>
-                            <span class="text-sm text-green-600 font-medium">{{ $value }}</span>
+                            <span class="text-sm text-[#37474F]">{{ $label }}</span>
+                            <span class="text-sm text-[#D4AF37] font-medium">{{ $value }}</span>
                         </div>
                     </div>
                     @endforeach
@@ -957,41 +945,41 @@
                 {{-- More characteristics collapsed --}}
                 <div x-show="charExpanded" style="display: none;">
                     @if($listing->is_negotiable)
-                    <div class="py-2.5 border-b border-gray-100">
+                    <div class="py-2.5 border-b border-[#E0E0E0]">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Price negotiable</span>
-                            <span class="text-sm text-green-600 font-medium">Yes</span>
+                            <span class="text-sm text-[#37474F]">Price negotiable</span>
+                            <span class="text-sm text-[#D4AF37] font-medium">Yes</span>
                         </div>
                     </div>
                     @endif
                     @if($listing->has_delivery)
-                    <div class="py-2.5 border-b border-gray-100">
+                    <div class="py-2.5 border-b border-[#E0E0E0]">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Delivery available</span>
-                            <span class="text-sm text-green-600 font-medium">Yes</span>
+                            <span class="text-sm text-[#37474F]">Delivery available</span>
+                            <span class="text-sm text-[#D4AF37] font-medium">Yes</span>
                         </div>
                     </div>
                     @endif
                 </div>
 
                 <button @click="charExpanded = !charExpanded"
-                        class="text-sm font-medium text-green-600 mt-3"
+                        class="text-sm font-medium text-[#D4AF37] mt-3"
                         x-text="charExpanded ? 'Show less' : 'Read more ...'">
                 </button>
             </div>
 
             {{-- Disclaimer --}}
             <div class="mt-4 space-y-1.5">
-                <p class="text-xs text-gray-400">* Product details and specifications may vary. Please verify before purchase.</p>
-                <p class="text-xs text-gray-400">* Product specifications may change without notice by the seller.</p>
-                <p class="text-xs text-gray-400">* Description is based on available product information.</p>
+                <p class="text-xs text-[#37474F]">* Product details and specifications may vary. Please verify before purchase.</p>
+                <p class="text-xs text-[#37474F]">* Product specifications may change without notice by the seller.</p>
+                <p class="text-xs text-[#37474F]">* Description is based on available product information.</p>
             </div>
         </div>
 
         {{-- ================================================================ --}}
         {{-- DELIVERY                                                          --}}
         {{-- ================================================================ --}}
-        <div class="bg-white mt-2 md:rounded-xl md:overflow-hidden">
+        <div class="bg-white mt-2 md:rounded md:overflow-hidden">
             @if($listing->has_delivery)
                 @php
                     $deliveryTiers = [];
@@ -1005,42 +993,34 @@
                         $deliveryTiers[] = ['label' => 'International', 'price' => $listing->international_delivery_price, 'days' => $listing->international_delivery_days];
                     }
                 @endphp
-                <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
-                    <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/>
-                        <circle cx="5.5" cy="18.5" r="2.5"/>
-                        <circle cx="18.5" cy="18.5" r="2.5"/>
-                    </svg>
-                    <span class="text-sm font-semibold text-gray-900">Delivery Options</span>
+                <div class="flex items-center gap-3 px-4 py-3 border-b border-[#E0E0E0]">
+                    <i class="fa-solid fa-truck text-[#D4AF37] flex-shrink-0 text-lg"></i>
+                    <span class="text-sm font-semibold text-[#1A1A1A]">Delivery Options</span>
                 </div>
                 @foreach($deliveryTiers as $tier)
-                    <div class="flex items-center justify-between px-4 py-3 {{ !$loop->last ? 'border-b border-gray-50' : '' }}">
+                    <div class="flex items-center justify-between px-4 py-3 {{ !$loop->last ? 'border-b border-[#E0E0E0]' : '' }}">
                         <div>
-                            <p class="text-sm font-medium text-gray-800">{{ $tier['label'] }}</p>
+                            <p class="text-sm font-medium text-[#1A1A1A]">{{ $tier['label'] }}</p>
                             @if($tier['days'])
-                                <p class="text-xs text-gray-500 mt-0.5">Estimated {{ $tier['days'] }} day(s)</p>
+                                <p class="text-xs text-[#37474F] mt-0.5">Estimated {{ $tier['days'] }} day(s)</p>
                             @endif
                         </div>
-                        <span class="text-sm font-semibold {{ (!$tier['price'] || $tier['price'] == 0) ? 'text-green-600' : 'text-gray-900' }}">
+                        <span class="text-sm font-semibold {{ (!$tier['price'] || $tier['price'] == 0) ? 'text-[#D4AF37]' : 'text-[#1A1A1A]' }}">
                             {{ (!$tier['price'] || $tier['price'] == 0) ? 'FREE' : $currency . ' ' . number_format($tier['price'], 2) }}
                         </span>
                     </div>
                 @endforeach
                 @if(empty($deliveryTiers))
                     <div class="px-4 py-3">
-                        <p class="text-sm text-gray-500">Delivery available — contact seller for details.</p>
+                        <p class="text-sm text-[#37474F]">Delivery available — contact seller for details.</p>
                     </div>
                 @endif
             @else
                 <div class="flex items-center gap-3 px-4 py-3.5">
-                    <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/>
-                        <circle cx="5.5" cy="18.5" r="2.5"/>
-                        <circle cx="18.5" cy="18.5" r="2.5"/>
-                    </svg>
+                    <i class="fa-solid fa-truck text-[#37474F] flex-shrink-0 text-lg"></i>
                     <div>
-                        <p class="text-sm font-semibold text-gray-500">Delivery not available</p>
-                        <p class="text-xs text-gray-400 mt-0.5">Pickup only — arrange with seller</p>
+                        <p class="text-sm font-semibold text-[#37474F]">Delivery not available</p>
+                        <p class="text-xs text-[#37474F] mt-0.5">Pickup only — arrange with seller</p>
                     </div>
                 </div>
             @endif
@@ -1054,16 +1034,16 @@
             $avgRating = $reviews->count() ? round($reviews->avg('rating'), 1) : 0;
             $reviewCount = $reviews->count();
         @endphp
-        <div class="bg-white mt-2 px-4 py-4 md:rounded-xl" id="reviews">
+        <div class="bg-white mt-2 px-4 py-4 md:rounded" id="reviews">
 
             {{-- Flash messages --}}
             @if(session('success'))
-            <div class="mb-3 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+            <div class="mb-3 px-3 py-2 bg-green-50 border border-green-200 rounded text-sm text-green-700">
                 {{ session('success') }}
             </div>
             @endif
             @if(session('error'))
-            <div class="mb-3 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            <div class="mb-3 px-3 py-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
                 {{ session('error') }}
             </div>
             @endif
@@ -1078,20 +1058,20 @@
                     @endfor
                 </div>
                 @if($reviewCount > 0)
-                <span class="text-sm font-bold text-gray-900">{{ $avgRating }}</span>
-                <span class="text-sm text-gray-500">({{ $reviewCount }} {{ Str::plural('review', $reviewCount) }})</span>
+                <span class="text-sm font-bold text-[#1A1A1A]">{{ $avgRating }}</span>
+                <span class="text-sm text-[#37474F]">({{ $reviewCount }} {{ Str::plural('review', $reviewCount) }})</span>
                 @else
-                <span class="text-sm text-gray-500">No reviews yet</span>
+                <span class="text-sm text-[#37474F]">No reviews yet</span>
                 @endif
             </div>
 
             {{-- Divider --}}
-            <div class="border-t border-gray-100 my-4"></div>
+            <div class="border-t border-[#E0E0E0] my-4"></div>
 
             {{-- Write a review form --}}
             @if($canReview)
             <div class="mb-5" x-data="{ rating: 0, hover: 0 }">
-                <h3 class="text-sm font-semibold text-gray-900 mb-3">Write a Review</h3>
+                <h3 class="text-sm font-semibold text-[#1A1A1A] mb-3">Write a Review</h3>
                 <form action="{{ route('listings.reviews.store', $listing) }}" method="POST">
                     @csrf
 
@@ -1120,7 +1100,7 @@
                            name="title"
                            value="{{ old('title') }}"
                            placeholder="Review title (optional)"
-                           class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm mb-2 focus:outline-none focus:border-orange-400">
+                           class="w-full border border-[#E0E0E0] rounded h-[34px] px-3 text-[13px] text-[#1A1A1A] focus:outline-none focus:border-[#D4AF37] mb-2">
                     @error('title')
                     <p class="text-xs text-red-500 mb-2">{{ $message }}</p>
                     @enderror
@@ -1128,29 +1108,29 @@
                     <textarea name="body"
                               rows="3"
                               placeholder="Share your experience with this product..."
-                              class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:border-orange-400">{{ old('body') }}</textarea>
+                              class="w-full border border-[#E0E0E0] rounded px-3 py-2 text-[13px] text-[#1A1A1A] resize-none focus:outline-none focus:border-[#D4AF37]">{{ old('body') }}</textarea>
                     @error('body')
                     <p class="text-xs text-red-500 mb-2">{{ $message }}</p>
                     @enderror
 
                     <button type="submit"
-                            class="mt-2 w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg transition-colors">
+                            class="mt-2 w-full py-2.5 bg-[#D4AF37] hover:brightness-110 text-[#000000] text-sm font-semibold rounded transition-colors">
                         Submit Review
                     </button>
                 </form>
-                <div class="border-t border-gray-100 my-4"></div>
+                <div class="border-t border-[#E0E0E0] my-4"></div>
             </div>
             @elseif($alreadyReviewed)
-            <p class="text-sm text-gray-500 mb-4 text-center">You have already reviewed this product.</p>
+            <p class="text-sm text-[#37474F] mb-4 text-center">You have already reviewed this product.</p>
             @elseif(!auth()->check())
-            <a href="{{ route('login') }}" class="block text-center text-sm text-orange-600 font-medium mb-4">
+            <a href="{{ route('login') }}" class="block text-center text-sm text-[#D4AF37] font-medium mb-4">
                 Login to write a review
             </a>
             @endif
 
             {{-- Review list --}}
             @if($reviews->isEmpty())
-            <p class="text-sm text-gray-400 text-center py-4">Be the first to leave a review!</p>
+            <p class="text-sm text-[#37474F] text-center py-4">Be the first to leave a review!</p>
             @else
             <div class="space-y-5">
                 @foreach($reviews as $review)
@@ -1165,11 +1145,11 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-semibold text-gray-900 truncate">{{ $review->user->name }}</span>
+                            <span class="text-sm font-semibold text-[#1A1A1A] truncate">{{ $review->user->name }}</span>
                             @if($review->is_verified_purchase)
                             <span class="text-xs text-green-600 font-medium flex-shrink-0">✓ Verified</span>
                             @endif
-                            <span class="text-xs text-gray-400 ml-auto flex-shrink-0">{{ $review->created_at->format('d M. Y') }}</span>
+                            <span class="text-xs text-[#37474F] ml-auto flex-shrink-0">{{ $review->created_at->format('d M. Y') }}</span>
                         </div>
                         <div class="flex items-center gap-0.5 mt-0.5">
                             @for($s = 1; $s <= 5; $s++)
@@ -1179,10 +1159,10 @@
                             @endfor
                         </div>
                         @if($review->title)
-                        <p class="text-sm font-semibold text-gray-800 mt-1">{{ $review->title }}</p>
+                        <p class="text-sm font-semibold text-[#1A1A1A] mt-1">{{ $review->title }}</p>
                         @endif
                         @if($review->body)
-                        <p class="text-sm text-gray-600 mt-0.5 leading-relaxed">{{ $review->body }}</p>
+                        <p class="text-sm text-[#37474F] mt-0.5 leading-relaxed">{{ $review->body }}</p>
                         @endif
                         @if(auth()->id() === $review->user_id)
                         <form action="{{ route('listings.reviews.destroy', $review) }}" method="POST" class="mt-1">
@@ -1208,14 +1188,14 @@
                 ? asset('storage/' . $seller->businessProfile->logo)
                 : ($seller->avatar ? asset('storage/' . $seller->avatar) : null);
         @endphp
-        <div class="bg-white mt-2 px-4 py-4 md:rounded-xl">
+        <div class="bg-white mt-2 px-4 py-4 md:rounded">
             <div class="flex items-center gap-3">
                 {{-- Avatar --}}
-                <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-[#E0E0E0] overflow-hidden flex-shrink-0">
                     @if($sellerSectionLogo)
                         <img src="{{ $sellerSectionLogo }}" alt="{{ $seller->name }}" class="w-full h-full object-cover">
                     @else
-                        <div class="w-full h-full flex items-center justify-center bg-gray-700">
+                        <div class="w-full h-full flex items-center justify-center bg-[#37474F]">
                             <span class="text-sm font-bold text-white">{{ strtoupper(substr($seller->name, 0, 2)) }}</span>
                         </div>
                     @endif
@@ -1224,7 +1204,7 @@
                 {{-- Seller details --}}
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-1.5 flex-wrap">
-                        <span class="text-sm font-semibold text-gray-900 truncate">{{ $seller->name }}</span>
+                        <span class="text-sm font-semibold text-[#1A1A1A] truncate">{{ $seller->name }}</span>
                         @if($sellerDisplayBadge)
                         <span class="flex items-center gap-0.5 text-xs {{ $sellerDisplayBadge['color'] }} font-semibold">
                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
@@ -1234,17 +1214,17 @@
                         </span>
                         @endif
                     </div>
-                    <p class="text-xs text-gray-500 mt-0.5">
+                    <p class="text-xs text-[#37474F] mt-0.5">
                         @if($listing->store_name){{ $listing->store_name }} · @endif
                         {{ $sellerAvgRating > 0 ? $sellerAvgRating . ' ★' : 'No ratings yet' }}
                     </p>
                     <div class="flex items-center gap-1 mt-0.5">
                         <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                        <span class="text-xs text-gray-500">Member since {{ $seller->created_at->format('Y') }}</span>
+                        <span class="text-xs text-[#37474F]">Member since {{ $seller->created_at->format('Y') }}</span>
                     </div>
                 </div>
 
-                <a href="{{ route('sellers.show', $seller) }}" class="text-xs text-primary-600 font-medium border border-primary-300 px-3 py-1.5 rounded-lg">
+                <a href="{{ route('sellers.show', $seller) }}" class="text-xs text-[#D4AF37] font-medium border border-[#D4AF37] px-3 py-1.5 rounded">
                     Visit
                 </a>
             </div>
@@ -1258,14 +1238,14 @@
         <div class="bg-white mt-2 md:rounded-xl md:overflow-hidden md:mt-4">
 
             {{-- Tab bar --}}
-            <div class="flex border-b border-gray-100 overflow-x-auto scrollbar-hide">
+            <div class="flex border-b border-[#E0E0E0] overflow-x-auto scrollbar-hide">
                 <button @click="activeTab = 'recommended'"
-                        :class="activeTab === 'recommended' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-gray-500'"
+                        :class="activeTab === 'recommended' ? 'border-b-2 border-[#D4AF37] text-[#D4AF37]' : 'text-[#37474F]'"
                         class="flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap">
                     Recommended
                 </button>
                 <button @click="activeTab = 'category'"
-                        :class="activeTab === 'category' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-gray-500'"
+                        :class="activeTab === 'category' ? 'border-b-2 border-[#D4AF37] text-[#D4AF37]' : 'text-[#37474F]'"
                         class="flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap">
                     {{ $listing->category->name ?? 'Category' }}
                 </button>

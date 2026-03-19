@@ -45,6 +45,33 @@ class ListingController extends Controller
             $query->where('base_price', '<=', $request->max_price);
         }
 
+        if ($request->filled('condition')) {
+            $query->where('condition', $request->condition);
+        }
+
+        if ($request->filled('country')) {
+            $query->where('country', 'like', '%'.$request->country.'%');
+        }
+
+        if ($request->filled('city')) {
+            $query->where('city', 'like', '%'.$request->city.'%');
+        }
+
+        foreach ($request->input('variant', []) as $variantId => $itemId) {
+            if ($itemId) {
+                $vid = (int) $variantId;
+                $iid = (int) $itemId;
+                $query->where(function ($q) use ($vid, $iid) {
+                    $q->whereHas('variations.attributes', function ($q2) use ($vid, $iid) {
+                        $q2->where('variant_id', $vid)->where('variant_item_id', $iid);
+                    })->orWhereRaw(
+                        'JSON_UNQUOTE(JSON_EXTRACT(variant_attributes, ?)) = ?',
+                        ['$."'.$vid.'"', (string) $iid]
+                    );
+                });
+            }
+        }
+
         $sort = $request->get('sort', 'newest');
         $query = match ($sort) {
             'price_asc' => $query->orderBy('base_price', 'asc'),

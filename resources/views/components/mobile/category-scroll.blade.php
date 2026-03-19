@@ -20,7 +20,7 @@
 </script>
 
 <!-- Horizontal Category Scroll -->
-<div class="bg-white border-b border-gray-200"
+<div class="bg-white border-b border-[#E0E0E0]"
      x-data="{
          categoryPanelOpen: false,
          stack: [],
@@ -51,22 +51,20 @@
             <!-- Grid Button (Opens Category Drawer) -->
             <button type="button"
                     @click="openPanel()"
-                    class="flex items-center justify-center flex-shrink-0 w-16 md:w-20 h-20 md:h-24 bg-gray-700 rounded-xl hover:bg-gray-800 transition-colors">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-                </svg>
+                    class="flex items-center justify-center flex-shrink-0 w-16 md:w-20 h-20 md:h-24 bg-[#000000] rounded hover:bg-[#1A1A1A] transition-colors">
+                <i class="fa-solid fa-grip text-[#D4AF37] text-2xl"></i>
             </button>
 
             @foreach($categories as $category)
             <a href="{{ route('listings.index', ['category' => $category->slug]) }}"
                class="flex flex-col flex-shrink-0 w-24 md:w-28 space-y-1 group">
-                <div class="relative h-20 md:h-24 bg-gray-200 rounded-xl overflow-hidden">
+                <div class="relative h-20 md:h-24 bg-[#E0E0E0] rounded overflow-hidden border border-[#E0E0E0]">
                     @if($category->icon)
                         <img src="{{ asset('storage/' . $category->icon) }}"
                              alt="{{ $category->name }}"
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
                     @else
-                        <div class="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400"></div>
+                        <div class="w-full h-full bg-[#E0E0E0]"></div>
                     @endif
                     <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 flex items-end p-2 transition-colors">
                         <span class="text-xs font-semibold text-white truncate">{{ $category->name }}</span>
@@ -106,45 +104,41 @@
            style="display: none;">
 
         <!-- Drawer Header -->
-        <div class="flex items-center gap-1 px-3 py-4 border-b border-gray-200 flex-shrink-0">
+        <div class="flex items-center gap-1 px-3 py-3.5 border-b border-[#E0E0E0] flex-shrink-0">
             <!-- Back button — visible when drilled into a subcategory level -->
             <button type="button"
                     x-show="stack.length > 1"
                     @click="pop()"
                     style="display: none;"
-                    class="flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
+                    class="flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors flex-shrink-0">
+                <i class="fa-solid fa-chevron-left text-[#37474F] text-sm"></i>
             </button>
 
-            <h2 class="text-base font-bold text-gray-900 flex-1 truncate px-1"
+            <h2 class="text-[13px] font-semibold text-[#1A1A1A] flex-1 truncate px-1"
                 x-text="currentLevel.title"></h2>
 
             <button type="button"
                     @click="categoryPanelOpen = false"
-                    class="flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
+                    class="flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors flex-shrink-0">
+                <i class="fa-solid fa-xmark text-[#37474F] text-sm"></i>
             </button>
         </div>
 
         <!-- Category List for current level -->
-        <nav class="flex-1 overflow-y-auto py-2">
+        <nav class="flex-1 overflow-y-auto py-1">
             <template x-for="item in currentLevel.items" :key="item.id">
-                <div class="border-b border-gray-100">
+                <div class="border-b border-[#E0E0E0]">
                     <div class="flex items-center">
                         <!-- Category name — navigates to listing page -->
                         <a :href="baseUrl + '?category=' + item.slug"
-                           class="flex-1 flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors min-w-0">
+                           class="flex-1 flex items-center gap-3 px-4 py-2.5 text-[13px] text-[#1A1A1A] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37] transition-colors min-w-0">
                             <template x-if="item.icon_url">
                                 <img :src="item.icon_url"
                                      :alt="item.name"
-                                     class="w-7 h-7 rounded-lg object-cover flex-shrink-0">
+                                     class="w-7 h-7 rounded object-cover flex-shrink-0">
                             </template>
                             <template x-if="!item.icon_url">
-                                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0"></div>
+                                <div class="w-7 h-7 rounded bg-[#E0E0E0] flex-shrink-0"></div>
                             </template>
                             <span class="font-medium truncate" x-text="item.name"></span>
                         </a>
@@ -153,10 +147,8 @@
                         <template x-if="item.children && item.children.length > 0">
                             <button type="button"
                                     @click.stop="push(item)"
-                                    class="flex-shrink-0 flex items-center justify-center w-10 h-12 text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-colors mr-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
+                                    class="flex-shrink-0 flex items-center justify-center w-10 h-10 text-[#37474F] hover:text-[#D4AF37] hover:bg-[#D4AF37]/5 transition-colors mr-1">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
                             </button>
                         </template>
                     </div>

@@ -4,7 +4,7 @@
 <div x-data="homeSlider()" class="max-w-[1250px] mx-auto px-4 md:px-6 py-4 md:py-6 space-y-3 md:space-y-4">
     <!-- Main Slider -->
     @if($mainSliders->count() > 0)
-    <div class="relative overflow-hidden rounded-2xl h-[250px]">
+    <div class="relative overflow-hidden rounded h-[250px]">
         @foreach($mainSliders as $index => $slider)
         <div x-show="currentSlide === {{ $index }}"
              x-transition:enter="transition ease-out duration-300"
@@ -60,7 +60,7 @@
         @endif
     </div>
     @else
-    <div class="relative overflow-hidden rounded-2xl h-[250px] bg-gradient-to-br from-yellow-300 to-yellow-400 flex items-center justify-center">
+    <div class="relative overflow-hidden rounded h-[250px] bg-gradient-to-br from-yellow-300 to-yellow-400 flex items-center justify-center">
         <div class="text-center p-4">
             <h2 class="text-2xl md:text-4xl font-bold text-white">Welcome to ShopEnhood</h2>
             <p class="text-sm md:text-lg text-white/90 mt-2">Your marketplace for everything</p>
@@ -71,7 +71,7 @@
     <!-- Two Small Banners -->
     <div class="grid grid-cols-2 gap-3 md:gap-4">
         @foreach($smallBanners->take(2) as $banner)
-        <a href="{{ $banner->link ?: '#' }}" class="h-10 md:h-16 lg:h-20 rounded-xl overflow-hidden">
+        <a href="{{ $banner->link ?: '#' }}" class="h-10 md:h-16 lg:h-20 rounded overflow-hidden">
             <img src="{{ asset('storage/' . $banner->image) }}"
                  alt="{{ $banner->title }}"
                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-200">

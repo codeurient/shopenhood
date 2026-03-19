@@ -2,11 +2,12 @@
     <div class="flex items-stretch h-full">
 
         {{-- Left brand panel (hidden on small screens) --}}
-        <div class="hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col justify-between bg-[#000000] p-10">
+        <div class="hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col bg-[#000000] p-10">
             <a href="{{ route('home') }}" class="flex items-center gap-2">
                 <span class="text-xl font-bold tracking-tight text-[#D4AF37]">{{ config('app.name', 'Shopenhood') }}</span>
             </a>
 
+            <div class="flex-1 flex items-center">
             <div>
                 <h2 class="text-2xl font-bold leading-snug mb-3 text-white">Join thousands of<br>buyers &amp; sellers today.</h2>
                 <p class="text-sm text-[#E0E0E0]/70 leading-relaxed mb-6">Create your free account in seconds and start exploring listings, saving favorites, and selling your own items.</p>
@@ -26,8 +27,8 @@
                     </li>
                 </ul>
             </div>
+            </div>
 
-            <p class="text-xs text-[#E0E0E0]/40">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
         </div>
 
         {{-- Right form panel --}}

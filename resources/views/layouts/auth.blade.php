@@ -63,7 +63,8 @@
 
     <!-- Footer -->
     <footer class="flex-shrink-0 border-t border-[#E0E0E0] bg-white">
-        <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-center sm:justify-end gap-2">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p class="text-xs text-[#37474F]">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
             <nav class="flex items-center gap-4">
                 <a href="#" class="text-xs text-[#37474F] hover:text-[#D4AF37] transition-colors">Privacy Policy</a>
                 <a href="#" class="text-xs text-[#37474F] hover:text-[#D4AF37] transition-colors">Terms of Service</a>

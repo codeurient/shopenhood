@@ -94,7 +94,7 @@
 
 <!-- Listing Card -->
 <a href="{{ route('listings.show', $listing->slug) }}"
-   class="block bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+   class="block bg-white rounded shadow-sm hover:shadow-md transition-shadow overflow-hidden">
 
     <!-- Image Container -->
     <div class="relative aspect-square bg-gray-100">

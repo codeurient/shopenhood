@@ -74,6 +74,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Alpine.js -->
+    <script>
+        function toggleFilterPanel() {
+            window.dispatchEvent(new CustomEvent('toggle-filter-panel'));
+        }
+    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @stack('styles')
@@ -81,7 +86,7 @@
 <body class="bg-white antialiased font-sans">
     <!-- Mobile-First Layout -->
     <div x-data="{ sidebarOpen: false, accountPanelOpen: false }"
-         x-on:keydown.escape.window="sidebarOpen = false; accountPanelOpen = false"
+         x-on:keydown.escape.window="sidebarOpen = false; accountPanelOpen = false; window.dispatchEvent(new CustomEvent('close-filter-panel'));"
          x-init="
     $watch('sidebarOpen', val => document.body.style.overflow = (val || accountPanelOpen) ? 'hidden' : '');
     $watch('accountPanelOpen', val => document.body.style.overflow = (val || sidebarOpen) ? 'hidden' : '');
@@ -93,6 +98,9 @@
 
         <!-- Account Panel Component -->
         <x-mobile.account-panel />
+
+        <!-- Filter Panel Component -->
+        <x-mobile.filter-panel />
 
         <!-- Main Content Area -->
         <div class="flex flex-col min-h-screen pb-16 md:pb-0">
