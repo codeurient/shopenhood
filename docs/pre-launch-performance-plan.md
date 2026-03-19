@@ -6,7 +6,7 @@
 > 200,000+ listings and 10,000+ concurrent users at launch.
 >
 > **How to use:** Hand this file to Claude Code and say:
-> *"Implement the pre-launch plan from `docs/pre-launch-performance-plan.md`"*
+> *"Implement the pre-launch plan from `docs\pre-launch-performance-plan.md`"*
 
 ---
 

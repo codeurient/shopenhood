@@ -74,8 +74,8 @@ class ListingController extends Controller
 
         $sort = $request->get('sort', 'newest');
         $query = match ($sort) {
-            'price_asc' => $query->orderBy('base_price', 'asc'),
-            'price_desc' => $query->orderBy('base_price', 'desc'),
+            'price_asc' => $query->orderByRaw('ISNULL(base_price) ASC, base_price ASC'),
+            'price_desc' => $query->orderByRaw('ISNULL(base_price) ASC, base_price DESC'),
             default => $query->latest(),
         };
 
