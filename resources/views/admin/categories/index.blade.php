@@ -129,10 +129,12 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Load categories for a specific level
  */
+const childrenBaseUrl = '{{ route('admin.categories.children') }}';
+
 function loadLevel(parentId, title, level) {
     const url = parentId
-        ? `/admin/categories/children/${parentId}`
-        : '/admin/categories/children';
+        ? `${childrenBaseUrl}/${parentId}`
+        : childrenBaseUrl;
 
     fetch(url, {
         headers: {
